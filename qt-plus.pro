@@ -153,7 +153,7 @@ helpfile = qt-plus.qdocconf
 QMAKE_POST_LINK += qdoc $$quote($$shell_path($$helpfile)) $$escape_expand(\\n\\t)
 
 # Copy the index.html to the help directory
-copyfile = src/misc/index.html
+copyfile = source/misc/index.html
 copydest = help/index.html
 
 QMAKE_POST_LINK += $$QMAKE_COPY $$quote($$shell_path($$copyfile)) $$quote($$shell_path($$copydest)) $$escape_expand(\\n\\t)
