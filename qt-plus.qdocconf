@@ -1,0 +1,16 @@
+project = qt-plus
+description = qt-plus Documentation
+
+sourcedirs = source/cpp
+headerdirs = source/cpp
+
+sources.fileextensions = "*.cpp *.qdoc *.mm *.qml"
+headers.fileextensions = "*.h *.ch *.h++ *.hh *.hpp *.hxx"
+
+outputdir = help
+outputformats = HTML
+
+HTML.stylesheets = source/css/offline.css
+HTML.headerstyles = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style/offline.css\" />"
+HTML.postheader = "<div id=\"maincontents\">"
+HTML.footer = "</div>"

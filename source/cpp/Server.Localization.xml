@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Localisation Available="fr,en,es,ar,zh" Default="fr">
+    <LastName>
+        <fr Value="Nom"/>
+        <en Value="Last name"/>
+        <de Value="Familienname"/>
+        <es Value="Apellido"/>
+        <ar Value="الكنية"/>
+        <zh Value="姓"/>
+    </LastName>
+    <FirstName>
+        <fr Value="Prénom"/>
+        <en Value="First name"/>
+        <de Value="Vorname"/>
+        <es Value="Primer nombre"/>
+        <ar Value="الاسم الاول"/>
+        <zh Value="名字"/>
+    </FirstName>
+</Localisation>
