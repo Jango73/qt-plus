@@ -132,9 +132,6 @@ SOURCES += \
     source/cpp/QMLTree/QMLTreeContext.cpp \
     source/cpp/QMLTree/QMLGrammarParser.cpp
 
-RESOURCES += \
-    resources.qrc
-
 DESTDIR = ../bin
 MOC_DIR = ../moc/qt-plus
 OBJECTS_DIR = ../obj/qt-plus
