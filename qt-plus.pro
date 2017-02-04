@@ -1,5 +1,5 @@
 
-QT += core gui xml network serialport widgets positioning qml quickwidgets
+QT += core gui multimedia xml network serialport widgets positioning qml quickwidgets
 
 CONFIG += warn_off
 
@@ -15,24 +15,26 @@ DEFINES += QTPLUS_LIBRARY
 # QMAKE_EXTRA_TARGETS += qmlGrammarTarget
 
 HEADERS += \
+    source/cpp/qtplus_global.h \
     source/cpp/CFactory.h \
     source/cpp/CSingleton.h \
     source/cpp/CDumpable.h \
     source/cpp/CXMLNodable.h \
     source/cpp/CXMLNode.h \
     source/cpp/QTree.h \
-    source/cpp/qtplus_global.h \
+    source/cpp/CPIDController.h \
     source/cpp/CLargeMatrix.h \
     source/cpp/CImageHistogram.h \
     source/cpp/CImageUtilities.h \
+    source/cpp/CSoundSynth.h \
     source/cpp/CTDMADevice.h \
+    source/cpp/CStreamFactory.h \
     source/cpp/CConnectedStream.h \
     source/cpp/CSocketStream.h \
-    source/cpp/CStreamFactory.h \
+    source/cpp/CSerialStream.h \
     source/cpp/CMJPEGClient.h \
     source/cpp/CMJPEGServer.h \
     source/cpp/CHTTPServer.h \
-    source/cpp/CSerialStream.h \
     source/cpp/CWebComposer.h \
     source/cpp/WebControls/CWebButton.h \
     source/cpp/WebControls/CWebControl.h \
@@ -79,17 +81,19 @@ SOURCES += \
     source/cpp/CDumpable.cpp \
     source/cpp/CXMLNodable.cpp \
     source/cpp/CXMLNode.cpp \
+    source/cpp/CPIDController.cpp \
     source/cpp/CLargeMatrix.cpp \
     source/cpp/CImageHistogram.cpp \
     source/cpp/CImageUtilities.cpp \
+    source/cpp/CSoundSynth.cpp \
     source/cpp/CTDMADevice.cpp \
+    source/cpp/CStreamFactory.cpp \
     source/cpp/CConnectedStream.cpp \
     source/cpp/CSocketStream.cpp \
-    source/cpp/CStreamFactory.cpp \
+    source/cpp/CSerialStream.cpp \
     source/cpp/CMJPEGClient.cpp \
     source/cpp/CMJPEGServer.cpp \
     source/cpp/CHTTPServer.cpp \
-    source/cpp/CSerialStream.cpp \
     source/cpp/CWebComposer.cpp \
     source/cpp/WebControls/CWebButton.cpp \
     source/cpp/WebControls/CWebControl.cpp \
