@@ -25,31 +25,22 @@ class QTPLUSSHARED_EXPORT CSerialStream : public CConnectedStream
 public:
 
 	//-------------------------------------------------------------------------------------------------
-	// Constructeurs et destructeur
+    // Constructors et destructor
 	//-------------------------------------------------------------------------------------------------
 
-	//! Constructeur avec paramètres
+    //! Constructor with parameters
     CSerialStream(const QString& sName, const QMap<QString, QString>& sParameters);
 
-	//! Destructeur
+    //! Destructor
     virtual ~CSerialStream();
 
-	//-------------------------------------------------------------------------------------------------
-	// Méthodes de contrôle
-	//-------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------
+    // QIODevice methods
+    //-------------------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------------------
-	// Méthodes héritées
-	//-------------------------------------------------------------------------------------------------
-
-	//! Lecture de données
-	virtual qint64 readData(char* data, qint64 maxSize);
-
-	//! Ecriture de données
-	virtual qint64 writeData(const char* data, qint64 maxSize);
-
-	//!
-	virtual qint64 bytesAvailable() const;
+    virtual qint64 readData(char* data, qint64 maxSize) Q_DECL_OVERRIDE;
+    virtual qint64 writeData(const char* data, qint64 maxSize) Q_DECL_OVERRIDE;
+    virtual qint64 bytesAvailable() const Q_DECL_OVERRIDE;
 
 	//-------------------------------------------------------------------------------------------------
 	// Slots

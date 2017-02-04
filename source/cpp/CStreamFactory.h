@@ -17,14 +17,14 @@ class QTPLUSSHARED_EXPORT CStreamFactory : public CSingleton<CStreamFactory>
 public:
 
 	//-------------------------------------------------------------------------------------------------
-	// Méthodes de contrôle
+    // Control methods
 	//-------------------------------------------------------------------------------------------------
 
 	//!
 	CConnectedStream* instanciateStream(const QString& sName, const QMap<QString, QString>& sParameters);
 
 	//-------------------------------------------------------------------------------------------------
-	// Constructeurs et destructeur
+    // Constructors et destructor
 	//-------------------------------------------------------------------------------------------------
 
 protected:

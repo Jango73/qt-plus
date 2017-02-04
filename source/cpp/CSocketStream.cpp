@@ -11,14 +11,31 @@
 
 //-------------------------------------------------------------------------------------------------
 
-CSocketStream::CSocketStream(const QString& sName, const QMap<QString, QString>& sParamMap)
+/*!
+    \class CSocketStream
+    \inmodule qt-plus
+    \brief A socket stream.
+
+    This stream acts like a serial stream but through sockets. The class will do its best to maintain connection.
+
+    \sa CStreamFactory
+*/
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Constructs a CSocketStream. \br\br
+    \a sName is a TCP/IP connection name like "127.0.0.1", "0.0.0.0:5555"
+    \a sParameters are unused for this class.
+*/
+CSocketStream::CSocketStream(const QString& sName, const QMap<QString, QString>& sParameters)
     : CConnectedStream(sName)
     , m_tMutex(QMutex::Recursive)
     , m_iPort(0)
     , m_pLocalServer(NULL)
     , m_pServer(NULL)
 {
-	Q_UNUSED(sParamMap);
+    Q_UNUSED(sParameters);
 
 	// On détermine d'après l'adresse IP si on est serveur ou client
 	if (sName.contains("0.0.0.0"))
@@ -52,6 +69,9 @@ CSocketStream::CSocketStream(const QString& sName, const QMap<QString, QString>&
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Starts socket in server mode, binding to port number in \a iPort.
+*/
 void CSocketStream::bindTo(int iPort)
 {
 	m_pLocalServer = new QTcpServer(this);
@@ -73,6 +93,10 @@ void CSocketStream::bindTo(int iPort)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Starts socket in client mode, connecting to address in \a sURL. \br\br
+    Always returns \c true.
+*/
 bool CSocketStream::connectTo(QString sURL)
 {
 	QStringList lTokens = sURL.split(":");
@@ -98,6 +122,9 @@ bool CSocketStream::connectTo(QString sURL)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Destroys a CSocketStream.
+*/
 CSocketStream::~CSocketStream()
 {
 	// Destruction de tous les clients actifs
@@ -128,27 +155,29 @@ CSocketStream::~CSocketStream()
 
 //-------------------------------------------------------------------------------------------------
 
-qint64 CSocketStream::bytesAvailable() const
+/*!
+    Returns the stream's name.
+*/
+QString CSocketStream::getName() const
 {
-	qint64 uiBytes = 0;
-
-	if (m_pServer != NULL)
-	{
-		uiBytes = m_pServer->bytesAvailable();
-	}
-	else
-	{
-		if (hasConnections())
-		{
-			uiBytes = m_vClients[0]->bytesAvailable();
-		}
-	}
-
-	return uiBytes + QIODevice::bytesAvailable();
+    return m_sName;
 }
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns true if there is at least one connection.
+*/
+bool CSocketStream::hasConnections() const
+{
+    return m_vClients.count() > 0;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    This slot is called when a connection attempt must be made.
+*/
 void CSocketStream::onReconnect()
 {
 	if (m_pServer != NULL)
@@ -186,6 +215,9 @@ void CSocketStream::onReconnect()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    This slot is called when there is an incoming connection.
+*/
 void CSocketStream::onNewConnection()
 {
 	// Récupération socket entrante
@@ -205,6 +237,9 @@ void CSocketStream::onNewConnection()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    This slot is called when a socket has been disconnected.
+*/
 void CSocketStream::onSocketDisconnected()
 {
 	QTcpSocket* pSocket = dynamic_cast<QTcpSocket*>(QObject::sender());
@@ -234,6 +269,9 @@ void CSocketStream::onSocketDisconnected()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    This slot is called when there is data available on a socket.
+*/
 void CSocketStream::onSocketReadyRead()
 {
 	int iBytesAvailable = 0;
@@ -258,6 +296,9 @@ void CSocketStream::onSocketReadyRead()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    This slot is called when \a iBytes have been written on a socket.
+*/
 void CSocketStream::onSocketBytesWritten(qint64 iBytes)
 {
 	QTcpSocket* pSocket = dynamic_cast<QTcpSocket*>(QObject::sender());
@@ -272,6 +313,9 @@ void CSocketStream::onSocketBytesWritten(qint64 iBytes)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    This slot is called when output must be sent on a socket.
+*/
 void CSocketStream::onSendOutput()
 {
 	QMutexLocker locker(&m_tMutex);
@@ -289,6 +333,9 @@ void CSocketStream::onSendOutput()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Sends output data to \a pSocket.
+*/
 void CSocketStream::sendOutputForSocket(QTcpSocket* pSocket)
 {
 	CClientData* pData = CClientData::getFromSocket(pSocket);
@@ -319,7 +366,35 @@ void CSocketStream::sendOutputForSocket(QTcpSocket* pSocket)
 
 //-------------------------------------------------------------------------------------------------
 
-//! Lecture de données
+/*!
+    Overrides QIODevice::bytesAvailable. \br\br
+    Returns available bytes in device.
+*/
+qint64 CSocketStream::bytesAvailable() const
+{
+    qint64 uiBytes = 0;
+
+    if (m_pServer != NULL)
+    {
+        uiBytes = m_pServer->bytesAvailable();
+    }
+    else
+    {
+        if (hasConnections())
+        {
+            uiBytes = m_vClients[0]->bytesAvailable();
+        }
+    }
+
+    return uiBytes + QIODevice::bytesAvailable();
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Overrides QIODevice::readData. \br\br
+    Returns number of bytes read to \a data, limited by \a maxSize
+*/
 qint64 CSocketStream::readData(char* data, qint64 maxSize)
 {
 	if (m_pServer != NULL)
@@ -339,7 +414,10 @@ qint64 CSocketStream::readData(char* data, qint64 maxSize)
 
 //-------------------------------------------------------------------------------------------------
 
-//! Ecriture de données
+/*!
+    Overrides QIODevice::writeData. \br\br
+    Returns number of bytes written to \a data, limited by \a maxSize
+*/
 qint64 CSocketStream::writeData(const char* data, qint64 maxSize)
 {
 	QMutexLocker locker(&m_tMutex);

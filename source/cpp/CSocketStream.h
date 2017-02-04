@@ -29,10 +29,10 @@ public:
 	// Constructeurs et destructeur
 	//-------------------------------------------------------------------------------------------------
 
-	//! Constructeur avec paramètres
-	//! sName = "0.0.0.0:pppp" Le flux sera serveur sur le port pppp
-	//! sName = "n.n.n.n:pppp" Le flux sera client de l'adresse n.n.n.n:pppp
-	CSocketStream(const QString& sName, const QMap<QString, QString>& sParameters);
+    //! Constructor with parameters
+    //! sName = "0.0.0.0:pppp" The stream servs port pppp
+    //! sName = "n.n.n.n:pppp" The stream is client of server at n.n.n.n:pppp
+    CSocketStream(const QString& sName, const QMap<QString, QString>& sParameters);
 
 	//! Destructeur
 	virtual ~CSocketStream();
@@ -41,34 +41,19 @@ public:
 	// Getters
 	//-------------------------------------------------------------------------------------------------
 
-	// Retourne le nom utilisé à la création de l'objet
-	QString getName() const { return m_sName; }
+    //! Returns the stream's name
+    QString getName() const;
+
+    //! Returns true if there is at least one connection
+    bool hasConnections() const;
 
 	//-------------------------------------------------------------------------------------------------
-	// Méthodes de contrôle
+    // QIODevice methods
 	//-------------------------------------------------------------------------------------------------
 
-	//! Appelée en interne pour démarrer en mode serveur
-	void bindTo(int iPort);
-
-	//! Appelée en interne pour démarrer en mode client
-	bool connectTo(QString sURL);
-
-	//! Retourne vrai si des connexions existent
-	bool hasConnections() const { return m_vClients.count() > 0; }
-
-	//-------------------------------------------------------------------------------------------------
-	// Méthodes héritées
-	//-------------------------------------------------------------------------------------------------
-
-	//! Lecture de données
-	virtual qint64 readData(char* data, qint64 maxSize);
-
-	//! Ecriture de données
-	virtual qint64 writeData(const char* data, qint64 maxSize);
-
-	//!
-	virtual qint64 bytesAvailable() const;
+    virtual qint64 readData(char* data, qint64 maxSize) Q_DECL_OVERRIDE;
+    virtual qint64 writeData(const char* data, qint64 maxSize) Q_DECL_OVERRIDE;
+    virtual qint64 bytesAvailable() const Q_DECL_OVERRIDE;
 
 	//-------------------------------------------------------------------------------------------------
 	// Slots
@@ -89,6 +74,12 @@ protected slots:
 
 protected:
 
+    //! Starts server mode
+    void bindTo(int iPort);
+
+    //! Starts client mode
+    bool connectTo(QString sURL);
+
 	//!
 	void sendOutputForSocket(QTcpSocket* pSocket);
 
@@ -98,8 +89,8 @@ protected:
 
 protected:
 
-	//! Cette classe utilitaire sert à associer des données utilisateur à une socket
-	//! Le pointeur vers cette classe est stocké dans les propriétés de QTcpSocket
+    //! This class associates user data to a QTcpSocket
+    //! The pointer to this class is stored in QTcpSocket properties
 	class CClientData
 	{
 	public:

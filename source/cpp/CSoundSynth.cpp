@@ -11,6 +11,19 @@ const int DataSampleRateHz  = 44100;
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    \class CSoundSynth
+    \inmodule qt-plus
+    \brief A real-time sound generation class.
+
+    Base class for sound synths, the synthesize must be overridden
+*/
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Constructs a CSoundSynth.
+*/
 CSoundSynth::CSoundSynth()
     : m_tGenerator(this)
     , m_tDevice(QAudioDeviceInfo::defaultOutputDevice())
@@ -40,6 +53,9 @@ CSoundSynth::CSoundSynth()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Destroys a CSoundSynth.
+*/
 CSoundSynth::~CSoundSynth()
 {
     close();
@@ -47,12 +63,19 @@ CSoundSynth::~CSoundSynth()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns generated sound data for position in \a pos.
+*/
 QByteArray CSoundSynth::synthesize(qint64 pos)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Overrides QIODevice::readData. \br\br
+    Returns number of bytes read to \a data, limited by \a len
+*/
 qint64 CSoundSynth::readData(char* data, qint64 len)
 {
     qint64 iRemaining = len;
@@ -89,6 +112,10 @@ qint64 CSoundSynth::readData(char* data, qint64 len)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Overrides QIODevice::writeData. \br\br
+    Returns 0. \a data and \a len are ignored.
+*/
 qint64 CSoundSynth::writeData(const char *data, qint64 len)
 {
     Q_UNUSED(data);
@@ -99,6 +126,10 @@ qint64 CSoundSynth::writeData(const char *data, qint64 len)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Overrides QIODevice::bytesAvailable. \br\br
+    Returns available bytes in device.
+*/
 qint64 CSoundSynth::bytesAvailable() const
 {
     qint64 total;
