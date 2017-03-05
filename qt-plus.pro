@@ -23,31 +23,31 @@ HEADERS += \
     source/cpp/CXMLNode.h \
     source/cpp/QTree.h \
     source/cpp/CPIDController.h \
-    source/cpp/CLargeMatrix.h \
-    source/cpp/CImageHistogram.h \
-    source/cpp/CImageUtilities.h \
+    source/cpp/Image/CLargeMatrix.h \
+    source/cpp/Image/CImageHistogram.h \
+    source/cpp/Image/CImageUtilities.h \
     source/cpp/CSoundSynth.h \
     source/cpp/CTDMADevice.h \
     source/cpp/CStreamFactory.h \
     source/cpp/CConnectedStream.h \
     source/cpp/CSocketStream.h \
     source/cpp/CSerialStream.h \
-    source/cpp/CMJPEGClient.h \
-    source/cpp/CMJPEGServer.h \
-    source/cpp/CHTTPServer.h \
-    source/cpp/CWebComposer.h \
-    source/cpp/WebControls/CWebButton.h \
-    source/cpp/WebControls/CWebControl.h \
-    source/cpp/WebControls/CWebDiv.h \
-    source/cpp/WebControls/CWebFactory.h \
-    source/cpp/WebControls/CWebLabel.h \
-    source/cpp/WebControls/CWebPage.h \
-    source/cpp/WebControls/CWebTextBox.h \
-    source/cpp/WebControls/CWebTextEdit.h \
-    source/cpp/WebControls/CWebFileInput.h \
+    source/cpp/Web/CMJPEGClient.h \
+    source/cpp/Web/CMJPEGServer.h \
+    source/cpp/Web/CWebComposer.h \
+    source/cpp/Web/CWebContext.h \
+    source/cpp/Web/CHTTPServer.h \
+    source/cpp/Web/CDynamicHTTPServer.h \
+    source/cpp/Web/WebControls/CWebButton.h \
+    source/cpp/Web/WebControls/CWebControl.h \
+    source/cpp/Web/WebControls/CWebDiv.h \
+    source/cpp/Web/WebControls/CWebFactory.h \
+    source/cpp/Web/WebControls/CWebLabel.h \
+    source/cpp/Web/WebControls/CWebPage.h \
+    source/cpp/Web/WebControls/CWebTextBox.h \
+    source/cpp/Web/WebControls/CWebTextEdit.h \
+    source/cpp/Web/WebControls/CWebFileInput.h \
     source/cpp/ISerializable.h \
-    source/cpp/CWebContext.h \
-    source/cpp/CDynamicHTTPServer.h \
     source/cpp/CInterpolator.h \
     source/cpp/GeoTools/coordcnv.h \
     source/cpp/GeoTools/geocent.h \
@@ -82,31 +82,31 @@ SOURCES += \
     source/cpp/CXMLNodable.cpp \
     source/cpp/CXMLNode.cpp \
     source/cpp/CPIDController.cpp \
-    source/cpp/CLargeMatrix.cpp \
-    source/cpp/CImageHistogram.cpp \
-    source/cpp/CImageUtilities.cpp \
+    source/cpp/Image/CLargeMatrix.cpp \
+    source/cpp/Image/CImageHistogram.cpp \
+    source/cpp/Image/CImageUtilities.cpp \
     source/cpp/CSoundSynth.cpp \
     source/cpp/CTDMADevice.cpp \
     source/cpp/CStreamFactory.cpp \
     source/cpp/CConnectedStream.cpp \
     source/cpp/CSocketStream.cpp \
     source/cpp/CSerialStream.cpp \
-    source/cpp/CMJPEGClient.cpp \
-    source/cpp/CMJPEGServer.cpp \
-    source/cpp/CHTTPServer.cpp \
-    source/cpp/CWebComposer.cpp \
-    source/cpp/WebControls/CWebButton.cpp \
-    source/cpp/WebControls/CWebControl.cpp \
-    source/cpp/WebControls/CWebDiv.cpp \
-    source/cpp/WebControls/CWebFactory.cpp \
-    source/cpp/WebControls/CWebLabel.cpp \
-    source/cpp/WebControls/CWebPage.cpp \
-    source/cpp/WebControls/CWebTextBox.cpp \
-    source/cpp/WebControls/CWebTextEdit.cpp \
-    source/cpp/WebControls/CWebFileInput.cpp \
+    source/cpp/Web/CMJPEGClient.cpp \
+    source/cpp/Web/CMJPEGServer.cpp \
+    source/cpp/Web/CWebComposer.cpp \
+    source/cpp/Web/CWebContext.cpp \
+    source/cpp/Web/CHTTPServer.cpp \
+    source/cpp/Web/CDynamicHTTPServer.cpp \
+    source/cpp/Web/WebControls/CWebButton.cpp \
+    source/cpp/Web/WebControls/CWebControl.cpp \
+    source/cpp/Web/WebControls/CWebDiv.cpp \
+    source/cpp/Web/WebControls/CWebFactory.cpp \
+    source/cpp/Web/WebControls/CWebLabel.cpp \
+    source/cpp/Web/WebControls/CWebPage.cpp \
+    source/cpp/Web/WebControls/CWebTextBox.cpp \
+    source/cpp/Web/WebControls/CWebTextEdit.cpp \
+    source/cpp/Web/WebControls/CWebFileInput.cpp \
     source/cpp/ISerializable.cpp \
-    source/cpp/CWebContext.cpp \
-    source/cpp/CDynamicHTTPServer.cpp \
     source/cpp/GeoTools/coordcnv.cpp \
     source/cpp/GeoTools/geocent.cpp \
     source/cpp/GeoTools/mgrs.cpp \

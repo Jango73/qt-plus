@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "qtplus_global.h"
+#include "../qtplus_global.h"
 
 // Qt
 #include <QDebug>

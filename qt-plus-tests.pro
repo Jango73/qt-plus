@@ -13,7 +13,7 @@ TEMPLATE = app
 SOURCES += \
     source/cpp/tests-main.cpp \
 
-DEPENDPATH += unis-lib
+DEPENDPATH += qt-plus
 
 DESTDIR = ../bin
 MOC_DIR = ../moc/qt-plus-tests

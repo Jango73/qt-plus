@@ -7,7 +7,7 @@
 
 // Application
 #include "CMJPEGServer.h"
-#include "CImageUtilities.h"
+#include "../Image/CImageUtilities.h"
 
 //-------------------------------------------------------------------------------------------------
 

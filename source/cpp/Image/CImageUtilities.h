@@ -1,10 +1,10 @@
 
 #pragma once
 
-#include "qtplus_global.h"
+#include "../qtplus_global.h"
 
 // Library
-#include "CSingleton.h"
+#include "../CSingleton.h"
 #include "CLargeMatrix.h"
 
 //-------------------------------------------------------------------------------------------------

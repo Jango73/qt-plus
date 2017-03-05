@@ -8,9 +8,9 @@
 #include <QString>
 
 // Application
-#include "../CSingleton.h"
-#include "../CXMLNode.h"
-#include "../CFactory.h"
+#include "../../CSingleton.h"
+#include "../../CXMLNode.h"
+#include "../../CFactory.h"
 #include "CWebControl.h"
 
 //-------------------------------------------------------------------------------------------------

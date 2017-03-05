@@ -2,7 +2,7 @@
 #ifndef CWEBCONTROL_H
 #define CWEBCONTROL_H
 
-#include "../qtplus_global.h"
+#include "../../qtplus_global.h"
 
 // Qt
 #include <QString>
@@ -10,7 +10,7 @@
 #include <QDataStream>
 
 // Application
-#include "../ISerializable.h"
+#include "../../ISerializable.h"
 #include "../CHTTPServer.h"
 
 //-------------------------------------------------------------------------------------------------
