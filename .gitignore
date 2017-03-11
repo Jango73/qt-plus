@@ -29,6 +29,14 @@
 *.app
 
 # Other
+/bin/*.xml
+/bin/*.qml
 /help
 /moc
 /obj
+Makefile
+Makefile.*
+*.stash
+*.Release
+*.Debug
+*.output
