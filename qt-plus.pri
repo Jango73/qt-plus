@@ -61,7 +61,7 @@ HEADERS += \
     source/cpp/QMLTree/QMLFor.h \
     source/cpp/QMLTree/QMLConditional.h \
     source/cpp/QMLTree/QMLTreeContext.h \
-    source/cpp/QMLTree/QMLArray.h
+    source/cpp/QMLTree/QMLAnalyzer.h
 
 SOURCES += \
     source/cpp/CDumpable.cpp \
@@ -121,4 +121,4 @@ SOURCES += \
     source/cpp/QMLTree/QMLConditional.cpp \
     source/cpp/QMLTree/QMLTreeContext.cpp \
     source/cpp/QMLTree/QMLGrammarParser.cpp \
-    source/cpp/QMLTree/QMLArray.cpp
+    source/cpp/QMLTree/QMLAnalyzer.cpp

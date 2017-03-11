@@ -3,18 +3,25 @@
 
 #include "../qtplus_global.h"
 
-//-------------------------------------------------------------------------------------------------
+// Foundations
+#include "../CXMLNode.h"
+#include "QMLTreeContext.h"
+#include "QMLComplexItem.h"
+#include "QMLImport.h"
+#include "QMLPropertyDeclaration.h"
+#include "QMLPropertyAssignment.h"
+#include "QMLIdentifier.h"
+#include "QMLQualifiedExpression.h"
+#include "QMLFunctionCall.h"
 
 // Qt
 #include <QObject>
-
-// Application
-#include "QMLComplexItem.h"
+#include <QString>
+#include <QVariant>
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a property declaration
-class QTPLUSSHARED_EXPORT QMLArray : public QMLComplexItem
+class QTPLUSSHARED_EXPORT QMLAnalyzer : public QObject
 {
     Q_OBJECT
 
@@ -24,40 +31,47 @@ public:
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //! Constructor with type and name
-    QMLArray();
+    // Default constructor
+    QMLAnalyzer();
 
-    //! Destructor
-    virtual ~QMLArray();
+    // Destructor
+    virtual ~QMLAnalyzer();
 
     //-------------------------------------------------------------------------------------------------
     // Setters
     //-------------------------------------------------------------------------------------------------
 
+    // Set folder
+    void setFolder(const QString& sFrom);
+
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
+
+    // Return folder
+    QString folder() const;
+
+    const QStringList& errors() const;
 
     //-------------------------------------------------------------------------------------------------
     // Control methods
     //-------------------------------------------------------------------------------------------------
 
-    //-------------------------------------------------------------------------------------------------
-    // Overridden methods
-    //-------------------------------------------------------------------------------------------------
-
-    //!
-    virtual void dump(QTextStream& stream, int iIdent) Q_DECL_OVERRIDE;
-
-    //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
-
-    //!
-    virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
+    bool analyze(CXMLNode xGrammar);
 
     //-------------------------------------------------------------------------------------------------
-    // Properties
+    // Protected control methods
     //-------------------------------------------------------------------------------------------------
 
 protected:
+
+    QStringList runGrammar(QMLTreeContext* pContext, CXMLNode xGrammar);
+
+    void runGrammar_Recurse(QMLItem* pItem, CXMLNode xGrammar, QStringList& lErrors);
+
+protected:
+
+    QString                         m_sFolder;
+    QMap<QString, QMLTreeContext*>  m_mContexts;     // The QML context used for parsing
+    QStringList                     m_lErrors;
 };
