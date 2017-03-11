@@ -970,6 +970,26 @@ JSAssignmentExpression :
         $<Object>$ = new QMLBinaryOperation(pLeft, pRight, QMLBinaryOperation::boAssign);
     }
     |
+    JSConditionalExpression TOKEN_MUL_ASSIGN JSAssignmentExpression
+    {
+        PARSER_TRACE("JSAssignmentExpression", "JSConditionalExpression TOKEN_MUL_ASSIGN JSAssignmentExpression");
+
+        QMLItem* pLeft = $<Object>1;
+        QMLItem* pRight = $<Object>3;
+
+        $<Object>$ = new QMLBinaryOperation(pLeft, pRight, QMLBinaryOperation::boAssign);
+    }
+    |
+    JSConditionalExpression TOKEN_DIV_ASSIGN JSAssignmentExpression
+    {
+        PARSER_TRACE("JSAssignmentExpression", "JSConditionalExpression TOKEN_DIV_ASSIGN JSAssignmentExpression");
+
+        QMLItem* pLeft = $<Object>1;
+        QMLItem* pRight = $<Object>3;
+
+        $<Object>$ = new QMLBinaryOperation(pLeft, pRight, QMLBinaryOperation::boAssign);
+    }
+    |
     JSConditionalExpression TOKEN_ASSIGN JSObject
     {
         PARSER_TRACE("JSAssignmentExpression", "JSConditionalExpression TOKEN_ASSIGN JSObject");
@@ -1009,16 +1029,35 @@ JSConditionalExpression :
 ;
 
 JSOrExpression :
-    JSAndExpression
+    JSXorExpression
     {
-        PARSER_TRACE("JSOrExpression", "JSAndExpression");
+        PARSER_TRACE("JSOrExpression", "JSXorExpression");
 
         $<Object>$ = $<Object>1;
     }
     |
-    JSAndExpression TOKEN_LOGICAL_OR JSOrExpression
+    JSXorExpression TOKEN_LOGICAL_OR JSOrExpression
     {
-        PARSER_TRACE("JSOrExpression", "JSAndExpression TOKEN_LOGICAL_OR JSOrExpression");
+        PARSER_TRACE("JSOrExpression", "JSXorExpression TOKEN_LOGICAL_OR JSOrExpression");
+
+        QMLItem* pLeft = $<Object>1;
+        QMLItem* pRight = $<Object>3;
+
+        $<Object>$ = new QMLBinaryOperation(pLeft, pRight, QMLBinaryOperation::boLogicOr);
+    }
+;
+
+JSXorExpression :
+    JSAndExpression
+    {
+        PARSER_TRACE("JSXorExpression", "JSAndExpression");
+
+        $<Object>$ = $<Object>1;
+    }
+    |
+    JSAndExpression TOKEN_XOR JSXorExpression
+    {
+        PARSER_TRACE("JSXorExpression", "JSAndExpression TOKEN_XOR JSOrExpression");
 
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
