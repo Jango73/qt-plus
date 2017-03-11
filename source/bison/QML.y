@@ -510,13 +510,6 @@ PropertyContent :
 
         $<Object>$ = $<Object>1;
     }
-    |
-    JSArray
-    {
-        PARSER_TRACE("PropertyContent", "JSArray");
-
-        $<Object>$ = $<Object>1;
-    }
 ;
 
 SignalDeclaration :
@@ -1428,9 +1421,7 @@ JSObject :
     {
         $<Object>$ = nullptr;
     }
-;
-
-JSArray :
+    |
     TOKEN_DIMENSION
     {
         $<Object>$ = new QMLComplexItem();
@@ -1504,25 +1495,6 @@ JSAttribute :
 
 JSAttributeNoComma :
     JSAttributeName ':' JSObject
-    {
-        QMLItem* pName = $<Object>1;
-        QMLItem* pValue = $<Object>3;
-
-        if (pName != nullptr && pValue != nullptr)
-        {
-            QMLComplexItem* pComplex = new QMLComplexItem(pName);
-
-            pComplex->contents() << pValue;
-
-            $<Object>$ = pComplex;
-        }
-        else
-        {
-            $<Object>$ = nullptr;
-        }
-    }
-    |
-    JSAttributeName ':' JSArray
     {
         QMLItem* pName = $<Object>1;
         QMLItem* pValue = $<Object>3;
