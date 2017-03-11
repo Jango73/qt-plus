@@ -28,6 +28,7 @@ public:
         boSub,
         boMul,
         boDiv,
+        boMod,
         boAnd,
         boOr,
         boXor,

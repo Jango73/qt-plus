@@ -33,6 +33,7 @@ int yyerror (void*, char*);
 #define SAFE_DELETE(a)  if ((a) != nullptr) delete (a);
 
 #define PARSER_TRACE(state, rule)  { qDebug() << state " : " << rule; }
+// #define PARSER_TRACE(state, rule)
 
 %}
 
@@ -862,11 +863,15 @@ JSVariablesOrExpressionOpt :
 JSVariables :
     JSVariable
     {
+        PARSER_TRACE("JSVariables", "JSVariable");
+
         $<Object>$ = $<Object>1;
     }
     |
     JSVariables ',' JSVariable
     {
+        PARSER_TRACE("JSVariables", "JSVariables ',' JSVariable");
+
         SAFE_DELETE($<Object>3);
 
         $<Object>$ = $<Object>1;
@@ -876,11 +881,15 @@ JSVariables :
 JSVariable :
     Identifier
     {
+        PARSER_TRACE("JSVariable", "Identifier");
+
         $<Object>$ = $<Object>1;
     }
     |
     Identifier TOKEN_ASSIGN JSAssignmentExpression
     {
+        PARSER_TRACE("JSVariable", "Identifier TOKEN_ASSIGN JSAssignmentExpression");
+
         SAFE_DELETE($<Object>3);
 
         $<Object>$ = $<Object>1;
@@ -890,11 +899,15 @@ JSVariable :
 JSExpression :
     JSExpressionSingle
     {
+        PARSER_TRACE("JSExpression", "JSExpressionSingle");
+
         $<Object>$ = $<Object>1;
     }
     |
     JSExpressionSingle ',' JSExpression
     {
+        PARSER_TRACE("JSExpression", "JSExpressionSingle ',' JSExpression");
+
         QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>1);
         QMLItem* pExpression2 = $<Object>2;
 
@@ -910,6 +923,8 @@ JSExpression :
 JSExpressionSingle :
     JSAssignmentExpression
     {
+        PARSER_TRACE("JSExpressionSingle", "JSAssignmentExpression");
+
         QMLItem* pExpression1 = $<Object>1;
         QMLComplexItem* pComplex = new QMLComplexItem();
 
@@ -922,11 +937,15 @@ JSExpressionSingle :
 JSAssignmentExpression :
     JSConditionalExpression
     {
+        PARSER_TRACE("JSAssignmentExpression", "JSConditionalExpression");
+
         $<Object>$ = $<Object>1;
     }
     |
     JSConditionalExpression TOKEN_ASSIGN JSAssignmentExpression
     {
+        PARSER_TRACE("JSAssignmentExpression", "JSConditionalExpression TOKEN_ASSIGN JSAssignmentExpression");
+
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
@@ -935,6 +954,8 @@ JSAssignmentExpression :
     |
     JSConditionalExpression TOKEN_ADD_ASSIGN JSAssignmentExpression
     {
+        PARSER_TRACE("JSAssignmentExpression", "JSConditionalExpression TOKEN_ADD_ASSIGN JSAssignmentExpression");
+
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
@@ -943,6 +964,8 @@ JSAssignmentExpression :
     |
     JSConditionalExpression TOKEN_SUB_ASSIGN JSAssignmentExpression
     {
+        PARSER_TRACE("JSAssignmentExpression", "JSConditionalExpression TOKEN_SUB_ASSIGN JSAssignmentExpression");
+
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
@@ -951,6 +974,8 @@ JSAssignmentExpression :
     |
     JSConditionalExpression TOKEN_ASSIGN JSObject
     {
+        PARSER_TRACE("JSAssignmentExpression", "JSConditionalExpression TOKEN_ASSIGN JSObject");
+
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
@@ -961,11 +986,15 @@ JSAssignmentExpression :
 JSConditionalExpression :
     JSOrExpression
     {
+        PARSER_TRACE("JSConditionalExpression", "JSOrExpression");
+
         $<Object>$ = $<Object>1;
     }
     |
     JSOrExpression '?' JSAssignmentExpression ':' JSAssignmentExpression
     {
+        PARSER_TRACE("JSConditionalExpression", "JSOrExpression '?' JSAssignmentExpression ':' JSAssignmentExpression");
+
         QMLItem* pCondition = $<Object>1;
         QMLItem* pThen = $<Object>3;
         QMLItem* pElse = $<Object>5;
@@ -977,11 +1006,15 @@ JSConditionalExpression :
 JSOrExpression :
     JSAndExpression
     {
+        PARSER_TRACE("JSOrExpression", "JSAndExpression");
+
         $<Object>$ = $<Object>1;
     }
     |
     JSAndExpression TOKEN_LOGICAL_OR JSOrExpression
     {
+        PARSER_TRACE("JSOrExpression", "JSAndExpression TOKEN_LOGICAL_OR JSOrExpression");
+
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
@@ -1142,6 +1175,14 @@ JSMultiplicativeExpression :
         $<Object>$ = new QMLBinaryOperation(pLeft, pRight, QMLBinaryOperation::boDiv);
     }
     |
+    JSUnaryExpression TOKEN_MOD JSMultiplicativeExpression
+    {
+        QMLItem* pLeft = $<Object>1;
+        QMLItem* pRight = $<Object>3;
+
+        $<Object>$ = new QMLBinaryOperation(pLeft, pRight, QMLBinaryOperation::boMod);
+    }
+    |
     JSUnaryExpression TOKEN_SHL JSMultiplicativeExpression
     {
         QMLItem* pLeft = $<Object>1;
@@ -1184,11 +1225,15 @@ JSUnaryExpression :
 JSMemberExpression:
     JSFunctionCall
     {
+        PARSER_TRACE("JSMemberExpression", "JSFunctionCall");
+
         $<Object>$ = $<Object>1;
     }
     |
     JSFunctionCall '.' JSMemberExpression
     {
+        PARSER_TRACE("JSMemberExpression", "JSFunctionCall '.' JSMemberExpression");
+
         QMLIdentifier* pIdentifier1 = dynamic_cast<QMLIdentifier*>($<Object>1);
         QMLIdentifier* pIdentifier2 = dynamic_cast<QMLIdentifier*>($<Object>3);
 
@@ -1224,11 +1269,15 @@ JSMemberExpression:
 JSFunctionCall :
     JSArrayAccessExpression
     {
+        PARSER_TRACE("JSFunctionCall", "JSArrayAccessExpression");
+
         $<Object>$ = $<Object>1;
     }
     |
     JSArrayAccessExpression '(' JSArgumentListOpt ')'
     {
+        PARSER_TRACE("JSFunctionCall", "JSArrayAccessExpression '(' JSArgumentListOpt ')'");
+
         QMLItem* pName = $<Object>1;
         QMLComplexItem* pArguments = dynamic_cast<QMLComplexItem*>($<Object>3);
 
@@ -1239,11 +1288,15 @@ JSFunctionCall :
 JSArrayAccessExpression :
     JSPrimaryExpression
     {
+        PARSER_TRACE("JSArrayAccessExpression", "JSPrimaryExpression");
+
         $<Object>$ = $<Object>1;
     }
     |
     JSPrimaryExpression '[' JSExpression ']'
     {
+        PARSER_TRACE("JSArrayAccessExpression", "JSPrimaryExpression '[' JSExpression ']'");
+
         $<Object>$ = $<Object>1;
     }
 ;
@@ -1251,16 +1304,22 @@ JSArrayAccessExpression :
 JSPrimaryExpression :
     Identifier
     {
+        PARSER_TRACE("JSPrimaryExpression", "Identifier");
+
         $<Object>$ = $<Object>1;
     }
     |
     Value
     {
+        PARSER_TRACE("JSPrimaryExpression", "Value");
+
         $<Object>$ = $<Object>1;
     }
     |
     '(' JSExpression ')'
     {
+        PARSER_TRACE("JSPrimaryExpression", "'(' JSExpression ')'");
+
         $<Object>$ = $<Object>2;
     }
 ;
@@ -1268,18 +1327,24 @@ JSPrimaryExpression :
 JSArgumentListOpt :
     Empty
     {
+        PARSER_TRACE("JSArgumentListOpt", "Empty");
+
         $<Object>$ = nullptr;
     }
     |
     JSArgumentList
     {
+        PARSER_TRACE("JSArgumentListOpt", "JSArgumentList");
+
         $<Object>$ = $<Object>1;
     }
 ;
 
 JSArgumentList :
-    JSAssignmentExpression
+    JSArgument
     {
+        PARSER_TRACE("JSArgumentList", "JSAssignmentExpression");
+
         QMLComplexItem* pList = dynamic_cast<QMLComplexItem*>($<Object>1);
         QMLItem* pExpression1 = $<Object>1;
 
@@ -1292,13 +1357,10 @@ JSArgumentList :
         $<Object>$ = pList;
     }
     |
-    JSObject
+    JSArgumentList ',' JSArgument
     {
-        $<Object>$ = $<Object>1;
-    }
-    |
-    JSArgumentList ',' JSAssignmentExpression
-    {
+        PARSER_TRACE("JSArgumentList", "JSArgumentList ',' JSAssignmentExpression");
+
         QMLComplexItem* pList = dynamic_cast<QMLComplexItem*>($<Object>1);
         QMLItem* pExpression1 = $<Object>1;
         QMLItem* pExpression2 = $<Object>3;
@@ -1313,12 +1375,22 @@ JSArgumentList :
 
         $<Object>$ = pList;
     }
+;
+
+JSArgument:
+    TOKEN_PROPERTY
+    {
+        $<Object>$ = nullptr;
+    }
     |
-    JSArgumentList ',' JSObject
+    JSObject
     {
         $<Object>$ = $<Object>1;
-
-        SAFE_DELETE($<Object>3);
+    }
+    |
+    JSAssignmentExpression
+    {
+        $<Object>$ = $<Object>1;
     }
 ;
 

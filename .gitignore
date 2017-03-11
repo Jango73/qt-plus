@@ -40,3 +40,4 @@ Makefile.*
 *.Release
 *.Debug
 *.output
+/_trash
