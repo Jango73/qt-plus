@@ -1267,16 +1267,16 @@ JSUnaryExpression :
 ;
 
 JSMemberExpression:
-    JSFunctionCall
+    JSArrayAccessExpression
     {
-        PARSER_TRACE("JSMemberExpression", "JSFunctionCall");
+        PARSER_TRACE("JSMemberExpression", "JSArrayAccessExpression");
 
         $<Object>$ = $<Object>1;
     }
     |
-    JSFunctionCall '.' JSMemberExpression
+    JSArrayAccessExpression '.' JSMemberExpression
     {
-        PARSER_TRACE("JSMemberExpression", "JSFunctionCall '.' JSMemberExpression");
+        PARSER_TRACE("JSMemberExpression", "JSArrayAccessExpression '.' JSMemberExpression");
 
         QMLIdentifier* pIdentifier1 = dynamic_cast<QMLIdentifier*>($<Object>1);
         QMLIdentifier* pIdentifier2 = dynamic_cast<QMLIdentifier*>($<Object>3);
@@ -1310,38 +1310,38 @@ JSMemberExpression:
     }
 ;
 
-JSFunctionCall :
-    JSArrayAccessExpression
+JSArrayAccessExpression :
+    JSFunctionCall
     {
-        PARSER_TRACE("JSFunctionCall", "JSArrayAccessExpression");
+        PARSER_TRACE("JSArrayAccessExpression", "JSFunctionCall");
 
         $<Object>$ = $<Object>1;
     }
     |
-    JSArrayAccessExpression '(' JSArgumentListOpt ')'
+    JSFunctionCall '[' JSExpression ']'
     {
-        PARSER_TRACE("JSFunctionCall", "JSArrayAccessExpression '(' JSArgumentListOpt ')'");
+        PARSER_TRACE("JSArrayAccessExpression", "JSFunctionCall '[' JSExpression ']'");
+
+        $<Object>$ = $<Object>1;
+    }
+;
+
+JSFunctionCall :
+    JSPrimaryExpression
+    {
+        PARSER_TRACE("JSFunctionCall", "JSPrimaryExpression");
+
+        $<Object>$ = $<Object>1;
+    }
+    |
+    JSPrimaryExpression '(' JSArgumentListOpt ')'
+    {
+        PARSER_TRACE("JSFunctionCall", "JSPrimaryExpression '(' JSArgumentListOpt ')'");
 
         QMLItem* pName = $<Object>1;
         QMLComplexItem* pArguments = dynamic_cast<QMLComplexItem*>($<Object>3);
 
         $<Object>$ = new QMLFunctionCall(pName, pArguments);
-    }
-;
-
-JSArrayAccessExpression :
-    JSPrimaryExpression
-    {
-        PARSER_TRACE("JSArrayAccessExpression", "JSPrimaryExpression");
-
-        $<Object>$ = $<Object>1;
-    }
-    |
-    JSPrimaryExpression '[' JSExpression ']'
-    {
-        PARSER_TRACE("JSArrayAccessExpression", "JSPrimaryExpression '[' JSExpression ']'");
-
-        $<Object>$ = $<Object>1;
     }
 ;
 
