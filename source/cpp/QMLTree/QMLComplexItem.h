@@ -51,6 +51,9 @@ public:
     //!
     const QVector<QMLItem*>& contents() const;
 
+    //! Returns all members
+    virtual QMap<QString, QMLItem*> members();
+
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------

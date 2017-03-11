@@ -87,6 +87,7 @@ bool QMLAnalyzer::analyze(CXMLNode xGrammar)
 
             if (m_mContexts[sFullName]->parse() == QMLTreeContext::peSuccess)
             {
+                qDebug() << "Analyzing " << sFullName;
                 m_lErrors << runGrammar(m_mContexts[sFullName], xGrammar);
             }
             else
@@ -110,6 +111,11 @@ QStringList QMLAnalyzer::runGrammar(QMLTreeContext* pContext, CXMLNode xGrammar)
 
 void QMLAnalyzer::runGrammar_Recurse(QMLItem* pItem, CXMLNode xGrammar, QStringList& lErrors)
 {
+    if (pItem == nullptr)
+    {
+        return;
+    }
+
     bool bHasRejects = false;
 
     QMap<QString, QMLItem*> mMembers = pItem->members();
@@ -122,7 +128,9 @@ void QMLAnalyzer::runGrammar_Recurse(QMLItem* pItem, CXMLNode xGrammar, QStringL
 
         if (pItem->metaObject()->className() == sClassName)
         {
-            QVector<CXMLNode> vRejects = xGrammar.getNodesByTagName(ANALYZER_TOKEN_REJECT);
+            // qDebug() << QString("Checking %1").arg(sClassName);
+
+            QVector<CXMLNode> vRejects = xCheck.getNodesByTagName(ANALYZER_TOKEN_REJECT);
 
             foreach (CXMLNode xReject, vRejects)
             {
@@ -130,8 +138,10 @@ void QMLAnalyzer::runGrammar_Recurse(QMLItem* pItem, CXMLNode xGrammar, QStringL
                 QString sValue = xReject.attributes()[ANALYZER_TOKEN_VALUE];
                 QString sText = xReject.attributes()[ANALYZER_TOKEN_TEXT];
 
-                if (mMembers.contains(sMember))
+                if (mMembers.contains(sMember) && mMembers[sMember] != nullptr)
                 {
+                    // qDebug() << QString("Checking %1 = %2").arg(sMember).arg(sValue);
+
                     if (mMembers[sMember]->toString() == sValue)
                     {
                         bHasRejects = true;
@@ -147,6 +157,16 @@ void QMLAnalyzer::runGrammar_Recurse(QMLItem* pItem, CXMLNode xGrammar, QStringL
         foreach (QString sKey, mMembers.keys())
         {
             runGrammar_Recurse(mMembers[sKey], xGrammar, lErrors);
+        }
+
+        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(pItem);
+
+        if (pComplex != nullptr)
+        {
+            foreach (QMLItem* pChildItem, pComplex->contents())
+            {
+                runGrammar_Recurse(pChildItem, xGrammar, lErrors);
+            }
         }
     }
 }

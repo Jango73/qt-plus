@@ -32,8 +32,8 @@ int yyerror (void*, char*);
 
 #define SAFE_DELETE(a)  if ((a) != nullptr) delete (a);
 
-#define PARSER_TRACE(state, rule)  { qDebug() << state " : " << rule; }
-// #define PARSER_TRACE(state, rule)
+// #define PARSER_TRACE(state, rule)  { qDebug() << state " : " << rule; }
+#define PARSER_TRACE(state, rule)
 
 %}
 
@@ -179,13 +179,6 @@ Declaration :
 
         $<Object>$ = $<Object>1;
     }
-    /*
-    | error
-    {
-        yyerror(pContext, QString("Item expected").toLatin1().data());
-        YYABORT;
-    }
-    */
 ;
 
 ImportStatement :
@@ -318,7 +311,7 @@ ItemContents :
         if (pOldItem != nullptr)
         {
             QMLComplexItem* pComplexItem = new QMLComplexItem();
-            pComplexItem->contents().append(pOldItem);
+            pComplexItem->contents() << pOldItem;
 
             $<Object>$ = pComplexItem;
         }
@@ -337,7 +330,7 @@ ItemContents :
 
         if (pComplexItem != nullptr && pNewItem != nullptr)
         {
-            pComplexItem->contents().append(pNewItem);
+            pComplexItem->contents() << pNewItem;
         }
 
         $<Object>$ = pComplexItem;
@@ -352,7 +345,7 @@ ItemContents :
 
         if (pComplexItem != nullptr && pNewItem != nullptr)
         {
-            pComplexItem->contents().append(pNewItem);
+            pComplexItem->contents() << pNewItem;
         }
 
         $<Object>$ = pComplexItem;
@@ -541,9 +534,9 @@ SignalDeclarationNoColon :
 ;
 
 JSFunction :
-    TOKEN_FUNCTION Identifier JSFunctionParameterList JSStatementBlock
+    TOKEN_FUNCTION Identifier JSFunctionParameterList JSStatement
     {
-        PARSER_TRACE("JSFunction", "TOKEN_FUNCTION Identifier JSFunctionParameterList JSStatementBlock");
+        PARSER_TRACE("JSFunction", "TOKEN_FUNCTION Identifier JSFunctionParameterList JSStatement");
 
         QMLItem* pName = dynamic_cast<QMLItem*>($<Object>2);
         QMLComplexItem* pParameters = dynamic_cast<QMLComplexItem*>($<Object>3);
@@ -551,6 +544,18 @@ JSFunction :
 
         $<Object>$ = new QMLFunction(pName, pParameters, pContent);
     }
+    |
+    TOKEN_FUNCTION JSFunctionParameterList JSStatement
+    {
+        PARSER_TRACE("JSFunction", "TOKEN_FUNCTION JSFunctionParameterList JSStatement");
+
+        QMLItem* pName = new QMLIdentifier("");
+        QMLComplexItem* pParameters = dynamic_cast<QMLComplexItem*>($<Object>2);
+        QMLComplexItem* pContent = dynamic_cast<QMLComplexItem*>($<Object>3);
+
+        $<Object>$ = new QMLFunction(pName, pParameters, pContent);
+    }
+;
 
 JSFunctionParameterList :
     '(' JSFunctionParameters ')'
@@ -639,7 +644,7 @@ JSStatements :
         QMLItem* pStatement1 = $<Object>1;
         QMLComplexItem* pComplex = new QMLComplexItem();
 
-        pComplex->contents().append(pStatement1);
+        pComplex->contents() << pStatement1;
 
         $<Object>$ = pComplex;
     }
@@ -653,7 +658,7 @@ JSStatements :
 
         if (pComplex != nullptr)
         {
-            pComplex->contents().append(pStatement2);
+            pComplex->contents() << pStatement2;
         }
 
         $<Object>$ = pComplex;
@@ -906,7 +911,7 @@ JSExpression :
 
         if (pComplex != nullptr)
         {
-            pComplex->contents().append(pExpression2);
+            pComplex->contents() << pExpression2;
         }
 
         $<Object>$ = pComplex;
@@ -993,6 +998,13 @@ JSConditionalExpression :
         QMLItem* pElse = $<Object>5;
 
         $<Object>$ = new QMLConditional(pCondition, pThen, pElse);
+    }
+    |
+    JSFunction
+    {
+        PARSER_TRACE("JSConditionalExpression", "JSFunction");
+
+        $<Object>$ = $<Object>1;
     }
 ;
 
@@ -1452,6 +1464,11 @@ JSArrayContents :
     }
     |
     Value
+    {
+        $<Object>$ = $<Object>1;
+    }
+    |
+    JSArrayContents ',' Value
     {
         $<Object>$ = $<Object>1;
     }

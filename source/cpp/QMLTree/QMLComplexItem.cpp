@@ -58,6 +58,17 @@ const QVector<QMLItem*>& QMLComplexItem::contents() const
 
 //-------------------------------------------------------------------------------------------------
 
+QMap<QString, QMLItem*> QMLComplexItem::members()
+{
+    QMap<QString, QMLItem*> vReturnValue;
+
+    vReturnValue["name"] = m_pName;
+
+    return vReturnValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void QMLComplexItem::dump(QTextStream& stream, int iIdent)
 {
     dumpIndented(stream, iIdent, QString("[QMLComplexItem]"));
