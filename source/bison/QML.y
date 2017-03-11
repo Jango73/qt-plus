@@ -25,12 +25,13 @@
 #include "QMLIf.h"
 #include "QMLFor.h"
 #include "QMLConditional.h"
+#include "QMLArray.h"
 #include "QMLTreeContext.h"
 
 int yylex (void*, void*);
 int yyerror (void*, char*);
 
-#define SAFE_DELETE(a)  if ((a) != NULL) delete (a);
+#define SAFE_DELETE(a)  if ((a) != nullptr) delete (a);
 
 %}
 
@@ -93,20 +94,22 @@ int yyerror (void*, char*);
 %token TOKEN_INT                505
 %token TOKEN_REAL               506
 %token TOKEN_STRING             507
-%token TOKEN_COLOR              508
-%token TOKEN_FUNCTION           509
-%token TOKEN_IF                 510
-%token TOKEN_ELSE               511
-%token TOKEN_FOR                512
-%token TOKEN_WHILE              513
-%token TOKEN_BREAK              514
-%token TOKEN_CONTINUE           515
-%token TOKEN_WITH               516
-%token TOKEN_RETURN             517
-%token TOKEN_TYPEOF             518
-%token TOKEN_PRAGMA             519
-%token TOKEN_ON                 520
-%token TOKEN_AS                 521
+%token TOKEN_VARIANT            508
+%token TOKEN_COLOR              509
+%token TOKEN_FUNCTION           510
+%token TOKEN_IF                 511
+%token TOKEN_ELSE               512
+%token TOKEN_FOR                513
+%token TOKEN_WHILE              514
+%token TOKEN_BREAK              515
+%token TOKEN_CONTINUE           516
+%token TOKEN_WITH               517
+%token TOKEN_RETURN             518
+%token TOKEN_TYPEOF             519
+%token TOKEN_PRAGMA             520
+%token TOKEN_ON                 521
+%token TOKEN_AS                 522
+%token TOKEN_SIGNAL             523
 
 %nonassoc TOKEN_IF
 %nonassoc TOKEN_ELSE
@@ -132,7 +135,7 @@ Declarations :
     {
         QMLItem* pItem = $<Object>1;
 
-        if (pItem != NULL)
+        if (pItem != nullptr)
         {
             pContext->item().contents().append(pItem);
         }
@@ -142,7 +145,7 @@ Declarations :
     {
         QMLItem* pItem = $<Object>2;
 
-        if (pItem != NULL)
+        if (pItem != nullptr)
         {
             pContext->item().contents().append(pItem);
         }
@@ -179,13 +182,13 @@ ImportStatement :
         QMLItem* pName = $<Object>2;
         QMLItem* pVersion = $<Object>3;
 
-        if (pName != NULL && pVersion != NULL)
+        if (pName != nullptr && pVersion != nullptr)
         {
             $<Object>$ = new QMLImport(pContext, pName->value().toString(), pVersion->value().toString());
         }
         else
         {
-            $<Object>$ = NULL;
+            $<Object>$ = nullptr;
         }
 
         SAFE_DELETE(pName);
@@ -197,13 +200,13 @@ ImportStatement :
         QMLItem* pName = $<Object>2;
         QMLItem* pVersion = $<Object>3;
 
-        if (pName != NULL && pVersion != NULL)
+        if (pName != nullptr && pVersion != nullptr)
         {
             $<Object>$ = new QMLImport(pContext, pName->value().toString(), pVersion->value().toString());
         }
         else
         {
-            $<Object>$ = NULL;
+            $<Object>$ = nullptr;
         }
 
         SAFE_DELETE(pName);
@@ -214,13 +217,29 @@ ImportStatement :
     {
         QMLItem* pName = $<Object>2;
 
-        if (pName != NULL)
+        if (pName != nullptr)
         {
             $<Object>$ = new QMLImport(pContext, pName->value().toString(), "");
         }
         else
         {
-            $<Object>$ = NULL;
+            $<Object>$ = nullptr;
+        }
+
+        SAFE_DELETE(pName);
+    }
+    |
+    TOKEN_IMPORT Literal TOKEN_AS Identifier
+    {
+        QMLItem* pName = $<Object>2;
+
+        if (pName != nullptr)
+        {
+            $<Object>$ = new QMLImport(pContext, pName->value().toString(), "");
+        }
+        else
+        {
+            $<Object>$ = nullptr;
         }
 
         SAFE_DELETE(pName);
@@ -230,7 +249,7 @@ ImportStatement :
 PragmaStatement :
     TOKEN_PRAGMA QualifiedIdentifier
     {
-        $<Object>$ = NULL;
+        $<Object>$ = nullptr;
     }
 
 Item :
@@ -239,7 +258,7 @@ Item :
         QMLItem* pName = $<Object>1;
         QMLComplexItem* pComplexItem = dynamic_cast<QMLComplexItem*>($<Object>3);
 
-        if (pComplexItem != NULL)
+        if (pComplexItem != nullptr)
         {
             pComplexItem->setName(pName);
         }
@@ -260,7 +279,7 @@ Item :
         QMLItem* pName = $<Object>1;
         QMLComplexItem* pComplexItem = dynamic_cast<QMLComplexItem*>($<Object>5);
 
-        if (pComplexItem != NULL)
+        if (pComplexItem != nullptr)
         {
             pComplexItem->setName(pName);
         }
@@ -269,19 +288,12 @@ Item :
     }
 ;
 
-ItemArray :
-    '[' ItemContents ']'
-    {
-        $<Object>$ = $<Object>2;
-    }
-;
-
 ItemContents :
     ItemContent
     {
         QMLItem* pOldItem = $<Object>1;
 
-        if (pOldItem != NULL)
+        if (pOldItem != nullptr)
         {
             QMLComplexItem* pComplexItem = new QMLComplexItem();
             pComplexItem->contents().append(pOldItem);
@@ -290,7 +302,7 @@ ItemContents :
         }
         else
         {
-            $<Object>$ = NULL;
+            $<Object>$ = nullptr;
         }
     }
     |
@@ -299,7 +311,7 @@ ItemContents :
         QMLComplexItem* pComplexItem = dynamic_cast<QMLComplexItem*>($<Object>1);
         QMLItem* pNewItem = $<Object>2;
 
-        if (pComplexItem != NULL && pNewItem != NULL)
+        if (pComplexItem != nullptr && pNewItem != nullptr)
         {
             pComplexItem->contents().append(pNewItem);
         }
@@ -312,7 +324,7 @@ ItemContents :
         QMLComplexItem* pComplexItem = dynamic_cast<QMLComplexItem*>($<Object>1);
         QMLItem* pNewItem = $<Object>3;
 
-        if (pComplexItem != NULL && pNewItem != NULL)
+        if (pComplexItem != nullptr && pNewItem != nullptr)
         {
             pComplexItem->contents().append(pNewItem);
         }
@@ -341,6 +353,11 @@ ItemContent :
     {
         $<Object>$ = $<Object>1;
     }
+    |
+    SignalDeclaration
+    {
+        $<Object>$ = $<Object>1;
+    }
 ;
 
 PropertyDeclaration :
@@ -356,50 +373,34 @@ PropertyDeclaration :
 ;
 
 PropertyDeclarationNoColon :
-    TOKEN_PROPERTY PropertyType Identifier
+    TOKEN_PROPERTY Identifier Identifier
     {
-        QMLType* pType = dynamic_cast<QMLType*>($<Object>2);
+        QMLType* pType = QMLType::fromQMLItem(dynamic_cast<QMLItem*>($<Object>2));
         QMLItem* pName = dynamic_cast<QMLItem*>($<Object>3);
 
-        if (pType != NULL && pName != NULL)
+        if (pType != nullptr && pName != nullptr)
         {
             $<Object>$ = new QMLPropertyDeclaration(pType, pName);
         }
         else
         {
-            $<Object>$ = NULL;
+            $<Object>$ = nullptr;
         }
     }
     |
-    TOKEN_PROPERTY PropertyType Identifier ':' PropertyContent
+    TOKEN_PROPERTY Identifier Identifier ':' PropertyContent
     {
-        QMLType* pType = dynamic_cast<QMLType*>($<Object>2);
+        QMLType* pType = QMLType::fromQMLItem(dynamic_cast<QMLItem*>($<Object>2));
         QMLItem* pName = dynamic_cast<QMLItem*>($<Object>3);
         QMLItem* pData = dynamic_cast<QMLItem*>($<Object>5);
 
-        if (pType != NULL && pName != NULL)
+        if (pType != nullptr && pName != nullptr)
         {
             $<Object>$ = new QMLPropertyDeclaration(pType, pName, pData);
         }
         else
         {
-            $<Object>$ = NULL;
-        }
-    }
-    |
-    TOKEN_PROPERTY TOKEN_COLOR Identifier ':' PropertyContent
-    {
-        QMLType* pType = new QMLType(QVariant::Color);
-        QMLItem* pName = dynamic_cast<QMLItem*>($<Object>3);
-        QMLItem* pData = dynamic_cast<QMLItem*>($<Object>5);
-
-        if (pType != NULL && pName != NULL)
-        {
-            $<Object>$ = new QMLPropertyDeclaration(pType, pName, pData);
-        }
-        else
-        {
-            $<Object>$ = NULL;
+            $<Object>$ = nullptr;
         }
     }
     |
@@ -408,41 +409,14 @@ PropertyDeclarationNoColon :
         QMLItem* pName = dynamic_cast<QMLItem*>($<Object>3);
         QMLItem* pData = dynamic_cast<QMLItem*>($<Object>5);
 
-        if (pName != NULL)
+        if (pName != nullptr)
         {
             $<Object>$ = new QMLPropertyAlias(pName, pData);
         }
         else
         {
-            $<Object>$ = NULL;
+            $<Object>$ = nullptr;
         }
-    }
-;
-
-PropertyType :
-    TOKEN_VAR
-    {
-        $<Object>$ = new QMLType((QVariant::Type) 0);
-    }
-    |
-    TOKEN_BOOL
-    {
-        $<Object>$ = new QMLType(QVariant::Bool);
-    }
-    |
-    TOKEN_INT
-    {
-        $<Object>$ = new QMLType(QVariant::Int);
-    }
-    |
-    TOKEN_REAL
-    {
-        $<Object>$ = new QMLType(QVariant::Double);
-    }
-    |
-    TOKEN_STRING
-    {
-        $<Object>$ = new QMLType(QVariant::String);
     }
 ;
 
@@ -463,32 +437,10 @@ PropertyAssignment :
 
         $<Object>$ = pAssignment;
     }
-    |
-    TOKEN_COLOR ':' PropertyContent
-    {
-        QMLItem* pContent = $<Object>3;
-        QMLPropertyAssignment* pAssignment = new QMLPropertyAssignment(new QMLItem(QString(TOKEN_COLOR)), pContent);
-
-        $<Object>$ = pAssignment;
-    }
-    |
-    QualifiedIdentifier '.' TOKEN_COLOR ':' PropertyContent
-    {
-        QMLItem* pName = $<Object>1;
-        QMLItem* pContent = $<Object>5;
-        QMLPropertyAssignment* pAssignment = new QMLPropertyAssignment(pName, pContent);
-
-        $<Object>$ = pAssignment;
-    }
 ;
 
 PropertyContent :
     Item
-    {
-        $<Object>$ = $<Object>1;
-    }
-    |
-    ItemArray
     {
         $<Object>$ = $<Object>1;
     }
@@ -498,14 +450,36 @@ PropertyContent :
         $<Object>$ = $<Object>1;
     }
     |
-    JSArrayInitializerBlock
+    JSObject
     {
         $<Object>$ = $<Object>1;
     }
     |
-    JSONObject
+    JSArray
     {
         $<Object>$ = $<Object>1;
+    }
+;
+
+SignalDeclaration :
+    SignalDeclarationNoColon
+    {
+        $<Object>$ = $<Object>1;
+    }
+    |
+    SignalDeclarationNoColon ';'
+    {
+        $<Object>$ = $<Object>1;
+    }
+;
+
+SignalDeclarationNoColon :
+    TOKEN_SIGNAL Identifier JSFunctionParameterList
+    {
+        QMLItem* pName = dynamic_cast<QMLItem*>($<Object>2);
+        QMLComplexItem* pParameters = dynamic_cast<QMLComplexItem*>($<Object>3);
+
+        $<Object>$ = new QMLFunction(pName, pParameters, nullptr);
     }
 ;
 
@@ -526,7 +500,7 @@ JSFunctionParameterList :
     }
     | '(' ')'
     {
-        $<Object>$ = NULL;
+        $<Object>$ = nullptr;
     }
 ;
 
@@ -536,9 +510,9 @@ JSFunctionParameters :
         $<Object>$ = $<Object>1;
     }
     |
-    JSFunctionParameters JSFunctionParameter
+    JSFunctionParameters ',' JSFunctionParameter
     {
-        SAFE_DELETE($<Object>2);
+        SAFE_DELETE($<Object>3);
 
         $<Object>$ = $<Object>1;
     }
@@ -547,8 +521,34 @@ JSFunctionParameters :
 JSFunctionParameter :
     Identifier
     {
-        $<Object>$ = $<Object>1;
+        QMLType* pType = QMLType::fromQMLItem(nullptr);
+        QMLItem* pName = dynamic_cast<QMLItem*>($<Object>1);
+
+        if (pType != nullptr && pName != nullptr)
+        {
+            $<Object>$ = new QMLPropertyDeclaration(pType, pName);
+        }
+        else
+        {
+            $<Object>$ = nullptr;
+        }
     }
+    |
+    Identifier Identifier
+    {
+        QMLType* pType = QMLType::fromQMLItem(dynamic_cast<QMLItem*>($<Object>1));
+        QMLItem* pName = dynamic_cast<QMLItem*>($<Object>2);
+
+        if (pType != nullptr && pName != nullptr)
+        {
+            $<Object>$ = new QMLPropertyDeclaration(pType, pName);
+        }
+        else
+        {
+            $<Object>$ = nullptr;
+        }
+    }
+;
 
 JSStatementBlock :
     '{' JSStatements '}'
@@ -573,7 +573,7 @@ JSStatements :
         QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>1);
         QMLItem* pStatement2 = $<Object>2;
 
-        if (pComplex != NULL)
+        if (pComplex != nullptr)
         {
             pComplex->contents().append(pStatement2);
         }
@@ -647,7 +647,7 @@ JSStatement_If :
         QMLItem* pCondition = $<Object>3;
         QMLItem* pThen = $<Object>5;
 
-        $<Object>$ = new QMLIf(pCondition, pThen, NULL);
+        $<Object>$ = new QMLIf(pCondition, pThen, nullptr);
     }
     |
     TOKEN_IF '(' JSExpression ')' JSStatement TOKEN_ELSE JSStatement
@@ -675,9 +675,9 @@ JSStatement_For :
 JSStatement_While :
     TOKEN_WHILE '(' JSExpression ')' JSStatement
     {
-        QMLItem* pInitialization = NULL;
+        QMLItem* pInitialization = nullptr;
         QMLItem* pCondition = $<Object>3;
-        QMLItem* pIncrementation = NULL;
+        QMLItem* pIncrementation = nullptr;
         QMLItem* pContent = $<Object>5;
 
         $<Object>$ = new QMLFor(pInitialization, pCondition, pIncrementation, pContent);
@@ -687,14 +687,14 @@ JSStatement_While :
 JSStatement_Break :
     TOKEN_BREAK
     {
-        $<Object>$ = NULL;
+        $<Object>$ = nullptr;
     }
 ;
 
 JSStatement_Continue :
     TOKEN_CONTINUE
     {
-        $<Object>$ = NULL;
+        $<Object>$ = nullptr;
     }
 ;
 
@@ -715,7 +715,7 @@ JSStatement_Return :
 JSExpressionOpt :
     Empty
     {
-        $<Object>$ = NULL;
+        $<Object>$ = nullptr;
     }
     |
     JSExpression
@@ -739,10 +739,10 @@ JSVariablesOrExpression :
 JSVariablesOrExpressionOpt :
     Empty
     {
-        $<Object>$ = NULL;
+        $<Object>$ = nullptr;
     }
     |
-    TOKEN_VAR JSVariables
+    Identifier JSVariables
     {
         $<Object>$ = $<Object>2;
     }
@@ -782,25 +782,32 @@ JSVariable :
 ;
 
 JSExpression :
+    JSExpressionSingle
+    {
+        $<Object>$ = $<Object>1;
+    }
+    |
+    JSExpressionSingle ',' JSExpression
+    {
+        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>1);
+        QMLItem* pExpression2 = $<Object>2;
+
+        if (pComplex != nullptr)
+        {
+            pComplex->contents().append(pExpression2);
+        }
+
+        $<Object>$ = pComplex;
+    }
+;
+
+JSExpressionSingle :
     JSAssignmentExpression
     {
         QMLItem* pExpression1 = $<Object>1;
         QMLComplexItem* pComplex = new QMLComplexItem();
 
         pComplex->contents().append(pExpression1);
-
-        $<Object>$ = pComplex;
-    }
-    |
-    JSAssignmentExpression ',' JSExpression
-    {
-        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>1);
-        QMLItem* pExpression2 = $<Object>2;
-
-        if (pComplex != NULL)
-        {
-            pComplex->contents().append(pExpression2);
-        }
 
         $<Object>$ = pComplex;
     }
@@ -813,6 +820,30 @@ JSAssignmentExpression :
     }
     |
     JSConditionalExpression TOKEN_ASSIGN JSAssignmentExpression
+    {
+        QMLItem* pLeft = $<Object>1;
+        QMLItem* pRight = $<Object>3;
+
+        $<Object>$ = new QMLBinaryOperation(pLeft, pRight, QMLBinaryOperation::boAssign);
+    }
+    |
+    JSConditionalExpression TOKEN_ADD_ASSIGN JSAssignmentExpression
+    {
+        QMLItem* pLeft = $<Object>1;
+        QMLItem* pRight = $<Object>3;
+
+        $<Object>$ = new QMLBinaryOperation(pLeft, pRight, QMLBinaryOperation::boAssign);
+    }
+    |
+    JSConditionalExpression TOKEN_SUB_ASSIGN JSAssignmentExpression
+    {
+        QMLItem* pLeft = $<Object>1;
+        QMLItem* pRight = $<Object>3;
+
+        $<Object>$ = new QMLBinaryOperation(pLeft, pRight, QMLBinaryOperation::boAssign);
+    }
+    |
+    JSConditionalExpression TOKEN_ASSIGN JSObject
     {
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
@@ -1055,7 +1086,7 @@ JSMemberExpression:
         QMLIdentifier* pIdentifier1 = dynamic_cast<QMLIdentifier*>($<Object>1);
         QMLIdentifier* pIdentifier2 = dynamic_cast<QMLIdentifier*>($<Object>3);
 
-        if (pIdentifier1 != NULL && pIdentifier2 != NULL)
+        if (pIdentifier1 != nullptr && pIdentifier2 != nullptr)
         {
             QString sFullString = pIdentifier1->value().value<QString>() + "." + pIdentifier2->value().value<QString>();
             pIdentifier1->setValue(sFullString);
@@ -1071,7 +1102,7 @@ JSMemberExpression:
 
             QMLQualifiedExpression* pExpression = dynamic_cast<QMLQualifiedExpression*>($<Object>1);
 
-            if (pExpression == NULL)
+            if (pExpression == nullptr)
             {
                 pExpression = new QMLQualifiedExpression();
                 pExpression->contents().append(pExpression1);
@@ -1082,25 +1113,32 @@ JSMemberExpression:
             $<Object>$ = pExpression;
         }
     }
-    |
-    JSFunctionCall '[' JSExpression ']'
-    {
-        $<Object>$ = $<Object>1;
-    }
 ;
 
 JSFunctionCall :
-    JSPrimaryExpression
+    JSArrayAccessExpression
     {
         $<Object>$ = $<Object>1;
     }
     |
-    JSPrimaryExpression '(' JSArgumentListOpt ')'
+    JSArrayAccessExpression '(' JSArgumentListOpt ')'
     {
         QMLItem* pName = $<Object>1;
         QMLComplexItem* pArguments = dynamic_cast<QMLComplexItem*>($<Object>3);
 
         $<Object>$ = new QMLFunctionCall(pName, pArguments);
+    }
+;
+
+JSArrayAccessExpression :
+    JSPrimaryExpression
+    {
+        $<Object>$ = $<Object>1;
+    }
+    |
+    JSPrimaryExpression '[' JSExpression ']'
+    {
+        $<Object>$ = $<Object>1;
     }
 ;
 
@@ -1124,7 +1162,7 @@ JSPrimaryExpression :
 JSArgumentListOpt :
     Empty
     {
-        $<Object>$ = NULL;
+        $<Object>$ = nullptr;
     }
     |
     JSArgumentList
@@ -1139,7 +1177,7 @@ JSArgumentList :
         QMLComplexItem* pList = dynamic_cast<QMLComplexItem*>($<Object>1);
         QMLItem* pExpression1 = $<Object>1;
 
-        if (pList == NULL)
+        if (pList == nullptr)
         {
             pList = new QMLComplexItem();
             pList->contents().append(pExpression1);
@@ -1148,9 +1186,9 @@ JSArgumentList :
         $<Object>$ = pList;
     }
     |
-    JSInitializerBlock
+    JSObject
     {
-        $<Object>$ = NULL;
+        $<Object>$ = $<Object>1;
     }
     |
     JSArgumentList ',' JSAssignmentExpression
@@ -1159,7 +1197,7 @@ JSArgumentList :
         QMLItem* pExpression1 = $<Object>1;
         QMLItem* pExpression2 = $<Object>3;
 
-        if (pList == NULL)
+        if (pList == nullptr)
         {
             pList = new QMLComplexItem();
             pList->contents().append(pExpression1);
@@ -1170,111 +1208,99 @@ JSArgumentList :
         $<Object>$ = pList;
     }
     |
-    JSArgumentList ',' JSInitializerBlock
+    JSArgumentList ',' JSObject
     {
-        $<Object>$ = NULL;
-    }
-;
+        $<Object>$ = $<Object>1;
 
-JSInitializerBlock :
-    '{' JSInitializers '}'
-    {
-        $<Object>$ = NULL;
-    }
-;
-
-JSInitializers :
-    JSInitializer
-    {
-        $<Object>$ = NULL;
-    }
-    |
-    JSInitializers ',' JSInitializer
-    {
-        $<Object>$ = NULL;
-    }
-;
-
-JSInitializer :
-    PropertyAssignment
-    {
-    }
-;
-
-JSArrayInitializerBlock :
-    '[' JSArrayInitializers ']'
-    {
-        $<Object>$ = $<Object>2;
-    }
-;
-
-JSArrayInitializers :
-    JSArrayInitializer
-    {
-        $<Object>$ = NULL;
-    }
-    |
-    JSArrayInitializers ',' JSArrayInitializer
-    {
-        $<Object>$ = NULL;
-    }
-;
-
-JSArrayInitializer :
-    Value
-    {
+        SAFE_DELETE($<Object>3);
     }
 ;
 
 JSIncrementOperator :
     TOKEN_INC
     {
-        $<Object>$ = NULL;
+        $<Object>$ = nullptr;
     }
     |
     TOKEN_DEC
     {
-        $<Object>$ = NULL;
+        $<Object>$ = nullptr;
     }
 ;
 
 JSUnaryOperator :
     TOKEN_NOT
     {
-        $<Object>$ = NULL;
+        $<Object>$ = nullptr;
     }
     |
     TOKEN_TYPEOF
     {
-        $<Object>$ = NULL;
+        $<Object>$ = nullptr;
     }
 ;
 
-JSONObject :
-    '{' JSONAttributes '}'
+JSObject :
+    '{' JSAttributes '}'
     {
         $<Object>$ = $<Object>2;
     }
     |
     '{' '}'
     {
-        $<Object>$ = NULL;
+        $<Object>$ = nullptr;
     }
 ;
 
-JSONAttributes :
-    JSONAttribute
+JSArray :
+    TOKEN_DIMENSION
+    {
+        $<Object>$ = new QMLArray();
+    }
+    |
+    '[' JSArrayContents ']'
+    {
+        $<Object>$ = $<Object>2;
+    }
+;
+
+JSArrayContents :
+    JSObject
     {
         $<Object>$ = $<Object>1;
     }
     |
-    JSONAttributes JSONAttribute
+    JSArrayContents ',' JSObject
+    {
+        $<Object>$ = $<Object>1;
+
+        SAFE_DELETE($<Object>3);
+    }
+    |
+    ItemContents
+    {
+        $<Object>$ = $<Object>1;
+    }
+    |
+    Value
+    {
+        $<Object>$ = $<Object>1;
+    }
+;
+
+JSAttributes :
+    JSAttribute
+    {
+        $<Object>$ = $<Object>1;
+    }
+    |
+    JSAttributes JSAttribute
     {
         QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>1);
         QMLItem* pAttribute1 = $<Object>1;
         QMLItem* pAttribute2 = $<Object>2;
 
-        if (pComplex == NULL)
+        if (pComplex == nullptr)
         {
             pComplex = new QMLComplexItem();
             pComplex->contents().append(pAttribute1);
@@ -1286,54 +1312,86 @@ JSONAttributes :
     }
 ;
 
-JSONAttribute :
-    JSONAttributeNoComma
+JSAttribute :
+    JSAttributeNoComma
     {
         $<Object>$ = $<Object>1;
     }
     |
-    JSONAttributeNoComma ','
+    JSAttributeNoComma ','
     {
         $<Object>$ = $<Object>1;
     }
 ;
 
-JSONAttributeNoComma :
-    Literal ':' Value
+JSAttributeNoComma :
+    JSAttributeName ':' JSObject
     {
         QMLItem* pName = $<Object>1;
         QMLItem* pValue = $<Object>3;
 
-        if (pName != NULL && pValue != NULL)
-        {
-            $<Object>$ = new QMLNameValue(pName->value().value<QString>(), pValue->value());
-        }
-        else
-        {
-            $<Object>$ = NULL;
-        }
-
-        SAFE_DELETE($<Object>1);
-        SAFE_DELETE($<Object>3);
-    }
-    |
-    Literal ':' JSONObject
-    {
-        QMLItem* pName = $<Object>1;
-        QMLItem* pValue = $<Object>3;
-
-        if (pName != NULL && pValue != NULL)
+        if (pName != nullptr && pValue != nullptr)
         {
             QMLComplexItem* pComplex = new QMLComplexItem(pName);
 
-            pComplex->contents().append(pValue);
+            pComplex->contents() << pValue;
 
             $<Object>$ = pComplex;
         }
         else
         {
-            $<Object>$ = NULL;
+            $<Object>$ = nullptr;
         }
+    }
+    |
+    JSAttributeName ':' JSArray
+    {
+        QMLItem* pName = $<Object>1;
+        QMLItem* pValue = $<Object>3;
+
+        if (pName != nullptr && pValue != nullptr)
+        {
+            QMLComplexItem* pComplex = new QMLComplexItem(pName);
+
+            pComplex->contents() << pValue;
+
+            $<Object>$ = pComplex;
+        }
+        else
+        {
+            $<Object>$ = nullptr;
+        }
+    }
+    |
+    JSAttributeName ':' JSExpressionSingle
+    {
+        QMLItem* pName = $<Object>1;
+        QMLItem* pValue = $<Object>3;
+
+        if (pName != nullptr && pValue != nullptr)
+        {
+            QMLComplexItem* pComplex = new QMLComplexItem(pName);
+
+            pComplex->contents() << pValue;
+
+            $<Object>$ = pComplex;
+        }
+        else
+        {
+            $<Object>$ = nullptr;
+        }
+    }
+;
+
+JSAttributeName :
+    Literal
+    {
+        $<Object>$ = $<Object>1;
+    }
+    |
+    Identifier
+    {
+        $<Object>$ = $<Object>1;
     }
 ;
 
@@ -1354,16 +1412,6 @@ QualifiedIdentifier :
 
         $<Object>$ = pLeft;
     }
-    |
-    QualifiedIdentifier '.' TOKEN_COLOR
-    {
-        QMLItem* pLeft = $<Object>1;
-        QMLItem* pRite = $<Object>3;
-
-        pLeft->setValue(pLeft->value().toString() + QString(".") + QString(TOKEN_COLOR));
-
-        $<Object>$ = pLeft;
-    }
 ;
 
 Identifier :
@@ -1371,13 +1419,13 @@ Identifier :
     {
         QString* pString = $<String>1;
 
-        if (pString != NULL)
+        if (pString != nullptr)
         {
             $<Object>$ = new QMLIdentifier(*pString);
         }
         else
         {
-            $<Object>$ = NULL;
+            $<Object>$ = nullptr;
         }
     }
 ;
@@ -1437,20 +1485,20 @@ Literal :
     {
         QString* pString = $<String>1;
 
-        if (pString != NULL)
+        if (pString != nullptr)
         {
             $<Object>$ = new QMLItem(QVariant(*pString));
         }
         else
         {
-            $<Object>$ = NULL;
+            $<Object>$ = nullptr;
         }
     }
 ;
 
 Empty :
     {
-        $<Object>$ = NULL;
+        $<Object>$ = nullptr;
     }
 
 %%

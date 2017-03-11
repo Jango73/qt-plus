@@ -48,6 +48,8 @@ public:
     //!
     QVariant::Type type() const;
 
+    //!
+    virtual QString toString() const;
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
@@ -67,6 +69,12 @@ public:
 
     //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
+
+    //-------------------------------------------------------------------------------------------------
+    // Static methods
+    //-------------------------------------------------------------------------------------------------
+
+    static QMLType* fromQMLItem(QMLItem* pItem);
 
     //-------------------------------------------------------------------------------------------------
     // Properties

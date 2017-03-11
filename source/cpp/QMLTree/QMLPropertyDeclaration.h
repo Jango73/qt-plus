@@ -53,6 +53,9 @@ public:
     //!
     const QMLItem* content() const;
 
+    //! Returns all members
+    virtual QMap<QString, QMLItem*> members() Q_DECL_OVERRIDE;
+
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------

@@ -61,6 +61,26 @@ QVariant QMLItem::value() const
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Returns the item as a string.
+*/
+QString QMLItem::toString() const
+{
+    return "";
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns a map of class members.
+*/
+QMap<QString, QMLItem*> QMLItem::members()
+{
+    return QMap<QString, QMLItem*>();
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Dumps the item to \a stream using \a iIdent for indentation.
 */
 void QMLItem::dump(QTextStream& stream, int iIdent)

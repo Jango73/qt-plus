@@ -16,13 +16,13 @@ QMLFor::QMLFor(QMLItem* pInitialization, QMLItem* pCondition, QMLItem* pIncremen
 
 QMLFor::~QMLFor()
 {
-    if (m_pInitialization != NULL)
+    if (m_pInitialization != nullptr)
         delete m_pInitialization;
-    if (m_pCondition != NULL)
+    if (m_pCondition != nullptr)
         delete m_pCondition;
-    if (m_pIncrementation != NULL)
+    if (m_pIncrementation != nullptr)
         delete m_pIncrementation;
-    if (m_pContent != NULL)
+    if (m_pContent != nullptr)
         delete m_pContent;
 }
 
@@ -56,11 +56,25 @@ QMLItem* QMLFor::content() const
 
 //-------------------------------------------------------------------------------------------------
 
+QMap<QString, QMLItem*> QMLFor::members()
+{
+    QMap<QString, QMLItem*> vReturnValue;
+
+    vReturnValue["initialization"] = m_pInitialization;
+    vReturnValue["condition"] = m_pCondition;
+    vReturnValue["incrementation"] = m_pIncrementation;
+    vReturnValue["content"] = m_pContent;
+
+    return vReturnValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void QMLFor::dump(QTextStream& stream, int iIdent)
 {
     dumpIndented(stream, iIdent, QString("[QMLIf]"));
 
-    if (m_pInitialization != NULL)
+    if (m_pInitialization != nullptr)
     {
         dumpIndented(stream, iIdent, QString("Initialization :"));
         dumpOpenBlock(stream, iIdent);
@@ -68,7 +82,7 @@ void QMLFor::dump(QTextStream& stream, int iIdent)
         dumpCloseBlock(stream, iIdent);
     }
 
-    if (m_pCondition != NULL)
+    if (m_pCondition != nullptr)
     {
         dumpIndented(stream, iIdent, QString("Condition :"));
         dumpOpenBlock(stream, iIdent);
@@ -76,7 +90,7 @@ void QMLFor::dump(QTextStream& stream, int iIdent)
         dumpCloseBlock(stream, iIdent);
     }
 
-    if (m_pIncrementation != NULL)
+    if (m_pIncrementation != nullptr)
     {
         dumpIndented(stream, iIdent, QString("Incrementation :"));
         dumpOpenBlock(stream, iIdent);
@@ -84,7 +98,7 @@ void QMLFor::dump(QTextStream& stream, int iIdent)
         dumpCloseBlock(stream, iIdent);
     }
 
-    if (m_pContent != NULL)
+    if (m_pContent != nullptr)
     {
         dumpIndented(stream, iIdent, QString("Content :"));
         dumpOpenBlock(stream, iIdent);
@@ -105,16 +119,16 @@ CXMLNode QMLFor::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
     CXMLNode xIncrementation("Incrementation");
     CXMLNode xContent("Content");
 
-    if (m_pInitialization != NULL)
+    if (m_pInitialization != nullptr)
         xInitialization.nodes() << m_pInitialization->toXMLNode(pContext, this);
 
-    if (m_pCondition != NULL)
+    if (m_pCondition != nullptr)
         xCondition.nodes() << m_pCondition->toXMLNode(pContext, this);
 
-    if (m_pIncrementation != NULL)
+    if (m_pIncrementation != nullptr)
         xIncrementation.nodes() << m_pIncrementation->toXMLNode(pContext, this);
 
-    if (m_pContent != NULL)
+    if (m_pContent != nullptr)
         xContent.nodes() << m_pContent->toXMLNode(pContext, this);
 
     xNode.nodes() << xInitialization;

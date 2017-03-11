@@ -89,7 +89,10 @@ void QMLComplexItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIte
     }
     else if (m_vContents.count() == 1)
     {
-        m_vContents[0]->toQML(stream, pContext, this, iIdent);
+        if (m_vContents[0] != nullptr)
+        {
+            m_vContents[0]->toQML(stream, pContext, this, iIdent);
+        }
     }
     else
     {

@@ -35,6 +35,12 @@ QVariant::Type QMLType::type() const
     return m_vType;
 }
 
+//-------------------------------------------------------------------------------------------------
+
+QString QMLType::toString() const
+{
+    return typeToString(m_vType);
+}
 
 //-------------------------------------------------------------------------------------------------
 
@@ -88,4 +94,26 @@ CXMLNode QMLType::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
     xNode.attributes()["Type"] = typeToString(m_vType);
 
     return xNode;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns a QMLType from a \a pItem.
+*/
+QMLType* QMLType::fromQMLItem(QMLItem* pItem)
+{
+    if (pItem != nullptr)
+    {
+        if (pItem->value().toString().toLower() == "var") return new QMLType(QVariant::Invalid);
+        if (pItem->value().toString().toLower() == "variant") return new QMLType(QVariant::Invalid);
+        if (pItem->value().toString().toLower() == "bool") return new QMLType(QVariant::Bool);
+        if (pItem->value().toString().toLower() == "int") return new QMLType(QVariant::Int);
+        if (pItem->value().toString().toLower() == "real") return new QMLType(QVariant::Double);
+        if (pItem->value().toString().toLower() == "string") return new QMLType(QVariant::String);
+        if (pItem->value().toString().toLower() == "color") return new QMLType(QVariant::Color);
+        if (pItem->value().toString().toLower() == "font") return new QMLType(QVariant::Font);
+    }
+
+    return new QMLType(QVariant::Invalid);
 }

@@ -15,9 +15,9 @@ SOURCES += \
 
 DEPENDPATH += qt-plus
 
-DESTDIR = ../bin
-MOC_DIR = ../moc/qt-plus-tests
-OBJECTS_DIR = ../obj/qt-plus-tests
+DESTDIR = $$PWD/bin
+MOC_DIR = $$PWD/moc/qt-plus-tests
+OBJECTS_DIR = $$PWD/obj/qt-plus-tests
 
 QMAKE_CLEAN *= $$DESTDIR/*$$TARGET*
 QMAKE_CLEAN *= $$MOC_DIR/*$$TARGET*
@@ -25,8 +25,8 @@ QMAKE_CLEAN *= $$OBJECTS_DIR/*$$TARGET*
 
 CONFIG(debug, debug|release) {
     TARGET = qt-plus-testsd
-    LIBS += -L$$PWD/../bin/ -lqt-plusd
+    LIBS += -L$$PWD/bin/ -lqt-plusd
 } else {
     TARGET = qt-plus-tests
-    LIBS += -L$$PWD/../bin/ -lqt-plus
+    LIBS += -L$$PWD/bin/ -lqt-plus
 }

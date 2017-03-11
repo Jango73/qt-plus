@@ -108,20 +108,22 @@
 #define TOKEN_INT               505
 #define TOKEN_REAL              506
 #define TOKEN_STRING            507
-#define TOKEN_COLOR             508
-#define TOKEN_FUNCTION          509
-#define TOKEN_IF                510
-#define TOKEN_ELSE              511
-#define TOKEN_FOR               512
-#define TOKEN_WHILE             513
-#define TOKEN_BREAK             514
-#define TOKEN_CONTINUE          515
-#define TOKEN_WITH              516
-#define TOKEN_RETURN            517
-#define TOKEN_TYPEOF            518
-#define TOKEN_PRAGMA            519
-#define TOKEN_ON                520
-#define TOKEN_AS                521
+#define TOKEN_VARIANT           508
+#define TOKEN_COLOR             509
+#define TOKEN_FUNCTION          510
+#define TOKEN_IF                511
+#define TOKEN_ELSE              512
+#define TOKEN_FOR               513
+#define TOKEN_WHILE             514
+#define TOKEN_BREAK             515
+#define TOKEN_CONTINUE          516
+#define TOKEN_WITH              517
+#define TOKEN_RETURN            518
+#define TOKEN_TYPEOF            519
+#define TOKEN_PRAGMA            520
+#define TOKEN_ON                521
+#define TOKEN_AS                522
+#define TOKEN_SIGNAL            523
 
 //-------------------------------------------------------------------------------------------------
 
@@ -134,6 +136,7 @@ extern int yyparse(QMLTreeContext* pContext);
 */
 QMLTreeContext::QMLTreeContext(const QString& sFileName)
     : m_eError(peSuccess)
+    , m_bIncludeImports(true)
 {
     QFileInfo info(sFileName);
     m_sFolder = info.absoluteDir().path();
@@ -143,12 +146,6 @@ QMLTreeContext::QMLTreeContext(const QString& sFileName)
     m_mTokens["import"] = TOKEN_IMPORT;
     m_mTokens["property"] = TOKEN_PROPERTY;
     m_mTokens["alias"] = TOKEN_ALIAS;
-    m_mTokens["var"] = TOKEN_VAR;
-    m_mTokens["bool"] = TOKEN_BOOL;
-    m_mTokens["int"] = TOKEN_INT;
-    m_mTokens["real"] = TOKEN_REAL;
-    m_mTokens["string"] = TOKEN_STRING;
-    m_mTokens["color"] = TOKEN_COLOR;
     m_mTokens["function"] = TOKEN_FUNCTION;
     m_mTokens["if"] = TOKEN_IF;
     m_mTokens["else"] = TOKEN_ELSE;
@@ -162,6 +159,7 @@ QMLTreeContext::QMLTreeContext(const QString& sFileName)
     m_mTokens["pragma"] = TOKEN_PRAGMA;
     m_mTokens["on"] = TOKEN_ON;
     m_mTokens["as"] = TOKEN_AS;
+    m_mTokens["signal"] = TOKEN_SIGNAL;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -175,6 +173,16 @@ QMLTreeContext::~QMLTreeContext()
     {
         delete pScope;
     }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Sets the include imports flag to \a bValue.
+*/
+void QMLTreeContext::setIncludeImports(bool bValue)
+{
+    m_bIncludeImports = bValue;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -273,20 +281,21 @@ QMLTreeContext::EParseError QMLTreeContext::parse_Internal()
 */
 QMLTreeContext::EParseError QMLTreeContext::parseImportFile(const QString& sFileName)
 {
-    /*
-    if (m_vFiles.contains(sFileName) == false)
+    if (m_bIncludeImports)
     {
-        if (QFile::exists(sFileName))
+        if (m_vFiles.contains(sFileName) == false)
         {
-            m_vFiles << sFileName;
-            m_sScopes.push(new QMLScope(sFileName));
+            if (QFile::exists(sFileName))
+            {
+                m_vFiles << sFileName;
+                m_sScopes.push(new QMLScope(sFileName));
 
-            parse_Internal();
+                parse_Internal();
 
-            delete m_sScopes.pop();
+                delete m_sScopes.pop();
+            }
         }
     }
-    */
 
     return peSuccess;
 }

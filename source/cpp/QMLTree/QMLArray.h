@@ -7,22 +7,14 @@
 
 // Qt
 #include <QObject>
-#include <QVariant>
-#include <QTextStream>
 
-// Library
-#include "../CDumpable.h"
-#include "../CXMLNodable.h"
-
-//-------------------------------------------------------------------------------------------------
-// Forward declarations
-
-class QMLTreeContext;
+// Application
+#include "QMLComplexItem.h"
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a base QML item
-class QTPLUSSHARED_EXPORT QMLItem : public QObject, public CDumpable, public CXMLNodable
+//! Defines a property declaration
+class QTPLUSSHARED_EXPORT QMLArray : public QMLComplexItem
 {
     Q_OBJECT
 
@@ -32,34 +24,23 @@ public:
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //! Default constructor
-    QMLItem();
-
-    //! Constructor with QVariant
-    QMLItem(const QVariant& value);
+    //! Constructor with type and name
+    QMLArray();
 
     //! Destructor
-    virtual ~QMLItem();
+    virtual ~QMLArray();
 
     //-------------------------------------------------------------------------------------------------
     // Setters
     //-------------------------------------------------------------------------------------------------
 
-    //!
-    virtual void setValue(const QVariant& value);
-
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
 
-    //!
-    virtual QVariant value() const;
-
-    //!
-    virtual QString toString() const;
-
-    //! Returns all members
-    virtual QMap<QString, QMLItem*> members();
+    //-------------------------------------------------------------------------------------------------
+    // Control methods
+    //-------------------------------------------------------------------------------------------------
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
@@ -69,7 +50,7 @@ public:
     virtual void dump(QTextStream& stream, int iIdent) Q_DECL_OVERRIDE;
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0);
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
@@ -79,6 +60,4 @@ public:
     //-------------------------------------------------------------------------------------------------
 
 protected:
-
-    QVariant    m_vValue;
 };
