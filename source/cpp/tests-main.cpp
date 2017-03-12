@@ -2,6 +2,7 @@
 #include "CGeoUtilities.h"
 #include "QTree.h"
 #include "QMLTree/QMLTreeContext.h"
+#include "QMLTree/QMLAnalyzer.h"
 
 QString Vector3DString(const QVector3D& vec)
 {
@@ -145,11 +146,14 @@ int main()
 
     // tTree.assignParents();
 
-    // QMLTree
+    qDebug() << "";
+    qDebug() << "--------------------------------------------------------------------";
 
-    QString sInputFile = "Test1.qml";
+    // QMLTree
+    QString sInputFile = "D:/Work/SomeFile.qml";
 
     QMLTreeContext context(sInputFile);
+    context.setIncludeImports(false);
     QMLTreeContext::EParseError error = context.parse();
 
     if (error == QMLTreeContext::peSuccess)
@@ -164,6 +168,38 @@ int main()
             file.close();
         }
     }
+
+    QMLAnalyzer tAnalyzer;
+
+    tAnalyzer.setFile(sInputFile);
+    tAnalyzer.analyze(CXMLNode::load("CodingRules.xml"));
+
+    qDebug() << "";
+    qDebug() << "--------------------------------------------------------------------";
+
+    foreach (QString sText, tAnalyzer.errors())
+    {
+        qDebug() << sText;
+    }
+
+    /*
+    qDebug() << "";
+    qDebug() << "--------------------------------------------------------------------";
+
+    // QMLAnalyzer
+    QMLAnalyzer tAnalyzer;
+
+    tAnalyzer.setFolder("D:/Work/SomeFolder");
+    tAnalyzer.analyze(CXMLNode::load("CodingRules.xml"));
+
+    qDebug() << "";
+    qDebug() << "--------------------------------------------------------------------";
+
+    foreach (QString sText, tAnalyzer.errors())
+    {
+        qDebug() << sText;
+    }
+    */
 
     return 0;
 }

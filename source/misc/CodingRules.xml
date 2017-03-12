@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root>
+    <Check Class="QMLPropertyDeclaration">
+        <Reject Member="content" Type="int" Text="No magic value allowed in property"/>
+        <Reject Member="content" Type="float" Text="No magic value allowed in property"/>
+        <Reject Member="content" Type="qreal" Text="No magic value allowed in property"/>
+    </Check>
+    <Check Class="QMLPropertyAssignment">
+        <Reject Member="content" Type="int" Text="No magic value allowed in property"/>
+        <Reject Member="content" Type="float" Text="No magic value allowed in property"/>
+        <Reject Member="content" Type="qreal" Text="No magic value allowed in property"/>
+    </Check>
+</Root>
