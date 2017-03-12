@@ -4,7 +4,8 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLQualifiedExpression::QMLQualifiedExpression()
+QMLQualifiedExpression::QMLQualifiedExpression(const QPoint& pPosition)
+    : QMLComplexItem(pPosition)
 {
 }
 

@@ -32,7 +32,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with filename
-    QMLFile(QMLTreeContext* pContext, const QString& sFileName);
+    QMLFile(const QPoint& pPosition, QMLTreeContext* pContext, const QString& sFileName);
 
     //! Copy constructor
     QMLFile(const QMLFile& target);

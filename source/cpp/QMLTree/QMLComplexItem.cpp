@@ -4,8 +4,9 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLComplexItem::QMLComplexItem(QMLItem* pName)
-    : m_pName(pName)
+QMLComplexItem::QMLComplexItem(const QPoint& pPosition, QMLItem* pName)
+    : QMLItem(pPosition)
+    , m_pName(pName)
 {
 }
 
@@ -58,6 +59,28 @@ const QVector<QMLItem*>& QMLComplexItem::contents() const
 
 //-------------------------------------------------------------------------------------------------
 
+QString QMLComplexItem::toString() const
+{
+    QString sReturnValue;
+
+    foreach (QMLItem* pItem, m_vContents)
+    {
+        if (pItem != nullptr)
+        {
+            if (sReturnValue.isEmpty())
+            {
+                sReturnValue += ", ";
+            }
+
+            sReturnValue += pItem->toString();
+        }
+    }
+
+    return sReturnValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 QMap<QString, QMLItem*> QMLComplexItem::members()
 {
     QMap<QString, QMLItem*> vReturnValue;
@@ -72,13 +95,13 @@ QMap<QString, QMLItem*> QMLComplexItem::members()
 void QMLComplexItem::dump(QTextStream& stream, int iIdent)
 {
     dumpIndented(stream, iIdent, QString("[QMLComplexItem]"));
-    dumpIndented(stream, iIdent, QString("Name : %1").arg(m_pName != NULL ? m_pName->value().toString() : ""));
+    dumpIndented(stream, iIdent, QString("Name : %1").arg(m_pName != nullptr ? m_pName->value().toString() : ""));
 
     dumpIndented(stream, iIdent, QString("Contents :"));
     dumpOpenBlock(stream, iIdent);
     foreach (QMLItem* pItem, m_vContents)
     {
-        if (pItem != NULL)
+        if (pItem != nullptr)
         {
             pItem->dump(stream, iIdent + 1);
         }

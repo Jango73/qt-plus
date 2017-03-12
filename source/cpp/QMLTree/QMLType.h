@@ -26,10 +26,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Default constructor
-    QMLType();
+    QMLType(const QPoint& pPosition);
 
     //! Constructor with QVariant
-    QMLType(QVariant::Type type);
+    QMLType(const QPoint& pPosition, QVariant::Type type);
 
     //! Destructor
     virtual ~QMLType();
@@ -49,13 +49,11 @@ public:
     QVariant::Type type() const;
 
     //!
-    virtual QString toString() const;
+    virtual QString toString() const Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------
-
-    QString typeToString(QVariant::Type eType) const;
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
@@ -74,6 +72,10 @@ public:
     // Static methods
     //-------------------------------------------------------------------------------------------------
 
+    //!
+    static QString typeToString(QVariant::Type eType);
+
+    //!
     static QMLType* fromQMLItem(QMLItem* pItem);
 
     //-------------------------------------------------------------------------------------------------

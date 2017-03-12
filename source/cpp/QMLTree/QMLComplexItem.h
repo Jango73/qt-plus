@@ -26,7 +26,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Default constructor
-    QMLComplexItem(QMLItem* pName = NULL);
+    QMLComplexItem(const QPoint& pPosition, QMLItem* pName = NULL);
 
     //! Destructor
     virtual ~QMLComplexItem();
@@ -50,6 +50,9 @@ public:
 
     //!
     const QVector<QMLItem*>& contents() const;
+
+    //!
+    virtual QString toString() const Q_DECL_OVERRIDE;
 
     //! Returns all members
     virtual QMap<QString, QMLItem*> members();

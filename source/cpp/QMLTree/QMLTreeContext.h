@@ -84,6 +84,9 @@ public:
     //!
     QString errorString() const;
 
+    //!
+    QPoint position() const;
+
     //-------------------------------------------------------------------------------------------------
     // Méthodes de contrôle
     // Control methods

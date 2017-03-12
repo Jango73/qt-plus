@@ -25,10 +25,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with type and name
-    QMLPropertyDeclaration(QMLType *pType, QMLItem* pName);
+    QMLPropertyDeclaration(const QPoint& pPosition, QMLType *pType, QMLItem* pName);
 
     //! Constructor with type, name and content
-    QMLPropertyDeclaration(QMLType *pType, QMLItem* pName, QMLItem *pContent);
+    QMLPropertyDeclaration(const QPoint& pPosition, QMLType *pType, QMLItem* pName, QMLItem *pContent);
 
     //! Destructor
     virtual ~QMLPropertyDeclaration();

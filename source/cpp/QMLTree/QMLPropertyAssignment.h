@@ -25,7 +25,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with name and content
-    QMLPropertyAssignment(QMLItem* pName, QMLItem *pContent);
+    QMLPropertyAssignment(const QPoint& pPosition, QMLItem* pName, QMLItem *pContent);
 
     //! Destructor
     virtual ~QMLPropertyAssignment();

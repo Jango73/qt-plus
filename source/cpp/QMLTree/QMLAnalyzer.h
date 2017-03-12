@@ -31,33 +31,41 @@ public:
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    // Default constructor
+    //! Default constructor
     QMLAnalyzer();
 
-    // Destructor
+    //! Destructor
     virtual ~QMLAnalyzer();
 
     //-------------------------------------------------------------------------------------------------
     // Setters
     //-------------------------------------------------------------------------------------------------
 
-    // Set folder
-    void setFolder(const QString& sFrom);
+    //! Set folder
+    void setFolder(const QString& sFolder);
+
+    //! Set folder
+    void setFile(const QString& sFileName);
 
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
 
-    // Return folder
+    //! Return folder
     QString folder() const;
 
+    //! Return error list
     const QStringList& errors() const;
 
     //-------------------------------------------------------------------------------------------------
     // Control methods
     //-------------------------------------------------------------------------------------------------
 
+    //!
     bool analyze(CXMLNode xGrammar);
+
+    //!
+    void analyzeFile(const QString& sFileName, CXMLNode xGrammar);
 
     //-------------------------------------------------------------------------------------------------
     // Protected control methods
@@ -65,13 +73,14 @@ public:
 
 protected:
 
-    QStringList runGrammar(QMLTreeContext* pContext, CXMLNode xGrammar);
+    QStringList runGrammar(const QString& sFileName, QMLTreeContext* pContext, CXMLNode& xGrammar);
 
-    void runGrammar_Recurse(QMLItem* pItem, CXMLNode xGrammar, QStringList& lErrors);
+    void runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, CXMLNode& xGrammar, QStringList& lErrors);
 
 protected:
 
     QString                         m_sFolder;
+    QString                         m_sFile;
     QMap<QString, QMLTreeContext*>  m_mContexts;     // The QML context used for parsing
     QStringList                     m_lErrors;
 };

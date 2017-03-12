@@ -4,8 +4,9 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLIf::QMLIf(QMLItem* pCondition, QMLItem* pThen, QMLItem* pElse)
-    : m_pCondition(pCondition)
+QMLIf::QMLIf(const QPoint& pPosition, QMLItem* pCondition, QMLItem* pThen, QMLItem* pElse)
+    : QMLItem(pPosition)
+    , m_pCondition(pCondition)
     , m_pThen(pThen)
     , m_pElse(pElse)
 {

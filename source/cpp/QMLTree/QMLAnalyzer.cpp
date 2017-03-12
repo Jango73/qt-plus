@@ -15,6 +15,7 @@
 #define ANALYZER_TOKEN_MEMBER   "Member"
 #define ANALYZER_TOKEN_REJECT   "Reject"
 #define ANALYZER_TOKEN_TEXT     "Text"
+#define ANALYZER_TOKEN_TYPE     "Type"
 #define ANALYZER_TOKEN_VALUE    "Value"
 
 //-------------------------------------------------------------------------------------------------
@@ -47,6 +48,14 @@ void QMLAnalyzer::setFolder(const QString& sFolder)
 }
 
 /*!
+    Sets the base file member to \a sFileName.
+*/
+void QMLAnalyzer::setFile(const QString& sFileName)
+{
+    m_sFile = sFileName;
+}
+
+/*!
     Returns the name of the base folder.
 */
 QString QMLAnalyzer::folder() const
@@ -54,6 +63,9 @@ QString QMLAnalyzer::folder() const
     return m_sFolder;
 }
 
+/*!
+    Returns the list of errors.
+*/
 const QStringList& QMLAnalyzer::errors() const
 {
     return m_lErrors;
@@ -69,47 +81,58 @@ bool QMLAnalyzer::analyze(CXMLNode xGrammar)
     m_mContexts.clear();
     m_lErrors.clear();
 
-    QStringList slNameFilter;
-    slNameFilter << "*.qml";
-
-    QDir dDirectory(m_sFolder);
-    QStringList lFiles = dDirectory.entryList(slNameFilter);
-
-    foreach (QString sFile, lFiles)
+    if (m_sFolder.isEmpty() == false)
     {
-        if (sFile != "." && sFile != "..")
+        QStringList slNameFilter;
+        slNameFilter << "*.qml";
+
+        QDir dDirectory(m_sFolder);
+        QStringList lFiles = dDirectory.entryList(slNameFilter);
+
+        foreach (QString sFile, lFiles)
         {
-            QString sFullName = QString("%1/%2").arg(m_sFolder).arg(sFile);
-
-            m_mContexts[sFullName] = new QMLTreeContext(sFullName);
-
-            m_mContexts[sFullName]->setIncludeImports(false);
-
-            if (m_mContexts[sFullName]->parse() == QMLTreeContext::peSuccess)
+            if (sFile != "." && sFile != "..")
             {
-                qDebug() << "Analyzing " << sFullName;
-                m_lErrors << runGrammar(m_mContexts[sFullName], xGrammar);
-            }
-            else
-            {
-                m_lErrors << m_mContexts[sFullName]->errorString();
+                QString sFullName = QString("%1/%2").arg(m_sFolder).arg(sFile);
+
+                analyzeFile(sFullName, xGrammar);
             }
         }
+    }
+    else if (m_sFile.isEmpty() == false)
+    {
+        analyzeFile(m_sFile, xGrammar);
     }
 
     return true;
 }
 
-QStringList QMLAnalyzer::runGrammar(QMLTreeContext* pContext, CXMLNode xGrammar)
+void QMLAnalyzer::analyzeFile(const QString& sFileName, CXMLNode xGrammar)
+{
+    m_mContexts[sFileName] = new QMLTreeContext(sFileName);
+
+    m_mContexts[sFileName]->setIncludeImports(false);
+
+    if (m_mContexts[sFileName]->parse() == QMLTreeContext::peSuccess)
+    {
+        m_lErrors << runGrammar(sFileName, m_mContexts[sFileName], xGrammar);
+    }
+    else
+    {
+        m_lErrors << m_mContexts[sFileName]->errorString();
+    }
+}
+
+QStringList QMLAnalyzer::runGrammar(const QString& sFileName, QMLTreeContext* pContext, CXMLNode& xGrammar)
 {
     QStringList lErrors;
 
-    runGrammar_Recurse(&(pContext->item()), xGrammar, lErrors);
+    runGrammar_Recurse(sFileName, &(pContext->item()), xGrammar, lErrors);
 
     return lErrors;
 }
 
-void QMLAnalyzer::runGrammar_Recurse(QMLItem* pItem, CXMLNode xGrammar, QStringList& lErrors)
+void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, CXMLNode& xGrammar, QStringList& lErrors)
 {
     if (pItem == nullptr)
     {
@@ -136,16 +159,35 @@ void QMLAnalyzer::runGrammar_Recurse(QMLItem* pItem, CXMLNode xGrammar, QStringL
             {
                 QString sMember = xReject.attributes()[ANALYZER_TOKEN_MEMBER].toLower();
                 QString sValue = xReject.attributes()[ANALYZER_TOKEN_VALUE];
+                QString sType = xReject.attributes()[ANALYZER_TOKEN_TYPE];
                 QString sText = xReject.attributes()[ANALYZER_TOKEN_TEXT];
 
                 if (mMembers.contains(sMember) && mMembers[sMember] != nullptr)
                 {
-                    // qDebug() << QString("Checking %1 = %2").arg(sMember).arg(sValue);
-
-                    if (mMembers[sMember]->toString() == sValue)
+                    if (sType.isEmpty() == false)
                     {
-                        bHasRejects = true;
-                        lErrors << sText;
+                        QString sTypeToString = QMLType::typeToString(mMembers[sMember]->value().type());
+
+                        if (sTypeToString == sType)
+                        {
+                            // qDebug() << QString("Rejecting %1 = %2").arg(sMember).arg(sType);
+
+                            bHasRejects = true;
+                            lErrors << QString("%1 (%2, %3) : %4").arg(sFileName).arg(pItem->position().y()).arg(pItem->position().x()).arg(sText);
+                        }
+                    }
+                    else
+                    {
+                        QString sMemberToString = mMembers[sMember]->toString();
+
+                        if (sMemberToString == sValue)
+                        {
+                            // qDebug() << QString("Rejecting %1 = %2").arg(sMember).arg(sValue);
+
+                            bHasRejects = true;
+                            // lErrors << sText;
+                            lErrors << QString("%1 (%2, %3) : %4").arg(sFileName).arg(pItem->position().y()).arg(pItem->position().x()).arg(sText);
+                        }
                     }
                 }
             }
@@ -156,7 +198,7 @@ void QMLAnalyzer::runGrammar_Recurse(QMLItem* pItem, CXMLNode xGrammar, QStringL
     {
         foreach (QString sKey, mMembers.keys())
         {
-            runGrammar_Recurse(mMembers[sKey], xGrammar, lErrors);
+            runGrammar_Recurse(sFileName, mMembers[sKey], xGrammar, lErrors);
         }
 
         QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(pItem);
@@ -165,7 +207,7 @@ void QMLAnalyzer::runGrammar_Recurse(QMLItem* pItem, CXMLNode xGrammar, QStringL
         {
             foreach (QMLItem* pChildItem, pComplex->contents())
             {
-                runGrammar_Recurse(pChildItem, xGrammar, lErrors);
+                runGrammar_Recurse(sFileName, pChildItem, xGrammar, lErrors);
             }
         }
     }

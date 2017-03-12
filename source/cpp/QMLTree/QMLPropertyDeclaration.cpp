@@ -4,8 +4,9 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLPropertyDeclaration::QMLPropertyDeclaration(QMLType* pType, QMLItem* pName)
-    : m_pType(pType)
+QMLPropertyDeclaration::QMLPropertyDeclaration(const QPoint& pPosition, QMLType* pType, QMLItem* pName)
+    : QMLItem(pPosition)
+    , m_pType(pType)
     , m_pName(pName)
     , m_pContent(nullptr)
 {
@@ -13,8 +14,9 @@ QMLPropertyDeclaration::QMLPropertyDeclaration(QMLType* pType, QMLItem* pName)
 
 //-------------------------------------------------------------------------------------------------
 
-QMLPropertyDeclaration::QMLPropertyDeclaration(QMLType* pType, QMLItem* pName, QMLItem* pContent)
-    : m_pType(pType)
+QMLPropertyDeclaration::QMLPropertyDeclaration(const QPoint& pPosition, QMLType* pType, QMLItem* pName, QMLItem* pContent)
+    : QMLItem(pPosition)
+    , m_pType(pType)
     , m_pName(pName)
     , m_pContent(pContent)
 {

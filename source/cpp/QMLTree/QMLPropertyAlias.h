@@ -25,7 +25,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with name and content
-    QMLPropertyAlias(QMLItem* pName, QMLItem *pContent);
+    QMLPropertyAlias(const QPoint& pPosition, QMLItem* pName, QMLItem *pContent);
 
     //! Destructor
     virtual ~QMLPropertyAlias();

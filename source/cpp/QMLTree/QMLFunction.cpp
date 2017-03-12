@@ -4,8 +4,9 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLFunction::QMLFunction(QMLItem* pName, QMLComplexItem *pParameters, QMLComplexItem *pContent)
-    : m_pName(pName)
+QMLFunction::QMLFunction(const QPoint& pPosition, QMLItem* pName, QMLComplexItem *pParameters, QMLComplexItem *pContent)
+    : QMLItem(pPosition)
+    , m_pName(pName)
     , m_pParameters(pParameters)
     , m_pContent(pContent)
 {

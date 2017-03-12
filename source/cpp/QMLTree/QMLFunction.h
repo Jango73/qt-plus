@@ -26,7 +26,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with name, parameters and content
-    QMLFunction(QMLItem* pName, QMLComplexItem *pParameters, QMLComplexItem *pContent);
+    QMLFunction(const QPoint& pPosition, QMLItem* pName, QMLComplexItem *pParameters, QMLComplexItem *pContent);
 
     //! Destructor
     virtual ~QMLFunction();

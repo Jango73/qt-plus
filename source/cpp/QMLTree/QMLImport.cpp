@@ -9,8 +9,9 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLImport::QMLImport(QMLTreeContext* pContext, const QString& sName, const QString& sVersion)
-    : m_sName(sName)
+QMLImport::QMLImport(const QPoint& pPosition, QMLTreeContext* pContext, const QString& sName, const QString& sVersion)
+    : QMLItem(pPosition)
+    , m_sName(sName)
     , m_sVersion(sVersion)
 {
     if (sVersion == "")

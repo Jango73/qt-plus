@@ -16,8 +16,9 @@
     Constructs a QMLFile with \a sFileName. \br\br
     \a pContext if the parser.
 */
-QMLFile::QMLFile(QMLTreeContext* pContext, const QString& sFileName)
-    : m_pContext(pContext)
+QMLFile::QMLFile(const QPoint& pPosition, QMLTreeContext* pContext, const QString& sFileName)
+    : QMLComplexItem(pPosition)
+    , m_pContext(pContext)
     , m_sFileName(sFileName)
 {
 }
@@ -28,6 +29,7 @@ QMLFile::QMLFile(QMLTreeContext* pContext, const QString& sFileName)
     Constructs a QMLFile as copy of \a target. Does nothing, exists only to make containers happy.
 */
 QMLFile::QMLFile(const QMLFile& target)
+    :QMLComplexItem(target.position())
 {
 }
 

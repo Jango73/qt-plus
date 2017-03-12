@@ -25,10 +25,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Default constructor
-    QMLIdentifier();
+    QMLIdentifier(const QPoint& pPosition);
 
     //! Constructor with QVariant
-    QMLIdentifier(const QString& value);
+    QMLIdentifier(const QPoint& pPosition, const QString& value);
 
     //! Destructor
     virtual ~QMLIdentifier();

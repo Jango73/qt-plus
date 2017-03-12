@@ -9,6 +9,7 @@
 #include <QObject>
 #include <QVariant>
 #include <QTextStream>
+#include <QPoint>
 
 // Library
 #include "../CDumpable.h"
@@ -33,10 +34,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Default constructor
-    QMLItem();
+    QMLItem(const QPoint& pPosition);
 
     //! Constructor with QVariant
-    QMLItem(const QVariant& value);
+    QMLItem(const QPoint& pPosition, const QVariant& value);
 
     //! Destructor
     virtual ~QMLItem();
@@ -51,6 +52,9 @@ public:
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
+
+    //!
+    QPoint position() const;
 
     //!
     virtual QVariant value() const;
@@ -81,4 +85,5 @@ public:
 protected:
 
     QVariant    m_vValue;
+    QPoint      m_pPosition;
 };

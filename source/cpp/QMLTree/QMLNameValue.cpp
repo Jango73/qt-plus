@@ -15,7 +15,8 @@
 /*!
     Constructs a QMLNameValue.
 */
-QMLNameValue::QMLNameValue()
+QMLNameValue::QMLNameValue(const QPoint& pPosition)
+    : QMLItem(pPosition)
 {
 }
 
@@ -24,8 +25,8 @@ QMLNameValue::QMLNameValue()
 /*!
     Constructs a QMLNameValue with \a sName and \a sValue.
 */
-QMLNameValue::QMLNameValue(const QString& sName, const QVariant& sValue)
-    : QMLItem(sValue)
+QMLNameValue::QMLNameValue(const QPoint& pPosition, const QString& sName, const QVariant& sValue)
+    : QMLItem(pPosition, sValue)
     , m_sName(sName)
 {
 }

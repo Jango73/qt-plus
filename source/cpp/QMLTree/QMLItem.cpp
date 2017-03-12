@@ -15,7 +15,8 @@
 /*!
     Constructs a QMLItem.
 */
-QMLItem::QMLItem()
+QMLItem::QMLItem(const QPoint& pPosition)
+    : m_pPosition(pPosition)
 {
 }
 
@@ -24,8 +25,9 @@ QMLItem::QMLItem()
 /*!
     Constructs a QMLItem with \a value.
 */
-QMLItem::QMLItem(const QVariant& value)
-    : m_vValue(value)
+QMLItem::QMLItem(const QPoint& pPosition, const QVariant& value)
+    : m_pPosition(pPosition)
+    , m_vValue(value)
 {
 }
 
@@ -50,6 +52,13 @@ void QMLItem::setValue(const QVariant& value)
 
 //-------------------------------------------------------------------------------------------------
 
+QPoint QMLItem::position() const
+{
+    return m_pPosition;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 /*!
     Returns the item's value.
 */
@@ -65,7 +74,7 @@ QVariant QMLItem::value() const
 */
 QString QMLItem::toString() const
 {
-    return "";
+    return m_vValue.toString();
 }
 
 //-------------------------------------------------------------------------------------------------

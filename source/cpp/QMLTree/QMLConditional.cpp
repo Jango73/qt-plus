@@ -4,8 +4,8 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLConditional::QMLConditional(QMLItem* pCondition, QMLItem* pThen, QMLItem* pElse)
-    : QMLIf(pCondition, pThen, pElse)
+QMLConditional::QMLConditional(const QPoint& pPosition, QMLItem* pCondition, QMLItem* pThen, QMLItem* pElse)
+    : QMLIf(pPosition, pCondition, pThen, pElse)
 {
 }
 

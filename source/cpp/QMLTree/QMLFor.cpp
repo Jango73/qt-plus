@@ -4,8 +4,9 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLFor::QMLFor(QMLItem* pInitialization, QMLItem* pCondition, QMLItem* pIncrementation, QMLItem* pContent)
-    : m_pInitialization(pInitialization)
+QMLFor::QMLFor(const QPoint& pPosition, QMLItem* pInitialization, QMLItem* pCondition, QMLItem* pIncrementation, QMLItem* pContent)
+    : QMLItem(pPosition)
+    , m_pInitialization(pInitialization)
     , m_pCondition(pCondition)
     , m_pIncrementation(pIncrementation)
     , m_pContent(pContent)

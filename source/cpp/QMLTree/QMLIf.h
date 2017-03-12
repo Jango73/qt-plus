@@ -25,7 +25,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with condition, then and else
-    QMLIf(QMLItem* pCondition, QMLItem* pThen, QMLItem* pElse);
+    QMLIf(const QPoint& pPosition, QMLItem* pCondition, QMLItem* pThen, QMLItem* pElse);
 
     //! Destructor
     virtual ~QMLIf();

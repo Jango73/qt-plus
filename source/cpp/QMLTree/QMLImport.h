@@ -30,7 +30,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with name and content
-    QMLImport(QMLTreeContext* pContext, const QString& sName, const QString& sVersion);
+    QMLImport(const QPoint& pPosition, QMLTreeContext* pContext, const QString& sName, const QString& sVersion);
 
     //! Destructor
     virtual ~QMLImport();

@@ -135,7 +135,8 @@ extern int yyparse(QMLTreeContext* pContext);
     Constructs a QMLTreeContext with a file named \a sFileName.
 */
 QMLTreeContext::QMLTreeContext(const QString& sFileName)
-    : m_eError(peSuccess)
+    : m_tItem(QPoint())
+    ,  m_eError(peSuccess)
     , m_bIncludeImports(true)
 {
     QFileInfo info(sFileName);
@@ -224,6 +225,18 @@ bool QMLTreeContext::success() const
 QString QMLTreeContext::errorString() const
 {
     return m_sErrorString;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+QPoint QMLTreeContext::position() const
+{
+    if (m_sScopes.count() > 0)
+    {
+        return QPoint(SCOPE.m_iColumn, SCOPE.m_iLine);
+    }
+
+    return QPoint(0, 0);
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -4,14 +4,15 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLIdentifier::QMLIdentifier()
+QMLIdentifier::QMLIdentifier(const QPoint& pPosition)
+    : QMLItem(pPosition)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLIdentifier::QMLIdentifier(const QString& value)
-    : QMLItem(value)
+QMLIdentifier::QMLIdentifier(const QPoint& pPosition, const QString& value)
+    : QMLItem(pPosition, value)
 {
 }
 

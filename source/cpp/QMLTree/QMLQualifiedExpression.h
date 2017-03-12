@@ -26,7 +26,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Default constructor
-    QMLQualifiedExpression();
+    QMLQualifiedExpression(const QPoint& pPosition);
 
     //! Destructor
     virtual ~QMLQualifiedExpression();

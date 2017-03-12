@@ -25,7 +25,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with condition, then and else
-    QMLFor(QMLItem* pInitialization, QMLItem* pCondition, QMLItem* pIncrementation, QMLItem* pContent);
+    QMLFor(const QPoint& pPosition, QMLItem* pInitialization, QMLItem* pCondition, QMLItem* pIncrementation, QMLItem* pContent);
 
     //! Destructor
     virtual ~QMLFor();

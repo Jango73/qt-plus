@@ -27,10 +27,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Default constructor
-    QMLNameValue();
+    QMLNameValue(const QPoint& pPosition);
 
     //! Constructor with QVariant
-    QMLNameValue(const QString& sName, const QVariant& sValue);
+    QMLNameValue(const QPoint& pPosition, const QString& sName, const QVariant& sValue);
 
     //! Destructor
     virtual ~QMLNameValue();

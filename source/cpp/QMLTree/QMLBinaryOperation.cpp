@@ -4,8 +4,9 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLBinaryOperation::QMLBinaryOperation(QMLItem* pLeft, QMLItem* pRight, EOperator eOperator)
-    : m_pLeft(pLeft)
+QMLBinaryOperation::QMLBinaryOperation(const QPoint& pPosition, QMLItem* pLeft, QMLItem* pRight, EOperator eOperator)
+    : QMLItem(pPosition)
+    , m_pLeft(pLeft)
     , m_pRight(pRight)
     , m_eOperator(eOperator)
 {

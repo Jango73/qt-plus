@@ -4,8 +4,8 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLPropertyAlias::QMLPropertyAlias(QMLItem* pName, QMLItem* pContent)
-    : QMLPropertyAssignment(pName, pContent)
+QMLPropertyAlias::QMLPropertyAlias(const QPoint& pPosition, QMLItem* pName, QMLItem* pContent)
+    : QMLPropertyAssignment(pPosition, pName, pContent)
 {
 }
 

@@ -51,10 +51,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with type and name
-    QMLBinaryOperation(QMLItem *pLeft, QMLItem* pRight, EOperator eOperator);
+    QMLBinaryOperation(const QPoint& pPosition, QMLItem *pLeft, QMLItem* pRight, EOperator eOperator);
 
     //! Constructor with type, name and content
-    QMLBinaryOperation(QMLType *pType, QMLItem* pName, QMLItem *pContent);
+    QMLBinaryOperation(const QPoint& pPosition, QMLType *pType, QMLItem* pName, QMLItem *pContent);
 
     //! Destructor
     virtual ~QMLBinaryOperation();
