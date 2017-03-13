@@ -94,24 +94,6 @@ QMap<QString, QMLItem*> QMLItem::members()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Dumps the item to \a stream using \a iIdent for indentation.
-*/
-void QMLItem::dump(QTextStream& stream, int iIdent)
-{
-    QString sValue = m_vValue.value<QString>();
-
-    if (sValue.isEmpty() == false)
-    {
-        dumpIndented(stream, iIdent, QString("[QMLItem]"));
-        dumpIndented(stream, iIdent, QString("Value : %1").arg(sValue));
-    }
-
-    dumpIndented(stream, iIdent, QString("----------"));
-}
-
-//-------------------------------------------------------------------------------------------------
-
-/*!
     Dumps the item to \a stream using \a iIdent for indentation. \br\br
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.

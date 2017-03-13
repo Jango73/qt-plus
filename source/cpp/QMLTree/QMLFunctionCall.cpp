@@ -45,31 +45,6 @@ const QMLComplexItem* QMLFunctionCall::arguments() const
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLFunctionCall::dump(QTextStream& stream, int iIdent)
-{
-    dumpIndented(stream, iIdent, QString("[QMLFunctionCall]"));
-
-    if (m_pName != NULL)
-    {
-        dumpIndented(stream, iIdent, QString("Name :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pName->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    if (m_pArguments != NULL)
-    {
-        dumpIndented(stream, iIdent, QString("Arguments :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pArguments->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    QMLItem::dump(stream, iIdent);
-}
-
-//-------------------------------------------------------------------------------------------------
-
 void QMLFunctionCall::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
 {
     Q_UNUSED(pContext);

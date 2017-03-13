@@ -50,39 +50,6 @@ QMLComplexItem* QMLFunction::content() const
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLFunction::dump(QTextStream& stream, int iIdent)
-{
-    dumpIndented(stream, iIdent, QString("[QMLFunction]"));
-
-    if (m_pName != NULL)
-    {
-        dumpIndented(stream, iIdent, QString("Name :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pName->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    if (m_pParameters != NULL)
-    {
-        dumpIndented(stream, iIdent, QString("Parameters :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pParameters->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    if (m_pContent != NULL)
-    {
-        dumpIndented(stream, iIdent, QString("Content :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pContent->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    QMLItem::dump(stream, iIdent);
-}
-
-//-------------------------------------------------------------------------------------------------
-
 /*!
     Dumps the item to \a stream using \a iIdent for indentation. \br\br
     \a pContext is the context of this item. \br

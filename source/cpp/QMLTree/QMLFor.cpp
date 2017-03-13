@@ -72,47 +72,6 @@ QMap<QString, QMLItem*> QMLFor::members()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLFor::dump(QTextStream& stream, int iIdent)
-{
-    dumpIndented(stream, iIdent, QString("[QMLIf]"));
-
-    if (m_pInitialization != nullptr)
-    {
-        dumpIndented(stream, iIdent, QString("Initialization :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pInitialization->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    if (m_pCondition != nullptr)
-    {
-        dumpIndented(stream, iIdent, QString("Condition :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pCondition->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    if (m_pIncrementation != nullptr)
-    {
-        dumpIndented(stream, iIdent, QString("Incrementation :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pIncrementation->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    if (m_pContent != nullptr)
-    {
-        dumpIndented(stream, iIdent, QString("Content :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pContent->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    QMLItem::dump(stream, iIdent);
-}
-
-//-------------------------------------------------------------------------------------------------
-
 /*!
     Dumps the item to \a stream using \a iIdent for indentation. \br\br
     \a pContext is the context of this item. \br

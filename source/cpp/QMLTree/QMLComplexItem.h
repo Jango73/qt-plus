@@ -62,9 +62,6 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void dump(QTextStream& stream, int iIdent) Q_DECL_OVERRIDE;
-
-    //!
     virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //!

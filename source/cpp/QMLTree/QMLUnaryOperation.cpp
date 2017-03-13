@@ -52,24 +52,6 @@ QString QMLUnaryOperation::operatorToString(EUnaryOperator eOperator) const
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLUnaryOperation::dump(QTextStream& stream, int iIdent)
-{
-    dumpIndented(stream, iIdent, QString("[QMLUnaryOperation]"));
-    dumpIndented(stream, iIdent, QString("Operator : %1").arg(operatorToString(m_eOperator)));
-
-    if (m_pExpression != NULL)
-    {
-        dumpIndented(stream, iIdent, QString("Expression :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pExpression->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    QMLItem::dump(stream, iIdent);
-}
-
-//-------------------------------------------------------------------------------------------------
-
 void QMLUnaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
 {
     Q_UNUSED(pContext);

@@ -56,19 +56,6 @@ QString QMLFile::fileName() const
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Dumps the item to \a stream using \a iIdent for indentation.
-*/
-void QMLFile::dump(QTextStream& stream, int iIdent)
-{
-    dumpIndented(stream, iIdent, QString("[QMLFile]"));
-    dumpIndented(stream, iIdent, QString("File name : %1").arg(m_sFileName));
-
-    QMLComplexItem::dump(stream, iIdent);
-}
-
-//-------------------------------------------------------------------------------------------------
-
-/*!
     Returns a CXMLNode representation of this item. \br\br
     \a pContext is a user defined context. \br
     \a pParent is the caller of this method.

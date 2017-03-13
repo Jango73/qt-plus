@@ -92,27 +92,6 @@ QMap<QString, QMLItem*> QMLComplexItem::members()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLComplexItem::dump(QTextStream& stream, int iIdent)
-{
-    dumpIndented(stream, iIdent, QString("[QMLComplexItem]"));
-    dumpIndented(stream, iIdent, QString("Name : %1").arg(m_pName != nullptr ? m_pName->value().toString() : ""));
-
-    dumpIndented(stream, iIdent, QString("Contents :"));
-    dumpOpenBlock(stream, iIdent);
-    foreach (QMLItem* pItem, m_vContents)
-    {
-        if (pItem != nullptr)
-        {
-            pItem->dump(stream, iIdent + 1);
-        }
-    }
-    dumpCloseBlock(stream, iIdent);
-
-    QMLItem::dump(stream, iIdent);
-}
-
-//-------------------------------------------------------------------------------------------------
-
 void QMLComplexItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
 {
     Q_UNUSED(pContext);

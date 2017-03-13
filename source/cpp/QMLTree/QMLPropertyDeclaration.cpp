@@ -77,39 +77,6 @@ QMap<QString, QMLItem*> QMLPropertyDeclaration::members()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLPropertyDeclaration::dump(QTextStream& stream, int iIdent)
-{
-    dumpIndented(stream, iIdent, QString("[QMLPropertyDeclaration]"));
-
-    if (m_pType != nullptr)
-    {
-        dumpIndented(stream, iIdent, QString("Type :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pType->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    if (m_pName != nullptr)
-    {
-        dumpIndented(stream, iIdent, QString("Name :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pName->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    if (m_pContent != nullptr)
-    {
-        dumpIndented(stream, iIdent, QString("Content :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pContent->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    QMLItem::dump(stream, iIdent);
-}
-
-//-------------------------------------------------------------------------------------------------
-
 void QMLPropertyDeclaration::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
 {
     Q_UNUSED(pContext);

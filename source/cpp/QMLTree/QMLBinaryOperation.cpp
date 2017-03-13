@@ -94,32 +94,6 @@ QString QMLBinaryOperation::operatorToString(EOperator eOperator) const
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLBinaryOperation::dump(QTextStream& stream, int iIdent)
-{
-    dumpIndented(stream, iIdent, QString("[QMLBinaryOperation]"));
-    dumpIndented(stream, iIdent, QString("Operator : %1").arg(operatorToString(m_eOperator)));
-
-    if (m_pLeft != NULL)
-    {
-        dumpIndented(stream, iIdent, QString("Left :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pLeft->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    if (m_pRight != NULL)
-    {
-        dumpIndented(stream, iIdent, QString("Right :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pRight->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    QMLItem::dump(stream, iIdent);
-}
-
-//-------------------------------------------------------------------------------------------------
-
 void QMLBinaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
 {
     Q_UNUSED(pContext);

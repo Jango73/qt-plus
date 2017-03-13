@@ -14,12 +14,3 @@ QMLPropertyAlias::QMLPropertyAlias(const QPoint& pPosition, QMLItem* pName, QMLI
 QMLPropertyAlias::~QMLPropertyAlias()
 {
 }
-
-//-------------------------------------------------------------------------------------------------
-
-void QMLPropertyAlias::dump(QTextStream& stream, int iIdent)
-{
-    dumpIndented(stream, iIdent, QString("[QMLPropertyAlias]"));
-
-    QMLPropertyAssignment::dump(stream, iIdent);
-}

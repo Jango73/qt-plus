@@ -24,15 +24,6 @@ QMLIdentifier::~QMLIdentifier()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLIdentifier::dump(QTextStream& stream, int iIdent)
-{
-    dumpIndented(stream, iIdent, QString("[QMLIdentifier]"));
-
-    QMLItem::dump(stream, iIdent);
-}
-
-//-------------------------------------------------------------------------------------------------
-
 void QMLIdentifier::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
 {
     Q_UNUSED(pContext);

@@ -50,31 +50,6 @@ QMap<QString, QMLItem*> QMLSwitch::members()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLSwitch::dump(QTextStream& stream, int iIdent)
-{
-    dumpIndented(stream, iIdent, QString("[QMLIf]"));
-
-    if (m_pExpression != nullptr)
-    {
-        dumpIndented(stream, iIdent, QString("Expression :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pExpression->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    if (m_pCases != nullptr)
-    {
-        dumpIndented(stream, iIdent, QString("Cases :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pCases->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    QMLItem::dump(stream, iIdent);
-}
-
-//-------------------------------------------------------------------------------------------------
-
 /*!
     Dumps the item to \a stream using \a iIdent for indentation. \br\br
     \a pContext is the context of this item. \br

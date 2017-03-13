@@ -14,12 +14,3 @@ QMLConditional::QMLConditional(const QPoint& pPosition, QMLItem* pCondition, QML
 QMLConditional::~QMLConditional()
 {
 }
-
-//-------------------------------------------------------------------------------------------------
-
-void QMLConditional::dump(QTextStream& stream, int iIdent)
-{
-    dumpIndented(stream, iIdent, QString("[QMLConditional]"));
-
-    QMLIf::dump(stream, iIdent);
-}

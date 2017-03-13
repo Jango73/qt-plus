@@ -60,39 +60,6 @@ QMap<QString, QMLItem*> QMLIf::members()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLIf::dump(QTextStream& stream, int iIdent)
-{
-    dumpIndented(stream, iIdent, QString("[QMLIf]"));
-
-    if (m_pCondition != nullptr)
-    {
-        dumpIndented(stream, iIdent, QString("Condition :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pCondition->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    if (m_pThen != nullptr)
-    {
-        dumpIndented(stream, iIdent, QString("Then :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pThen->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    if (m_pElse != nullptr)
-    {
-        dumpIndented(stream, iIdent, QString("Else :"));
-        dumpOpenBlock(stream, iIdent);
-        m_pElse->dump(stream, iIdent + 1);
-        dumpCloseBlock(stream, iIdent);
-    }
-
-    QMLItem::dump(stream, iIdent);
-}
-
-//-------------------------------------------------------------------------------------------------
-
 CXMLNode QMLIf::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
     CXMLNode xNode = QMLItem::toXMLNode(pContext, pParent);

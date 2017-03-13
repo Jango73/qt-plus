@@ -55,17 +55,6 @@ QString QMLImport::version() const
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLImport::dump(QTextStream& stream, int iIdent)
-{
-    dumpIndented(stream, iIdent, QString("[QMLImport]"));
-    dumpIndented(stream, iIdent, QString("Name : %1").arg(m_sName));
-    dumpIndented(stream, iIdent, QString("Version : %1").arg(m_sVersion));
-
-    QMLItem::dump(stream, iIdent);
-}
-
-//-------------------------------------------------------------------------------------------------
-
 void QMLImport::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
 {
     Q_UNUSED(pContext);

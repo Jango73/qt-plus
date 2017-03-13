@@ -17,15 +17,6 @@ QMLPropertyAssignment::~QMLPropertyAssignment()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLPropertyAssignment::dump(QTextStream& stream, int iIdent)
-{
-    dumpIndented(stream, iIdent, QString("[QMLPropertyAssignment]"));
-
-    QMLPropertyDeclaration::dump(stream, iIdent);
-}
-
-//-------------------------------------------------------------------------------------------------
-
 void QMLPropertyAssignment::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
 {
     Q_UNUSED(pContext);

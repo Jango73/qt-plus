@@ -46,14 +46,6 @@ QString QMLType::toString() const
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLType::dump(QTextStream& stream, int iIdent)
-{
-    dumpIndented(stream, iIdent, QString("[QMLType]"));
-    dumpIndented(stream, iIdent, QString("Type : %1").arg(typeToString(m_vType)));
-}
-
-//-------------------------------------------------------------------------------------------------
-
 void QMLType::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
 {
     Q_UNUSED(pContext);

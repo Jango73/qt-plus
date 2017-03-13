@@ -55,9 +55,6 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void dump(QTextStream& stream, int iIdent) Q_DECL_OVERRIDE;
-
-    //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------

@@ -17,15 +17,6 @@ QMLQualifiedExpression::~QMLQualifiedExpression()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLQualifiedExpression::dump(QTextStream& stream, int iIdent)
-{
-    dumpIndented(stream, iIdent, QString("[QMLQualifiedExpression]"));
-
-    QMLComplexItem::dump(stream, iIdent);
-}
-
-//-------------------------------------------------------------------------------------------------
-
 void QMLQualifiedExpression::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
