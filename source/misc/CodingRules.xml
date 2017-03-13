@@ -10,4 +10,7 @@
         <Reject Member="content" Type="float" Text="No magic value allowed in property"/>
         <Reject Member="content" Type="qreal" Text="No magic value allowed in property"/>
     </Check>
+    <Check Class="QMLConditional">
+        <Reject NestedCount="2" Text="No more than 2 nested conditional expressions allowed"/>
+    </Check>
 </Root>

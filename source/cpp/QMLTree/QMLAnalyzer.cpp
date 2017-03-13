@@ -10,13 +10,14 @@
 
 //-------------------------------------------------------------------------------------------------
 
-#define ANALYZER_TOKEN_CHECK    "Check"
-#define ANALYZER_TOKEN_CLASS    "Class"
-#define ANALYZER_TOKEN_MEMBER   "Member"
-#define ANALYZER_TOKEN_REJECT   "Reject"
-#define ANALYZER_TOKEN_TEXT     "Text"
-#define ANALYZER_TOKEN_TYPE     "Type"
-#define ANALYZER_TOKEN_VALUE    "Value"
+#define ANALYZER_TOKEN_CHECK        "Check"
+#define ANALYZER_TOKEN_CLASS        "Class"
+#define ANALYZER_TOKEN_MEMBER       "Member"
+#define ANALYZER_TOKEN_NESTED_COUNT "NestedCount"
+#define ANALYZER_TOKEN_REJECT       "Reject"
+#define ANALYZER_TOKEN_TEXT         "Text"
+#define ANALYZER_TOKEN_TYPE         "Type"
+#define ANALYZER_TOKEN_VALUE        "Value"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -151,8 +152,6 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, C
 
         if (pItem->metaObject()->className() == sClassName)
         {
-            // qDebug() << QString("Checking %1").arg(sClassName);
-
             QVector<CXMLNode> vRejects = xCheck.getNodesByTagName(ANALYZER_TOKEN_REJECT);
 
             foreach (CXMLNode xReject, vRejects)
@@ -161,8 +160,29 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, C
                 QString sValue = xReject.attributes()[ANALYZER_TOKEN_VALUE];
                 QString sType = xReject.attributes()[ANALYZER_TOKEN_TYPE];
                 QString sText = xReject.attributes()[ANALYZER_TOKEN_TEXT];
+                QString sNestedCount = xReject.attributes()[ANALYZER_TOKEN_NESTED_COUNT];
 
-                if (mMembers.contains(sMember) && mMembers[sMember] != nullptr)
+                if (sNestedCount.isEmpty() == false)
+                {
+                    int iNestedCountAllowed = sNestedCount.toInt();
+
+                    if (iNestedCountAllowed > 0)
+                    {
+                        int iNestedCount = runGrammar_CountNested(sClassName, pItem);
+
+                        if (iNestedCount > iNestedCountAllowed)
+                        {
+                            bHasRejects = true;
+
+                            lErrors << QString("%1 (%2, %3) : %4")
+                                       .arg(sFileName)
+                                       .arg(pItem->position().y())
+                                       .arg(pItem->position().x())
+                                       .arg(sText);
+                        }
+                    }
+                }
+                else if (mMembers.contains(sMember) && mMembers[sMember] != nullptr)
                 {
                     if (sType.isEmpty() == false)
                     {
@@ -216,4 +236,33 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, C
             }
         }
     }
+}
+
+int QMLAnalyzer::runGrammar_CountNested(const QString& sClassName, QMLItem* pItem)
+{
+    int iCount = 0;
+
+    if (pItem->metaObject()->className() == sClassName)
+    {
+        iCount++;
+    }
+
+    QMap<QString, QMLItem*> mMembers = pItem->members();
+
+    foreach (QString sKey, mMembers.keys())
+    {
+        iCount += runGrammar_CountNested(sClassName, mMembers[sKey]);
+    }
+
+    QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(pItem);
+
+    if (pComplex != nullptr)
+    {
+        foreach (QMLItem* pChildItem, pComplex->contents())
+        {
+            iCount += runGrammar_CountNested(sClassName, pChildItem);
+        }
+    }
+
+    return iCount;
 }

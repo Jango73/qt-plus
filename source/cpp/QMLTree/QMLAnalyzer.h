@@ -77,6 +77,8 @@ protected:
 
     void runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, CXMLNode& xGrammar, QStringList& lErrors);
 
+    int runGrammar_CountNested(const QString& sClassName, QMLItem* pItem);
+
 protected:
 
     QString                         m_sFolder;

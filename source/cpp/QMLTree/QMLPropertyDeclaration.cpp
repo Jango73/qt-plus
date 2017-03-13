@@ -88,7 +88,6 @@ void QMLPropertyDeclaration::toQML(QTextStream& stream, QMLTreeContext* pContext
         m_pType->toQML(stream, pContext, this, iIdent + 1);
         dumpNoIndentNoNewLine(stream, " ");
         m_pName->toQML(stream, pContext, this, iIdent + 1);
-        dumpNoIndentNoNewLine(stream, " ");
 
         if (m_pContent != nullptr)
         {
