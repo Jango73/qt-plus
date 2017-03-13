@@ -1,6 +1,7 @@
 
 // Application
 #include "QMLSwitch.h"
+#include "QMLUnaryOperation.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -70,6 +71,57 @@ void QMLSwitch::dump(QTextStream& stream, int iIdent)
     }
 
     QMLItem::dump(stream, iIdent);
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Dumps the item to \a stream using \a iIdent for indentation. \br\br
+    \a pContext is the context of this item. \br
+    \a pParent is the caller of this method.
+*/
+void QMLSwitch::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+{
+    Q_UNUSED(pContext);
+    Q_UNUSED(pParent);
+
+    dumpNoIndentNoNewLine(stream, "switch (");
+
+    if (m_pExpression != nullptr)
+    {
+        m_pExpression->toQML(stream, pContext, this, iIdent + 1);
+    }
+
+    dumpNoIndentNoNewLine(stream, ")");
+    dumpNewLine(stream);
+
+    dumpIndented(stream, iIdent, "{");
+
+    if (m_pCases != nullptr)
+    {
+        foreach (QMLItem* pItem, m_pCases->contents())
+        {
+            if (pItem != nullptr)
+            {
+                QMLUnaryOperation* pUnary = dynamic_cast<QMLUnaryOperation*>(pItem);
+
+                if (pUnary != nullptr && pUnary->oper() == QMLUnaryOperation::uoCase)
+                {
+                    dumpIndentedNoNewLine(stream, iIdent + 1, "");
+                    pItem->toQML(stream, pContext, this, iIdent + 1);
+                    dumpNewLine(stream);
+                }
+                else
+                {
+                    dumpIndentedNoNewLine(stream, iIdent + 2, "");
+                    pItem->toQML(stream, pContext, this, iIdent + 2);
+                    dumpNewLine(stream);
+                }
+            }
+        }
+    }
+
+    dumpIndented(stream, iIdent, "}");
 }
 
 //-------------------------------------------------------------------------------------------------

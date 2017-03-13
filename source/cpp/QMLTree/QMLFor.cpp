@@ -1,6 +1,7 @@
 
 // Application
 #include "QMLFor.h"
+#include "QMLComplexItem.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -108,6 +109,68 @@ void QMLFor::dump(QTextStream& stream, int iIdent)
     }
 
     QMLItem::dump(stream, iIdent);
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Dumps the item to \a stream using \a iIdent for indentation. \br\br
+    \a pContext is the context of this item. \br
+    \a pParent is the caller of this method.
+*/
+void QMLFor::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+{
+    Q_UNUSED(pContext);
+    Q_UNUSED(pParent);
+
+    dumpNoIndentNoNewLine(stream, "for (");
+
+    if (m_pInitialization != nullptr)
+    {
+        m_pInitialization->toQML(stream, pContext, this, iIdent + 1);
+    }
+
+    dumpNoIndentNoNewLine(stream, "; ");
+
+    if (m_pCondition != nullptr)
+    {
+        m_pCondition->toQML(stream, pContext, this, iIdent + 1);
+    }
+
+    dumpNoIndentNoNewLine(stream, "; ");
+
+    if (m_pIncrementation != nullptr)
+    {
+        m_pIncrementation->toQML(stream, pContext, this, iIdent + 1);
+    }
+
+    dumpNoIndentNoNewLine(stream, ")");
+    dumpNewLine(stream);
+
+    dumpIndented(stream, iIdent, "{");
+
+    QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(m_pContent);
+
+    if (pComplex != nullptr)
+    {
+        foreach (QMLItem* pItem, pComplex->contents())
+        {
+            if (pItem != nullptr)
+            {
+                dumpIndentedNoNewLine(stream, iIdent + 1, "");
+                pItem->toQML(stream, pContext, this, iIdent + 1);
+                dumpNewLine(stream);
+            }
+        }
+    }
+    else if (m_pContent != nullptr)
+    {
+        dumpIndentedNoNewLine(stream, iIdent + 1, "");
+        m_pContent->toQML(stream, pContext, this, iIdent + 1);
+        dumpNewLine(stream);
+    }
+
+    dumpIndented(stream, iIdent, "}");
 }
 
 //-------------------------------------------------------------------------------------------------

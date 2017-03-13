@@ -75,11 +75,16 @@ void QMLUnaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QML
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
-    dumpNoIndentNoNewLine(stream, QString(" %1 ").arg(operatorToString(m_eOperator)));
+    dumpNoIndentNoNewLine(stream, QString("%1 ").arg(operatorToString(m_eOperator)));
 
-    if (m_pExpression != NULL)
+    if (m_pExpression != nullptr)
     {
         m_pExpression->toQML(stream, pContext, this, iIdent);
+
+        if (m_eOperator == uoCase)
+        {
+            dumpNoIndentNoNewLine(stream, ":");
+        }
     }
 }
 
@@ -92,7 +97,7 @@ CXMLNode QMLUnaryOperation::toXMLNode(CXMLNodableContext* pContext, CXMLNodable*
 
     xNode.attributes()["Operator"] = operatorToString(m_eOperator);
 
-    if (m_pExpression != NULL)
+    if (m_pExpression != nullptr)
         xExpression.nodes() << m_pExpression->toXMLNode(pContext, this);
 
     xNode.nodes() << xExpression;

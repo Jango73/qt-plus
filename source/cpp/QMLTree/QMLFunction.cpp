@@ -1,4 +1,7 @@
 
+// Qt
+#include <QDebug>
+
 // Application
 #include "QMLFunction.h"
 
@@ -76,6 +79,59 @@ void QMLFunction::dump(QTextStream& stream, int iIdent)
     }
 
     QMLItem::dump(stream, iIdent);
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Dumps the item to \a stream using \a iIdent for indentation. \br\br
+    \a pContext is the context of this item. \br
+    \a pParent is the caller of this method.
+*/
+void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+{
+    Q_UNUSED(pContext);
+    Q_UNUSED(pParent);
+
+    dumpIndentedNoNewLine(stream, iIdent, "function ");
+
+    if (m_pName != nullptr)
+    {
+        m_pName->toQML(stream, pContext, this, iIdent + 1);
+    }
+
+    dumpNoIndentNoNewLine(stream, "(");
+
+    if (m_pParameters != nullptr)
+    {
+        foreach (QMLItem* pItem, m_pParameters->contents())
+        {
+            if (pItem != nullptr)
+            {
+                pItem->toQML(stream, pContext, this, iIdent + 1);
+            }
+        }
+    }
+
+    dumpNoIndentNoNewLine(stream, ")");
+    dumpNewLine(stream);
+
+    dumpIndented(stream, iIdent, "{");
+
+    if (m_pContent != nullptr)
+    {
+        foreach (QMLItem* pItem, m_pContent->contents())
+        {
+            if (pItem != nullptr)
+            {
+                dumpIndentedNoNewLine(stream, iIdent + 1, "");
+                pItem->toQML(stream, pContext, this, iIdent + 1);
+                dumpNewLine(stream);
+            }
+        }
+    }
+
+    dumpIndented(stream, iIdent, "}");
 }
 
 //-------------------------------------------------------------------------------------------------
