@@ -13,7 +13,8 @@
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Constructs a QMLItem.
+    Constructs a QMLItem. \br\br
+    \a pPosition is the position of the token in the file
 */
 QMLItem::QMLItem(const QPoint& pPosition)
     : m_pPosition(pPosition)
@@ -52,6 +53,9 @@ void QMLItem::setValue(const QVariant& value)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns the item's position in the file.
+*/
 QPoint QMLItem::position() const
 {
     return m_pPosition;

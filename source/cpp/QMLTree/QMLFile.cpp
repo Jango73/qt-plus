@@ -14,6 +14,7 @@
 
 /*!
     Constructs a QMLFile with \a sFileName. \br\br
+    \a pPosition is the position of the token in the file \br
     \a pContext if the parser.
 */
 QMLFile::QMLFile(const QPoint& pPosition, QMLTreeContext* pContext, const QString& sFileName)

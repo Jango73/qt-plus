@@ -229,11 +229,14 @@ QString QMLTreeContext::errorString() const
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns the item's position in the file.
+*/
 QPoint QMLTreeContext::position() const
 {
     if (m_sScopes.count() > 0)
     {
-        return QPoint(SCOPE.m_iColumn, SCOPE.m_iLine);
+        return QPoint(SCOPE.m_iPreviousColumn + 1, SCOPE.m_iPreviousLine - 1);
     }
 
     return QPoint(0, 0);
@@ -346,7 +349,7 @@ void QMLTreeContext::showError(const QString& sText)
     QString sFullError = QString("%1 (line %2, col %3) : %4")
             .arg(info.fileName())
             .arg(SCOPE.m_iLine)
-            .arg(SCOPE.m_iColumn - 1)
+            .arg(SCOPE.m_iColumn)
             .arg(sText);
 
     qDebug() << sFullError;
@@ -364,9 +367,9 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
         SCOPE.m_pCurrentTokenValue->clear();
     }
 
-    SCOPE.m_iCommentLevel = 0;
-    SCOPE.m_bParsingFloat = false;
-    SCOPE.m_bParsingHexa = false;
+    SCOPE.m_iCommentLevel   = 0;
+    SCOPE.m_bParsingFloat   = false;
+    SCOPE.m_bParsingHexa    = false;
 
     int c, d, e;
 
@@ -429,8 +432,8 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
 
     // Set context parsing stuff
 
-    SCOPE.m_iPreviousLine     = SCOPE.m_iLine;
-    SCOPE.m_iPreviousColumn   = SCOPE.m_iColumn;
+    SCOPE.m_iPreviousLine   = SCOPE.m_iLine;
+    SCOPE.m_iPreviousColumn = SCOPE.m_iColumn;
 
     GET(c);
 
@@ -798,7 +801,7 @@ int QMLTreeContext::getChar()
     switch (iChar)
     {
         case '\n' :
-            SCOPE.m_iColumn = 1;
+            SCOPE.m_iColumn = 0;
             SCOPE.m_iLine++;
             break;
         case '\t' :

@@ -601,7 +601,7 @@ JSFunctionParameter :
 
         if (pType != nullptr && pName != nullptr)
         {
-            $<Object>$ = new QMLPropertyDeclaration(pContext->position(), pType, pName);
+            $<Object>$ = new QMLPropertyDeclaration(pName->position(), pType, pName);
         }
         else
         {
@@ -618,7 +618,7 @@ JSFunctionParameter :
 
         if (pType != nullptr && pName != nullptr)
         {
-            $<Object>$ = new QMLPropertyDeclaration(pContext->position(), pType, pName);
+            $<Object>$ = new QMLPropertyDeclaration(pName->position(), pType, pName);
         }
         else
         {
@@ -642,7 +642,13 @@ JSStatements :
         PARSER_TRACE("JSStatements", "JSStatement");
 
         QMLItem* pStatement1 = $<Object>1;
-        QMLComplexItem* pComplex = new QMLComplexItem(pContext->position());
+
+        if (pStatement1 == nullptr)
+        {
+            pStatement1 = new QMLItem(pContext->position());
+        }
+
+        QMLComplexItem* pComplex = new QMLComplexItem(pStatement1->position());
 
         pComplex->contents() << pStatement1;
 
@@ -752,7 +758,12 @@ JSStatement_If :
         QMLItem* pCondition = $<Object>3;
         QMLItem* pThen = $<Object>5;
 
-        $<Object>$ = new QMLIf(pContext->position(), pCondition, pThen, nullptr);
+        if (pCondition == nullptr)
+        {
+            pCondition = new QMLItem(pContext->position());
+        }
+
+        $<Object>$ = new QMLIf(pCondition->position(), pCondition, pThen, nullptr);
     }
     |
     TOKEN_IF '(' JSExpression ')' JSStatement TOKEN_ELSE JSStatement
@@ -761,7 +772,12 @@ JSStatement_If :
         QMLItem* pThen = $<Object>5;
         QMLItem* pElse = $<Object>7;
 
-        $<Object>$ = new QMLIf(pContext->position(), pCondition, pThen, pElse);
+        if (pCondition == nullptr)
+        {
+            pCondition = new QMLItem(pContext->position());
+        }
+
+        $<Object>$ = new QMLIf(pCondition->position(), pCondition, pThen, pElse);
     }
 ;
 
@@ -773,7 +789,12 @@ JSStatement_For :
         QMLItem* pIncrementation = $<Object>7;
         QMLItem* pContent = $<Object>9;
 
-        $<Object>$ = new QMLFor(pContext->position(), pInitialization, pCondition, pIncrementation, pContent);
+        if (pInitialization == nullptr)
+        {
+            pInitialization = new QMLItem(pContext->position());
+        }
+
+        $<Object>$ = new QMLFor(pInitialization->position(), pInitialization, pCondition, pIncrementation, pContent);
     }
 ;
 
@@ -785,7 +806,12 @@ JSStatement_While :
         QMLItem* pIncrementation = nullptr;
         QMLItem* pContent = $<Object>5;
 
-        $<Object>$ = new QMLFor(pContext->position(), pInitialization, pCondition, pIncrementation, pContent);
+        if (pInitialization == nullptr)
+        {
+            pInitialization = new QMLItem(pContext->position());
+        }
+
+        $<Object>$ = new QMLFor(pInitialization->position(), pInitialization, pCondition, pIncrementation, pContent);
     }
 ;
 
@@ -940,7 +966,14 @@ JSAssignmentExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
     |
     JSConditionalExpression TOKEN_ADD_ASSIGN JSAssignmentExpression
@@ -950,7 +983,14 @@ JSAssignmentExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
     |
     JSConditionalExpression TOKEN_SUB_ASSIGN JSAssignmentExpression
@@ -960,7 +1000,14 @@ JSAssignmentExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
     |
     JSConditionalExpression TOKEN_MUL_ASSIGN JSAssignmentExpression
@@ -970,7 +1017,14 @@ JSAssignmentExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
     |
     JSConditionalExpression TOKEN_DIV_ASSIGN JSAssignmentExpression
@@ -980,7 +1034,14 @@ JSAssignmentExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
     |
     JSConditionalExpression TOKEN_ASSIGN JSObject
@@ -990,7 +1051,14 @@ JSAssignmentExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
 ;
 
@@ -1010,7 +1078,12 @@ JSConditionalExpression :
         QMLItem* pThen = $<Object>3;
         QMLItem* pElse = $<Object>5;
 
-        $<Object>$ = new QMLConditional(pContext->position(), pCondition, pThen, pElse);
+        if (pCondition == nullptr)
+        {
+            pCondition = new QMLItem(pContext->position());
+        }
+
+        $<Object>$ = new QMLConditional(pCondition->position(), pCondition, pThen, pElse);
     }
     |
     JSFunction
@@ -1036,7 +1109,14 @@ JSOrExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boLogicOr);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boLogicOr);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
 ;
 
@@ -1055,7 +1135,14 @@ JSXorExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boLogicOr);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boLogicOr);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
 ;
 
@@ -1070,7 +1157,14 @@ JSAndExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boLogicAnd);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boLogicAnd);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
 ;
 
@@ -1085,7 +1179,14 @@ JSBitwiseAndExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boAnd);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAnd);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
 ;
 
@@ -1100,7 +1201,14 @@ JSEqualityExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boEquals);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boEquals);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
     |
     JSRelationalExpression TOKEN_EQUALS_CHECK JSEqualityExpression
@@ -1108,7 +1216,14 @@ JSEqualityExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boEqualsCheck);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boEqualsCheck);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
     |
     JSRelationalExpression TOKEN_NOT_EQUALS JSEqualityExpression
@@ -1116,7 +1231,14 @@ JSEqualityExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boNotEquals);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boNotEquals);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
     |
     JSRelationalExpression TOKEN_NOT_EQUALS_CHECK JSEqualityExpression
@@ -1124,7 +1246,14 @@ JSEqualityExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boNotEqualsCheck);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boNotEqualsCheck);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
 ;
 
@@ -1139,7 +1268,14 @@ JSRelationalExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boLower);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boLower);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
     |
     JSRelationalExpression TOKEN_LOWER_EQUALS JSAdditiveExpression
@@ -1147,7 +1283,14 @@ JSRelationalExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boLowerOrEquals);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boLowerOrEquals);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
     |
     JSRelationalExpression TOKEN_GREATER JSAdditiveExpression
@@ -1155,7 +1298,14 @@ JSRelationalExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boGreater);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boGreater);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
     |
     JSRelationalExpression TOKEN_GREATER_EQUALS JSAdditiveExpression
@@ -1163,7 +1313,14 @@ JSRelationalExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boGreaterOrEquals);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boGreaterOrEquals);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
 ;
 
@@ -1178,7 +1335,14 @@ JSAdditiveExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boAdd);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAdd);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
     |
     JSMultiplicativeExpression TOKEN_SUB JSAdditiveExpression
@@ -1186,7 +1350,14 @@ JSAdditiveExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boSub);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boSub);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
 ;
 
@@ -1201,7 +1372,14 @@ JSMultiplicativeExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boMul);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boMul);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
     |
     JSUnaryExpression TOKEN_DIV JSMultiplicativeExpression
@@ -1209,7 +1387,14 @@ JSMultiplicativeExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boDiv);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boDiv);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
     |
     JSUnaryExpression TOKEN_MOD JSMultiplicativeExpression
@@ -1217,7 +1402,14 @@ JSMultiplicativeExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boMod);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boMod);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
     |
     JSUnaryExpression TOKEN_SHL JSMultiplicativeExpression
@@ -1225,7 +1417,14 @@ JSMultiplicativeExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boShiftLeft);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boShiftLeft);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
     |
     JSUnaryExpression TOKEN_SHR JSMultiplicativeExpression
@@ -1233,7 +1432,14 @@ JSMultiplicativeExpression :
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
 
-        $<Object>$ = new QMLBinaryOperation(pContext->position(), pLeft, pRight, QMLBinaryOperation::boShiftRight);
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boShiftRight);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
     }
 ;
 
@@ -1271,35 +1477,20 @@ JSMemberExpression:
     {
         PARSER_TRACE("JSMemberExpression", "JSArrayAccessExpression '.' JSMemberExpression");
 
-        QMLIdentifier* pIdentifier1 = dynamic_cast<QMLIdentifier*>($<Object>1);
-        QMLIdentifier* pIdentifier2 = dynamic_cast<QMLIdentifier*>($<Object>3);
+        QMLItem* pExpression1 = $<Object>1;
+        QMLItem* pExpression2 = $<Object>3;
 
-        if (pIdentifier1 != nullptr && pIdentifier2 != nullptr)
+        QMLQualifiedExpression* pExpression = dynamic_cast<QMLQualifiedExpression*>($<Object>1);
+
+        if (pExpression == nullptr)
         {
-            QString sFullString = pIdentifier1->value().value<QString>() + "." + pIdentifier2->value().value<QString>();
-            pIdentifier1->setValue(sFullString);
-
-            SAFE_DELETE(pIdentifier2);
-
-            $<Object>$ = pIdentifier1;
+            pExpression = new QMLQualifiedExpression(pExpression1->position());
+            pExpression->contents() << pExpression1;
         }
-        else
-        {
-            QMLItem* pExpression1 = $<Object>1;
-            QMLItem* pExpression2 = $<Object>3;
 
-            QMLQualifiedExpression* pExpression = dynamic_cast<QMLQualifiedExpression*>($<Object>1);
+        pExpression->contents() << pExpression2;
 
-            if (pExpression == nullptr)
-            {
-                pExpression = new QMLQualifiedExpression(pContext->position());
-                pExpression->contents().append(pExpression1);
-            }
-
-            pExpression->contents().append(pExpression2);
-
-            $<Object>$ = pExpression;
-        }
+        $<Object>$ = pExpression;
     }
 ;
 
@@ -1334,7 +1525,7 @@ JSFunctionCall :
         QMLItem* pName = $<Object>1;
         QMLComplexItem* pArguments = dynamic_cast<QMLComplexItem*>($<Object>3);
 
-        $<Object>$ = new QMLFunctionCall(pContext->position(), pName, pArguments);
+        $<Object>$ = new QMLFunctionCall(pName->position(), pName, pArguments);
     }
 ;
 
@@ -1366,7 +1557,7 @@ JSArgumentListOpt :
     {
         PARSER_TRACE("JSArgumentListOpt", "Empty");
 
-        $<Object>$ = nullptr;
+        $<Object>$ = new QMLComplexItem(pContext->position());
     }
     |
     JSArgumentList
@@ -1387,7 +1578,7 @@ JSArgumentList :
 
         if (pList == nullptr)
         {
-            pList = new QMLComplexItem(pContext->position());
+            pList = new QMLComplexItem(pExpression1->position());
             pList->contents().append(pExpression1);
         }
 
@@ -1404,7 +1595,7 @@ JSArgumentList :
 
         if (pList == nullptr)
         {
-            pList = new QMLComplexItem(pContext->position());
+            pList = new QMLComplexItem(pExpression1->position());
             pList->contents().append(pExpression1);
         }
 
@@ -1463,7 +1654,7 @@ JSObject :
     |
     '{' '}'
     {
-        $<Object>$ = nullptr;
+        $<Object>$ = new QMLComplexItem(pContext->position());
     }
     |
     TOKEN_DIMENSION
@@ -1503,6 +1694,8 @@ JSArrayContents :
     JSArrayContents ',' Value
     {
         $<Object>$ = $<Object>1;
+
+        SAFE_DELETE($<Object>3);
     }
 ;
 
@@ -1520,7 +1713,7 @@ JSAttributes :
 
         if (pComplex == nullptr)
         {
-            pComplex = new QMLComplexItem(pContext->position());
+            pComplex = new QMLComplexItem(pAttribute1->position());
             pComplex->contents() << pAttribute1;
         }
 
@@ -1550,7 +1743,7 @@ JSAttributeNoComma :
 
         if (pName != nullptr && pValue != nullptr)
         {
-            QMLComplexItem* pComplex = new QMLComplexItem(pContext->position(), pName);
+            QMLComplexItem* pComplex = new QMLComplexItem(pName->position(), pName);
 
             pComplex->contents() << pValue;
 
@@ -1569,7 +1762,7 @@ JSAttributeNoComma :
 
         if (pName != nullptr && pValue != nullptr)
         {
-            QMLComplexItem* pComplex = new QMLComplexItem(pContext->position(), pName);
+            QMLComplexItem* pComplex = new QMLComplexItem(pName->position(), pName);
 
             pComplex->contents() << pValue;
 

@@ -59,6 +59,8 @@ QString QMLBinaryOperation::operatorToString(EOperator eOperator) const
             return "*";
         case boDiv:
             return "/";
+        case boMod:
+            return "%";
         case boAnd:
             return "&";
         case boOr:

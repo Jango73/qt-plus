@@ -13,7 +13,8 @@
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Constructs a QMLNameValue.
+    Constructs a QMLNameValue. \br\br
+    \a pPosition is the position of the token in the file \br
 */
 QMLNameValue::QMLNameValue(const QPoint& pPosition)
     : QMLItem(pPosition)
