@@ -115,15 +115,17 @@
 #define TOKEN_ELSE              512
 #define TOKEN_FOR               513
 #define TOKEN_WHILE             514
-#define TOKEN_BREAK             515
-#define TOKEN_CONTINUE          516
-#define TOKEN_WITH              517
-#define TOKEN_RETURN            518
-#define TOKEN_TYPEOF            519
-#define TOKEN_PRAGMA            520
-#define TOKEN_ON                521
-#define TOKEN_AS                522
-#define TOKEN_SIGNAL            523
+#define TOKEN_SWITCH            515
+#define TOKEN_CASE              516
+#define TOKEN_BREAK             517
+#define TOKEN_CONTINUE          518
+#define TOKEN_WITH              519
+#define TOKEN_RETURN            520
+#define TOKEN_TYPEOF            521
+#define TOKEN_PRAGMA            522
+#define TOKEN_ON                523
+#define TOKEN_AS                524
+#define TOKEN_SIGNAL            525
 
 //-------------------------------------------------------------------------------------------------
 
@@ -152,6 +154,8 @@ QMLTreeContext::QMLTreeContext(const QString& sFileName)
     m_mTokens["else"] = TOKEN_ELSE;
     m_mTokens["for"] = TOKEN_FOR;
     m_mTokens["while"] = TOKEN_WHILE;
+    m_mTokens["switch"] = TOKEN_SWITCH;
+    m_mTokens["case"] = TOKEN_CASE;
     m_mTokens["break"] = TOKEN_BREAK;
     m_mTokens["continue"] = TOKEN_CONTINUE;
     m_mTokens["with"] = TOKEN_WITH;

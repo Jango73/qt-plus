@@ -170,10 +170,13 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, C
 
                         if (sTypeToString == sType)
                         {
-                            // qDebug() << QString("Rejecting %1 = %2").arg(sMember).arg(sType);
-
                             bHasRejects = true;
-                            lErrors << QString("%1 (%2, %3) : %4").arg(sFileName).arg(pItem->position().y()).arg(pItem->position().x()).arg(sText);
+
+                            lErrors << QString("%1 (%2, %3) : %4")
+                                       .arg(sFileName)
+                                       .arg(pItem->position().y())
+                                       .arg(pItem->position().x())
+                                       .arg(sText);
                         }
                     }
                     else
@@ -182,11 +185,13 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, C
 
                         if (sMemberToString == sValue)
                         {
-                            // qDebug() << QString("Rejecting %1 = %2").arg(sMember).arg(sValue);
-
                             bHasRejects = true;
-                            // lErrors << sText;
-                            lErrors << QString("%1 (%2, %3) : %4").arg(sFileName).arg(pItem->position().y()).arg(pItem->position().x()).arg(sText);
+
+                            lErrors << QString("%1 (%2, %3) : %4")
+                                       .arg(sFileName)
+                                       .arg(pItem->position().y())
+                                       .arg(pItem->position().x())
+                                       .arg(sText);
                         }
                     }
                 }

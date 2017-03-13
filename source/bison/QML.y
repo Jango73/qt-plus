@@ -24,6 +24,7 @@
 #include "QMLBinaryOperation.h"
 #include "QMLIf.h"
 #include "QMLFor.h"
+#include "QMLSwitch.h"
 #include "QMLConditional.h"
 #include "QMLTreeContext.h"
 
@@ -103,15 +104,17 @@ int yyerror (void*, char*);
 %token TOKEN_ELSE               512
 %token TOKEN_FOR                513
 %token TOKEN_WHILE              514
-%token TOKEN_BREAK              515
-%token TOKEN_CONTINUE           516
-%token TOKEN_WITH               517
-%token TOKEN_RETURN             518
-%token TOKEN_TYPEOF             519
-%token TOKEN_PRAGMA             520
-%token TOKEN_ON                 521
-%token TOKEN_AS                 522
-%token TOKEN_SIGNAL             523
+%token TOKEN_SWITCH             515
+%token TOKEN_CASE               516
+%token TOKEN_BREAK              517
+%token TOKEN_CONTINUE           518
+%token TOKEN_WITH               519
+%token TOKEN_RETURN             520
+%token TOKEN_TYPEOF             521
+%token TOKEN_PRAGMA             522
+%token TOKEN_ON                 523
+%token TOKEN_AS                 524
+%token TOKEN_SIGNAL             525
 
 %nonassoc TOKEN_IF
 %nonassoc TOKEN_ELSE
@@ -723,6 +726,20 @@ JSStatementNoColon :
         $<Object>$ = $<Object>1;
     }
     |
+    JSStatement_Switch
+    {
+        PARSER_TRACE("JSStatementNoColon", "JSStatement_Switch");
+
+        $<Object>$ = $<Object>1;
+    }
+    |
+    JSStatement_Case
+    {
+        PARSER_TRACE("JSStatementNoColon", "JSStatement_Case");
+
+        $<Object>$ = $<Object>1;
+    }
+    |
     JSStatement_Break
     {
         PARSER_TRACE("JSStatement_Break", "JSStatement_Break");
@@ -801,31 +818,52 @@ JSStatement_For :
 JSStatement_While :
     TOKEN_WHILE '(' JSExpression ')' JSStatement
     {
-        QMLItem* pInitialization = nullptr;
+        QMLItem* pInitialization = new QMLItem(pContext->position());
         QMLItem* pCondition = $<Object>3;
-        QMLItem* pIncrementation = nullptr;
+        QMLItem* pIncrementation = new QMLItem(pContext->position());
         QMLItem* pContent = $<Object>5;
 
-        if (pInitialization == nullptr)
-        {
-            pInitialization = new QMLItem(pContext->position());
-        }
-
         $<Object>$ = new QMLFor(pInitialization->position(), pInitialization, pCondition, pIncrementation, pContent);
+    }
+;
+
+JSStatement_Switch :
+    TOKEN_SWITCH '(' JSExpression ')' JSStatementBlock
+    {
+        QMLItem* pExpression = $<Object>3;
+        QMLComplexItem* pCases = dynamic_cast<QMLComplexItem*>($<Object>5);
+
+        if (pExpression != nullptr && pCases != nullptr)
+        {
+            QMLItem* pSwitch = new QMLSwitch(pExpression->position(), pExpression, pCases);
+
+            $<Object>$ = pSwitch;
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
+    }
+;
+
+JSStatement_Case :
+    TOKEN_CASE JSExpression ':'
+    {
+        $<Object>$ = new QMLItem(pContext->position(), "case");
     }
 ;
 
 JSStatement_Break :
     TOKEN_BREAK
     {
-        $<Object>$ = nullptr;
+        $<Object>$ = new QMLItem(pContext->position(), "break");
     }
 ;
 
 JSStatement_Continue :
     TOKEN_CONTINUE
     {
-        $<Object>$ = nullptr;
+        $<Object>$ = new QMLItem(pContext->position(), "continue");
     }
 ;
 
