@@ -21,6 +21,7 @@
 #include "QMLFunction.h"
 #include "QMLFunctionCall.h"
 #include "QMLQualifiedExpression.h"
+#include "QMLUnaryOperation.h"
 #include "QMLBinaryOperation.h"
 #include "QMLIf.h"
 #include "QMLFor.h"
@@ -849,21 +850,23 @@ JSStatement_Switch :
 JSStatement_Case :
     TOKEN_CASE JSExpression ':'
     {
-        $<Object>$ = new QMLItem(pContext->position(), "case");
+        QMLItem* pExpression = $<Object>2;
+
+        $<Object>$ = new QMLUnaryOperation(pContext->position(), pExpression, QMLUnaryOperation::uoCase);
     }
 ;
 
 JSStatement_Break :
     TOKEN_BREAK
     {
-        $<Object>$ = new QMLItem(pContext->position(), "break");
+        $<Object>$ = new QMLUnaryOperation(pContext->position(), nullptr, QMLUnaryOperation::uoBreak);
     }
 ;
 
 JSStatement_Continue :
     TOKEN_CONTINUE
     {
-        $<Object>$ = new QMLItem(pContext->position(), "continue");
+        $<Object>$ = new QMLUnaryOperation(pContext->position(), nullptr, QMLUnaryOperation::uoContinue);
     }
 ;
 
@@ -877,7 +880,9 @@ JSStatement_With :
 JSStatement_Return :
     TOKEN_RETURN JSExpressionOpt
     {
-        $<Object>$ = $<Object>2;
+        QMLItem* pExpression = $<Object>2;
+
+        $<Object>$ = new QMLUnaryOperation(pContext->position(), pExpression, QMLUnaryOperation::uoReturn);
     }
 ;
 
