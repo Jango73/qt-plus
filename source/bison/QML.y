@@ -1702,12 +1702,25 @@ JSObject :
     |
     TOKEN_DIMENSION
     {
-        $<Object>$ = new QMLComplexItem(pContext->position());
+        QMLComplexItem* pComplex = new QMLComplexItem(pContext->position());
+        pComplex->setIsArray(true);
+
+        $<Object>$ = pComplex;
     }
     |
     '[' JSArrayContents ']'
     {
-        $<Object>$ = $<Object>2;
+        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>2);
+        QMLItem* pItem1 = $<Object>2;
+
+        if (pComplex == nullptr)
+        {
+            pComplex = new QMLComplexItem(pItem1->position());
+            pComplex->contents() << pItem1;
+            pComplex->setIsArray(true);
+        }
+
+        $<Object>$ = pComplex;
     }
 ;
 
@@ -1736,9 +1749,17 @@ JSArrayContents :
     |
     JSArrayContents ',' Value
     {
-        $<Object>$ = $<Object>1;
+        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>1);
+        QMLItem* pItem1 = $<Object>1;
+        QMLItem* pItem2 = $<Object>3;
 
-        SAFE_DELETE($<Object>3);
+        if (pComplex == nullptr)
+        {
+            pComplex = new QMLComplexItem(pItem1->position());
+            pComplex->contents() << pItem1;
+        }
+
+        pComplex->contents() << pItem2;
     }
 ;
 

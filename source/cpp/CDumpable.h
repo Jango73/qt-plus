@@ -28,6 +28,12 @@ public:
     //! Ferme un block dans le fichier de sortie
     void dumpCloseBlock(QTextStream& stream, int iIdent);
 
+    //! Ouvre un tableau dans le fichier de sortie
+    void dumpOpenArray(QTextStream& stream, int iIdent);
+
+    //! Ferme un tableau dans le fichier de sortie
+    void dumpCloseArray(QTextStream& stream, int iIdent);
+
     //! Ecrit un texte indenté dans le fichier de sortie
     void dumpNoIndentNoNewLine(QTextStream& stream, QString sText);
 

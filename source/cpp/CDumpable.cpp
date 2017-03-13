@@ -36,6 +36,20 @@ void CDumpable::dumpCloseBlock(QTextStream& stream, int iIdent)
 
 //-------------------------------------------------------------------------------------------------
 
+void CDumpable::dumpOpenArray(QTextStream& stream, int iIdent)
+{
+    dumpIndented(stream, iIdent, "[");
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CDumpable::dumpCloseArray(QTextStream& stream, int iIdent)
+{
+    dumpIndented(stream, iIdent, "]");
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void CDumpable::dumpNoIndentNoNewLine(QTextStream& stream, QString sText)
 {
     stream << sText;

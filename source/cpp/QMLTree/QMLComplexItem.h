@@ -38,6 +38,9 @@ public:
     //!
     void setName(QMLItem* pName);
 
+    //!
+    void setIsArray(bool bValue);
+
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
@@ -47,6 +50,9 @@ public:
 
     //!
     QVector<QMLItem*>& contents();
+
+    //!
+    bool isArray() const;
 
     //!
     const QVector<QMLItem*>& contents() const;
@@ -75,4 +81,5 @@ protected:
 
     QMLItem*            m_pName;
     QVector<QMLItem*>   m_vContents;
+    bool                m_bIsArray;
 };

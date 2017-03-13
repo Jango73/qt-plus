@@ -7,6 +7,7 @@
 QMLComplexItem::QMLComplexItem(const QPoint& pPosition, QMLItem* pName)
     : QMLItem(pPosition)
     , m_pName(pName)
+    , m_bIsArray(false)
 {
 }
 
@@ -14,12 +15,12 @@ QMLComplexItem::QMLComplexItem(const QPoint& pPosition, QMLItem* pName)
 
 QMLComplexItem::~QMLComplexItem()
 {
-    if (m_pName != NULL)
+    if (m_pName != nullptr)
         delete m_pName;
 
     foreach (QMLItem* pItem, m_vContents)
     {
-        if (pItem != NULL)
+        if (pItem != nullptr)
         {
             delete pItem;
         }
@@ -30,10 +31,17 @@ QMLComplexItem::~QMLComplexItem()
 
 void QMLComplexItem::setName(QMLItem* pName)
 {
-    if (m_pName != NULL)
+    if (m_pName != nullptr)
         delete m_pName;
 
     m_pName = pName;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void QMLComplexItem::setIsArray(bool bValue)
+{
+    m_bIsArray = bValue;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -48,6 +56,13 @@ QMLItem* QMLComplexItem::name() const
 QVector<QMLItem*>& QMLComplexItem::contents()
 {
     return m_vContents;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+bool QMLComplexItem::isArray() const
+{
+    return m_bIsArray;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -99,36 +114,56 @@ void QMLComplexItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIte
 
     if (m_vContents.count() == 0)
     {
+        if (m_bIsArray)
+        {
+            dumpNoIndentNoNewLine(stream, "[]");
+        }
     }
     else if (m_vContents.count() == 1)
     {
+        if (m_bIsArray)
+            dumpNoIndentNoNewLine(stream, "[");
+
         if (m_vContents[0] != nullptr)
         {
             m_vContents[0]->toQML(stream, pContext, this, iIdent);
         }
+
+        if (m_bIsArray)
+            dumpNoIndentNoNewLine(stream, "]");
     }
     else
     {
-        if (m_pName != NULL)
+        if (m_pName != nullptr)
         {
             dumpIndentedNoNewLine(stream, iIdent, "");
             m_pName->toQML(stream, pContext, this, iIdent);
             dumpNewLine(stream);
         }
 
-        if (pParent != NULL)
-            dumpOpenBlock(stream, iIdent);
+        if (pParent != nullptr)
+        {
+            if (m_bIsArray)
+                dumpOpenArray(stream, iIdent);
+            else
+                dumpOpenBlock(stream, iIdent);
+        }
 
         foreach (QMLItem* pItem, m_vContents)
         {
-            if (pItem != NULL)
+            if (pItem != nullptr)
             {
                 pItem->toQML(stream, pContext, this, pParent != NULL ? iIdent + 1 : iIdent);
             }
         }
 
-        if (pParent != NULL)
-            dumpCloseBlock(stream, iIdent);
+        if (pParent != nullptr)
+        {
+            if (m_bIsArray)
+                dumpCloseArray(stream, iIdent);
+            else
+                dumpCloseBlock(stream, iIdent);
+        }
     }
 }
 
@@ -138,14 +173,14 @@ CXMLNode QMLComplexItem::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pP
 {
     CXMLNode xNode = QMLItem::toXMLNode(pContext, pParent);
 
-    if (m_pName != NULL)
+    if (m_pName != nullptr)
     {
         xNode.attributes()["Name"] = m_pName->value().toString();
     }
 
     foreach (QMLItem* pItem, m_vContents)
     {
-        if (pItem != NULL)
+        if (pItem != nullptr)
         {
             CXMLNode xChild = pItem->toXMLNode(pContext, this);
             xNode.nodes() << xChild;

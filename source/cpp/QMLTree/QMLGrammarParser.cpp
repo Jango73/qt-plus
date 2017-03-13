@@ -622,10 +622,10 @@ static const yytype_uint16 yyrline[] =
     1324,  1339,  1354,  1371,  1376,  1391,  1408,  1413,  1428,  1443,
     1458,  1473,  1490,  1495,  1500,  1505,  1512,  1519,  1541,  1548,
     1557,  1564,  1576,  1583,  1590,  1599,  1606,  1615,  1631,  1652,
-    1657,  1662,  1669,  1674,  1681,  1686,  1693,  1698,  1703,  1708,
-    1715,  1720,  1727,  1732,  1737,  1746,  1751,  1770,  1775,  1782,
-    1801,  1822,  1827,  1834,  1839,  1853,  1869,  1876,  1881,  1886,
-    1891,  1898,  1905,  1912,  1919,  1935
+    1657,  1662,  1669,  1674,  1681,  1686,  1693,  1698,  1703,  1711,
+    1728,  1733,  1740,  1745,  1750,  1767,  1772,  1791,  1796,  1803,
+    1822,  1843,  1848,  1855,  1860,  1874,  1890,  1897,  1902,  1907,
+    1912,  1919,  1926,  1933,  1940,  1956
 };
 #endif
 
@@ -3851,23 +3851,36 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 1704 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
-        (yyval.Object) = new QMLComplexItem(pContext->position());
+        QMLComplexItem* pComplex = new QMLComplexItem(pContext->position());
+        pComplex->setIsArray(true);
+
+        (yyval.Object) = pComplex;
     ;}
     break;
 
   case 149:
 
 /* Line 1455 of yacc.c  */
-#line 1709 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1712 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
-        (yyval.Object) = (yyvsp[(2) - (3)].Object);
+        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>((yyvsp[(2) - (3)].Object));
+        QMLItem* pItem1 = (yyvsp[(2) - (3)].Object);
+
+        if (pComplex == nullptr)
+        {
+            pComplex = new QMLComplexItem(pItem1->position());
+            pComplex->contents() << pItem1;
+            pComplex->setIsArray(true);
+        }
+
+        (yyval.Object) = pComplex;
     ;}
     break;
 
   case 150:
 
 /* Line 1455 of yacc.c  */
-#line 1716 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1729 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -3876,7 +3889,7 @@ yyreduce:
   case 151:
 
 /* Line 1455 of yacc.c  */
-#line 1721 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1734 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (3)].Object);
 
@@ -3887,7 +3900,7 @@ yyreduce:
   case 152:
 
 /* Line 1455 of yacc.c  */
-#line 1728 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1741 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -3896,7 +3909,7 @@ yyreduce:
   case 153:
 
 /* Line 1455 of yacc.c  */
-#line 1733 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1746 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -3905,18 +3918,26 @@ yyreduce:
   case 154:
 
 /* Line 1455 of yacc.c  */
-#line 1738 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1751 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
-        (yyval.Object) = (yyvsp[(1) - (3)].Object);
+        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>((yyvsp[(1) - (3)].Object));
+        QMLItem* pItem1 = (yyvsp[(1) - (3)].Object);
+        QMLItem* pItem2 = (yyvsp[(3) - (3)].Object);
 
-        SAFE_DELETE((yyvsp[(3) - (3)].Object));
+        if (pComplex == nullptr)
+        {
+            pComplex = new QMLComplexItem(pItem1->position());
+            pComplex->contents() << pItem1;
+        }
+
+        pComplex->contents() << pItem2;
     ;}
     break;
 
   case 155:
 
 /* Line 1455 of yacc.c  */
-#line 1747 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1768 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -3925,7 +3946,7 @@ yyreduce:
   case 156:
 
 /* Line 1455 of yacc.c  */
-#line 1752 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1773 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>((yyvsp[(1) - (2)].Object));
         QMLItem* pAttribute1 = (yyvsp[(1) - (2)].Object);
@@ -3946,7 +3967,7 @@ yyreduce:
   case 157:
 
 /* Line 1455 of yacc.c  */
-#line 1771 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1792 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -3955,7 +3976,7 @@ yyreduce:
   case 158:
 
 /* Line 1455 of yacc.c  */
-#line 1776 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1797 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (2)].Object);
     ;}
@@ -3964,7 +3985,7 @@ yyreduce:
   case 159:
 
 /* Line 1455 of yacc.c  */
-#line 1783 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1804 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLItem* pName = (yyvsp[(1) - (3)].Object);
         QMLItem* pValue = (yyvsp[(3) - (3)].Object);
@@ -3987,7 +4008,7 @@ yyreduce:
   case 160:
 
 /* Line 1455 of yacc.c  */
-#line 1802 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1823 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLItem* pName = (yyvsp[(1) - (3)].Object);
         QMLItem* pValue = (yyvsp[(3) - (3)].Object);
@@ -4010,7 +4031,7 @@ yyreduce:
   case 161:
 
 /* Line 1455 of yacc.c  */
-#line 1823 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1844 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -4019,7 +4040,7 @@ yyreduce:
   case 162:
 
 /* Line 1455 of yacc.c  */
-#line 1828 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1849 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -4028,7 +4049,7 @@ yyreduce:
   case 163:
 
 /* Line 1455 of yacc.c  */
-#line 1835 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1856 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -4037,7 +4058,7 @@ yyreduce:
   case 164:
 
 /* Line 1455 of yacc.c  */
-#line 1840 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1861 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLItem* pLeft = (yyvsp[(1) - (3)].Object);
         QMLItem* pRite = (yyvsp[(3) - (3)].Object);
@@ -4053,7 +4074,7 @@ yyreduce:
   case 165:
 
 /* Line 1455 of yacc.c  */
-#line 1854 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1875 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QString* pString = (yyvsp[(1) - (1)].String);
 
@@ -4071,7 +4092,7 @@ yyreduce:
   case 166:
 
 /* Line 1455 of yacc.c  */
-#line 1870 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1891 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) =  new QMLItem(pContext->position(), pContext->tokenValue());
     ;}
@@ -4080,7 +4101,7 @@ yyreduce:
   case 167:
 
 /* Line 1455 of yacc.c  */
-#line 1877 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1898 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -4089,7 +4110,7 @@ yyreduce:
   case 168:
 
 /* Line 1455 of yacc.c  */
-#line 1882 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1903 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -4098,7 +4119,7 @@ yyreduce:
   case 169:
 
 /* Line 1455 of yacc.c  */
-#line 1887 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1908 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -4107,7 +4128,7 @@ yyreduce:
   case 170:
 
 /* Line 1455 of yacc.c  */
-#line 1892 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1913 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -4116,7 +4137,7 @@ yyreduce:
   case 171:
 
 /* Line 1455 of yacc.c  */
-#line 1899 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1920 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = new QMLItem(pContext->position(), QVariant((yyvsp[(1) - (1)].Boolean)));
     ;}
@@ -4125,7 +4146,7 @@ yyreduce:
   case 172:
 
 /* Line 1455 of yacc.c  */
-#line 1906 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1927 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = new QMLItem(pContext->position(), QVariant((yyvsp[(1) - (1)].Integer)));
     ;}
@@ -4134,7 +4155,7 @@ yyreduce:
   case 173:
 
 /* Line 1455 of yacc.c  */
-#line 1913 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1934 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) =  new QMLItem(pContext->position(), QVariant((yyvsp[(1) - (1)].Real)));
     ;}
@@ -4143,7 +4164,7 @@ yyreduce:
   case 174:
 
 /* Line 1455 of yacc.c  */
-#line 1920 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1941 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QString* pString = (yyvsp[(1) - (1)].String);
 
@@ -4161,7 +4182,7 @@ yyreduce:
   case 175:
 
 /* Line 1455 of yacc.c  */
-#line 1935 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1956 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = nullptr;
     ;}
@@ -4170,7 +4191,7 @@ yyreduce:
 
 
 /* Line 1455 of yacc.c  */
-#line 4174 "D:/Work/Projects/qt-plus/source/cpp/QMLTree/QMLGrammarParser.cpp"
+#line 4195 "D:/Work/Projects/qt-plus/source/cpp/QMLTree/QMLGrammarParser.cpp"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -4382,7 +4403,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 1939 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1960 "D:/Work/Projects/qt-plus/source/bison/QML.y"
 
 
 /* -------------- body section -------------- */
