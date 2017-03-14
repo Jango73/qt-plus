@@ -264,16 +264,23 @@ QMLTreeContext::EParseError QMLTreeContext::parse()
 
     if (m_vFiles.count() > 0)
     {
+        // Stack a new scope with the first file
         m_sScopes.push(new QMLScope(m_vFiles[0]));
+
+        // Tell the world parsing started
+        emit parsingStarted(SCOPE.m_sFileName);
 
         m_eError = parse_Internal();
 
-        // Delete scopes
+        emit parsingFinished(SCOPE.m_sFileName);
+
+        // Delete all scopes
         foreach (QMLScope* pScope, m_sScopes)
         {
             delete pScope;
         }
 
+        // Clear scope stack
         m_sScopes.clear();
     }
     else
@@ -282,6 +289,16 @@ QMLTreeContext::EParseError QMLTreeContext::parse()
     }
 
     return m_eError;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void QMLTreeContext::threadedParse()
+{
+    if (isRunning() == false)
+    {
+        start();
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -315,6 +332,9 @@ QMLTreeContext::EParseError QMLTreeContext::parseImportFile(const QString& sFile
             {
                 m_vFiles << sFileName;
                 m_sScopes.push(new QMLScope(sFileName));
+
+                // Tell the world parsing started
+                emit importParsingStarted(SCOPE.m_sFileName);
 
                 parse_Internal();
 
@@ -366,6 +386,16 @@ void QMLTreeContext::showError(const QString& sText)
 
     m_eError = SCOPE.m_eError = peSyntaxError;
     m_sErrorString = sFullError;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Implements the thread's \c run method, simply calls \c parse().
+*/
+void QMLTreeContext::run()
+{
+    parse();
 }
 
 //-------------------------------------------------------------------------------------------------

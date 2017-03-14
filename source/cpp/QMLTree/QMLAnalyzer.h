@@ -15,13 +15,13 @@
 #include "QMLFunctionCall.h"
 
 // Qt
-#include <QObject>
+#include <QThread>
 #include <QString>
 #include <QVariant>
 
 //-------------------------------------------------------------------------------------------------
 
-class QTPLUSSHARED_EXPORT QMLAnalyzer : public QObject
+class QTPLUSSHARED_EXPORT QMLAnalyzer : public QThread
 {
     Q_OBJECT
 
@@ -42,7 +42,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Set folder
-    void setFolder(const QString& sFolder);
+    void setFolder(const QString& sFolder, bool bIncludeSubFolders = false);
 
     //! Set folder
     void setFile(const QString& sFileName);
@@ -62,10 +62,34 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    bool analyze(CXMLNode xGrammar);
+    bool analyze(CXMLNode xGrammar, bool bIncludeImports = false);
+
+    //!
+    void threadedAnalyze(CXMLNode xGrammar, bool bIncludeImports = false);
 
     //!
     void analyzeFile(const QString& sFileName, CXMLNode xGrammar);
+
+    //-------------------------------------------------------------------------------------------------
+    // Overridden methods
+    //-------------------------------------------------------------------------------------------------
+
+    virtual void run() Q_DECL_OVERRIDE;
+
+    //-------------------------------------------------------------------------------------------------
+    // Signals
+    //-------------------------------------------------------------------------------------------------
+
+signals:
+
+    //!
+    void parsingStarted(QString sFileName);
+
+    //!
+    void parsingFinished(QString sFileName);
+
+    //!
+    void importParsingStarted(QString sFileName);
 
     //-------------------------------------------------------------------------------------------------
     // Protected control methods
@@ -85,4 +109,7 @@ protected:
     QString                         m_sFile;
     QMap<QString, QMLTreeContext*>  m_mContexts;     // The QML context used for parsing
     QStringList                     m_lErrors;
+    CXMLNode                        m_xGrammar;
+    bool                            m_bIncludeImports;
+    bool                            m_bIncludeSubFolders;
 };

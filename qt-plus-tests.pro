@@ -12,6 +12,10 @@ TEMPLATE = app
 
 SOURCES += \
     source/cpp/tests-main.cpp \
+    source/cpp/ParsingMonitor.cpp
+
+HEADERS += \
+    source/cpp/ParsingMonitor.h
 
 DEPENDPATH += qt-plus
 

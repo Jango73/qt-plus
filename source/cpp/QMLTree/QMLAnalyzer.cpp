@@ -25,7 +25,9 @@
     Constructs a CCodeAnalyzer.
 */
 QMLAnalyzer::QMLAnalyzer()
-    : QObject(NULL)
+    : QThread(NULL)
+    , m_bIncludeImports(false)
+    , m_bIncludeSubFolders(false)
 {
 }
 
@@ -43,9 +45,10 @@ QMLAnalyzer::~QMLAnalyzer()
 /*!
     Sets the base folder member to \a sFolder.
 */
-void QMLAnalyzer::setFolder(const QString& sFolder)
+void QMLAnalyzer::setFolder(const QString& sFolder, bool bIncludeSubFolders)
 {
     m_sFolder = sFolder;
+    m_bIncludeSubFolders = bIncludeSubFolders;
 }
 
 /*!
@@ -72,8 +75,11 @@ const QStringList& QMLAnalyzer::errors() const
     return m_lErrors;
 }
 
-bool QMLAnalyzer::analyze(CXMLNode xGrammar)
+bool QMLAnalyzer::analyze(CXMLNode xGrammar, bool bIncludeImports)
 {
+    m_xGrammar = xGrammar;
+    m_bIncludeImports = bIncludeImports;
+
     foreach (QString sKey, m_mContexts.keys())
     {
         delete m_mContexts[sKey];
@@ -108,20 +114,42 @@ bool QMLAnalyzer::analyze(CXMLNode xGrammar)
     return true;
 }
 
+void QMLAnalyzer::threadedAnalyze(CXMLNode xGrammar, bool bIncludeImports)
+{
+    if (isRunning() == false)
+    {
+        m_xGrammar = xGrammar;
+        m_bIncludeImports = bIncludeImports;
+
+        start();
+    }
+}
+
 void QMLAnalyzer::analyzeFile(const QString& sFileName, CXMLNode xGrammar)
 {
     m_mContexts[sFileName] = new QMLTreeContext(sFileName);
 
-    m_mContexts[sFileName]->setIncludeImports(false);
+    connect(m_mContexts[sFileName], SIGNAL(parsingStarted(QString)), this, SIGNAL(parsingStarted(QString)), Qt::DirectConnection);
+    connect(m_mContexts[sFileName], SIGNAL(parsingFinished(QString)), this, SIGNAL(parsingFinished(QString)), Qt::DirectConnection);
+    connect(m_mContexts[sFileName], SIGNAL(importParsingStarted(QString)), this, SIGNAL(importParsingStarted(QString)), Qt::DirectConnection);
+
+    m_mContexts[sFileName]->setIncludeImports(m_bIncludeImports);
 
     if (m_mContexts[sFileName]->parse() == QMLTreeContext::peSuccess)
     {
-        m_lErrors << runGrammar(sFileName, m_mContexts[sFileName], xGrammar);
+        QFileInfo info(sFileName);
+        QString sShortFileName = info.baseName();
+        m_lErrors << runGrammar(sShortFileName, m_mContexts[sFileName], xGrammar);
     }
     else
     {
         m_lErrors << m_mContexts[sFileName]->errorString();
     }
+}
+
+void QMLAnalyzer::run()
+{
+    analyze(m_xGrammar, m_bIncludeImports);
 }
 
 QStringList QMLAnalyzer::runGrammar(const QString& sFileName, QMLTreeContext* pContext, CXMLNode& xGrammar)

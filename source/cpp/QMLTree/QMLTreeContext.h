@@ -12,6 +12,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QStack>
+#include <QThread>
 
 // Library
 #include "../CXMLNodable.h"
@@ -33,8 +34,10 @@ typedef union
 //-------------------------------------------------------------------------------------------------
 
 //!
-class QTPLUSSHARED_EXPORT QMLTreeContext : public CXMLNodableContext
+class QTPLUSSHARED_EXPORT QMLTreeContext : public QThread, public CXMLNodableContext
 {
+    Q_OBJECT
+
 public:
 
     //-------------------------------------------------------------------------------------------------
@@ -96,6 +99,9 @@ public:
     EParseError parse();
 
     //!
+    void threadedParse();
+
+    //!
     EParseError parseImportFile(const QString& sFileName);
 
     //!
@@ -106,6 +112,27 @@ public:
 
     //!
     void showError(const QString& sText);
+
+    //-------------------------------------------------------------------------------------------------
+    // Overridden methods
+    //-------------------------------------------------------------------------------------------------
+
+    virtual void run() Q_DECL_OVERRIDE;
+
+    //-------------------------------------------------------------------------------------------------
+    // Signals
+    //-------------------------------------------------------------------------------------------------
+
+signals:
+
+    //!
+    void parsingStarted(QString sFileName);
+
+    //!
+    void parsingFinished(QString sFileName);
+
+    //!
+    void importParsingStarted(QString sFileName);
 
 private:
 
@@ -132,8 +159,7 @@ private:
 protected:
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes de contrôle protégées
-    // Protected control methods
+    // Protected classes
     //-------------------------------------------------------------------------------------------------
 
     class QMLScope
@@ -192,6 +218,10 @@ protected:
         bool                m_bParsingFloat;
         bool                m_bParsingHexa;
     };
+
+    //-------------------------------------------------------------------------------------------------
+    // Protected control methods
+    //-------------------------------------------------------------------------------------------------
 
     EParseError parse_Internal();
 
