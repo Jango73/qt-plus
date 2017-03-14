@@ -242,25 +242,28 @@ int QMLAnalyzer::runGrammar_CountNested(const QString& sClassName, QMLItem* pIte
 {
     int iCount = 0;
 
-    if (pItem->metaObject()->className() == sClassName)
+    if (pItem != nullptr)
     {
-        iCount++;
-    }
-
-    QMap<QString, QMLItem*> mMembers = pItem->members();
-
-    foreach (QString sKey, mMembers.keys())
-    {
-        iCount += runGrammar_CountNested(sClassName, mMembers[sKey]);
-    }
-
-    QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(pItem);
-
-    if (pComplex != nullptr)
-    {
-        foreach (QMLItem* pChildItem, pComplex->contents())
+        if (pItem->metaObject()->className() == sClassName)
         {
-            iCount += runGrammar_CountNested(sClassName, pChildItem);
+            iCount++;
+        }
+
+        QMap<QString, QMLItem*> mMembers = pItem->members();
+
+        foreach (QString sKey, mMembers.keys())
+        {
+            iCount += runGrammar_CountNested(sClassName, mMembers[sKey]);
+        }
+
+        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(pItem);
+
+        if (pComplex != nullptr)
+        {
+            foreach (QMLItem* pChildItem, pComplex->contents())
+            {
+                iCount += runGrammar_CountNested(sClassName, pChildItem);
+            }
         }
     }
 

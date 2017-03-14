@@ -92,30 +92,33 @@ int yyerror (void*, char*);
 
 %token TOKEN_IMPORT             500
 %token TOKEN_PROPERTY           501
-%token TOKEN_ALIAS              502
-%token TOKEN_VAR                503
-%token TOKEN_BOOL               504
-%token TOKEN_INT                505
-%token TOKEN_REAL               506
-%token TOKEN_STRING             507
-%token TOKEN_VARIANT            508
-%token TOKEN_COLOR              509
-%token TOKEN_FUNCTION           510
-%token TOKEN_IF                 511
-%token TOKEN_ELSE               512
-%token TOKEN_FOR                513
-%token TOKEN_WHILE              514
-%token TOKEN_SWITCH             515
-%token TOKEN_CASE               516
-%token TOKEN_BREAK              517
-%token TOKEN_CONTINUE           518
-%token TOKEN_WITH               519
-%token TOKEN_RETURN             520
-%token TOKEN_TYPEOF             521
-%token TOKEN_PRAGMA             522
-%token TOKEN_ON                 523
-%token TOKEN_AS                 524
-%token TOKEN_SIGNAL             525
+%token TOKEN_DEFAULT            502
+%token TOKEN_READ_ONLY          503
+%token TOKEN_ALIAS              504
+%token TOKEN_VAR                505
+%token TOKEN_BOOL               506
+%token TOKEN_INT                507
+%token TOKEN_REAL               508
+%token TOKEN_STRING             509
+%token TOKEN_VARIANT            510
+%token TOKEN_COLOR              511
+%token TOKEN_FUNCTION           512
+%token TOKEN_IF                 513
+%token TOKEN_ELSE               514
+%token TOKEN_FOR                515
+%token TOKEN_IN                 516
+%token TOKEN_WHILE              517
+%token TOKEN_SWITCH             518
+%token TOKEN_CASE               519
+%token TOKEN_BREAK              520
+%token TOKEN_CONTINUE           521
+%token TOKEN_WITH               522
+%token TOKEN_RETURN             523
+%token TOKEN_TYPEOF             524
+%token TOKEN_PRAGMA             525
+%token TOKEN_ON                 526
+%token TOKEN_AS                 527
+%token TOKEN_SIGNAL             528
 
 %nonassoc TOKEN_IF
 %nonassoc TOKEN_ELSE
@@ -145,7 +148,7 @@ Declarations :
 
         if (pItem != nullptr)
         {
-            pContext->item().contents().append(pItem);
+            pContext->item().contents() << pItem;
         }
     }
     |
@@ -157,7 +160,7 @@ Declarations :
 
         if (pItem != nullptr)
         {
-            pContext->item().contents().append(pItem);
+            pContext->item().contents() << pItem;
         }
     }
 ;
@@ -410,12 +413,12 @@ PropertyDeclaration :
 ;
 
 PropertyDeclarationNoColon :
-    TOKEN_PROPERTY Identifier Identifier
+    PropertyModifiersOpt TOKEN_PROPERTY Identifier Identifier
     {
-        PARSER_TRACE("PropertyDeclarationNoColon", "TOKEN_PROPERTY Identifier Identifier");
+        PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY Identifier Identifier");
 
-        QMLType* pType = QMLType::fromQMLItem(dynamic_cast<QMLItem*>($<Object>2));
-        QMLItem* pName = dynamic_cast<QMLItem*>($<Object>3);
+        QMLType* pType = QMLType::fromQMLItem(dynamic_cast<QMLItem*>($<Object>3));
+        QMLItem* pName = dynamic_cast<QMLItem*>($<Object>4);
 
         if (pType != nullptr && pName != nullptr)
         {
@@ -427,13 +430,13 @@ PropertyDeclarationNoColon :
         }
     }
     |
-    TOKEN_PROPERTY Identifier Identifier ':' PropertyContent
+    PropertyModifiersOpt TOKEN_PROPERTY Identifier Identifier ':' PropertyContent
     {
-        PARSER_TRACE("PropertyDeclarationNoColon", "TOKEN_PROPERTY Identifier Identifier ':' PropertyContent");
+        PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY Identifier Identifier ':' PropertyContent");
 
-        QMLType* pType = QMLType::fromQMLItem(dynamic_cast<QMLItem*>($<Object>2));
-        QMLItem* pName = dynamic_cast<QMLItem*>($<Object>3);
-        QMLItem* pData = dynamic_cast<QMLItem*>($<Object>5);
+        QMLType* pType = QMLType::fromQMLItem(dynamic_cast<QMLItem*>($<Object>3));
+        QMLItem* pName = dynamic_cast<QMLItem*>($<Object>4);
+        QMLItem* pData = dynamic_cast<QMLItem*>($<Object>6);
 
         if (pType != nullptr && pName != nullptr)
         {
@@ -445,12 +448,12 @@ PropertyDeclarationNoColon :
         }
     }
     |
-    TOKEN_PROPERTY TOKEN_ALIAS Identifier ':' PropertyContent
+    PropertyModifiersOpt TOKEN_PROPERTY TOKEN_ALIAS Identifier ':' PropertyContent
     {
-        PARSER_TRACE("PropertyDeclarationNoColon", "TOKEN_PROPERTY TOKEN_ALIAS Identifier ':' PropertyContent");
+        PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY TOKEN_ALIAS Identifier ':' PropertyContent");
 
-        QMLItem* pName = dynamic_cast<QMLItem*>($<Object>3);
-        QMLItem* pData = dynamic_cast<QMLItem*>($<Object>5);
+        QMLItem* pName = dynamic_cast<QMLItem*>($<Object>4);
+        QMLItem* pData = dynamic_cast<QMLItem*>($<Object>6);
 
         if (pName != nullptr)
         {
@@ -463,6 +466,30 @@ PropertyDeclarationNoColon :
     }
 ;
 
+PropertyModifiersOpt :
+    Empty
+    {
+        $<Object>$ = nullptr;
+    }
+    |
+    PropertyModifiers
+    {
+        $<Object>$ = $<Object>1;
+    }
+;
+
+PropertyModifiers:
+    TOKEN_DEFAULT
+    {
+        $<Object>$ = nullptr;
+    }
+    |
+    TOKEN_READ_ONLY
+    {
+        $<Object>$ = nullptr;
+    }
+;
+
 PropertyAssignment :
     QualifiedIdentifier ':' PropertyContent
     {
@@ -471,16 +498,6 @@ PropertyAssignment :
         QMLItem* pName = $<Object>1;
         QMLItem* pContent = $<Object>3;
         QMLPropertyAssignment* pAssignment = new QMLPropertyAssignment(pContext->position(), pName, pContent);
-
-        $<Object>$ = pAssignment;
-    }
-    |
-    TOKEN_PROPERTY ':' PropertyContent
-    {
-        PARSER_TRACE("PropertyAssignment", "TOKEN_PROPERTY ':' PropertyContent");
-
-        QMLItem* pContent = $<Object>3;
-        QMLPropertyAssignment* pAssignment = new QMLPropertyAssignment(pContext->position(), new QMLItem(pContext->position(), QString(TOKEN_PROPERTY)), pContent);
 
         $<Object>$ = pAssignment;
     }
@@ -632,6 +649,13 @@ JSFunctionParameter :
 ;
 
 JSStatementBlock :
+    '{' Empty '}'
+    {
+        PARSER_TRACE("JSStatementBlock", "'{' Empty '}'");
+
+        $<Object>$ = $<Object>2;
+    }
+    |
     '{' JSStatements '}'
     {
         PARSER_TRACE("JSStatementBlock", "'{' JSStatements '}'");
@@ -814,6 +838,31 @@ JSStatement_For :
 
         $<Object>$ = new QMLFor(pInitialization->position(), pInitialization, pCondition, pIncrementation, pContent);
     }
+    |
+    TOKEN_FOR '(' JSVariablesOrExpressionOpt TOKEN_IN JSExpression ')' JSStatement
+    {
+        QMLItem* pInitialization = $<Object>3;
+        QMLItem* pCondition = nullptr;
+        QMLItem* pIncrementation = nullptr;
+        QMLItem* pContent = $<Object>7;
+
+        if (pInitialization == nullptr)
+        {
+            pInitialization = new QMLItem(pContext->position());
+        }
+
+        if (pCondition == nullptr)
+        {
+            pCondition = new QMLItem(pContext->position());
+        }
+
+        if (pIncrementation == nullptr)
+        {
+            pIncrementation = new QMLItem(pContext->position());
+        }
+
+        $<Object>$ = new QMLFor(pInitialization->position(), pInitialization, pCondition, pIncrementation, pContent);
+    }
 ;
 
 JSStatement_While :
@@ -854,6 +903,13 @@ JSStatement_Case :
 
         $<Object>$ = new QMLUnaryOperation(pContext->position(), pExpression, QMLUnaryOperation::uoCase);
     }
+    |
+    TOKEN_DEFAULT ':'
+    {
+        QMLItem* pExpression = new QMLItem(pContext->position(), "default");
+
+        $<Object>$ = new QMLUnaryOperation(pContext->position(), pExpression, QMLUnaryOperation::uoCase);
+    }
 ;
 
 JSStatement_Break :
@@ -878,6 +934,13 @@ JSStatement_With :
 ;
 
 JSStatement_Return :
+    TOKEN_RETURN JSObject
+    {
+        QMLItem* pExpression = $<Object>2;
+
+        $<Object>$ = new QMLUnaryOperation(pContext->position(), pExpression, QMLUnaryOperation::uoReturn);
+    }
+    |
     TOKEN_RETURN JSExpressionOpt
     {
         QMLItem* pExpression = $<Object>2;
@@ -1622,7 +1685,7 @@ JSArgumentList :
         if (pList == nullptr)
         {
             pList = new QMLComplexItem(pExpression1->position());
-            pList->contents().append(pExpression1);
+            pList->contents() << pExpression1;
         }
 
         $<Object>$ = pList;
@@ -1639,10 +1702,10 @@ JSArgumentList :
         if (pList == nullptr)
         {
             pList = new QMLComplexItem(pExpression1->position());
-            pList->contents().append(pExpression1);
+            pList->contents() << pExpression1;
         }
 
-        pList->contents().append(pExpression2);
+        pList->contents() << pExpression2;
 
         $<Object>$ = pList;
     }

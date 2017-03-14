@@ -102,30 +102,33 @@
 
 #define TOKEN_IMPORT            500
 #define TOKEN_PROPERTY          501
-#define TOKEN_ALIAS             502
-#define TOKEN_VAR               503
-#define TOKEN_BOOL              504
-#define TOKEN_INT               505
-#define TOKEN_REAL              506
-#define TOKEN_STRING            507
-#define TOKEN_VARIANT           508
-#define TOKEN_COLOR             509
-#define TOKEN_FUNCTION          510
-#define TOKEN_IF                511
-#define TOKEN_ELSE              512
-#define TOKEN_FOR               513
-#define TOKEN_WHILE             514
-#define TOKEN_SWITCH            515
-#define TOKEN_CASE              516
-#define TOKEN_BREAK             517
-#define TOKEN_CONTINUE          518
-#define TOKEN_WITH              519
-#define TOKEN_RETURN            520
-#define TOKEN_TYPEOF            521
-#define TOKEN_PRAGMA            522
-#define TOKEN_ON                523
-#define TOKEN_AS                524
-#define TOKEN_SIGNAL            525
+#define TOKEN_DEFAULT           502
+#define TOKEN_READ_ONLY         503
+#define TOKEN_ALIAS             504
+#define TOKEN_VAR               505
+#define TOKEN_BOOL              506
+#define TOKEN_INT               507
+#define TOKEN_REAL              508
+#define TOKEN_STRING            509
+#define TOKEN_VARIANT           510
+#define TOKEN_COLOR             511
+#define TOKEN_FUNCTION          512
+#define TOKEN_IF                513
+#define TOKEN_ELSE              514
+#define TOKEN_FOR               515
+#define TOKEN_IN                516
+#define TOKEN_WHILE             517
+#define TOKEN_SWITCH            518
+#define TOKEN_CASE              519
+#define TOKEN_BREAK             520
+#define TOKEN_CONTINUE          521
+#define TOKEN_WITH              522
+#define TOKEN_RETURN            523
+#define TOKEN_TYPEOF            524
+#define TOKEN_PRAGMA            525
+#define TOKEN_ON                526
+#define TOKEN_AS                527
+#define TOKEN_SIGNAL            528
 
 //-------------------------------------------------------------------------------------------------
 
@@ -148,11 +151,14 @@ QMLTreeContext::QMLTreeContext(const QString& sFileName)
 
     m_mTokens["import"] = TOKEN_IMPORT;
     m_mTokens["property"] = TOKEN_PROPERTY;
+    m_mTokens["default"] = TOKEN_DEFAULT;
+    m_mTokens["readonly"] = TOKEN_READ_ONLY;
     m_mTokens["alias"] = TOKEN_ALIAS;
     m_mTokens["function"] = TOKEN_FUNCTION;
     m_mTokens["if"] = TOKEN_IF;
     m_mTokens["else"] = TOKEN_ELSE;
     m_mTokens["for"] = TOKEN_FOR;
+    m_mTokens["in"] = TOKEN_IN;
     m_mTokens["while"] = TOKEN_WHILE;
     m_mTokens["switch"] = TOKEN_SWITCH;
     m_mTokens["case"] = TOKEN_CASE;
