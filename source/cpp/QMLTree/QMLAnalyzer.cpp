@@ -12,6 +12,7 @@
 
 #define ANALYZER_TOKEN_CHECK        "Check"
 #define ANALYZER_TOKEN_CLASS        "Class"
+#define ANALYZER_TOKEN_COUNT        "Count"
 #define ANALYZER_TOKEN_MEMBER       "Member"
 #define ANALYZER_TOKEN_NESTED_COUNT "NestedCount"
 #define ANALYZER_TOKEN_REJECT       "Reject"
@@ -91,7 +92,7 @@ bool QMLAnalyzer::analyze(CXMLNode xGrammar, bool bIncludeImports)
     if (m_sFolder.isEmpty() == false)
     {
         QStringList slNameFilter;
-        slNameFilter << "*.qml";
+        slNameFilter << "*.qml" << "*.js";
 
         QDir dDirectory(m_sFolder);
         QStringList lFiles = dDirectory.entryList(slNameFilter);
@@ -189,6 +190,7 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, C
                 QString sType = xReject.attributes()[ANALYZER_TOKEN_TYPE];
                 QString sText = xReject.attributes()[ANALYZER_TOKEN_TEXT];
                 QString sNestedCount = xReject.attributes()[ANALYZER_TOKEN_NESTED_COUNT];
+                QString sCount = xReject.attributes()[ANALYZER_TOKEN_COUNT];
 
                 if (sNestedCount.isEmpty() == false)
                 {
@@ -212,7 +214,23 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, C
                 }
                 else if (mMembers.contains(sMember) && mMembers[sMember] != nullptr)
                 {
-                    if (sType.isEmpty() == false)
+                    if (sCount.isEmpty() == false)
+                    {
+                        int iCountToCheck = sCount.toInt();
+                        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(mMembers[sMember]);
+
+                        if (pComplex != nullptr && pComplex->contents().count() > iCountToCheck)
+                        {
+                            bHasRejects = true;
+
+                            lErrors << QString("%1 (%2, %3) : %4")
+                                       .arg(sFileName)
+                                       .arg(pItem->position().y())
+                                       .arg(pItem->position().x())
+                                       .arg(sText);
+                        }
+                    }
+                    else if (sType.isEmpty() == false)
                     {
                         QString sTypeToString = QMLType::typeToString(mMembers[sMember]->value().type());
 

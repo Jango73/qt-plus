@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../qtplus_global.h"
+#include "../unislib_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -10,12 +10,11 @@
 
 // Application
 #include "QMLItem.h"
-#include "QMLComplexItem.h"
 
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a property declaration
-class QTPLUSSHARED_EXPORT QMLFunction : public QMLItem
+class UNISLIBSHARED_EXPORT QMLForIn : public QMLItem
 {
     Q_OBJECT
 
@@ -25,11 +24,11 @@ public:
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //! Constructor with name, parameters and content
-    QMLFunction(const QPoint& pPosition, QMLItem* pName, QMLComplexItem *pParameters, QMLComplexItem *pContent);
+    //! Constructor with condition, then and else
+    QMLForIn(const QPoint& pPosition, QMLItem* pVariable, QMLItem* pExpression, QMLItem* pContent);
 
     //! Destructor
-    virtual ~QMLFunction();
+    virtual ~QMLForIn();
 
     //-------------------------------------------------------------------------------------------------
     // Setters
@@ -40,13 +39,13 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    QMLItem* name() const;
+    QMLItem* variable() const;
 
     //!
-    QMLComplexItem* parameters() const;
+    QMLItem* expression() const;
 
     //!
-    QMLComplexItem* content() const;
+    QMLItem* content() const;
 
     //! Returns all members
     virtual QMap<QString, QMLItem*> members() Q_DECL_OVERRIDE;
@@ -67,7 +66,7 @@ public:
 
 protected:
 
-    QMLItem*        m_pName;
-    QMLComplexItem* m_pParameters;
-    QMLComplexItem* m_pContent;
+    QMLItem*    m_pVariable;
+    QMLItem*    m_pExpression;
+    QMLItem*    m_pContent;
 };

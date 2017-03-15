@@ -25,6 +25,7 @@
 #include "QMLBinaryOperation.h"
 #include "QMLIf.h"
 #include "QMLFor.h"
+#include "QMLForIn.h"
 #include "QMLSwitch.h"
 #include "QMLConditional.h"
 #include "QMLTreeContext.h"
@@ -183,6 +184,13 @@ Declaration :
     Item
     {
         PARSER_TRACE("Declaration", "Item");
+
+        $<Object>$ = $<Object>1;
+    }
+    |
+    JSFunction
+    {
+        PARSER_TRACE("Declaration", "Function");
 
         $<Object>$ = $<Object>1;
     }
@@ -563,7 +571,12 @@ JSFunction :
         QMLComplexItem* pParameters = dynamic_cast<QMLComplexItem*>($<Object>3);
         QMLComplexItem* pContent = dynamic_cast<QMLComplexItem*>($<Object>4);
 
-        $<Object>$ = new QMLFunction(pContext->position(), pName, pParameters, pContent);
+        if (pParameters == nullptr)
+        {
+            pParameters = new QMLComplexItem(pContext->position());
+        }
+
+        $<Object>$ = new QMLFunction(pName->position(), pName, pParameters, pContent);
     }
     |
     TOKEN_FUNCTION JSFunctionParameterList JSStatement
@@ -574,7 +587,12 @@ JSFunction :
         QMLComplexItem* pParameters = dynamic_cast<QMLComplexItem*>($<Object>2);
         QMLComplexItem* pContent = dynamic_cast<QMLComplexItem*>($<Object>3);
 
-        $<Object>$ = new QMLFunction(pContext->position(), pName, pParameters, pContent);
+        if (pParameters == nullptr)
+        {
+            pParameters = new QMLComplexItem(pContext->position());
+        }
+
+        $<Object>$ = new QMLFunction(pParameters->position(), pName, pParameters, pContent);
     }
 ;
 
@@ -841,27 +859,26 @@ JSStatement_For :
     |
     TOKEN_FOR '(' JSVariablesOrExpressionOpt TOKEN_IN JSExpression ')' JSStatement
     {
-        QMLItem* pInitialization = $<Object>3;
-        QMLItem* pCondition = nullptr;
-        QMLItem* pIncrementation = nullptr;
+        QMLItem* pVariable = $<Object>3;
+        QMLItem* pExpression = $<Object>5;
         QMLItem* pContent = $<Object>7;
 
-        if (pInitialization == nullptr)
+        if (pVariable == nullptr)
         {
-            pInitialization = new QMLItem(pContext->position());
+            pVariable = new QMLItem(pContext->position());
         }
 
-        if (pCondition == nullptr)
+        if (pExpression == nullptr)
         {
-            pCondition = new QMLItem(pContext->position());
+            pExpression = new QMLItem(pContext->position());
         }
 
-        if (pIncrementation == nullptr)
+        if (pContent == nullptr)
         {
-            pIncrementation = new QMLItem(pContext->position());
+            pContent = new QMLItem(pContext->position());
         }
 
-        $<Object>$ = new QMLFor(pInitialization->position(), pInitialization, pCondition, pIncrementation, pContent);
+        $<Object>$ = new QMLForIn(pVariable->position(), pVariable, pExpression, pContent);
     }
 ;
 

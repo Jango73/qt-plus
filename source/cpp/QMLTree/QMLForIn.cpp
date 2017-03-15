@@ -1,61 +1,59 @@
 
-// Qt
-#include <QDebug>
-
 // Application
-#include "QMLFunction.h"
+#include "QMLForIn.h"
+#include "QMLComplexItem.h"
 
 //-------------------------------------------------------------------------------------------------
 
-QMLFunction::QMLFunction(const QPoint& pPosition, QMLItem* pName, QMLComplexItem *pParameters, QMLComplexItem *pContent)
+QMLForIn::QMLForIn(const QPoint& pPosition, QMLItem* pVariable, QMLItem* pExpression, QMLItem* pContent)
     : QMLItem(pPosition)
-    , m_pName(pName)
-    , m_pParameters(pParameters)
+    , m_pVariable(pVariable)
+    , m_pExpression(pExpression)
     , m_pContent(pContent)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLFunction::~QMLFunction()
+QMLForIn::~QMLForIn()
 {
-    if (m_pName != NULL)
-        delete m_pName;
-    if (m_pParameters != NULL)
-        delete m_pParameters;
-    if (m_pContent != NULL)
+    if (m_pVariable != nullptr)
+        delete m_pVariable;
+    if (m_pExpression != nullptr)
+        delete m_pExpression;
+    if (m_pContent != nullptr)
         delete m_pContent;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLFunction::name() const
+QMLItem* QMLForIn::variable() const
 {
-    return m_pName;
+    return m_pVariable;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLComplexItem* QMLFunction::parameters() const
+QMLItem* QMLForIn::expression() const
 {
-    return m_pParameters;
+    return m_pExpression;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLComplexItem* QMLFunction::content() const
+QMLItem* QMLForIn::content() const
 {
     return m_pContent;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMap<QString, QMLItem*> QMLFunction::members()
+QMap<QString, QMLItem*> QMLForIn::members()
 {
     QMap<QString, QMLItem*> vReturnValue;
 
-    vReturnValue["name"] = m_pName;
-    vReturnValue["parameters"] = m_pParameters;
+    vReturnValue["variable"] = m_pVariable;
+    vReturnValue["expression"] = m_pExpression;
     vReturnValue["content"] = m_pContent;
 
     return vReturnValue;
@@ -68,29 +66,23 @@ QMap<QString, QMLItem*> QMLFunction::members()
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLForIn::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
-    dumpIndentedNoNewLine(stream, iIdent, "function ");
+    dumpNoIndentNoNewLine(stream, "for (");
 
-    if (m_pName != nullptr)
+    if (m_pVariable != nullptr)
     {
-        m_pName->toQML(stream, pContext, this, iIdent + 1);
+        m_pVariable->toQML(stream, pContext, this, iIdent + 1);
     }
 
-    dumpNoIndentNoNewLine(stream, "(");
+    dumpNoIndentNoNewLine(stream, " in ");
 
-    if (m_pParameters != nullptr)
+    if (m_pExpression != nullptr)
     {
-        foreach (QMLItem* pItem, m_pParameters->contents())
-        {
-            if (pItem != nullptr)
-            {
-                pItem->toQML(stream, pContext, this, iIdent + 1);
-            }
-        }
+        m_pExpression->toQML(stream, pContext, this, iIdent + 1);
     }
 
     dumpNoIndentNoNewLine(stream, ")");
@@ -98,9 +90,11 @@ void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* 
 
     dumpIndented(stream, iIdent, "{");
 
-    if (m_pContent != nullptr)
+    QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(m_pContent);
+
+    if (pComplex != nullptr)
     {
-        foreach (QMLItem* pItem, m_pContent->contents())
+        foreach (QMLItem* pItem, pComplex->contents())
         {
             if (pItem != nullptr)
             {
@@ -110,30 +104,36 @@ void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* 
             }
         }
     }
+    else if (m_pContent != nullptr)
+    {
+        dumpIndentedNoNewLine(stream, iIdent + 1, "");
+        m_pContent->toQML(stream, pContext, this, iIdent + 1);
+        dumpNewLine(stream);
+    }
 
     dumpIndented(stream, iIdent, "}");
 }
 
 //-------------------------------------------------------------------------------------------------
 
-CXMLNode QMLFunction::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
+CXMLNode QMLForIn::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
     CXMLNode xNode = QMLItem::toXMLNode(pContext, pParent);
-    CXMLNode xName("Name");
-    CXMLNode xParameters("Parameters");
+    CXMLNode xVariable("Variable");
+    CXMLNode xExpression("Expression");
     CXMLNode xContent("Content");
 
-    if (m_pName != NULL)
-        xName.nodes() << m_pName->toXMLNode(pContext, this);
+    if (m_pVariable != nullptr)
+        xVariable.nodes() << m_pVariable->toXMLNode(pContext, this);
 
-    if (m_pParameters != NULL)
-        xParameters.nodes() << m_pParameters->toXMLNode(pContext, this);
+    if (m_pExpression != nullptr)
+        xExpression.nodes() << m_pExpression->toXMLNode(pContext, this);
 
-    if (m_pContent != NULL)
+    if (m_pContent != nullptr)
         xContent.nodes() << m_pContent->toXMLNode(pContext, this);
 
-    xNode.nodes() << xName;
-    xNode.nodes() << xParameters;
+    xNode.nodes() << xVariable;
+    xNode.nodes() << xExpression;
     xNode.nodes() << xContent;
 
     return xNode;
