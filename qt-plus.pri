@@ -60,6 +60,7 @@ HEADERS += \
     source/cpp/QMLTree/QMLBinaryOperation.h \
     source/cpp/QMLTree/QMLIf.h \
     source/cpp/QMLTree/QMLFor.h \
+    source/cpp/QMLTree/QMLForIn.h \
     source/cpp/QMLTree/QMLSwitch.h \
     source/cpp/QMLTree/QMLConditional.h \
     source/cpp/QMLTree/QMLTreeContext.h \
@@ -121,6 +122,7 @@ SOURCES += \
     source/cpp/QMLTree/QMLBinaryOperation.cpp \
     source/cpp/QMLTree/QMLIf.cpp \
     source/cpp/QMLTree/QMLFor.cpp \
+    source/cpp/QMLTree/QMLForIn.cpp \
     source/cpp/QMLTree/QMLSwitch.cpp \
     source/cpp/QMLTree/QMLConditional.cpp \
     source/cpp/QMLTree/QMLTreeContext.cpp \
