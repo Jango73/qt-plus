@@ -422,7 +422,22 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
 
         if (c == EOF) return 0;
 
-        if (c == '/')
+        if (SCOPE.m_iCommentLevel > 0)
+        {
+            if (c == '*')
+            {
+                GET(d);
+                if (d == '/') // This is the end of a multi-line comment
+                {
+                    SCOPE.m_iCommentLevel--;
+                }
+                else
+                {
+                    UNGET(d);
+                }
+            }
+        }
+        else if (c == '/')
         {
             GET(d);
             if (d == '*') // This is a multi-line comment
@@ -446,22 +461,6 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
                 UNGET(d);
                 UNGET(c);
                 break;
-            }
-        }
-        else
-        if (SCOPE.m_iCommentLevel > 0)
-        {
-            if (c == '*')
-            {
-                GET(d);
-                if (d == '/') // This is the end of a multi-line comment
-                {
-                    SCOPE.m_iCommentLevel--;
-                }
-                else
-                {
-                    UNGET(d);
-                }
             }
         }
         else
@@ -698,10 +697,10 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
         return parseNumber(LVAL);
     }
 
-    if (isalpha(c) | c == '_')
+    if (isalpha(c) | c == '_' | c == '$')
     {
         do { STORE(c); GET(c); }
-        while (c != EOF && (isalnum(c) || c == '_'));
+        while (c != EOF && (isalnum(c) || c == '_' | c == '$'));
 
         UNGET(c);
 

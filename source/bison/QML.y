@@ -1805,6 +1805,26 @@ JSArrayContents :
         $<Object>$ = $<Object>1;
     }
     |
+    Identifier
+    {
+        $<Object>$ = $<Object>1;
+    }
+    |
+    JSArrayContents ',' Identifier
+    {
+        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>1);
+        QMLItem* pItem1 = $<Object>1;
+        QMLItem* pItem2 = $<Object>3;
+
+        if (pComplex == nullptr)
+        {
+            pComplex = new QMLComplexItem(pItem1->position());
+            pComplex->contents() << pItem1;
+        }
+
+        pComplex->contents() << pItem2;
+    }
+    |
     Value
     {
         $<Object>$ = $<Object>1;
