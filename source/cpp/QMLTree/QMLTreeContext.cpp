@@ -50,6 +50,38 @@
     As of now, the import statements do not lead to recursive parsing (might be implemented later).
 */
 
+/*!
+    \fn void QMLTreeContext::parsingStarted(QString sFileName)
+
+    This signal is emitted when parsing on \a sFileName is starting.
+*/
+
+/*!
+    \fn void QMLTreeContext::parsingFinished(QString sFileName)
+
+    This signal is emitted when parsing on \a sFileName has ended.
+*/
+
+/*!
+    \fn void QMLTreeContext::importParsingStarted(QString sFileName)
+
+    This signal is emitted when parsing on the imported file \a sFileName is starting.
+*/
+
+/*!
+    \enum QMLTreeContext::EParseError
+    Used to identify the result of a file parsing.
+
+    \value peSuccess
+    This indicates that parsing was successful.
+
+    \value peNoFile
+    This indicates that there are no files to parse.
+
+    \value peSyntaxError
+    This indicates that there was a syntax error while parsing.
+*/
+
 //-------------------------------------------------------------------------------------------------
 
 #define SCOPE                   (*(m_sScopes.last()))
@@ -293,6 +325,9 @@ QMLTreeContext::EParseError QMLTreeContext::parse()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Starts parsing in a thread.
+*/
 void QMLTreeContext::threadedParse()
 {
     if (isRunning() == false)

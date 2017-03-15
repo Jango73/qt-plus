@@ -26,11 +26,11 @@ class QTPLUSSHARED_EXPORT CSocketStream : public CConnectedStream
 public:
 
 	//-------------------------------------------------------------------------------------------------
-	// Constructeurs et destructeur
+    // Constructors and destructor
 	//-------------------------------------------------------------------------------------------------
 
     //! Constructor with parameters
-    //! sName = "0.0.0.0:pppp" The stream servs port pppp
+    //! sName = "0.0.0.0:pppp" The stream serves port pppp
     //! sName = "n.n.n.n:pppp" The stream is client of server at n.n.n.n:pppp
     CSocketStream(const QString& sName, const QMap<QString, QString>& sParameters);
 
@@ -69,7 +69,7 @@ protected slots:
 	void onSendOutput();
 
 	//-------------------------------------------------------------------------------------------------
-	// Méthodes protégées
+    // Protected methods
 	//-------------------------------------------------------------------------------------------------
 
 protected:

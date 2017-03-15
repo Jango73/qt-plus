@@ -21,6 +21,18 @@
     \sa CStreamFactory
 */
 
+/*!
+    \fn CClientData* CSocketStream::CClientData::getFromSocket(QTcpSocket* pSocket)
+
+    Returns the data associated with \a pSocket.
+*/
+
+/*!
+    \fn void CSocketStream::CClientData::deleteFromSocket(QTcpSocket* pSocket)
+
+    Deletes the data associated with \a pSocket.
+*/
+
 //-------------------------------------------------------------------------------------------------
 
 /*!
