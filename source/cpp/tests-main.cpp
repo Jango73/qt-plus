@@ -177,9 +177,9 @@ int main()
     qDebug() << "";
     qDebug() << "--------------------------------------------------------------------";
 
-    foreach (QString sText, tAnalyzer.errors())
+    foreach (QMLAnalyzerError tError, tAnalyzer.errors())
     {
-        qDebug() << sText;
+        qDebug() << tError.toString();
     }
 
     /*
@@ -195,9 +195,9 @@ int main()
     qDebug() << "";
     qDebug() << "--------------------------------------------------------------------";
 
-    foreach (QString sText, tAnalyzer.errors())
+    foreach (QMLAnalyzerError tError, tAnalyzer.errors())
     {
-        qDebug() << sText;
+        qDebug() << tError.toString();
     }
     */
 

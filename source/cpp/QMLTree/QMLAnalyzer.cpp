@@ -22,6 +22,43 @@
 
 //-------------------------------------------------------------------------------------------------
 
+QMLAnalyzerError::QMLAnalyzerError()
+{
+}
+
+QMLAnalyzerError::QMLAnalyzerError(const QString& sFileName, QPoint pPosition, const QString& sText)
+    : m_sFileName(sFileName)
+    , m_pPosition(pPosition)
+    , m_sText(sText)
+{
+}
+
+QString QMLAnalyzerError::fileName() const
+{
+    return m_sFileName;
+}
+
+QPoint QMLAnalyzerError::position() const
+{
+    return m_pPosition;
+}
+
+QString QMLAnalyzerError::text() const
+{
+    return m_sText;
+}
+
+QString QMLAnalyzerError::toString() const
+{
+    return QString("%1 (%2, %3) : %4")
+            .arg(m_sFileName)
+            .arg(m_pPosition.y())
+            .arg(m_pPosition.x())
+            .arg(m_sText);
+}
+
+//-------------------------------------------------------------------------------------------------
+
 /*!
     Constructs a CCodeAnalyzer.
 */
@@ -71,9 +108,9 @@ QString QMLAnalyzer::folder() const
 /*!
     Returns the list of errors.
 */
-const QStringList& QMLAnalyzer::errors() const
+const QVector<QMLAnalyzerError>& QMLAnalyzer::errors() const
 {
-    return m_lErrors;
+    return m_vErrors;
 }
 
 bool QMLAnalyzer::analyze(CXMLNode xGrammar, bool bIncludeImports)
@@ -87,7 +124,7 @@ bool QMLAnalyzer::analyze(CXMLNode xGrammar, bool bIncludeImports)
     }
 
     m_mContexts.clear();
-    m_lErrors.clear();
+    m_vErrors.clear();
 
     if (m_sFolder.isEmpty() == false)
     {
@@ -124,18 +161,13 @@ bool QMLAnalyzer::analyzeFile(const QString& sFileName)
 
     if (m_mContexts[sFileName]->parse() == QMLTreeContext::peSuccess)
     {
-        QFileInfo info(sFileName);
-        QString sShortFileName = info.baseName();
-
-        m_lErrors << runGrammar(sShortFileName, m_mContexts[sFileName]);
+        runGrammar(sFileName, m_mContexts[sFileName]);
     }
     else
     {
-        QString sError = m_mContexts[sFileName]->errorString();
+        m_vErrors << QMLAnalyzerError(sFileName, QPoint(0, 0), m_mContexts[sFileName]->errorString());
 
-        m_lErrors << sError;
-
-        emit analyzeError(sError);
+        emit analyzeError(m_vErrors.last());
     }
 
     return true;
@@ -181,16 +213,12 @@ bool QMLAnalyzer::analyze_Recurse(QString sDirectory)
     return true;
 }
 
-QStringList QMLAnalyzer::runGrammar(const QString& sFileName, QMLTreeContext* pContext)
+void QMLAnalyzer::runGrammar(const QString& sFileName, QMLTreeContext* pContext)
 {
-    QStringList lErrors;
-
-    runGrammar_Recurse(sFileName, &(pContext->item()), lErrors);
-
-    return lErrors;
+    runGrammar_Recurse(sFileName, &(pContext->item()));
 }
 
-void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, QStringList& lErrors)
+void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem)
 {
     if (pItem == nullptr)
     {
@@ -231,7 +259,7 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, Q
                         if (iNestedCount > iNestedCountAllowed)
                         {
                             bHasRejects = true;
-                            outputError(lErrors, sFileName, pItem->position(), sText);
+                            outputError(sFileName, pItem->position(), sText);
                         }
                     }
                 }
@@ -245,7 +273,7 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, Q
                         if (pComplex != nullptr && pComplex->contents().count() > iCountToCheck)
                         {
                             bHasRejects = true;
-                            outputError(lErrors, sFileName, pItem->position(), sText);
+                            outputError(sFileName, pItem->position(), sText);
                         }
                     }
                     else if (sType.isEmpty() == false)
@@ -255,7 +283,7 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, Q
                         if (sTypeToString == sType)
                         {
                             bHasRejects = true;
-                            outputError(lErrors, sFileName, pItem->position(), sText);
+                            outputError(sFileName, pItem->position(), sText);
                         }
                     }
                     else
@@ -265,7 +293,7 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, Q
                         if (sMemberToString == sValue)
                         {
                             bHasRejects = true;
-                            outputError(lErrors, sFileName, pItem->position(), sText);
+                            outputError(sFileName, pItem->position(), sText);
                         }
                     }
                 }
@@ -277,7 +305,7 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, Q
     {
         foreach (QString sKey, mMembers.keys())
         {
-            runGrammar_Recurse(sFileName, mMembers[sKey], lErrors);
+            runGrammar_Recurse(sFileName, mMembers[sKey]);
         }
 
         QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(pItem);
@@ -286,7 +314,7 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, Q
         {
             foreach (QMLItem* pChildItem, pComplex->contents())
             {
-                runGrammar_Recurse(sFileName, pChildItem, lErrors);
+                runGrammar_Recurse(sFileName, pChildItem);
             }
         }
     }
@@ -330,15 +358,9 @@ int QMLAnalyzer::runGrammar_CountNested(const QString& sClassName, QMLItem* pIte
     return iCount;
 }
 
-void QMLAnalyzer::outputError(QStringList& lErrors, const QString& sFileName, const QPoint& pPosition, const QString& sText)
+void QMLAnalyzer::outputError(const QString& sFileName, const QPoint& pPosition, const QString& sText)
 {
-    QString sError =  QString("%1 (%2, %3) : %4")
-               .arg(sFileName)
-               .arg(pPosition.y())
-               .arg(pPosition.x())
-               .arg(sText);
+    m_vErrors << QMLAnalyzerError(sFileName, pPosition, sText);
 
-    lErrors << sError;
-
-    emit analyzeError(sError);
+    emit analyzeError(m_vErrors.last());
 }

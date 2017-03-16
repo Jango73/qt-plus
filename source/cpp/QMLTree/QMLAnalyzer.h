@@ -21,6 +21,37 @@
 
 //-------------------------------------------------------------------------------------------------
 
+class QTPLUSSHARED_EXPORT QMLAnalyzerError
+{
+public:
+
+    //!
+    QMLAnalyzerError();
+
+    //!
+    QMLAnalyzerError(const QString& sFileName, QPoint pPosition, const QString& sText);
+
+    //!
+    QString fileName() const;
+
+    //!
+    QPoint position() const;
+
+    //!
+    QString text() const;
+
+    //!
+    QString toString() const;
+
+protected:
+
+    QString m_sFileName;
+    QPoint  m_pPosition;
+    QString m_sText;
+};
+
+//-------------------------------------------------------------------------------------------------
+
 class QTPLUSSHARED_EXPORT QMLAnalyzer : public QThread
 {
     Q_OBJECT
@@ -55,7 +86,7 @@ public:
     QString folder() const;
 
     //! Return error list
-    const QStringList& errors() const;
+    const QVector<QMLAnalyzerError>& errors() const;
 
     //-------------------------------------------------------------------------------------------------
     // Control methods
@@ -92,7 +123,7 @@ signals:
     void importParsingStarted(QString sFileName);
 
     //!
-    void analyzeError(QString sError);
+    void analyzeError(QMLAnalyzerError tError);
 
     //-------------------------------------------------------------------------------------------------
     // Protected control methods
@@ -104,23 +135,23 @@ protected:
     bool analyze_Recurse(QString sDirectory);
 
     //!
-    QStringList runGrammar(const QString& sFileName, QMLTreeContext* pContext);
+    void runGrammar(const QString& sFileName, QMLTreeContext* pContext);
 
     //!
-    void runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, QStringList& lErrors);
+    void runGrammar_Recurse(const QString& sFileName, QMLItem* pItem);
 
     //!
     int runGrammar_CountNested(const QString& sClassName, QMLItem* pItem);
 
     //!
-    void outputError(QStringList& lErrors, const QString& sFileName, const QPoint& pPosition, const QString& sText);
+    void outputError(const QString& sFileName, const QPoint& pPosition, const QString& sText);
 
 protected:
 
     QString                         m_sFolder;
     QString                         m_sFile;
     QMap<QString, QMLTreeContext*>  m_mContexts;     // The QML context used for parsing
-    QStringList                     m_lErrors;
+    QVector<QMLAnalyzerError>       m_vErrors;
     CXMLNode                        m_xGrammar;
     bool                            m_bIncludeImports;
     bool                            m_bIncludeSubFolders;
