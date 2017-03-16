@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Root>
+    <!--
     <Check Class="QMLPropertyDeclaration">
         <Reject Member="content" Type="int" Text="No magic value allowed in property"/>
         <Reject Member="content" Type="float" Text="No magic value allowed in property"/>
@@ -10,7 +11,20 @@
         <Reject Member="content" Type="float" Text="No magic value allowed in property"/>
         <Reject Member="content" Type="qreal" Text="No magic value allowed in property"/>
     </Check>
+    -->
     <Check Class="QMLConditional">
-        <Reject NestedCount="2" Text="No more than 2 nested conditional expressions allowed"/>
+        <Reject NestedCount="2" Text="No more than 2 nested conditional expressions allowed..."/>
+    </Check>
+    <Check Class="QMLIf">
+        <Reject NestedCount="5" Text="Too many nested ifs, consider using switch..."/>
+    </Check>
+    <Check Class="QMLIf">
+        <Reject Member="then" Count="20" Text="Too many statements, consider refactor..."/>
+    </Check>
+    <Check Class="QMLIf">
+        <Reject Member="else" Count="20" Text="Too many statements, consider refactor..."/>
+    </Check>
+    <Check Class="QMLFunction">
+        <Reject Member="content" Count="20" Text="Too many statements, consider refactor..."/>
     </Check>
 </Root>

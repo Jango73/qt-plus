@@ -4,10 +4,11 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLUnaryOperation::QMLUnaryOperation(const QPoint& pPosition, QMLItem* pExpression, EUnaryOperator eOperator)
+QMLUnaryOperation::QMLUnaryOperation(const QPoint& pPosition, QMLItem* pExpression, EUnaryOperator eOperator, bool bIsPostFix)
     : QMLItem(pPosition)
     , m_pExpression(pExpression)
     , m_eOperator(eOperator)
+    , m_bIsPostFix(bIsPostFix)
 {
 }
 
@@ -57,16 +58,33 @@ void QMLUnaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QML
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
-    dumpNoIndentNoNewLine(stream, QString("%1 ").arg(operatorToString(m_eOperator)));
-
-    if (m_pExpression != nullptr)
+    if (m_bIsPostFix == false)
     {
-        m_pExpression->toQML(stream, pContext, this, iIdent);
+        dumpNoIndentNoNewLine(stream, QString("%1 ").arg(operatorToString(m_eOperator)));
 
-        if (m_eOperator == uoCase)
+        if (m_pExpression != nullptr)
         {
-            dumpNoIndentNoNewLine(stream, ":");
+            m_pExpression->toQML(stream, pContext, this, iIdent);
+
+            if (m_eOperator == uoCase)
+            {
+                dumpNoIndentNoNewLine(stream, ":");
+            }
         }
+    }
+    else
+    {
+        if (m_pExpression != nullptr)
+        {
+            m_pExpression->toQML(stream, pContext, this, iIdent);
+
+            if (m_eOperator == uoCase)
+            {
+                dumpNoIndentNoNewLine(stream, ":");
+            }
+        }
+
+        dumpNoIndentNoNewLine(stream, QString("%1 ").arg(operatorToString(m_eOperator)));
     }
 }
 

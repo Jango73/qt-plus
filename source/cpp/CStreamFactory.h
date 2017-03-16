@@ -24,7 +24,7 @@ public:
 	CConnectedStream* instanciateStream(const QString& sName, const QMap<QString, QString>& sParameters);
 
 	//-------------------------------------------------------------------------------------------------
-    // Constructors et destructor
+    // Constructors and destructor
 	//-------------------------------------------------------------------------------------------------
 
 protected:

@@ -26,7 +26,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Default constructor
-    QMLComplexItem(const QPoint& pPosition, QMLItem* pName = NULL);
+    QMLComplexItem(const QPoint& pPosition, QMLItem* pName = nullptr);
 
     //! Destructor
     virtual ~QMLComplexItem();
@@ -61,7 +61,7 @@ public:
     virtual QString toString() const Q_DECL_OVERRIDE;
 
     //! Returns all members
-    virtual QMap<QString, QMLItem*> members();
+    virtual QMap<QString, QMLItem*> members() Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods

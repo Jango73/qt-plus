@@ -68,7 +68,7 @@ public:
     void threadedAnalyze(CXMLNode xGrammar, bool bIncludeImports = false);
 
     //!
-    void analyzeFile(const QString& sFileName, CXMLNode xGrammar);
+    bool analyzeFile(const QString& sFileName);
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
@@ -91,17 +91,29 @@ signals:
     //!
     void importParsingStarted(QString sFileName);
 
+    //!
+    void analyzeError(QString sError);
+
     //-------------------------------------------------------------------------------------------------
     // Protected control methods
     //-------------------------------------------------------------------------------------------------
 
 protected:
 
-    QStringList runGrammar(const QString& sFileName, QMLTreeContext* pContext, CXMLNode& xGrammar);
+    //!
+    bool analyze_Recurse(QString sDirectory);
 
-    void runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, CXMLNode& xGrammar, QStringList& lErrors);
+    //!
+    QStringList runGrammar(const QString& sFileName, QMLTreeContext* pContext);
 
+    //!
+    void runGrammar_Recurse(const QString& sFileName, QMLItem* pItem, QStringList& lErrors);
+
+    //!
     int runGrammar_CountNested(const QString& sClassName, QMLItem* pItem);
+
+    //!
+    void outputError(QStringList& lErrors, const QString& sFileName, const QPoint& pPosition, const QString& sText);
 
 protected:
 

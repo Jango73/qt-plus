@@ -25,7 +25,7 @@ class QTPLUSSHARED_EXPORT CSerialStream : public CConnectedStream
 public:
 
 	//-------------------------------------------------------------------------------------------------
-    // Constructors et destructor
+    // Constructors and destructor
 	//-------------------------------------------------------------------------------------------------
 
     //! Constructor with parameters

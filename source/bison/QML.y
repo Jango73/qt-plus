@@ -23,6 +23,7 @@
 #include "QMLQualifiedExpression.h"
 #include "QMLUnaryOperation.h"
 #include "QMLBinaryOperation.h"
+#include "QMLOnExpression.h"
 #include "QMLIf.h"
 #include "QMLFor.h"
 #include "QMLForIn.h"
@@ -305,14 +306,27 @@ Item :
         PARSER_TRACE("Item", "Identifier TOKEN_ON Identifier '{' ItemContents '}'");
 
         QMLItem* pName = $<Object>1;
-        QMLComplexItem* pComplexItem = dynamic_cast<QMLComplexItem*>($<Object>5);
+        QMLItem* pTarget = $<Object>3;
+        QMLComplexItem* pContents = dynamic_cast<QMLComplexItem*>($<Object>5);
 
-        if (pComplexItem != nullptr)
+        if (pName == nullptr)
         {
-            pComplexItem->setName(pName);
+            pName = new QMLIdentifier(pContext->position(), "");
         }
 
-        $<Object>$ = pComplexItem;
+        if (pTarget == nullptr)
+        {
+            pTarget = new QMLIdentifier(pContext->position(), "");
+        }
+
+        if (pContents == nullptr)
+        {
+            pContents = new QMLComplexItem(pContext->position(), pName);
+        }
+
+        QMLOnExpression* pExpression = new QMLOnExpression(pName->position(), pTarget, pName, pContents);
+
+        $<Object>$ = pExpression;
     }
 ;
 
@@ -1185,6 +1199,18 @@ JSAssignmentExpression :
     }
 ;
 
+JSAssignmentExpressionOrJSObject :
+    JSAssignmentExpression
+    {
+        $<Object>$ = $<Object>1;
+    }
+    |
+    JSObject
+    {
+        $<Object>$ = $<Object>1;
+    }
+;
+
 JSConditionalExpression :
     JSOrExpression
     {
@@ -1193,7 +1219,7 @@ JSConditionalExpression :
         $<Object>$ = $<Object>1;
     }
     |
-    JSOrExpression '?' JSAssignmentExpression ':' JSAssignmentExpression
+    JSOrExpression '?' JSAssignmentExpressionOrJSObject ':' JSAssignmentExpressionOrJSObject
     {
         PARSER_TRACE("JSConditionalExpression", "JSOrExpression '?' JSAssignmentExpression ':' JSAssignmentExpression");
 
@@ -1572,9 +1598,32 @@ JSUnaryExpression :
         $<Object>$ = $<Object>1;
     }
     |
-    JSMemberExpression JSIncrementOperator
+    JSMemberExpression TOKEN_INC
     {
-        $<Object>$ = $<Object>1;
+        QMLItem* pItem = $<Object>1;
+
+        $<Object>$ = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoIncrement, true);
+    }
+    |
+    TOKEN_INC JSMemberExpression
+    {
+        QMLItem* pItem = $<Object>2;
+
+        $<Object>$ = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoIncrement);
+    }
+    |
+    JSMemberExpression TOKEN_DEC
+    {
+        QMLItem* pItem = $<Object>1;
+
+        $<Object>$ = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoDecrement, true);
+    }
+    |
+    TOKEN_DEC JSMemberExpression
+    {
+        QMLItem* pItem = $<Object>2;
+
+        $<Object>$ = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoDecrement);
     }
     |
     JSUnaryOperator JSMemberExpression
@@ -1742,18 +1791,6 @@ JSArgument:
     JSAssignmentExpression
     {
         $<Object>$ = $<Object>1;
-    }
-;
-
-JSIncrementOperator :
-    TOKEN_INC
-    {
-        $<Object>$ = nullptr;
-    }
-    |
-    TOKEN_DEC
-    {
-        $<Object>$ = nullptr;
     }
 ;
 

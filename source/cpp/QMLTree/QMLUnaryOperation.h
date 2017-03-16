@@ -26,7 +26,9 @@ public:
         uoReturn,
         uoBreak,
         uoCase,
-        uoContinue
+        uoContinue,
+        uoIncrement,
+        uoDecrement
     };
 
     //-------------------------------------------------------------------------------------------------
@@ -34,7 +36,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with type and name
-    QMLUnaryOperation(const QPoint& pPosition, QMLItem* pExpression, EUnaryOperator eOperator);
+    QMLUnaryOperation(const QPoint& pPosition, QMLItem* pExpression, EUnaryOperator eOperator, bool bIsPostFix = false);
 
     //! Destructor
     virtual ~QMLUnaryOperation();
@@ -78,4 +80,5 @@ protected:
 
     QMLItem*        m_pExpression;
     EUnaryOperator  m_eOperator;
+    bool            m_bIsPostFix;
 };
