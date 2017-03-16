@@ -164,6 +164,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
+extern int yydebug;
 extern int yyparse(QMLTreeContext* pContext);
 
 //-------------------------------------------------------------------------------------------------
@@ -345,6 +346,8 @@ QMLTreeContext::EParseError QMLTreeContext::parse_Internal()
 {
     // Assume success, will be changed on error
     SCOPE.m_eError = peSuccess;
+
+    // yydebug = 1;
 
     // Call generated parser
     yyparse(this);

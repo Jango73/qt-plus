@@ -54,6 +54,16 @@ void QMLItem::setValue(const QVariant& value)
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Sets the item's position to \a point.
+*/
+void QMLItem::setPosition(const QPoint& point)
+{
+    m_pPosition = point;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Returns the item's position in the file.
 */
 QPoint QMLItem::position() const

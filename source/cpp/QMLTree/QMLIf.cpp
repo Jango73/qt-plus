@@ -1,6 +1,7 @@
 
 // Application
 #include "QMLIf.h"
+#include "QMLComplexItem.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -56,6 +57,82 @@ QMap<QString, QMLItem*> QMLIf::members()
     vReturnValue["else"] = m_pElse;
 
     return vReturnValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Dumps the item to \a stream using \a iIdent for indentation. \br\br
+    \a pContext is the context of this item. \br
+    \a pParent is the caller of this method.
+*/
+void QMLIf::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+{
+    Q_UNUSED(pContext);
+    Q_UNUSED(pParent);
+
+    dumpNoIndentNoNewLine(stream, "if (");
+
+    if (m_pCondition != nullptr)
+    {
+        m_pCondition->toQML(stream, pContext, this, iIdent + 1);
+    }
+
+    dumpNoIndentNoNewLine(stream, ")");
+    dumpNewLine(stream);
+
+    dumpIndented(stream, iIdent, "{");
+
+    QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(m_pThen);
+
+    if (pComplex != nullptr)
+    {
+        foreach (QMLItem* pItem, pComplex->contents())
+        {
+            if (pItem != nullptr)
+            {
+                dumpIndentedNoNewLine(stream, iIdent + 1, "");
+                pItem->toQML(stream, pContext, this, iIdent + 1);
+                dumpNewLine(stream);
+            }
+        }
+    }
+    else if (m_pThen != nullptr)
+    {
+        dumpIndentedNoNewLine(stream, iIdent + 1, "");
+        m_pThen->toQML(stream, pContext, this, iIdent + 1);
+        dumpNewLine(stream);
+    }
+
+    dumpIndented(stream, iIdent, "}");
+
+    if (m_pElse != nullptr)
+    {
+        dumpIndented(stream, iIdent, "else {");
+
+        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(m_pElse);
+
+        if (pComplex != nullptr)
+        {
+            foreach (QMLItem* pItem, pComplex->contents())
+            {
+                if (pItem != nullptr)
+                {
+                    dumpIndentedNoNewLine(stream, iIdent + 1, "");
+                    pItem->toQML(stream, pContext, this, iIdent + 1);
+                    dumpNewLine(stream);
+                }
+            }
+        }
+        else if (m_pElse != nullptr)
+        {
+            dumpIndentedNoNewLine(stream, iIdent + 1, "");
+            m_pElse->toQML(stream, pContext, this, iIdent + 1);
+            dumpNewLine(stream);
+        }
+
+        dumpIndented(stream, iIdent, "}");
+    }
 }
 
 //-------------------------------------------------------------------------------------------------

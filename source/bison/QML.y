@@ -5,6 +5,7 @@
 %lex-param   {QMLTreeContext* pContext}
 %parse-param {QMLTreeContext* pContext}
 %error-verbose
+%debug
 
 %{
 #include <QDebug>
