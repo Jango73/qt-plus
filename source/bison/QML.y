@@ -585,32 +585,37 @@ JSFunction :
     {
         PARSER_TRACE("JSFunction", "TOKEN_FUNCTION Identifier JSFunctionParameterList JSStatementBlock");
 
-        QMLItem* pName = dynamic_cast<QMLItem*>($<Object>2);
-        QMLComplexItem* pParameters = dynamic_cast<QMLComplexItem*>($<Object>3);
+        QMLItem* pName = $<Object>2;
+        QMLItem* pParameters = $<Object>3;
+        QMLComplexItem* pParameterList = dynamic_cast<QMLComplexItem*>($<Object>3);
         QMLComplexItem* pContent = dynamic_cast<QMLComplexItem*>($<Object>4);
 
-        if (pParameters == nullptr)
+        if (pParameterList == nullptr)
         {
-            pParameters = new QMLComplexItem(pContext->position());
+            pParameterList = new QMLComplexItem(pContext->position());
+            pParameterList->contents() << pParameters;
         }
 
-        $<Object>$ = new QMLFunction(pName->position(), pName, pParameters, pContent);
+        $<Object>$ = new QMLFunction(pName->position(), pName, pParameterList, pContent);
     }
     |
     TOKEN_FUNCTION JSFunctionParameterList JSStatementBlock
     {
         PARSER_TRACE("JSFunction", "TOKEN_FUNCTION JSFunctionParameterList JSStatementBlock");
 
-        QMLItem* pName = new QMLIdentifier(pContext->position(), "");
-        QMLComplexItem* pParameters = dynamic_cast<QMLComplexItem*>($<Object>2);
+        QMLItem* pParameters = $<Object>2;
+        QMLComplexItem* pParameterList = dynamic_cast<QMLComplexItem*>($<Object>2);
         QMLComplexItem* pContent = dynamic_cast<QMLComplexItem*>($<Object>3);
 
-        if (pParameters == nullptr)
+        if (pParameterList == nullptr)
         {
-            pParameters = new QMLComplexItem(pContext->position());
+            pParameterList = new QMLComplexItem(pContext->position());
+            pParameterList->contents() << pParameters;
         }
 
-        $<Object>$ = new QMLFunction(pParameters->position(), pName, pParameters, pContent);
+        QMLItem* pName = new QMLIdentifier(pParameters->position(), "");
+
+        $<Object>$ = new QMLFunction(pParameters->position(), pName, pParameterList, pContent);
     }
 ;
 
@@ -642,9 +647,19 @@ JSFunctionParameters :
     {
         PARSER_TRACE("JSFunctionParameters", "JSFunctionParameters ',' JSFunctionParameter");
 
-        SAFE_DELETE($<Object>3);
+        QMLComplexItem* pList = dynamic_cast<QMLComplexItem*>($<Object>1);
+        QMLItem* pExpression1 = $<Object>1;
+        QMLItem* pExpression2 = $<Object>3;
 
-        $<Object>$ = $<Object>1;
+        if (pList == nullptr)
+        {
+            pList = new QMLComplexItem(pExpression1->position());
+            pList->contents() << pExpression1;
+        }
+
+        pList->contents() << pExpression2;
+
+        $<Object>$ = pList;
     }
 ;
 
@@ -656,17 +671,16 @@ JSFunctionParameter :
         QMLType* pType = QMLType::fromQMLItem(nullptr);
         QMLItem* pName = dynamic_cast<QMLItem*>($<Object>1);
 
-        PARSER_TRACE("========>", QMLType::typeToString(pType->type()));
-        PARSER_TRACE("========>", pName->value().toString());
-
         if (pType != nullptr && pName != nullptr)
         {
-            $<Object>$ = new QMLPropertyDeclaration(pName->position(), pType, pName);
+            $<Object>$ = new QMLIdentifier(pName->position(), pName->value().toString());
         }
         else
         {
             $<Object>$ = nullptr;
         }
+
+        SAFE_DELETE(pName);
     }
     |
     Identifier Identifier
@@ -676,17 +690,16 @@ JSFunctionParameter :
         QMLType* pType = QMLType::fromQMLItem(dynamic_cast<QMLItem*>($<Object>1));
         QMLItem* pName = dynamic_cast<QMLItem*>($<Object>2);
 
-        PARSER_TRACE("========>", QMLType::typeToString(pType->type()));
-        PARSER_TRACE("========>", pName->value().toString());
-
         if (pType != nullptr && pName != nullptr)
         {
-            $<Object>$ = new QMLPropertyDeclaration(pName->position(), pType, pName);
+            $<Object>$ = new QMLIdentifier(pName->position(), pName->value().toString());
         }
         else
         {
             $<Object>$ = nullptr;
         }
+
+        SAFE_DELETE(pName);
     }
 ;
 
