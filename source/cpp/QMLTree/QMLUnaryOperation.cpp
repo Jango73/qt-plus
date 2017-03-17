@@ -40,12 +40,18 @@ QString QMLUnaryOperation::operatorToString(EUnaryOperator eOperator) const
 {
     switch (eOperator)
     {
+        case uoReturn:
+            return "return";
         case uoBreak:
             return "break";
         case uoCase:
             return "case";
-        case uoReturn:
-            return "return";
+        case uoContinue:
+            return "continue";
+        case uoIncrement:
+            return "++";
+        case uoDecrement:
+            return "--";
     }
 
     return "??";
