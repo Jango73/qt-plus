@@ -36,8 +36,8 @@ int yyerror (void*, char*);
 
 #define SAFE_DELETE(a)  if ((a) != nullptr) delete (a);
 
-#define PARSER_TRACE(state, rule)  { qDebug() << state " : " << rule; }
-// #define PARSER_TRACE(state, rule)
+// #define PARSER_TRACE(state, rule)  { qDebug() << state " : " << rule; }
+#define PARSER_TRACE(state, rule)
 
 %}
 
@@ -382,16 +382,16 @@ ItemContents :
 ;
 
 ItemContent :
-    PropertyAssignment
+    PropertyDeclaration
     {
-        PARSER_TRACE("ItemContent", "PropertyAssignment");
+        PARSER_TRACE("ItemContent", "PropertyDeclaration");
 
         $<Object>$ = $<Object>1;
     }
     |
-    PropertyDeclaration
+    PropertyAssignment
     {
-        PARSER_TRACE("ItemContent", "PropertyDeclaration");
+        PARSER_TRACE("ItemContent", "PropertyAssignment");
 
         $<Object>$ = $<Object>1;
     }
@@ -442,7 +442,22 @@ PropertyDeclarationNoColon :
         QMLType* pType = QMLType::fromQMLItem(dynamic_cast<QMLItem*>($<Object>3));
         QMLItem* pName = dynamic_cast<QMLItem*>($<Object>4);
 
-        PARSER_TRACE("========>", QMLType::typeToString(pType->type()));
+        if (pType != nullptr && pName != nullptr)
+        {
+            $<Object>$ = new QMLPropertyDeclaration(pContext->position(), pType, pName);
+        }
+        else
+        {
+            $<Object>$ = nullptr;
+        }
+    }
+    |
+    PropertyModifiersOpt TOKEN_PROPERTY TOKEN_VAR Identifier
+    {
+        PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY TOKEN_VAR Identifier");
+
+        QMLType* pType = QMLType::fromQMLItem(nullptr);
+        QMLItem* pName = dynamic_cast<QMLItem*>($<Object>4);
 
         if (pType != nullptr && pName != nullptr)
         {
@@ -462,7 +477,23 @@ PropertyDeclarationNoColon :
         QMLItem* pName = dynamic_cast<QMLItem*>($<Object>4);
         QMLItem* pData = dynamic_cast<QMLItem*>($<Object>6);
 
-        PARSER_TRACE("========>", QMLType::typeToString(pType->type()));
+        if (pType != nullptr && pName != nullptr)
+        {
+            $<Object>$ = new QMLPropertyDeclaration(pContext->position(), pType, pName, pData);
+        }
+        else
+        {
+            $<Object>$ = nullptr;
+        }
+    }
+    |
+    PropertyModifiersOpt TOKEN_PROPERTY TOKEN_VAR Identifier ':' PropertyContent
+    {
+        PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY TOKEN_VAR Identifier ':' PropertyContent");
+
+        QMLType* pType = QMLType::fromQMLItem(nullptr);
+        QMLItem* pName = dynamic_cast<QMLItem*>($<Object>4);
+        QMLItem* pData = dynamic_cast<QMLItem*>($<Object>6);
 
         if (pType != nullptr && pName != nullptr)
         {
@@ -613,9 +644,14 @@ JSFunction :
             pParameterList->contents() << pParameters;
         }
 
-        QMLItem* pName = new QMLIdentifier(pParameters->position(), "");
+        QPoint pPosition;
 
-        $<Object>$ = new QMLFunction(pParameters->position(), pName, pParameterList, pContent);
+        if (pParameters != nullptr) pPosition = pParameters->position();
+        else pPosition = pContent->position();
+
+        QMLItem* pName = new QMLIdentifier(pPosition, "");
+
+        $<Object>$ = new QMLFunction(pPosition, pName, pParameterList, pContent);
     }
 ;
 
@@ -683,6 +719,25 @@ JSFunctionParameter :
         SAFE_DELETE(pName);
     }
     |
+    TOKEN_VAR Identifier
+    {
+        PARSER_TRACE("JSFunctionParameter", "Identifier Identifier");
+
+        QMLType* pType = QMLType::fromQMLItem(nullptr);
+        QMLItem* pName = dynamic_cast<QMLItem*>($<Object>2);
+
+        if (pType != nullptr && pName != nullptr)
+        {
+            $<Object>$ = new QMLIdentifier(pName->position(), pName->value().toString());
+        }
+        else
+        {
+            $<Object>$ = nullptr;
+        }
+
+        SAFE_DELETE(pName);
+    }
+    |
     Identifier Identifier
     {
         PARSER_TRACE("JSFunctionParameter", "Identifier Identifier");
@@ -731,8 +786,6 @@ JSStatements :
             pStatement1 = new QMLItem(pContext->position());
         }
 
-        PARSER_TRACE("========>", pStatement1->metaObject()->className());
-
         QMLComplexItem* pComplex = new QMLComplexItem(pStatement1->position());
 
         pComplex->contents() << pStatement1;
@@ -746,8 +799,6 @@ JSStatements :
 
         QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>1);
         QMLItem* pStatement2 = $<Object>2;
-
-        PARSER_TRACE("========>", pStatement2->metaObject()->className());
 
         if (pComplex != nullptr)
         {
@@ -1020,7 +1071,7 @@ JSExpressionOpt :
 ;
 
 JSVariablesOrExpression :
-    Identifier JSVariables
+    TOKEN_VAR JSVariables
     {
         PARSER_TRACE("JSVariablesOrExpression", "Identifier JSVariables");
 
@@ -1043,7 +1094,7 @@ JSVariablesOrExpressionOpt :
         $<Object>$ = nullptr;
     }
     |
-    Identifier JSVariables
+    TOKEN_VAR JSVariables
     {
         PARSER_TRACE("JSVariablesOrExpressionOpt", "Identifier JSVariables");
 
@@ -1087,6 +1138,23 @@ JSVariable :
     Identifier TOKEN_ASSIGN JSAssignmentExpression
     {
         PARSER_TRACE("JSVariable", "Identifier TOKEN_ASSIGN JSAssignmentExpression");
+
+        QMLItem* pLeft = $<Object>1;
+        QMLItem* pRight = $<Object>3;
+
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
+    }
+    |
+    Identifier TOKEN_ASSIGN JSObject
+    {
+        PARSER_TRACE("JSVariable", "Identifier TOKEN_ASSIGN JSObject");
 
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
@@ -1744,7 +1812,14 @@ JSFunctionCall :
         PARSER_TRACE("JSFunctionCall", "JSPrimaryExpression '(' JSArgumentListOpt ')'");
 
         QMLItem* pName = $<Object>1;
+        QMLItem* pArgument = $<Object>3;
         QMLComplexItem* pArguments = dynamic_cast<QMLComplexItem*>($<Object>3);
+
+        if (pArguments == nullptr && pArgument != nullptr)
+        {
+            pArguments = new QMLComplexItem(pArgument->position());
+            pArguments->contents() << pArgument;
+        }
 
         $<Object>$ = new QMLFunctionCall(pName->position(), pName, pArguments);
     }
@@ -2031,11 +2106,17 @@ JSAttributeName :
 QualifiedIdentifier :
     Identifier
     {
-        $<Object>$ = $<Object>1;
+        PARSER_TRACE("QualifiedIdentifier", "Identifier");
+
+        QMLItem* pIdentifier = $<Object>1;
+
+        $<Object>$ = pIdentifier;
     }
     |
     QualifiedIdentifier '.' Identifier
     {
+        PARSER_TRACE("QualifiedIdentifier", "QualifiedIdentifier '.' Identifier");
+
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRite = $<Object>3;
 

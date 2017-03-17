@@ -204,6 +204,7 @@ QMLTreeContext::QMLTreeContext(const QString& sFileName)
     m_mTokens["on"] = TOKEN_ON;
     m_mTokens["as"] = TOKEN_AS;
     m_mTokens["signal"] = TOKEN_SIGNAL;
+    m_mTokens["var"] = TOKEN_VAR;
 }
 
 //-------------------------------------------------------------------------------------------------
