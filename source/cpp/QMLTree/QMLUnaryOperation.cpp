@@ -52,6 +52,12 @@ QString QMLUnaryOperation::operatorToString(EUnaryOperator eOperator) const
             return "++";
         case uoDecrement:
             return "--";
+        case uoMinus:
+            return "-";
+        case uoNot:
+            return "!";
+        case uoTypeof:
+            return "typeof";
     }
 
     return "??";
@@ -63,6 +69,11 @@ void QMLUnaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QML
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
+
+    if (m_bIsParenthesized)
+    {
+        dumpNoIndentNoNewLine(stream, "(");
+    }
 
     if (m_bIsPostFix == false)
     {
@@ -91,6 +102,11 @@ void QMLUnaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QML
         }
 
         dumpNoIndentNoNewLine(stream, QString("%1 ").arg(operatorToString(m_eOperator)));
+    }
+
+    if (m_bIsParenthesized)
+    {
+        dumpNoIndentNoNewLine(stream, ")");
     }
 }
 

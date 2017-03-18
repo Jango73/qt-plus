@@ -22,6 +22,11 @@ void QMLQualifiedExpression::toQML(QTextStream& stream, QMLTreeContext* pContext
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
+    if (m_bIsParenthesized)
+    {
+        dumpNoIndentNoNewLine(stream, "(");
+    }
+
     bool putDot = false;
 
     foreach (QMLItem* pItem, m_vContents)
@@ -37,5 +42,10 @@ void QMLQualifiedExpression::toQML(QTextStream& stream, QMLTreeContext* pContext
         }
 
         putDot = true;
+    }
+
+    if (m_bIsParenthesized)
+    {
+        dumpNoIndentNoNewLine(stream, ")");
     }
 }

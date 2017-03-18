@@ -26,7 +26,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with name, parameters and content
-    QMLFunction(const QPoint& pPosition, QMLItem* pName, QMLComplexItem *pParameters, QMLComplexItem *pContent);
+    QMLFunction(const QPoint& pPosition, QMLItem* pName, QMLItem *pParameters, QMLItem *pContent);
 
     //! Destructor
     virtual ~QMLFunction();
@@ -46,10 +46,10 @@ public:
     QMLItem* name() const;
 
     //!
-    QMLComplexItem* parameters() const;
+    QMLItem* parameters() const;
 
     //!
-    QMLComplexItem* content() const;
+    QMLItem* content() const;
 
     //!
     bool isSignal() const;
@@ -73,8 +73,8 @@ public:
 
 protected:
 
-    QMLItem*        m_pName;
-    QMLComplexItem* m_pParameters;
-    QMLComplexItem* m_pContent;
-    bool            m_bIsSignal;
+    QMLItem*    m_pName;
+    QMLItem*    m_pParameters;
+    QMLItem*    m_pContent;
+    bool        m_bIsSignal;
 };

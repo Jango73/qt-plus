@@ -606,17 +606,8 @@ SignalDeclarationNoColon :
 
         QMLItem* pName = $<Object>2;
         QMLItem* pParameters = $<Object>3;
-        QMLComplexItem* pParameterList = dynamic_cast<QMLComplexItem*>($<Object>3);
 
-        if (pParameterList == nullptr)
-        {
-            pParameterList = new QMLComplexItem(pContext->position());
-            pParameterList->contents() << pParameters;
-        }
-
-        pParameterList->setIsArgumentList(true);
-
-        QMLFunction* pFunction = new QMLFunction(pContext->position(), pName, pParameterList, nullptr);
+        QMLFunction* pFunction = new QMLFunction(pContext->position(), pName, pParameters, nullptr);
         pFunction->setIsSignal(true);
 
         $<Object>$ = pFunction;
@@ -630,18 +621,9 @@ JSFunction :
 
         QMLItem* pName = $<Object>2;
         QMLItem* pParameters = $<Object>3;
-        QMLComplexItem* pParameterList = dynamic_cast<QMLComplexItem*>($<Object>3);
         QMLComplexItem* pContent = dynamic_cast<QMLComplexItem*>($<Object>4);
 
-        if (pParameterList == nullptr)
-        {
-            pParameterList = new QMLComplexItem(pContext->position());
-            pParameterList->contents() << pParameters;
-        }
-
-        pParameterList->setIsArgumentList(true);
-
-        $<Object>$ = new QMLFunction(pName->position(), pName, pParameterList, pContent);
+        $<Object>$ = new QMLFunction(pName->position(), pName, pParameters, pContent);
     }
     |
     TOKEN_FUNCTION JSFunctionParameterList JSStatementBlock
@@ -649,16 +631,7 @@ JSFunction :
         PARSER_TRACE("JSFunction", "TOKEN_FUNCTION JSFunctionParameterList JSStatementBlock");
 
         QMLItem* pParameters = $<Object>2;
-        QMLComplexItem* pParameterList = dynamic_cast<QMLComplexItem*>($<Object>2);
         QMLComplexItem* pContent = dynamic_cast<QMLComplexItem*>($<Object>3);
-
-        if (pParameterList == nullptr)
-        {
-            pParameterList = new QMLComplexItem(pContext->position());
-            pParameterList->contents() << pParameters;
-        }
-
-        pParameterList->setIsArgumentList(true);
 
         QPoint pPosition;
 
@@ -667,7 +640,7 @@ JSFunction :
 
         QMLItem* pName = new QMLIdentifier(pPosition, "");
 
-        $<Object>$ = new QMLFunction(pPosition, pName, pParameterList, pContent);
+        $<Object>$ = new QMLFunction(pPosition, pName, pParameters, pContent);
     }
 ;
 
@@ -786,7 +759,11 @@ JSStatementBlock :
     {
         PARSER_TRACE("JSStatementBlock", "'{' JSStatements '}'");
 
-        $<Object>$ = $<Object>2;
+        QMLItem* pItem = $<Object>2;
+
+        pItem = QMLComplexItem::makeBlock(pItem);
+
+        $<Object>$ = pItem;
     }
 ;
 
@@ -931,6 +908,8 @@ JSStatement_If :
             pCondition = new QMLItem(pContext->position());
         }
 
+        pThen = QMLComplexItem::makeBlock(pThen);
+
         $<Object>$ = new QMLIf(pCondition->position(), pCondition, pThen, nullptr);
     }
     |
@@ -944,6 +923,9 @@ JSStatement_If :
         {
             pCondition = new QMLItem(pContext->position());
         }
+
+        pThen = QMLComplexItem::makeBlock(pThen);
+        pElse = QMLComplexItem::makeBlock(pElse);
 
         $<Object>$ = new QMLIf(pCondition->position(), pCondition, pThen, pElse);
     }
@@ -961,6 +943,8 @@ JSStatement_For :
         {
             pInitialization = new QMLItem(pContext->position());
         }
+
+        pContent = QMLComplexItem::makeBlock(pContent);
 
         $<Object>$ = new QMLFor(pInitialization->position(), pInitialization, pCondition, pIncrementation, pContent);
     }
@@ -986,6 +970,8 @@ JSStatement_For :
             pContent = new QMLItem(pContext->position());
         }
 
+        pContent = QMLComplexItem::makeBlock(pContent);
+
         $<Object>$ = new QMLForIn(pVariable->position(), pVariable, pExpression, pContent);
     }
 ;
@@ -997,6 +983,8 @@ JSStatement_While :
         QMLItem* pCondition = $<Object>3;
         QMLItem* pIncrementation = new QMLItem(pContext->position());
         QMLItem* pContent = $<Object>5;
+
+        pContent = QMLComplexItem::makeBlock(pContent);
 
         $<Object>$ = new QMLFor(pInitialization->position(), pInitialization, pCondition, pIncrementation, pContent);
     }
@@ -1759,14 +1747,25 @@ JSUnaryExpression :
         $<Object>$ = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoDecrement);
     }
     |
-    JSUnaryOperator JSMemberExpression
+    TOKEN_NOT JSMemberExpression
     {
-        $<Object>$ = $<Object>2;
+        QMLItem* pItem = $<Object>2;
+
+        $<Object>$ = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoNot);
+    }
+    |
+    TOKEN_TYPEOF JSMemberExpression
+    {
+        QMLItem* pItem = $<Object>2;
+
+        $<Object>$ = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoTypeof);
     }
     |
     TOKEN_SUB JSMemberExpression
     {
-        $<Object>$ = $<Object>2;
+        QMLItem* pItem = $<Object>2;
+
+        $<Object>$ = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoMinus);
     }
 ;
 
@@ -1860,7 +1859,11 @@ JSPrimaryExpression :
     {
         PARSER_TRACE("JSPrimaryExpression", "'(' JSExpression ')'");
 
-        $<Object>$ = $<Object>2;
+        QMLItem* pItem = $<Object>2;
+
+        pItem->setIsParenthesized(true);
+
+        $<Object>$ = pItem;
     }
 ;
 
@@ -1885,7 +1888,13 @@ JSArgumentList :
     {
         PARSER_TRACE("JSArgumentList", "JSAssignmentExpression");
 
-        $<Object>$ = $<Object>1;
+        QMLItem* pArgument = $<Object>1;
+
+        QMLComplexItem* pList = new QMLComplexItem(pArgument->position());
+        pList->setIsArgumentList(true);
+        pList->contents() << pArgument;
+
+        $<Object>$ = pList;
     }
     |
     JSArgumentList ',' JSArgument
@@ -1893,16 +1902,9 @@ JSArgumentList :
         PARSER_TRACE("JSArgumentList", "JSArgumentList ',' JSAssignmentExpression");
 
         QMLComplexItem* pList = dynamic_cast<QMLComplexItem*>($<Object>1);
-        QMLItem* pExpression1 = $<Object>1;
-        QMLItem* pExpression2 = $<Object>3;
+        QMLItem* pArgument = $<Object>3;
 
-        if (pList == nullptr)
-        {
-            pList = new QMLComplexItem(pExpression1->position());
-            pList->contents() << pExpression1;
-        }
-
-        pList->contents() << pExpression2;
+        pList->contents() << pArgument;
 
         $<Object>$ = pList;
     }
@@ -1922,18 +1924,6 @@ JSArgument:
     JSAssignmentExpression
     {
         $<Object>$ = $<Object>1;
-    }
-;
-
-JSUnaryOperator :
-    TOKEN_NOT
-    {
-        $<Object>$ = nullptr;
-    }
-    |
-    TOKEN_TYPEOF
-    {
-        $<Object>$ = nullptr;
     }
 ;
 

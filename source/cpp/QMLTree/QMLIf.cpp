@@ -80,58 +80,12 @@ void QMLIf::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParen
 
     dumpNoIndentNoNewLine(stream, ")");
 
-    dumpOpenBlock(stream, iIdent);
-
-    QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(m_pThen);
-
-    if (pComplex != nullptr)
-    {
-        foreach (QMLItem* pItem, pComplex->contents())
-        {
-            if (pItem != nullptr)
-            {
-                dumpIndentedNoNewLine(stream, iIdent + 1, "");
-                pItem->toQML(stream, pContext, this, iIdent + 1);
-                dumpNewLine(stream);
-            }
-        }
-    }
-    else if (m_pThen != nullptr)
-    {
-        dumpIndentedNoNewLine(stream, iIdent + 1, "");
-        m_pThen->toQML(stream, pContext, this, iIdent + 1);
-        dumpNewLine(stream);
-    }
-
-    dumpCloseBlock(stream, iIdent);
+    m_pThen->toQML(stream, pContext, this, iIdent + 1);
 
     if (m_pElse != nullptr)
     {
-        dumpIndentedNoNewLine(stream, iIdent, "else");
-        dumpOpenBlock(stream, iIdent);
-
-        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(m_pElse);
-
-        if (pComplex != nullptr)
-        {
-            foreach (QMLItem* pItem, pComplex->contents())
-            {
-                if (pItem != nullptr)
-                {
-                    dumpIndentedNoNewLine(stream, iIdent + 1, "");
-                    pItem->toQML(stream, pContext, this, iIdent + 1);
-                    dumpNewLine(stream);
-                }
-            }
-        }
-        else if (m_pElse != nullptr)
-        {
-            dumpIndentedNoNewLine(stream, iIdent + 1, "");
-            m_pElse->toQML(stream, pContext, this, iIdent + 1);
-            dumpNewLine(stream);
-        }
-
-        dumpCloseBlock(stream, iIdent);
+        dumpIndentedNoNewLine(stream, iIdent, "else ");
+        m_pElse->toQML(stream, pContext, this, iIdent + 1);
     }
 }
 

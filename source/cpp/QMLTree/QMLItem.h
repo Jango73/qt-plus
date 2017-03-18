@@ -52,12 +52,18 @@ public:
     //!
     virtual void setPosition(const QPoint& point);
 
+    //!
+    void setIsParenthesized(bool bValue);
+
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
 
     //!
     QPoint position() const;
+
+    //!
+    bool isParenthesized() const;
 
     //!
     virtual QVariant value() const;
@@ -86,4 +92,5 @@ protected:
 
     QVariant    m_vValue;
     QPoint      m_pPosition;
+    bool        m_bIsParenthesized;
 };

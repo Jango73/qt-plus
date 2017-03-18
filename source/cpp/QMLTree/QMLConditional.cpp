@@ -24,10 +24,20 @@ void QMLConditional::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIte
 
     if (m_pCondition != nullptr && m_pThen != nullptr && m_pElse != nullptr)
     {
+        if (m_bIsParenthesized)
+        {
+            dumpNoIndentNoNewLine(stream, "(");
+        }
+
         m_pCondition->toQML(stream, pContext, this, iIdent);
         dumpNoIndentNoNewLine(stream, " ? ");
         m_pThen->toQML(stream, pContext, this, iIdent);
         dumpNoIndentNoNewLine(stream, " : ");
         m_pElse->toQML(stream, pContext, this, iIdent);
+
+        if (m_bIsParenthesized)
+        {
+            dumpNoIndentNoNewLine(stream, ")");
+        }
     }
 }

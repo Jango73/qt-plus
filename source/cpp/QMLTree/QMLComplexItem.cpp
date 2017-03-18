@@ -9,6 +9,7 @@ QMLComplexItem::QMLComplexItem(const QPoint& pPosition, QMLItem* pName)
     , m_pName(pName)
     , m_bIsArray(false)
     , m_bIsObject(false)
+    , m_bIsBlock(false)
     , m_bIsArgumentList(false)
 {
 }
@@ -55,6 +56,13 @@ void QMLComplexItem::setIsObject(bool bValue)
 
 //-------------------------------------------------------------------------------------------------
 
+void QMLComplexItem::setIsBlock(bool bValue)
+{
+    m_bIsBlock = bValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void QMLComplexItem::setIsArgumentList(bool bValue)
 {
     m_bIsArgumentList = bValue;
@@ -93,6 +101,13 @@ bool QMLComplexItem::isArray() const
 bool QMLComplexItem::isObject() const
 {
     return m_bIsObject;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+bool QMLComplexItem::isBlock() const
+{
+    return m_bIsBlock;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -156,9 +171,14 @@ void QMLComplexItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIte
     }
 
     if (m_bIsArray)
-        dumpOpenArray(stream, iIdent);
-    else if (m_bIsObject || isNamed())
-        dumpOpenBlock(stream, iIdent);
+        dumpOpenArray(stream, iIdent - 1);
+    else if (m_bIsObject || m_bIsBlock || isNamed())
+        dumpOpenBlock(stream, iIdent - 1);
+
+    if (m_bIsParenthesized)
+    {
+        dumpNoIndentNoNewLine(stream, "(");
+    }
 
     int iCount = 0;
 
@@ -174,15 +194,30 @@ void QMLComplexItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIte
                 }
             }
 
-            pItem->toQML(stream, pContext, this, pParent != NULL ? iIdent + 1 : iIdent);
+            if (m_bIsBlock)
+            {
+                dumpIndentedNoNewLine(stream, iIdent, "");
+            }
+
+            pItem->toQML(stream, pContext, this, pParent != nullptr ? iIdent + 1 : iIdent);
+
+            if (m_bIsBlock)
+            {
+                dumpNewLine(stream);
+            }
 
             iCount++;
         }
     }
 
+    if (m_bIsParenthesized)
+    {
+        dumpNoIndentNoNewLine(stream, ")");
+    }
+
     if (m_bIsArray)
         dumpCloseArray(stream, iIdent);
-    else if (m_bIsObject || isNamed())
+    else if (m_bIsObject || m_bIsBlock || isNamed())
         dumpCloseBlock(stream, iIdent);
 }
 
@@ -207,4 +242,21 @@ CXMLNode QMLComplexItem::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pP
     }
 
     return xNode;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+QMLComplexItem* QMLComplexItem::makeBlock(QMLItem* pItem)
+{
+    QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(pItem);
+
+    if (pComplex == nullptr)
+    {
+        pComplex = new QMLComplexItem(pItem->position());
+        pComplex->contents() << pItem;
+    }
+
+    pComplex->setIsBlock(true);
+
+    return pComplex;
 }

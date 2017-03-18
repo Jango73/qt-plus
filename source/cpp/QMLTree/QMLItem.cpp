@@ -18,6 +18,7 @@
 */
 QMLItem::QMLItem(const QPoint& pPosition)
     : m_pPosition(pPosition)
+    , m_bIsParenthesized(false)
 {
 }
 
@@ -29,6 +30,7 @@ QMLItem::QMLItem(const QPoint& pPosition)
 QMLItem::QMLItem(const QPoint& pPosition, const QVariant& value)
     : m_pPosition(pPosition)
     , m_vValue(value)
+    , m_bIsParenthesized(false)
 {
 }
 
@@ -64,6 +66,16 @@ void QMLItem::setPosition(const QPoint& point)
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Sets the item's isParenthesized flag to \a bValue.
+*/
+void QMLItem::setIsParenthesized(bool bValue)
+{
+    m_bIsParenthesized = bValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Returns the item's position in the file.
 */
 QPoint QMLItem::position() const
@@ -79,6 +91,16 @@ QPoint QMLItem::position() const
 QVariant QMLItem::value() const
 {
     return m_vValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns the item's isParenthesized flag.
+*/
+bool QMLItem::isParenthesized() const
+{
+    return m_bIsParenthesized;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -118,6 +140,9 @@ void QMLItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pPar
     switch (m_vValue.type())
     {
         case QVariant::Int :
+            sValue = m_vValue.toString();
+            break;
+
         case QVariant::Double :
             sValue = m_vValue.toString();
             break;
@@ -126,11 +151,14 @@ void QMLItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pPar
             sValue = m_vValue.toBool() ? "true" : "false";
             break;
 
-        default :
+        case QVariant::String :
             sValue = QString("\"%1\"").arg(m_vValue.toString());
     }
 
-    dumpNoIndentNoNewLine(stream, sValue);
+    if (sValue.isEmpty() == false)
+    {
+        dumpNoIndentNoNewLine(stream, sValue);
+    }
 }
 
 //-------------------------------------------------------------------------------------------------

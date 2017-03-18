@@ -28,7 +28,10 @@ public:
         uoCase,
         uoContinue,
         uoIncrement,
-        uoDecrement
+        uoDecrement,
+        uoMinus,
+        uoNot,
+        uoTypeof
     };
 
     //-------------------------------------------------------------------------------------------------

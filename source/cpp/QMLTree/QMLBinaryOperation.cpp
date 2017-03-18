@@ -99,6 +99,11 @@ void QMLBinaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QM
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
+    if (m_bIsParenthesized)
+    {
+        dumpNoIndentNoNewLine(stream, "(");
+    }
+
     if (m_pLeft != NULL)
     {
         m_pLeft->toQML(stream, pContext, this, iIdent);
@@ -109,6 +114,11 @@ void QMLBinaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QM
     if (m_pRight != NULL)
     {
         m_pRight->toQML(stream, pContext, this, iIdent);
+    }
+
+    if (m_bIsParenthesized)
+    {
+        dumpNoIndentNoNewLine(stream, ")");
     }
 }
 

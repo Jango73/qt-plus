@@ -7,7 +7,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLFunction::QMLFunction(const QPoint& pPosition, QMLItem* pName, QMLComplexItem *pParameters, QMLComplexItem *pContent)
+QMLFunction::QMLFunction(const QPoint& pPosition, QMLItem* pName, QMLItem* pParameters, QMLItem* pContent)
     : QMLItem(pPosition)
     , m_pName(pName)
     , m_pParameters(pParameters)
@@ -20,11 +20,11 @@ QMLFunction::QMLFunction(const QPoint& pPosition, QMLItem* pName, QMLComplexItem
 
 QMLFunction::~QMLFunction()
 {
-    if (m_pName != NULL)
+    if (m_pName != nullptr)
         delete m_pName;
-    if (m_pParameters != NULL)
+    if (m_pParameters != nullptr)
         delete m_pParameters;
-    if (m_pContent != NULL)
+    if (m_pContent != nullptr)
         delete m_pContent;
 }
 
@@ -44,14 +44,14 @@ QMLItem* QMLFunction::name() const
 
 //-------------------------------------------------------------------------------------------------
 
-QMLComplexItem* QMLFunction::parameters() const
+QMLItem* QMLFunction::parameters() const
 {
     return m_pParameters;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLComplexItem* QMLFunction::content() const
+QMLItem* QMLFunction::content() const
 {
     return m_pContent;
 }
@@ -113,22 +113,7 @@ void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* 
 
     if (m_bIsSignal == false)
     {
-        dumpOpenBlock(stream, iIdent);
-
-        if (m_pContent != nullptr)
-        {
-            foreach (QMLItem* pItem, m_pContent->contents())
-            {
-                if (pItem != nullptr)
-                {
-                    dumpIndentedNoNewLine(stream, iIdent + 1, "");
-                    pItem->toQML(stream, pContext, this, iIdent + 1);
-                    dumpNewLine(stream);
-                }
-            }
-        }
-
-        dumpCloseBlock(stream, iIdent);
+        m_pContent->toQML(stream, pContext, this, iIdent + 1);
     }
     else
     {
@@ -145,13 +130,13 @@ CXMLNode QMLFunction::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pPare
     CXMLNode xParameters("Parameters");
     CXMLNode xContent("Content");
 
-    if (m_pName != NULL)
+    if (m_pName != nullptr)
         xName.nodes() << m_pName->toXMLNode(pContext, this);
 
-    if (m_pParameters != NULL)
+    if (m_pParameters != nullptr)
         xParameters.nodes() << m_pParameters->toXMLNode(pContext, this);
 
-    if (m_pContent != NULL)
+    if (m_pContent != nullptr)
         xContent.nodes() << m_pContent->toXMLNode(pContext, this);
 
     xNode.nodes() << xName;

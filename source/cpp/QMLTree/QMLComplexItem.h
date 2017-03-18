@@ -45,6 +45,9 @@ public:
     void setIsObject(bool bValue);
 
     //!
+    void setIsBlock(bool bValue);
+
+    //!
     void setIsArgumentList(bool bValue);
 
     //-------------------------------------------------------------------------------------------------
@@ -65,6 +68,9 @@ public:
 
     //!
     bool isObject() const;
+
+    //!
+    bool isBlock() const;
 
     //!
     bool isArgumentList() const;
@@ -89,6 +95,12 @@ public:
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
+    // Static methods
+    //-------------------------------------------------------------------------------------------------
+
+    static QMLComplexItem* makeBlock(QMLItem* pItem);
+
+    //-------------------------------------------------------------------------------------------------
     // Properties
     //-------------------------------------------------------------------------------------------------
 
@@ -98,5 +110,6 @@ protected:
     QVector<QMLItem*>   m_vContents;
     bool                m_bIsArray;
     bool                m_bIsObject;
+    bool                m_bIsBlock;
     bool                m_bIsArgumentList;
 };

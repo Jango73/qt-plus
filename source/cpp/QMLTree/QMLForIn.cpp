@@ -86,32 +86,8 @@ void QMLForIn::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pPa
     }
 
     dumpNoIndentNoNewLine(stream, ")");
-    dumpNewLine(stream);
 
-    dumpIndented(stream, iIdent, "{");
-
-    QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(m_pContent);
-
-    if (pComplex != nullptr)
-    {
-        foreach (QMLItem* pItem, pComplex->contents())
-        {
-            if (pItem != nullptr)
-            {
-                dumpIndentedNoNewLine(stream, iIdent + 1, "");
-                pItem->toQML(stream, pContext, this, iIdent + 1);
-                dumpNewLine(stream);
-            }
-        }
-    }
-    else if (m_pContent != nullptr)
-    {
-        dumpIndentedNoNewLine(stream, iIdent + 1, "");
-        m_pContent->toQML(stream, pContext, this, iIdent + 1);
-        dumpNewLine(stream);
-    }
-
-    dumpIndented(stream, iIdent, "}");
+    m_pContent->toQML(stream, pContext, this, iIdent + 1);
 }
 
 //-------------------------------------------------------------------------------------------------
