@@ -20,6 +20,7 @@
 #include "QMLPropertyAlias.h"
 #include "QMLFunction.h"
 #include "QMLFunctionCall.h"
+#include "QMLVariableDeclaration.h"
 #include "QMLQualifiedExpression.h"
 #include "QMLUnaryOperation.h"
 #include "QMLBinaryOperation.h"
@@ -1079,7 +1080,28 @@ JSVariablesOrExpression :
     {
         PARSER_TRACE("JSVariablesOrExpression", "Identifier JSVariables");
 
-        $<Object>$ = $<Object>2;
+        QMLItem* pVariable = $<Object>2;
+        QMLComplexItem* pVariables = dynamic_cast<QMLComplexItem*>($<Object>2);
+
+        if (pVariables != nullptr)
+        {
+            QMLVariableDeclaration* pDeclaration = new QMLVariableDeclaration(pVariables->position());
+
+            pDeclaration->setIsArgumentList(true);
+            pDeclaration->contents() = pVariables->grabContents();
+
+            SAFE_DELETE(pVariables);
+
+            $<Object>$ = pDeclaration;
+        }
+        else
+        {
+            QMLVariableDeclaration* pDeclaration = new QMLVariableDeclaration(pVariable->position());
+
+            pDeclaration->contents() << pVariable;
+
+            $<Object>$ = pDeclaration;
+        }
     }
     |
     JSExpression
@@ -1118,16 +1140,31 @@ JSVariables :
     {
         PARSER_TRACE("JSVariables", "JSVariable");
 
-        $<Object>$ = $<Object>1;
+        QMLItem* pVariable = $<Object>1;
+
+        QMLComplexItem* pVariables = new QMLComplexItem(pVariables->position());
+        pVariables->contents() << pVariable;
+
+        $<Object>$ = pVariables;
     }
     |
     JSVariables ',' JSVariable
     {
         PARSER_TRACE("JSVariables", "JSVariables ',' JSVariable");
 
-        SAFE_DELETE($<Object>3);
+        QMLComplexItem* pVariables = dynamic_cast<QMLComplexItem*>($<Object>1);
+        QMLItem* pVariable = $<Object>3;
 
-        $<Object>$ = $<Object>1;
+        if (pVariables != nullptr)
+        {
+            pVariables->contents() << pVariable;
+
+            $<Object>$ = pVariables;
+        }
+        else
+        {
+            $<Object>$ = nullptr;
+        }
     }
 ;
 

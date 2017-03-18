@@ -55,6 +55,7 @@ HEADERS += \
     source/cpp/QMLTree/QMLPropertyAlias.h \
     source/cpp/QMLTree/QMLFunction.h \
     source/cpp/QMLTree/QMLFunctionCall.h \
+    source/cpp/QMLTree/QMLVariableDeclaration.h \
     source/cpp/QMLTree/QMLQualifiedExpression.h \
     source/cpp/QMLTree/QMLOnExpression.h \
     source/cpp/QMLTree/QMLUnaryOperation.h \
@@ -118,6 +119,7 @@ SOURCES += \
     source/cpp/QMLTree/QMLPropertyAlias.cpp \
     source/cpp/QMLTree/QMLFunction.cpp \
     source/cpp/QMLTree/QMLFunctionCall.cpp \
+    source/cpp/QMLTree/QMLVariableDeclaration.cpp \
     source/cpp/QMLTree/QMLQualifiedExpression.cpp \
     source/cpp/QMLTree/QMLOnExpression.cpp \
     source/cpp/QMLTree/QMLUnaryOperation.cpp \
