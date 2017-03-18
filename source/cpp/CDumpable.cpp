@@ -4,6 +4,10 @@
 
 //-------------------------------------------------------------------------------------------------
 
+bool CDumpable::m_bJavaStyle = false;
+
+//-------------------------------------------------------------------------------------------------
+
 CDumpable::CDumpable()
 {
 }
@@ -24,7 +28,16 @@ void CDumpable::dump(QTextStream& stream, int iIdent)
 
 void CDumpable::dumpOpenBlock(QTextStream& stream, int iIdent)
 {
-    dumpIndented(stream, iIdent, "{");
+    if (m_bJavaStyle)
+    {
+        dumpNoIndentNoNewLine(stream, " {");
+        dumpNewLine(stream);
+    }
+    else
+    {
+        dumpNewLine(stream);
+        dumpIndented(stream, iIdent, "{");
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -38,7 +51,16 @@ void CDumpable::dumpCloseBlock(QTextStream& stream, int iIdent)
 
 void CDumpable::dumpOpenArray(QTextStream& stream, int iIdent)
 {
-    dumpIndented(stream, iIdent, "[");
+    if (m_bJavaStyle)
+    {
+        dumpNoIndentNoNewLine(stream, " [");
+        dumpNewLine(stream);
+    }
+    else
+    {
+        dumpNewLine(stream);
+        dumpIndented(stream, iIdent, "[");
+    }
 }
 
 //-------------------------------------------------------------------------------------------------

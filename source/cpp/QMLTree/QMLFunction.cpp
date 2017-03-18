@@ -110,11 +110,10 @@ void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* 
     }
 
     dumpNoIndentNoNewLine(stream, ")");
-    dumpNewLine(stream);
 
     if (m_bIsSignal == false)
     {
-        dumpIndented(stream, iIdent, "{");
+        dumpOpenBlock(stream, iIdent);
 
         if (m_pContent != nullptr)
         {
@@ -129,7 +128,11 @@ void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* 
             }
         }
 
-        dumpIndented(stream, iIdent, "}");
+        dumpCloseBlock(stream, iIdent);
+    }
+    else
+    {
+        dumpNewLine(stream);
     }
 }
 

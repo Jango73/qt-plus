@@ -79,9 +79,8 @@ void QMLIf::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParen
     }
 
     dumpNoIndentNoNewLine(stream, ")");
-    dumpNewLine(stream);
 
-    dumpIndented(stream, iIdent, "{");
+    dumpOpenBlock(stream, iIdent);
 
     QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(m_pThen);
 
@@ -104,11 +103,12 @@ void QMLIf::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParen
         dumpNewLine(stream);
     }
 
-    dumpIndented(stream, iIdent, "}");
+    dumpCloseBlock(stream, iIdent);
 
     if (m_pElse != nullptr)
     {
-        dumpIndented(stream, iIdent, "else {");
+        dumpIndentedNoNewLine(stream, iIdent, "else");
+        dumpOpenBlock(stream, iIdent);
 
         QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(m_pElse);
 
@@ -131,7 +131,7 @@ void QMLIf::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParen
             dumpNewLine(stream);
         }
 
-        dumpIndented(stream, iIdent, "}");
+        dumpCloseBlock(stream, iIdent);
     }
 }
 

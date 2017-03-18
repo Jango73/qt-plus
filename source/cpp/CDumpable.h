@@ -45,4 +45,10 @@ public:
 
     //! Ecrit un texte indenté dans le fichier de sortie
     void dumpIndented(QTextStream& stream, int iIdent, QString sText);
+
+    //-------------------------------------------------------------------------------------------------
+    // Static properties
+    //-------------------------------------------------------------------------------------------------
+
+    static bool m_bJavaStyle;
 };

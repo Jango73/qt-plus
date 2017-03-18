@@ -58,8 +58,6 @@ void QMLOnExpression::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIt
         m_pTarget->toQML(stream, pContext, this, iIdent + 1);
     }
 
-    dumpNewLine(stream);
-
     if (pParent != nullptr)
     {
         dumpOpenBlock(stream, iIdent);

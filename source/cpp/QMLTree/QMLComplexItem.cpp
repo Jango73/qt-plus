@@ -153,7 +153,6 @@ void QMLComplexItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIte
     {
         dumpIndentedNoNewLine(stream, iIdent, "");
         m_pName->toQML(stream, pContext, this, iIdent);
-        dumpNewLine(stream);
     }
 
     if (m_bIsArray)
