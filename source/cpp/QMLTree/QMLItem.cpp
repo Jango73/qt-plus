@@ -122,6 +122,10 @@ void QMLItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pPar
             sValue = m_vValue.toString();
             break;
 
+        case QVariant::Bool :
+            sValue = m_vValue.toBool() ? "true" : "false";
+            break;
+
         default :
             sValue = QString("\"%1\"").arg(m_vValue.toString());
     }
