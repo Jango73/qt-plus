@@ -909,6 +909,11 @@ JSStatement_If :
             pCondition = new QMLItem(pContext->position());
         }
 
+        if (pThen == nullptr)
+        {
+            pThen = new QMLItem(pContext->position());
+        }
+
         pThen = QMLComplexItem::makeBlock(pThen);
 
         $<Object>$ = new QMLIf(pCondition->position(), pCondition, pThen, nullptr);
@@ -923,6 +928,16 @@ JSStatement_If :
         if (pCondition == nullptr)
         {
             pCondition = new QMLItem(pContext->position());
+        }
+
+        if (pThen == nullptr)
+        {
+            pThen = new QMLItem(pContext->position());
+        }
+
+        if (pElse == nullptr)
+        {
+            pElse = new QMLItem(pContext->position());
         }
 
         pThen = QMLComplexItem::makeBlock(pThen);
