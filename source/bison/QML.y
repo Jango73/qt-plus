@@ -2182,9 +2182,6 @@ JSAttributeNoComma :
         {
             PARSER_TRACE("JSAttributeNoComma", pName->value().toString() + ", " + pValue->value().toString());
 
-            // QMLComplexItem* pComplex = new QMLComplexItem(pName->position(), pName);
-            // pComplex->contents() << pValue;
-
             QMLPropertyAssignment* pAssign = new QMLPropertyAssignment(pName->position(), pName, pValue);
 
             $<Object>$ = pAssign;
@@ -2207,9 +2204,6 @@ JSAttributeNoComma :
         if (pName != nullptr && pValue != nullptr)
         {
             PARSER_TRACE("JSAttributeNoComma", pName->value().toString() + ", " + pValue->value().toString());
-
-            // QMLComplexItem* pComplex = new QMLComplexItem(pName->position(), pName);
-            // pComplex->contents() << pValue;
 
             QMLPropertyAssignment* pAssign = new QMLPropertyAssignment(pName->position(), pName, pValue);
 
