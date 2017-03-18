@@ -12,6 +12,7 @@ QMLFunction::QMLFunction(const QPoint& pPosition, QMLItem* pName, QMLComplexItem
     , m_pName(pName)
     , m_pParameters(pParameters)
     , m_pContent(pContent)
+    , m_bIsSignal(false)
 {
 }
 
@@ -25,6 +26,13 @@ QMLFunction::~QMLFunction()
         delete m_pParameters;
     if (m_pContent != NULL)
         delete m_pContent;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void QMLFunction::setIsSignal(bool bValue)
+{
+    m_bIsSignal = bValue;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -46,6 +54,13 @@ QMLComplexItem* QMLFunction::parameters() const
 QMLComplexItem* QMLFunction::content() const
 {
     return m_pContent;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+bool QMLFunction::isSignal() const
+{
+    return m_bIsSignal;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -73,7 +88,14 @@ void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* 
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
-    dumpIndentedNoNewLine(stream, iIdent, "function ");
+    if (m_bIsSignal)
+    {
+        dumpIndentedNoNewLine(stream, iIdent, "signal ");
+    }
+    else
+    {
+        dumpIndentedNoNewLine(stream, iIdent, "function ");
+    }
 
     if (m_pName != nullptr)
     {
@@ -90,22 +112,25 @@ void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* 
     dumpNoIndentNoNewLine(stream, ")");
     dumpNewLine(stream);
 
-    dumpIndented(stream, iIdent, "{");
-
-    if (m_pContent != nullptr)
+    if (m_bIsSignal == false)
     {
-        foreach (QMLItem* pItem, m_pContent->contents())
+        dumpIndented(stream, iIdent, "{");
+
+        if (m_pContent != nullptr)
         {
-            if (pItem != nullptr)
+            foreach (QMLItem* pItem, m_pContent->contents())
             {
-                dumpIndentedNoNewLine(stream, iIdent + 1, "");
-                pItem->toQML(stream, pContext, this, iIdent + 1);
-                dumpNewLine(stream);
+                if (pItem != nullptr)
+                {
+                    dumpIndentedNoNewLine(stream, iIdent + 1, "");
+                    pItem->toQML(stream, pContext, this, iIdent + 1);
+                    dumpNewLine(stream);
+                }
             }
         }
-    }
 
-    dumpIndented(stream, iIdent, "}");
+        dumpIndented(stream, iIdent, "}");
+    }
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -604,10 +604,22 @@ SignalDeclarationNoColon :
     {
         PARSER_TRACE("SignalDeclarationNoColon", "TOKEN_SIGNAL Identifier JSFunctionParameterList");
 
-        QMLItem* pName = dynamic_cast<QMLItem*>($<Object>2);
-        QMLComplexItem* pParameters = dynamic_cast<QMLComplexItem*>($<Object>3);
+        QMLItem* pName = $<Object>2;
+        QMLItem* pParameters = $<Object>3;
+        QMLComplexItem* pParameterList = dynamic_cast<QMLComplexItem*>($<Object>3);
 
-        $<Object>$ = new QMLFunction(pContext->position(), pName, pParameters, nullptr);
+        if (pParameterList == nullptr)
+        {
+            pParameterList = new QMLComplexItem(pContext->position());
+            pParameterList->contents() << pParameters;
+        }
+
+        pParameterList->setIsArgumentList(true);
+
+        QMLFunction* pFunction = new QMLFunction(pContext->position(), pName, pParameterList, nullptr);
+        pFunction->setIsSignal(true);
+
+        $<Object>$ = pFunction;
     }
 ;
 
@@ -1955,12 +1967,12 @@ JSObject :
         PARSER_TRACE("JSObject", "'[' JSArrayContents ']'");
 
         QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>2);
-        QMLItem* pItem1 = $<Object>2;
+        QMLItem* pItem = $<Object>2;
 
         if (pComplex == nullptr)
         {
-            pComplex = new QMLComplexItem(pItem1->position());
-            pComplex->contents() << pItem1;
+            pComplex = new QMLComplexItem(pItem->position());
+            pComplex->contents() << pItem;
             pComplex->setIsArray(true);
         }
 

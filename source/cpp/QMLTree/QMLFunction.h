@@ -35,6 +35,9 @@ public:
     // Setters
     //-------------------------------------------------------------------------------------------------
 
+    //!
+    void setIsSignal(bool bValue);
+
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
@@ -47,6 +50,9 @@ public:
 
     //!
     QMLComplexItem* content() const;
+
+    //!
+    bool isSignal() const;
 
     //! Returns all members
     virtual QMap<QString, QMLItem*> members() Q_DECL_OVERRIDE;
@@ -70,4 +76,5 @@ protected:
     QMLItem*        m_pName;
     QMLComplexItem* m_pParameters;
     QMLComplexItem* m_pContent;
+    bool            m_bIsSignal;
 };
