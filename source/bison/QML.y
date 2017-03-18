@@ -1949,7 +1949,10 @@ JSObject :
     {
         PARSER_TRACE("JSObject", "'{' '}'");
 
-        $<Object>$ = new QMLComplexItem(pContext->position());
+        QMLComplexItem* pComplex = new QMLComplexItem(pContext->position());
+        pComplex->setIsObject(true);
+
+        $<Object>$ = pComplex;
     }
     |
     TOKEN_DIMENSION
@@ -1966,42 +1969,21 @@ JSObject :
     {
         PARSER_TRACE("JSObject", "'[' JSArrayContents ']'");
 
-        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>2);
-        QMLItem* pItem = $<Object>2;
-
-        if (pComplex == nullptr)
-        {
-            pComplex = new QMLComplexItem(pItem->position());
-            pComplex->contents() << pItem;
-            pComplex->setIsArray(true);
-        }
-
-        $<Object>$ = pComplex;
+        $<Object>$ = $<Object>2;
     }
 ;
 
 JSArrayContents :
-    JSObject
-    {
-        PARSER_TRACE("JSObject", "JSArrayContents");
-
-        $<Object>$ = $<Object>1;
-    }
-    |
     JSArrayContents ',' JSObject
     {
         PARSER_TRACE("JSObject", "JSArrayContents ',' JSObject");
 
-        $<Object>$ = $<Object>1;
+        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>1);
+        QMLItem* pItem2 = $<Object>3;
 
-        SAFE_DELETE($<Object>3);
-    }
-    |
-    ItemContents
-    {
-        PARSER_TRACE("JSObject", "ItemContents");
+        pComplex->contents() << pItem2;
 
-        $<Object>$ = $<Object>1;
+        $<Object>$ = pComplex;
     }
     |
     JSArrayContents ',' Identifier
@@ -2009,16 +1991,11 @@ JSArrayContents :
         PARSER_TRACE("JSObject", "JSArrayContents ',' Identifier");
 
         QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>1);
-        QMLItem* pItem1 = $<Object>1;
         QMLItem* pItem2 = $<Object>3;
 
-        if (pComplex == nullptr)
-        {
-            pComplex = new QMLComplexItem(pItem1->position());
-            pComplex->contents() << pItem1;
-        }
-
         pComplex->contents() << pItem2;
+
+        $<Object>$ = pComplex;
     }
     |
     JSArrayContents ',' Value
@@ -2026,30 +2003,63 @@ JSArrayContents :
         PARSER_TRACE("JSObject", "JSArrayContents ',' Value");
 
         QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>1);
-        QMLItem* pItem1 = $<Object>1;
         QMLItem* pItem2 = $<Object>3;
 
-        if (pComplex == nullptr)
-        {
-            pComplex = new QMLComplexItem(pItem1->position());
-            pComplex->contents() << pItem1;
-        }
-
         pComplex->contents() << pItem2;
+
+        $<Object>$ = pComplex;
+    }
+    |
+    ItemContents
+    {
+        PARSER_TRACE("JSObject", "ItemContents");
+
+        QMLItem* pItem1 = $<Object>1;
+
+        QMLComplexItem* pComplex = new QMLComplexItem(pItem1->position());
+        pComplex->setIsArray(true);
+        pComplex->contents() << pItem1;
+
+        $<Object>$ = pComplex;
+    }
+    |
+    JSObject
+    {
+        PARSER_TRACE("JSObject", "JSArrayContents");
+
+        QMLItem* pItem1 = $<Object>1;
+
+        QMLComplexItem* pComplex = new QMLComplexItem(pItem1->position());
+        pComplex->setIsArray(true);
+        pComplex->contents() << pItem1;
+
+        $<Object>$ = pComplex;
     }
     |
     Identifier
     {
         PARSER_TRACE("JSObject", "Identifier");
 
-        $<Object>$ = $<Object>1;
+        QMLItem* pItem1 = $<Object>1;
+
+        QMLComplexItem* pComplex = new QMLComplexItem(pItem1->position());
+        pComplex->setIsArray(true);
+        pComplex->contents() << pItem1;
+
+        $<Object>$ = pComplex;
     }
     |
     Value
     {
         PARSER_TRACE("JSObject", "Value");
 
-        $<Object>$ = $<Object>1;
+        QMLItem* pItem1 = $<Object>1;
+
+        QMLComplexItem* pComplex = new QMLComplexItem(pItem1->position());
+        pComplex->setIsArray(true);
+        pComplex->contents() << pItem1;
+
+        $<Object>$ = pComplex;
     }
 ;
 

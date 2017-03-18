@@ -76,6 +76,13 @@ QVector<QMLItem*>& QMLComplexItem::contents()
 
 //-------------------------------------------------------------------------------------------------
 
+bool QMLComplexItem::isNamed() const
+{
+    return (m_pName != nullptr && m_pName->value().toString().isEmpty() == false);
+}
+
+//-------------------------------------------------------------------------------------------------
+
 bool QMLComplexItem::isArray() const
 {
     return m_bIsArray;
@@ -142,72 +149,42 @@ void QMLComplexItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIte
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
-    if (m_vContents.count() == 0)
+    if (isNamed())
     {
-        if (m_bIsArray)
-        {
-            dumpNoIndentNoNewLine(stream, "[]");
-        }
+        dumpIndentedNoNewLine(stream, iIdent, "");
+        m_pName->toQML(stream, pContext, this, iIdent);
+        dumpNewLine(stream);
     }
-    else if (m_vContents.count() == 1)
+
+    if (m_bIsArray)
+        dumpOpenArray(stream, iIdent);
+    else if (m_bIsObject || isNamed())
+        dumpOpenBlock(stream, iIdent);
+
+    int iCount = 0;
+
+    foreach (QMLItem* pItem, m_vContents)
     {
-        if (m_bIsArray)
-            dumpNoIndentNoNewLine(stream, "[");
-        else if (m_bIsObject)
-            dumpNoIndentNoNewLine(stream, "{");
-
-        if (m_vContents[0] != nullptr)
+        if (pItem != nullptr)
         {
-            m_vContents[0]->toQML(stream, pContext, this, iIdent);
-        }
-
-        if (m_bIsArray)
-            dumpNoIndentNoNewLine(stream, "]");
-        else if (m_bIsObject)
-            dumpNoIndentNoNewLine(stream, "}");
-    }
-    else
-    {
-        if (m_pName != nullptr)
-        {
-            dumpIndentedNoNewLine(stream, iIdent, "");
-            m_pName->toQML(stream, pContext, this, iIdent);
-            dumpNewLine(stream);
-        }
-
-        if (pParent != nullptr)
-        {
-            if (m_bIsArray)
-                dumpOpenArray(stream, iIdent);
-            else
-                dumpOpenBlock(stream, iIdent);
-        }
-
-        int iCount = 0;
-
-        foreach (QMLItem* pItem, m_vContents)
-        {
-            if (pItem != nullptr)
+            if (m_bIsArray || m_bIsObject || m_bIsArgumentList)
             {
-                if (iCount > 0 && (m_bIsObject || m_bIsArgumentList))
+                if (iCount > 0)
                 {
                     dumpNoIndentNoNewLine(stream, ", ");
                 }
-
-                pItem->toQML(stream, pContext, this, pParent != NULL ? iIdent + 1 : iIdent);
-
-                iCount++;
             }
-        }
 
-        if (pParent != nullptr)
-        {
-            if (m_bIsArray)
-                dumpCloseArray(stream, iIdent);
-            else
-                dumpCloseBlock(stream, iIdent);
+            pItem->toQML(stream, pContext, this, pParent != NULL ? iIdent + 1 : iIdent);
+
+            iCount++;
         }
     }
+
+    if (m_bIsArray)
+        dumpCloseArray(stream, iIdent);
+    else if (m_bIsObject || isNamed())
+        dumpCloseBlock(stream, iIdent);
 }
 
 //-------------------------------------------------------------------------------------------------

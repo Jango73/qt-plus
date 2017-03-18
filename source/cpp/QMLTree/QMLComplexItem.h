@@ -58,6 +58,9 @@ public:
     QVector<QMLItem*>& contents();
 
     //!
+    bool isNamed() const;
+
+    //!
     bool isArray() const;
 
     //!
