@@ -9,6 +9,7 @@ QMLComplexItem::QMLComplexItem(const QPoint& pPosition, QMLItem* pName)
     , m_pName(pName)
     , m_bIsArray(false)
     , m_bIsObject(false)
+    , m_bIsArgumentList(false)
 {
 }
 
@@ -54,6 +55,13 @@ void QMLComplexItem::setIsObject(bool bValue)
 
 //-------------------------------------------------------------------------------------------------
 
+void QMLComplexItem::setIsArgumentList(bool bValue)
+{
+    m_bIsArgumentList = bValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 QMLItem* QMLComplexItem::name() const
 {
     return m_pName;
@@ -78,6 +86,13 @@ bool QMLComplexItem::isArray() const
 bool QMLComplexItem::isObject() const
 {
     return m_bIsObject;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+bool QMLComplexItem::isArgumentList() const
+{
+    return m_bIsArgumentList;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -138,6 +153,8 @@ void QMLComplexItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIte
     {
         if (m_bIsArray)
             dumpNoIndentNoNewLine(stream, "[");
+        else if (m_bIsObject)
+            dumpNoIndentNoNewLine(stream, "{");
 
         if (m_vContents[0] != nullptr)
         {
@@ -146,6 +163,8 @@ void QMLComplexItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIte
 
         if (m_bIsArray)
             dumpNoIndentNoNewLine(stream, "]");
+        else if (m_bIsObject)
+            dumpNoIndentNoNewLine(stream, "}");
     }
     else
     {
@@ -170,7 +189,7 @@ void QMLComplexItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIte
         {
             if (pItem != nullptr)
             {
-                if (iCount > 0 && m_bIsObject)
+                if (iCount > 0 && (m_bIsObject || m_bIsArgumentList))
                 {
                     dumpNoIndentNoNewLine(stream, ", ");
                 }

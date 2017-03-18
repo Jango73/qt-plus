@@ -2491,7 +2491,7 @@ yyreduce:
             pParameterList->contents() << pParameters;
         }
 
-        pParameterList->setIsObject(true);
+        pParameterList->setIsArgumentList(true);
 
         (yyval.Object) = new QMLFunction(pName->position(), pName, pParameterList, pContent);
     ;}
@@ -2514,7 +2514,7 @@ yyreduce:
             pParameterList->contents() << pParameters;
         }
 
-        pParameterList->setIsObject(true);
+        pParameterList->setIsArgumentList(true);
 
         QPoint pPosition;
 

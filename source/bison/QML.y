@@ -627,7 +627,7 @@ JSFunction :
             pParameterList->contents() << pParameters;
         }
 
-        pParameterList->setIsObject(true);
+        pParameterList->setIsArgumentList(true);
 
         $<Object>$ = new QMLFunction(pName->position(), pName, pParameterList, pContent);
     }
@@ -646,7 +646,7 @@ JSFunction :
             pParameterList->contents() << pParameters;
         }
 
-        pParameterList->setIsObject(true);
+        pParameterList->setIsArgumentList(true);
 
         QPoint pPosition;
 

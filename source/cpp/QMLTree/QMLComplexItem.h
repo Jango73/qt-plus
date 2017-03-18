@@ -44,6 +44,9 @@ public:
     //!
     void setIsObject(bool bValue);
 
+    //!
+    void setIsArgumentList(bool bValue);
+
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
@@ -59,6 +62,9 @@ public:
 
     //!
     bool isObject() const;
+
+    //!
+    bool isArgumentList() const;
 
     //!
     const QVector<QMLItem*>& contents() const;
@@ -89,4 +95,5 @@ protected:
     QVector<QMLItem*>   m_vContents;
     bool                m_bIsArray;
     bool                m_bIsObject;
+    bool                m_bIsArgumentList;
 };

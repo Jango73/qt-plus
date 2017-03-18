@@ -26,7 +26,6 @@ void QMLPropertyAssignment::toQML(QTextStream& stream, QMLTreeContext* pContext,
     {
         dumpIndentedNoNewLine(stream, iIdent, "");
         m_pName->toQML(stream, pContext, this, iIdent + 1);
-        dumpNoIndentNoNewLine(stream, " ");
 
         dumpNoIndentNoNewLine(stream, ": ");
         m_pContent->toQML(stream, pContext, this, iIdent + 1);
