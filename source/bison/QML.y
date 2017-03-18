@@ -1139,7 +1139,28 @@ JSVariablesOrExpressionOpt :
     {
         PARSER_TRACE("JSVariablesOrExpressionOpt", "Identifier JSVariables");
 
-        $<Object>$ = $<Object>2;
+        QMLItem* pVariable = $<Object>2;
+        QMLComplexItem* pVariables = dynamic_cast<QMLComplexItem*>($<Object>2);
+
+        if (pVariables != nullptr)
+        {
+            QMLVariableDeclaration* pDeclaration = new QMLVariableDeclaration(pVariables->position());
+
+            pDeclaration->setIsArgumentList(true);
+            pDeclaration->contents() = pVariables->grabContents();
+
+            SAFE_DELETE(pVariables);
+
+            $<Object>$ = pDeclaration;
+        }
+        else
+        {
+            QMLVariableDeclaration* pDeclaration = new QMLVariableDeclaration(pVariable->position());
+
+            pDeclaration->contents() << pVariable;
+
+            $<Object>$ = pDeclaration;
+        }
     }
     |
     JSExpression
