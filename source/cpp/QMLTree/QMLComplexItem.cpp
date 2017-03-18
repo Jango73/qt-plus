@@ -8,6 +8,7 @@ QMLComplexItem::QMLComplexItem(const QPoint& pPosition, QMLItem* pName)
     : QMLItem(pPosition)
     , m_pName(pName)
     , m_bIsArray(false)
+    , m_bIsObject(false)
 {
 }
 
@@ -46,6 +47,13 @@ void QMLComplexItem::setIsArray(bool bValue)
 
 //-------------------------------------------------------------------------------------------------
 
+void QMLComplexItem::setIsObject(bool bValue)
+{
+    m_bIsObject = bValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 QMLItem* QMLComplexItem::name() const
 {
     return m_pName;
@@ -63,6 +71,13 @@ QVector<QMLItem*>& QMLComplexItem::contents()
 bool QMLComplexItem::isArray() const
 {
     return m_bIsArray;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+bool QMLComplexItem::isObject() const
+{
+    return m_bIsObject;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -149,11 +164,20 @@ void QMLComplexItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIte
                 dumpOpenBlock(stream, iIdent);
         }
 
+        int iCount = 0;
+
         foreach (QMLItem* pItem, m_vContents)
         {
             if (pItem != nullptr)
             {
+                if (iCount > 0 && m_bIsObject)
+                {
+                    dumpNoIndentNoNewLine(stream, ", ");
+                }
+
                 pItem->toQML(stream, pContext, this, pParent != NULL ? iIdent + 1 : iIdent);
+
+                iCount++;
             }
         }
 

@@ -123,16 +123,10 @@ void QMLItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pPar
             break;
 
         default :
-            if (m_vValue.toString().isEmpty() == false)
-            {
-                sValue = QString("\"%1\"").arg(m_vValue.toString());
-            }
+            sValue = QString("\"%1\"").arg(m_vValue.toString());
     }
 
-    if (sValue.isEmpty() == false)
-    {
-        dumpNoIndentNoNewLine(stream, sValue);
-    }
+    dumpNoIndentNoNewLine(stream, sValue);
 }
 
 //-------------------------------------------------------------------------------------------------

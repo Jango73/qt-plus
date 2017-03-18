@@ -627,6 +627,8 @@ JSFunction :
             pParameterList->contents() << pParameters;
         }
 
+        pParameterList->setIsObject(true);
+
         $<Object>$ = new QMLFunction(pName->position(), pName, pParameterList, pContent);
     }
     |
@@ -643,6 +645,8 @@ JSFunction :
             pParameterList = new QMLComplexItem(pContext->position());
             pParameterList->contents() << pParameters;
         }
+
+        pParameterList->setIsObject(true);
 
         QPoint pPosition;
 
@@ -1745,7 +1749,7 @@ JSUnaryExpression :
     |
     JSUnaryOperator JSMemberExpression
     {
-        $<Object>$ = $<Object>1;
+        $<Object>$ = $<Object>2;
     }
     |
     TOKEN_SUB JSMemberExpression
@@ -1924,16 +1928,22 @@ JSUnaryOperator :
 JSObject :
     '{' JSAttributes '}'
     {
+        PARSER_TRACE("JSObject", "'{' JSAttributes '}'");
+
         $<Object>$ = $<Object>2;
     }
     |
     '{' '}'
     {
+        PARSER_TRACE("JSObject", "'{' '}'");
+
         $<Object>$ = new QMLComplexItem(pContext->position());
     }
     |
     TOKEN_DIMENSION
     {
+        PARSER_TRACE("JSObject", "TOKEN_DIMENSION");
+
         QMLComplexItem* pComplex = new QMLComplexItem(pContext->position());
         pComplex->setIsArray(true);
 
@@ -1942,6 +1952,8 @@ JSObject :
     |
     '[' JSArrayContents ']'
     {
+        PARSER_TRACE("JSObject", "'[' JSArrayContents ']'");
+
         QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>2);
         QMLItem* pItem1 = $<Object>2;
 
@@ -1959,11 +1971,15 @@ JSObject :
 JSArrayContents :
     JSObject
     {
+        PARSER_TRACE("JSObject", "JSArrayContents");
+
         $<Object>$ = $<Object>1;
     }
     |
     JSArrayContents ',' JSObject
     {
+        PARSER_TRACE("JSObject", "JSArrayContents ',' JSObject");
+
         $<Object>$ = $<Object>1;
 
         SAFE_DELETE($<Object>3);
@@ -1971,16 +1987,15 @@ JSArrayContents :
     |
     ItemContents
     {
-        $<Object>$ = $<Object>1;
-    }
-    |
-    Identifier
-    {
+        PARSER_TRACE("JSObject", "ItemContents");
+
         $<Object>$ = $<Object>1;
     }
     |
     JSArrayContents ',' Identifier
     {
+        PARSER_TRACE("JSObject", "JSArrayContents ',' Identifier");
+
         QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>1);
         QMLItem* pItem1 = $<Object>1;
         QMLItem* pItem2 = $<Object>3;
@@ -1992,15 +2007,12 @@ JSArrayContents :
         }
 
         pComplex->contents() << pItem2;
-    }
-    |
-    Value
-    {
-        $<Object>$ = $<Object>1;
     }
     |
     JSArrayContents ',' Value
     {
+        PARSER_TRACE("JSObject", "JSArrayContents ',' Value");
+
         QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>1);
         QMLItem* pItem1 = $<Object>1;
         QMLItem* pItem2 = $<Object>3;
@@ -2012,26 +2024,44 @@ JSArrayContents :
         }
 
         pComplex->contents() << pItem2;
+    }
+    |
+    Identifier
+    {
+        PARSER_TRACE("JSObject", "Identifier");
+
+        $<Object>$ = $<Object>1;
+    }
+    |
+    Value
+    {
+        PARSER_TRACE("JSObject", "Value");
+
+        $<Object>$ = $<Object>1;
     }
 ;
 
 JSAttributes :
     JSAttribute
     {
-        $<Object>$ = $<Object>1;
+        PARSER_TRACE("JSAttributes", "JSAttribute");
+
+        QMLItem* pAttribute1 = $<Object>1;
+
+        QMLComplexItem* pComplex = new QMLComplexItem(pAttribute1->position());
+        pComplex->setIsObject(true);
+
+        pComplex->contents() << pAttribute1;
+
+        $<Object>$ = pComplex;
     }
     |
     JSAttributes JSAttribute
     {
-        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>1);
-        QMLItem* pAttribute1 = $<Object>1;
-        QMLItem* pAttribute2 = $<Object>2;
+        PARSER_TRACE("JSAttributes", "JSAttributes JSAttribute");
 
-        if (pComplex == nullptr)
-        {
-            pComplex = new QMLComplexItem(pAttribute1->position());
-            pComplex->contents() << pAttribute1;
-        }
+        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>1);
+        QMLItem* pAttribute2 = $<Object>2;
 
         pComplex->contents() << pAttribute2;
 
@@ -2042,11 +2072,15 @@ JSAttributes :
 JSAttribute :
     JSAttributeNoComma
     {
+        PARSER_TRACE("JSAttribute", "JSAttributeNoComma");
+
         $<Object>$ = $<Object>1;
     }
     |
     JSAttributeNoComma ','
     {
+        PARSER_TRACE("JSAttribute", "JSAttributeNoComma ','");
+
         $<Object>$ = $<Object>1;
     }
 ;
@@ -2054,38 +2088,52 @@ JSAttribute :
 JSAttributeNoComma :
     JSAttributeName ':' JSObject
     {
+        PARSER_TRACE("JSAttributeNoComma", "JSAttributeName ':' JSObject");
+
         QMLItem* pName = $<Object>1;
         QMLItem* pValue = $<Object>3;
 
         if (pName != nullptr && pValue != nullptr)
         {
-            QMLComplexItem* pComplex = new QMLComplexItem(pName->position(), pName);
+            PARSER_TRACE("JSAttributeNoComma", pName->value().toString() + ", " + pValue->value().toString());
 
-            pComplex->contents() << pValue;
+            // QMLComplexItem* pComplex = new QMLComplexItem(pName->position(), pName);
+            // pComplex->contents() << pValue;
 
-            $<Object>$ = pComplex;
+            QMLPropertyAssignment* pAssign = new QMLPropertyAssignment(pName->position(), pName, pValue);
+
+            $<Object>$ = pAssign;
         }
         else
         {
+            PARSER_TRACE("JSAttributeNoComma", "... name or value is NULL !!");
+
             $<Object>$ = nullptr;
         }
     }
     |
     JSAttributeName ':' JSExpressionSingle
     {
+        PARSER_TRACE("JSAttributeNoComma", "JSAttributeName ':' JSExpressionSingle");
+
         QMLItem* pName = $<Object>1;
         QMLItem* pValue = $<Object>3;
 
         if (pName != nullptr && pValue != nullptr)
         {
-            QMLComplexItem* pComplex = new QMLComplexItem(pName->position(), pName);
+            PARSER_TRACE("JSAttributeNoComma", pName->value().toString() + ", " + pValue->value().toString());
 
-            pComplex->contents() << pValue;
+            // QMLComplexItem* pComplex = new QMLComplexItem(pName->position(), pName);
+            // pComplex->contents() << pValue;
 
-            $<Object>$ = pComplex;
+            QMLPropertyAssignment* pAssign = new QMLPropertyAssignment(pName->position(), pName, pValue);
+
+            $<Object>$ = pAssign;
         }
         else
         {
+            PARSER_TRACE("JSAttributeNoComma", "... name or value is NULL !!");
+
             $<Object>$ = nullptr;
         }
     }

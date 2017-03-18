@@ -84,13 +84,7 @@ void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* 
 
     if (m_pParameters != nullptr)
     {
-        foreach (QMLItem* pItem, m_pParameters->contents())
-        {
-            if (pItem != nullptr)
-            {
-                pItem->toQML(stream, pContext, this, iIdent + 1);
-            }
-        }
+        m_pParameters->toQML(stream, pContext, nullptr, iIdent + 1);
     }
 
     dumpNoIndentNoNewLine(stream, ")");
