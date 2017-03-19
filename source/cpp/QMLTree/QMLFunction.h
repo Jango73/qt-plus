@@ -11,6 +11,7 @@
 // Application
 #include "QMLItem.h"
 #include "QMLComplexItem.h"
+#include "QMLIdentifier.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -62,6 +63,12 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
+    virtual void solveOrigins(QMLTreeContext* pContext, QMLItem* pParent = nullptr) Q_DECL_OVERRIDE;
+
+    //!
+    virtual QMLItem* findNamedItem(const QString& sName) Q_DECL_OVERRIDE;
+
+    //!
     virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //!
@@ -73,8 +80,11 @@ public:
 
 protected:
 
-    QMLItem*    m_pName;
-    QMLItem*    m_pParameters;
-    QMLItem*    m_pContent;
-    bool        m_bIsSignal;
+    QMLItem*                m_pName;
+    QMLItem*                m_pParameters;
+    QMLItem*                m_pContent;
+    bool                    m_bIsSignal;
+
+    // Constructed after parsing
+    QMap<QString, QMLItem*> m_mVariables;
 };

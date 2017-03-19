@@ -316,6 +316,9 @@ QMLTreeContext::EParseError QMLTreeContext::parse()
 
         // Clear scope stack
         m_sScopes.clear();
+
+        // Solve internal references
+        m_tItem.solveOrigins(this, nullptr);
     }
     else
     {

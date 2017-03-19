@@ -53,6 +53,9 @@ public:
     virtual void setPosition(const QPoint& point);
 
     //!
+    virtual void setOrigin(QMLItem* pItem);
+
+    //!
     void setIsParenthesized(bool bValue);
 
     //-------------------------------------------------------------------------------------------------
@@ -61,6 +64,9 @@ public:
 
     //!
     QPoint position() const;
+
+    //!
+    QMLItem* origin() const;
 
     //!
     bool isParenthesized() const;
@@ -75,11 +81,28 @@ public:
     virtual QMap<QString, QMLItem*> members();
 
     //-------------------------------------------------------------------------------------------------
-    // Overridden methods
+    // Control methods
+    //-------------------------------------------------------------------------------------------------
+
+    //-------------------------------------------------------------------------------------------------
+    // Virtual control methods
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0);
+    virtual void solveOrigins(QMLTreeContext* pContext, QMLItem* pParent = nullptr);
+
+    //!
+    virtual QMap<QString, QMLItem*> getDeclaredVariables();
+
+    //!
+    virtual QMLItem* findNamedItem(const QString& sName);
+
+    //!
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = nullptr, int iIdent = 0);
+
+    //-------------------------------------------------------------------------------------------------
+    // Overridden methods
+    //-------------------------------------------------------------------------------------------------
 
     //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
@@ -92,5 +115,6 @@ protected:
 
     QVariant    m_vValue;
     QPoint      m_pPosition;
+    QMLItem*    m_pOrigin;
     bool        m_bIsParenthesized;
 };

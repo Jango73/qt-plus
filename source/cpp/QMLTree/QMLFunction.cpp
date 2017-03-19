@@ -4,6 +4,8 @@
 
 // Application
 #include "QMLFunction.h"
+#include "QMLVariableDeclaration.h"
+#include "QMLBinaryOperation.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -74,6 +76,30 @@ QMap<QString, QMLItem*> QMLFunction::members()
     vReturnValue["content"] = m_pContent;
 
     return vReturnValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Finds the origin of the item. \br\br
+    \a pContext is the context of this item. \br
+    \a pParent is the caller of this method.
+*/
+void QMLFunction::solveOrigins(QMLTreeContext* pContext, QMLItem* pParent)
+{
+    m_mVariables = m_pContent->getDeclaredVariables();
+
+    m_pContent->solveOrigins(pContext, this);
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns the item named \a sName, for identifier resolution.
+*/
+QMLItem* QMLFunction::findNamedItem(const QString& sName)
+{
+    return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------

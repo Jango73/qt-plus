@@ -38,6 +38,9 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
+    virtual void solveOrigins(QMLTreeContext* pContext, QMLItem* pParent = nullptr);
+
+    //!
     virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------

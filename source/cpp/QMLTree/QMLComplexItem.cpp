@@ -168,6 +168,56 @@ QVector<QMLItem*> QMLComplexItem::grabContents()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Finds the origin of the item. \br\br
+    \a pContext is the context of this item. \br
+    \a pParent is the caller of this method.
+*/
+void QMLComplexItem::solveOrigins(QMLTreeContext* pContext, QMLItem* pParent)
+{
+    foreach(QMLItem* pItem, m_vContents)
+    {
+        pItem->solveOrigins(pContext, this);
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns a list of all declared variables.
+*/
+QMap<QString, QMLItem*> QMLComplexItem::getDeclaredVariables()
+{
+    QMap<QString, QMLItem*> mReturnValue;
+
+    foreach(QMLItem* pItem, m_vContents)
+    {
+        QMap<QString, QMLItem*> itemVariables = pItem->getDeclaredVariables();
+
+        foreach (QString sKey, itemVariables.keys())
+        {
+            if (mReturnValue.contains(sKey) == false)
+            {
+                mReturnValue[sKey] = itemVariables[sKey];
+            }
+        }
+    }
+
+    return mReturnValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns the item named \a sName, for identifier resolution.
+*/
+QMLItem* QMLComplexItem::findNamedItem(const QString& sName)
+{
+    return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void QMLComplexItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
 {
     Q_UNUSED(pContext);

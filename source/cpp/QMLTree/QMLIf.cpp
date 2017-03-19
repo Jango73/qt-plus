@@ -62,6 +62,41 @@ QMap<QString, QMLItem*> QMLIf::members()
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Returns a list of all declared variables.
+*/
+QMap<QString, QMLItem*> QMLIf::getDeclaredVariables()
+{
+    QMap<QString, QMLItem*> mReturnValue;
+
+    if (m_pThen != nullptr)
+    {
+        QMap<QString, QMLItem*> thenVariables = m_pThen->getDeclaredVariables();
+
+        foreach (QString sKey, thenVariables.keys())
+        {
+            mReturnValue[sKey] = thenVariables[sKey];
+        }
+    }
+
+    if (m_pElse != nullptr)
+    {
+        QMap<QString, QMLItem*> elseVariables = m_pElse->getDeclaredVariables();
+
+        foreach (QString sKey, elseVariables.keys())
+        {
+            if (mReturnValue.contains(sKey) == false)
+            {
+                mReturnValue[sKey] = elseVariables[sKey];
+            }
+        }
+    }
+
+    return mReturnValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Dumps the item to \a stream using \a iIdent for indentation. \br\br
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.

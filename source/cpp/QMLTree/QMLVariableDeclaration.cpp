@@ -1,6 +1,11 @@
 
+// Qt
+#include <QDebug>
+
 // Application
 #include "QMLVariableDeclaration.h"
+#include "QMLIdentifier.h"
+#include "QMLBinaryOperation.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -30,6 +35,38 @@ QMLVariableDeclaration::QMLVariableDeclaration(const QMLVariableDeclaration& tar
 */
 QMLVariableDeclaration::~QMLVariableDeclaration()
 {
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns a list of all declared variables.
+*/
+QMap<QString, QMLItem*> QMLVariableDeclaration::getDeclaredVariables()
+{
+    QMap<QString, QMLItem*> mReturnValue;
+
+    foreach (QMLItem* pVariable, m_vContents)
+    {
+        QMLIdentifier* pIdentifier = dynamic_cast<QMLIdentifier*>(pVariable);
+
+        if (pIdentifier == nullptr)
+        {
+            QMLBinaryOperation* pAssign = dynamic_cast<QMLBinaryOperation*>(pVariable);
+
+            if (pAssign != nullptr)
+            {
+                pIdentifier = dynamic_cast<QMLIdentifier*>(pAssign->left());
+            }
+        }
+
+        if (pIdentifier != nullptr)
+        {
+            mReturnValue[pIdentifier->value().toString()] = pIdentifier;
+        }
+    }
+
+    return mReturnValue;
 }
 
 //-------------------------------------------------------------------------------------------------

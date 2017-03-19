@@ -24,6 +24,26 @@ QMLIdentifier::~QMLIdentifier()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Finds the origin of the item. \br\br
+    \a pContext is the context of this item. \br
+    \a pParent is the caller of this method.
+*/
+void QMLIdentifier::solveOrigins(QMLTreeContext* pContext, QMLItem* pParent)
+{
+    if (m_vValue.toString().isEmpty() == false)
+    {
+        m_pOrigin = pParent->findNamedItem(m_vValue.toString());
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Dumps the item to \a stream using \a iIdent for indentation. \br\br
+    \a pContext is the context of this item. \br
+    \a pParent is the caller of this method.
+*/
 void QMLIdentifier::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
 {
     Q_UNUSED(pContext);

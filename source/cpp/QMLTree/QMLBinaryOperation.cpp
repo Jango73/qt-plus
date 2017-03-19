@@ -94,6 +94,34 @@ QString QMLBinaryOperation::operatorToString(EOperator eOperator) const
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns a list of all declared variables.
+*/
+QMap<QString, QMLItem*> QMLBinaryOperation::getDeclaredVariables()
+{
+    QMap<QString, QMLItem*> mReturnValue;
+
+    QMap<QString, QMLItem*> leftVariables = m_pLeft->getDeclaredVariables();
+    QMap<QString, QMLItem*> rightVariables = m_pLeft->getDeclaredVariables();
+
+    foreach (QString sKey, leftVariables.keys())
+    {
+        mReturnValue[sKey] = leftVariables[sKey];
+    }
+
+    foreach (QString sKey, rightVariables.keys())
+    {
+        if (mReturnValue.contains(sKey) == false)
+        {
+            mReturnValue[sKey] = rightVariables[sKey];
+        }
+    }
+
+    return mReturnValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void QMLBinaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
@@ -104,14 +132,14 @@ void QMLBinaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QM
         dumpNoIndentNoNewLine(stream, "(");
     }
 
-    if (m_pLeft != NULL)
+    if (m_pLeft != nullptr)
     {
         m_pLeft->toQML(stream, pContext, this, iIdent);
     }
 
     dumpNoIndentNoNewLine(stream, QString(" %1 ").arg(operatorToString(m_eOperator)));
 
-    if (m_pRight != NULL)
+    if (m_pRight != nullptr)
     {
         m_pRight->toQML(stream, pContext, this, iIdent);
     }

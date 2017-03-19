@@ -18,6 +18,7 @@
 */
 QMLItem::QMLItem(const QPoint& pPosition)
     : m_pPosition(pPosition)
+    , m_pOrigin(nullptr)
     , m_bIsParenthesized(false)
 {
 }
@@ -28,8 +29,9 @@ QMLItem::QMLItem(const QPoint& pPosition)
     Constructs a QMLItem with \a value.
 */
 QMLItem::QMLItem(const QPoint& pPosition, const QVariant& value)
-    : m_pPosition(pPosition)
-    , m_vValue(value)
+    : m_vValue(value)
+    , m_pPosition(pPosition)
+    , m_pOrigin(nullptr)
     , m_bIsParenthesized(false)
 {
 }
@@ -66,6 +68,16 @@ void QMLItem::setPosition(const QPoint& point)
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Sets the item's origin to \a pItem.
+*/
+void QMLItem::setOrigin(QMLItem* pItem)
+{
+    m_pOrigin = pItem;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Sets the item's isParenthesized flag to \a bValue.
 */
 void QMLItem::setIsParenthesized(bool bValue)
@@ -81,6 +93,16 @@ void QMLItem::setIsParenthesized(bool bValue)
 QPoint QMLItem::position() const
 {
     return m_pPosition;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns the item's origin.
+*/
+QMLItem* QMLItem::origin() const
+{
+    return m_pOrigin;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -121,6 +143,39 @@ QString QMLItem::toString() const
 QMap<QString, QMLItem*> QMLItem::members()
 {
     return QMap<QString, QMLItem*>();
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Finds the origin of the item. \br\br
+    \a pContext is the context of this item. \br
+    \a pParent is the caller of this method.
+*/
+void QMLItem::solveOrigins(QMLTreeContext* pContext, QMLItem* pParent)
+{
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns a list of all declared variables.
+*/
+QMap<QString, QMLItem*> QMLItem::getDeclaredVariables()
+{
+    QMap<QString, QMLItem*> mReturnValue;
+
+    return mReturnValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns the item named \a sName, for identifier resolution.
+*/
+QMLItem* QMLItem::findNamedItem(const QString& sName)
+{
+    return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
