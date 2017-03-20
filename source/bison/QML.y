@@ -706,9 +706,10 @@ JSFunctionParameter :
         else
         {
             $<Object>$ = nullptr;
-        }
 
-        SAFE_DELETE(pName);
+            SAFE_DELETE(pType);
+            SAFE_DELETE(pName);
+        }
     }
     |
     TOKEN_VAR Identifier
@@ -725,9 +726,10 @@ JSFunctionParameter :
         else
         {
             $<Object>$ = nullptr;
-        }
 
-        SAFE_DELETE(pName);
+            SAFE_DELETE(pType);
+            SAFE_DELETE(pName);
+        }
     }
     |
     Identifier Identifier
@@ -744,6 +746,9 @@ JSFunctionParameter :
         else
         {
             $<Object>$ = nullptr;
+
+            SAFE_DELETE(pType);
+            SAFE_DELETE(pName);
         }
     }
 ;

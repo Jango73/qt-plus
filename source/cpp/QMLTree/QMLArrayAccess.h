@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../unislib_global.h"
+#include "../qtplus_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -14,7 +14,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a property declaration
-class UNISLIBSHARED_EXPORT QMLArrayAccess : public QMLComplexItem
+class QTPLUSSHARED_EXPORT QMLArrayAccess : public QMLComplexItem
 {
     Q_OBJECT
 
