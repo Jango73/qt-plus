@@ -47,6 +47,9 @@ public:
     //! Set folder
     void setFile(const QString& sFileName);
 
+    //!
+    void setRewriteFiles(bool bValue);
+
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
@@ -124,4 +127,5 @@ protected:
     CXMLNode                        m_xGrammar;
     bool                            m_bIncludeImports;
     bool                            m_bIncludeSubFolders;
+    bool                            m_bRewriteFiles;
 };

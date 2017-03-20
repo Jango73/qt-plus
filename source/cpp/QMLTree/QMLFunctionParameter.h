@@ -1,20 +1,22 @@
 
 #pragma once
 
-#include "../qtplus_global.h"
+#include "../unislib_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
 // Qt
 #include <QObject>
+#include <QVariant>
+#include <QTextStream>
 
-// Application
-#include "QMLPropertyAssignment.h"
+// Library
+#include "QMLPropertyDeclaration.h"
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a property declaration
-class QTPLUSSHARED_EXPORT QMLPropertyAlias : public QMLPropertyAssignment
+//! Defines a QML file item
+class UNISLIBSHARED_EXPORT QMLFunctionParameter : public QMLPropertyDeclaration
 {
     Q_OBJECT
 
@@ -24,11 +26,11 @@ public:
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //! Constructor with name and content
-    QMLPropertyAlias(const QPoint& pPosition, QMLItem* pName, QMLItem *pContent);
+    //! Constructor with filename
+    QMLFunctionParameter(const QPoint& pPosition, QMLType* pType, QMLItem* pName);
 
     //! Destructor
-    virtual ~QMLPropertyAlias();
+    virtual ~QMLFunctionParameter();
 
     //-------------------------------------------------------------------------------------------------
     // Setters

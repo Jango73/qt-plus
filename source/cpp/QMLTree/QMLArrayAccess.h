@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../qtplus_global.h"
+#include "../unislib_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -9,12 +9,12 @@
 #include <QObject>
 
 // Application
-#include "QMLPropertyAssignment.h"
+#include "QMLComplexItem.h"
 
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a property declaration
-class QTPLUSSHARED_EXPORT QMLPropertyAlias : public QMLPropertyAssignment
+class UNISLIBSHARED_EXPORT QMLArrayAccess : public QMLComplexItem
 {
     Q_OBJECT
 
@@ -24,11 +24,11 @@ public:
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //! Constructor with name and content
-    QMLPropertyAlias(const QPoint& pPosition, QMLItem* pName, QMLItem *pContent);
+    //! Constructor with condition, then and else
+    QMLArrayAccess(const QPoint& pPosition, QMLItem* pLeft);
 
     //! Destructor
-    virtual ~QMLPropertyAlias();
+    virtual ~QMLArrayAccess();
 
     //-------------------------------------------------------------------------------------------------
     // Setters
@@ -38,16 +38,30 @@ public:
     // Getters
     //-------------------------------------------------------------------------------------------------
 
+    //!
+    QMLItem* left() const;
+
+    //! Returns all members
+    virtual QMap<QString, QMLItem*> members() Q_DECL_OVERRIDE;
+
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------
 
     //!
+    virtual QMap<QString, QMLItem*> getDeclaredVariables() Q_DECL_OVERRIDE;
+
+    //!
     virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+
+    //!
+    virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Properties
     //-------------------------------------------------------------------------------------------------
 
 protected:
+
+    QMLItem*    m_pLeft;
 };

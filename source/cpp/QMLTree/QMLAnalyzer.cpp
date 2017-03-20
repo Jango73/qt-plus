@@ -29,6 +29,7 @@ QMLAnalyzer::QMLAnalyzer()
     : QThread(NULL)
     , m_bIncludeImports(false)
     , m_bIncludeSubFolders(false)
+    , m_bRewriteFiles(false)
 {
 }
 
@@ -58,6 +59,11 @@ void QMLAnalyzer::setFolder(const QString& sFolder, bool bIncludeSubFolders)
 void QMLAnalyzer::setFile(const QString& sFileName)
 {
     m_sFile = sFileName;
+}
+
+void QMLAnalyzer::setRewriteFiles(bool bValue)
+{
+    m_bRewriteFiles = bValue;
 }
 
 /*!
@@ -125,6 +131,20 @@ bool QMLAnalyzer::analyzeFile(const QString& sFileName)
     if (m_mContexts[sFileName]->parse() == QMLTreeContext::peSuccess)
     {
         runGrammar(sFileName, m_mContexts[sFileName]);
+
+        if (m_bRewriteFiles)
+        {
+            m_mContexts[sFileName]->item().toXMLNode(m_mContexts[sFileName], nullptr).save(sFileName + ".xml");
+
+            QFile file(sFileName);
+
+            if (file.open(QFile::WriteOnly))
+            {
+                QTextStream stream(&file);
+                m_mContexts[sFileName]->item().toQML(stream, m_mContexts[sFileName]);
+                file.close();
+            }
+        }
     }
     else
     {

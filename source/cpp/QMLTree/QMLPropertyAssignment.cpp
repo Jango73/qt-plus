@@ -22,7 +22,7 @@ void QMLPropertyAssignment::toQML(QTextStream& stream, QMLTreeContext* pContext,
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
-    if (m_pName != NULL && m_pContent != NULL)
+    if (m_pName != nullptr && m_pContent != nullptr)
     {
         dumpIndentedNoNewLine(stream, iIdent, "");
         m_pName->toQML(stream, pContext, this, iIdent + 1);

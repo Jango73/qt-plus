@@ -312,7 +312,7 @@ CXMLNode QMLComplexItem::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pP
 
 //-------------------------------------------------------------------------------------------------
 
-QMLComplexItem* QMLComplexItem::makeBlock(QMLItem* pItem)
+QMLComplexItem* QMLComplexItem::fromItem(QMLItem* pItem)
 {
     QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(pItem);
 
@@ -321,6 +321,15 @@ QMLComplexItem* QMLComplexItem::makeBlock(QMLItem* pItem)
         pComplex = new QMLComplexItem(pItem->position());
         pComplex->contents() << pItem;
     }
+
+    return pComplex;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+QMLComplexItem* QMLComplexItem::makeBlock(QMLItem* pItem)
+{
+    QMLComplexItem* pComplex = fromItem(pItem);
 
     pComplex->setIsBlock(true);
 

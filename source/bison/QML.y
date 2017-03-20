@@ -20,8 +20,10 @@
 #include "QMLPropertyAlias.h"
 #include "QMLFunction.h"
 #include "QMLFunctionCall.h"
+#include "QMLFunctionParameter.h"
 #include "QMLVariableDeclaration.h"
 #include "QMLQualifiedExpression.h"
+#include "QMLArrayAccess.h"
 #include "QMLUnaryOperation.h"
 #include "QMLBinaryOperation.h"
 #include "QMLOnExpression.h"
@@ -699,7 +701,7 @@ JSFunctionParameter :
 
         if (pType != nullptr && pName != nullptr)
         {
-            $<Object>$ = new QMLIdentifier(pName->position(), pName->value().toString());
+            $<Object>$ = new QMLFunctionParameter(pName->position(), pType, pName);
         }
         else
         {
@@ -711,14 +713,14 @@ JSFunctionParameter :
     |
     TOKEN_VAR Identifier
     {
-        PARSER_TRACE("JSFunctionParameter", "Identifier Identifier");
+        PARSER_TRACE("JSFunctionParameter", "TOKEN_VAR Identifier");
 
         QMLType* pType = QMLType::fromQMLItem(nullptr);
         QMLItem* pName = dynamic_cast<QMLItem*>($<Object>2);
 
         if (pType != nullptr && pName != nullptr)
         {
-            $<Object>$ = new QMLIdentifier(pName->position(), pName->value().toString());
+            $<Object>$ = new QMLFunctionParameter(pName->position(), pType, pName);
         }
         else
         {
@@ -737,14 +739,12 @@ JSFunctionParameter :
 
         if (pType != nullptr && pName != nullptr)
         {
-            $<Object>$ = new QMLIdentifier(pName->position(), pName->value().toString());
+            $<Object>$ = new QMLFunctionParameter(pName->position(), pType, pName);
         }
         else
         {
             $<Object>$ = nullptr;
         }
-
-        SAFE_DELETE(pName);
     }
 ;
 
@@ -1879,11 +1879,22 @@ JSArrayAccessExpression :
         $<Object>$ = $<Object>1;
     }
     |
-    JSFunctionCall '[' JSExpression ']'
+    JSArrayAccessExpression '[' JSExpression ']'
     {
-        PARSER_TRACE("JSArrayAccessExpression", "JSFunctionCall '[' JSExpression ']'");
+        PARSER_TRACE("JSArrayAccessExpression", "JSArrayAccessExpression '[' JSExpression ']'");
 
-        $<Object>$ = $<Object>1;
+        QMLItem* pLeft = $<Object>1;
+        QMLArrayAccess* pArrayAccess = dynamic_cast<QMLArrayAccess*>($<Object>1);
+        QMLItem* pIndexer = $<Object>3;
+
+        if (pArrayAccess == nullptr)
+        {
+            pArrayAccess = new QMLArrayAccess(pIndexer->position(), pLeft);
+        }
+
+        pArrayAccess->contents() << pIndexer;
+
+        $<Object>$ = pArrayAccess;
     }
 ;
 
