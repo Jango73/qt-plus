@@ -87,9 +87,11 @@ QMap<QString, QMLItem*> QMLFunction::members()
 */
 void QMLFunction::solveOrigins(QMLTreeContext* pContext, QMLItem* pParent)
 {
-    m_mVariables = m_pContent->getDeclaredVariables();
-
-    m_pContent->solveOrigins(pContext, this);
+    if (m_pContent != nullptr)
+    {
+        m_mVariables = m_pContent->getDeclaredVariables();
+        m_pContent->solveOrigins(pContext, this);
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -139,7 +141,10 @@ void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* 
 
     if (m_bIsSignal == false)
     {
-        m_pContent->toQML(stream, pContext, this, iIdent + 1);
+        if (m_pContent != nullptr)
+        {
+            m_pContent->toQML(stream, pContext, this, iIdent + 1);
+        }
     }
     else
     {

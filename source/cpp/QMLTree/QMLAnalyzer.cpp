@@ -22,43 +22,6 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLAnalyzerError::QMLAnalyzerError()
-{
-}
-
-QMLAnalyzerError::QMLAnalyzerError(const QString& sFileName, QPoint pPosition, const QString& sText)
-    : m_sFileName(sFileName)
-    , m_pPosition(pPosition)
-    , m_sText(sText)
-{
-}
-
-QString QMLAnalyzerError::fileName() const
-{
-    return m_sFileName;
-}
-
-QPoint QMLAnalyzerError::position() const
-{
-    return m_pPosition;
-}
-
-QString QMLAnalyzerError::text() const
-{
-    return m_sText;
-}
-
-QString QMLAnalyzerError::toString() const
-{
-    return QString("%1 (%2, %3) : %4")
-            .arg(m_sFileName)
-            .arg(m_pPosition.y())
-            .arg(m_pPosition.x())
-            .arg(m_sText);
-}
-
-//-------------------------------------------------------------------------------------------------
-
 /*!
     Constructs a CCodeAnalyzer.
 */
@@ -165,7 +128,7 @@ bool QMLAnalyzer::analyzeFile(const QString& sFileName)
     }
     else
     {
-        m_vErrors << QMLAnalyzerError(sFileName, QPoint(0, 0), m_mContexts[sFileName]->errorString());
+        m_vErrors << m_mContexts[sFileName]->error();
 
         emit analyzeError(m_vErrors.last());
     }

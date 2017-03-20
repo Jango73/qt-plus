@@ -33,6 +33,46 @@ typedef union
 
 //-------------------------------------------------------------------------------------------------
 
+class QTPLUSSHARED_EXPORT QMLAnalyzerError
+{
+public:
+
+    //!
+    QMLAnalyzerError();
+
+    //!
+    QMLAnalyzerError(const QMLAnalyzerError& target);
+
+    //!
+    QMLAnalyzerError(const QString& sFileName, QPoint pPosition, const QString& sText);
+
+    //!
+    QMLAnalyzerError& operator = (const QMLAnalyzerError& target);
+
+    //!
+    QString fileName() const;
+
+    //!
+    QPoint position() const;
+
+    //!
+    QString text() const;
+
+    //!
+    QString toString() const;
+
+    //!
+    void clear();
+
+protected:
+
+    QString m_sFileName;
+    QPoint  m_pPosition;
+    QString m_sText;
+};
+
+//-------------------------------------------------------------------------------------------------
+
 //!
 class QTPLUSSHARED_EXPORT QMLTreeContext : public QThread, public CXMLNodableContext
 {
@@ -83,6 +123,9 @@ public:
 
     //!
     bool success() const;
+
+    //!
+    QMLAnalyzerError error() const;
 
     //!
     QString errorString() const;
@@ -231,7 +274,7 @@ protected:
     //-------------------------------------------------------------------------------------------------
 
     EParseError             m_eError;
-    QString                 m_sErrorString;
+    QMLAnalyzerError        m_tErrorObject;
     QString                 m_sFolder;
     QStack<QMLScope*>       m_sScopes;
     QVector<QString>        m_vFiles;

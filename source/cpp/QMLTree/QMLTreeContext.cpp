@@ -169,6 +169,64 @@ extern int yyparse(QMLTreeContext* pContext);
 
 //-------------------------------------------------------------------------------------------------
 
+QMLAnalyzerError::QMLAnalyzerError()
+{
+}
+
+QMLAnalyzerError::QMLAnalyzerError(const QMLAnalyzerError& target)
+{
+    *this = target;
+}
+
+QMLAnalyzerError::QMLAnalyzerError(const QString& sFileName, QPoint pPosition, const QString& sText)
+    : m_sFileName(sFileName)
+    , m_pPosition(pPosition)
+    , m_sText(sText)
+{
+}
+
+QMLAnalyzerError& QMLAnalyzerError::operator = (const QMLAnalyzerError& target)
+{
+    m_sFileName     = target.m_sFileName;
+    m_pPosition     = target.m_pPosition;
+    m_sText         = target.m_sText;
+
+    return *this;
+}
+
+QString QMLAnalyzerError::fileName() const
+{
+    return m_sFileName;
+}
+
+QPoint QMLAnalyzerError::position() const
+{
+    return m_pPosition;
+}
+
+QString QMLAnalyzerError::text() const
+{
+    return m_sText;
+}
+
+QString QMLAnalyzerError::toString() const
+{
+    return QString("%1 (%2, %3) : %4")
+            .arg(m_sFileName)
+            .arg(m_pPosition.y())
+            .arg(m_pPosition.x())
+            .arg(m_sText);
+}
+
+void QMLAnalyzerError::clear()
+{
+    m_sFileName.clear();
+    m_pPosition = QPoint(0, 0);
+    m_sText.clear();
+}
+
+//-------------------------------------------------------------------------------------------------
+
 /*!
     Constructs a QMLTreeContext with a file named \a sFileName.
 */
@@ -263,12 +321,21 @@ bool QMLTreeContext::success() const
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Returns the last error.
+*/
+QMLAnalyzerError QMLTreeContext::error() const
+{
+    return m_tErrorObject;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Returns the last error string.
 */
-
 QString QMLTreeContext::errorString() const
 {
-    return m_sErrorString;
+    return m_tErrorObject.toString();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -294,7 +361,7 @@ QPoint QMLTreeContext::position() const
 QMLTreeContext::EParseError QMLTreeContext::parse()
 {
     m_eError = peSuccess;
-    m_sErrorString.clear();
+    m_tErrorObject.clear();
 
     if (m_vFiles.count() > 0)
     {
@@ -416,18 +483,10 @@ QString QMLTreeContext::tokenValue() const
 */
 void QMLTreeContext::showError(const QString& sText)
 {
-    QFileInfo info(SCOPE.m_sFileName);
-
-    QString sFullError = QString("%1 (line %2, col %3) : %4")
-            .arg(info.fileName())
-            .arg(SCOPE.m_iLine)
-            .arg(SCOPE.m_iColumn)
-            .arg(sText);
-
-    qDebug() << sFullError;
-
     m_eError = SCOPE.m_eError = peSyntaxError;
-    m_sErrorString = sFullError;
+    m_tErrorObject = QMLAnalyzerError(SCOPE.m_sFileName, QPoint(SCOPE.m_iColumn, SCOPE.m_iLine), sText);
+
+    qDebug() << m_tErrorObject.toString();
 }
 
 //-------------------------------------------------------------------------------------------------

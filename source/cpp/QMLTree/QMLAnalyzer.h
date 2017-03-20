@@ -21,37 +21,6 @@
 
 //-------------------------------------------------------------------------------------------------
 
-class QTPLUSSHARED_EXPORT QMLAnalyzerError
-{
-public:
-
-    //!
-    QMLAnalyzerError();
-
-    //!
-    QMLAnalyzerError(const QString& sFileName, QPoint pPosition, const QString& sText);
-
-    //!
-    QString fileName() const;
-
-    //!
-    QPoint position() const;
-
-    //!
-    QString text() const;
-
-    //!
-    QString toString() const;
-
-protected:
-
-    QString m_sFileName;
-    QPoint  m_pPosition;
-    QString m_sText;
-};
-
-//-------------------------------------------------------------------------------------------------
-
 class QTPLUSSHARED_EXPORT QMLAnalyzer : public QThread
 {
     Q_OBJECT
