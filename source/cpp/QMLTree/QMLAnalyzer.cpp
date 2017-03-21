@@ -47,10 +47,9 @@ QMLAnalyzer::~QMLAnalyzer()
 /*!
     Sets the base folder member to \a sFolder.
 */
-void QMLAnalyzer::setFolder(const QString& sFolder, bool bIncludeSubFolders)
+void QMLAnalyzer::setFolder(const QString& sFolder)
 {
     m_sFolder = sFolder;
-    m_bIncludeSubFolders = bIncludeSubFolders;
 }
 
 /*!
@@ -61,6 +60,25 @@ void QMLAnalyzer::setFile(const QString& sFileName)
     m_sFile = sFileName;
 }
 
+/*!
+    Sets the include imports flag to \a bValue.
+*/
+void QMLAnalyzer::setIncludeImports(bool bValue)
+{
+    m_bIncludeImports = bValue;
+}
+
+/*!
+    Sets the include subfolders flag to \a bValue.
+*/
+void QMLAnalyzer::setIncludeSubFolders(bool bValue)
+{
+    m_bIncludeSubFolders = bValue;
+}
+
+/*!
+    Sets the include rewrite files flag to \a bValue.
+*/
 void QMLAnalyzer::setRewriteFiles(bool bValue)
 {
     m_bRewriteFiles = bValue;
@@ -82,10 +100,9 @@ const QVector<QMLAnalyzerError>& QMLAnalyzer::errors() const
     return m_vErrors;
 }
 
-bool QMLAnalyzer::analyze(CXMLNode xGrammar, bool bIncludeImports)
+bool QMLAnalyzer::analyze(CXMLNode xGrammar)
 {
     m_xGrammar = xGrammar;
-    m_bIncludeImports = bIncludeImports;
 
     foreach (QString sKey, m_mContexts.keys())
     {
@@ -107,12 +124,11 @@ bool QMLAnalyzer::analyze(CXMLNode xGrammar, bool bIncludeImports)
     return true;
 }
 
-void QMLAnalyzer::threadedAnalyze(CXMLNode xGrammar, bool bIncludeImports)
+void QMLAnalyzer::threadedAnalyze(CXMLNode xGrammar)
 {
     if (isRunning() == false)
     {
         m_xGrammar = xGrammar;
-        m_bIncludeImports = bIncludeImports;
 
         start();
     }
@@ -134,8 +150,6 @@ bool QMLAnalyzer::analyzeFile(const QString& sFileName)
 
         if (m_bRewriteFiles)
         {
-            m_mContexts[sFileName]->item().toXMLNode(m_mContexts[sFileName], nullptr).save(sFileName + ".xml");
-
             QFile file(sFileName);
 
             if (file.open(QFile::WriteOnly))
@@ -158,7 +172,7 @@ bool QMLAnalyzer::analyzeFile(const QString& sFileName)
 
 void QMLAnalyzer::run()
 {
-    analyze(m_xGrammar, m_bIncludeImports);
+    analyze(m_xGrammar);
 }
 
 bool QMLAnalyzer::analyze_Recurse(QString sDirectory)

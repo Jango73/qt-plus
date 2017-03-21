@@ -233,7 +233,7 @@ void QMLAnalyzerError::clear()
 QMLTreeContext::QMLTreeContext(const QString& sFileName)
     : m_tItem(QPoint())
     ,  m_eError(peSuccess)
-    , m_bIncludeImports(true)
+    , m_bIncludeImports(false)
 {
     QFileInfo info(sFileName);
     m_sFolder = info.absoluteDir().path();

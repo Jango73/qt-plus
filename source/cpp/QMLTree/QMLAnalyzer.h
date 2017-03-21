@@ -42,12 +42,18 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Set folder
-    void setFolder(const QString& sFolder, bool bIncludeSubFolders = false);
+    void setFolder(const QString& sFolder);
 
-    //! Set folder
+    //! Set file
     void setFile(const QString& sFileName);
 
-    //!
+    //! Set include imports
+    void setIncludeImports(bool bValue);
+
+    //! Set include subfolders
+    void setIncludeSubFolders(bool bValue);
+
+    //! Set rewrite files
     void setRewriteFiles(bool bValue);
 
     //-------------------------------------------------------------------------------------------------
@@ -65,10 +71,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    bool analyze(CXMLNode xGrammar, bool bIncludeImports = false);
+    bool analyze(CXMLNode xGrammar);
 
     //!
-    void threadedAnalyze(CXMLNode xGrammar, bool bIncludeImports = false);
+    void threadedAnalyze(CXMLNode xGrammar);
 
     //!
     bool analyzeFile(const QString& sFileName);

@@ -207,6 +207,10 @@ void QMLItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pPar
             break;
 
         case QVariant::String :
+        case QVariant::Color :
+        case QVariant::Point :
+        case QVariant::PointF :
+        case QVariant::Font :
             sValue = QString("\"%1\"").arg(m_vValue.toString());
     }
 
