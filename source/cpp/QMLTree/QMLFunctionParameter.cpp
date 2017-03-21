@@ -32,12 +32,12 @@ void QMLFunctionParameter::toQML(QTextStream& stream, QMLTreeContext* pContext, 
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
-    if (m_pType != nullptr)
+    if (m_pType != nullptr && m_pType->type() != QVariant::Invalid)
     {
         m_pType->toQML(stream, pContext, this, iIdent + 1);
-    }
 
-    dumpNoIndentNoNewLine(stream, " ");
+        dumpNoIndentNoNewLine(stream, " ");
+    }
 
     if (m_pName != nullptr)
     {

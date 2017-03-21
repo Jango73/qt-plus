@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../qtplus_global.h"
+#include "../unislib_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -12,14 +12,9 @@
 #include "QMLItem.h"
 
 //-------------------------------------------------------------------------------------------------
-// Forward declarations
-
-class QMLTreeContext;
-
-//-------------------------------------------------------------------------------------------------
 
 //! Defines a property declaration
-class QTPLUSSHARED_EXPORT QMLImport : public QMLItem
+class UNISLIBSHARED_EXPORT QMLPragma : public QMLItem
 {
     Q_OBJECT
 
@@ -30,10 +25,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with name and content
-    QMLImport(const QPoint& pPosition, QMLTreeContext* pContext, const QString& sName, const QString& sVersion, const QString& sAs = "");
+    QMLPragma(const QPoint& pPosition, QMLItem* pStatement);
 
     //! Destructor
-    virtual ~QMLImport();
+    virtual ~QMLPragma();
 
     //-------------------------------------------------------------------------------------------------
     // Setters
@@ -44,14 +39,14 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    QString name() const;
-
-    //!
-    QString version() const;
+    QMLItem* statement() const;
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------
+
+    //! Returns all members
+    virtual QMap<QString, QMLItem*> members() Q_DECL_OVERRIDE;
 
     //!
     virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
@@ -65,7 +60,5 @@ public:
 
 protected:
 
-    QString    m_sName;
-    QString    m_sVersion;
-    QString    m_sAs;
+    QMLItem*    m_pStatement;
 };

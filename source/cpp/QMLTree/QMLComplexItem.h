@@ -78,12 +78,6 @@ public:
     //!
     const QVector<QMLItem*>& contents() const;
 
-    //!
-    virtual QString toString() const Q_DECL_OVERRIDE;
-
-    //! Returns all members
-    virtual QMap<QString, QMLItem*> members() Q_DECL_OVERRIDE;
-
     //-------------------------------------------------------------------------------------------------
     // Control methods
     //-------------------------------------------------------------------------------------------------
@@ -94,6 +88,12 @@ public:
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------
+
+    //!
+    virtual QString toString() const Q_DECL_OVERRIDE;
+
+    //! Returns all members
+    virtual QMap<QString, QMLItem*> members() Q_DECL_OVERRIDE;
 
     //!
     virtual void solveOrigins(QMLTreeContext* pContext, QMLItem* pParent = nullptr) Q_DECL_OVERRIDE;

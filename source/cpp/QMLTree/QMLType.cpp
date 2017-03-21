@@ -85,6 +85,8 @@ QString QMLType::typeToString(QVariant::Type eType)
             return "color";
         case QVariant::Font:
             return "font";
+        case QVARIANT_VARIANT:
+            return "variant";
     }
 
     return "";
@@ -100,7 +102,7 @@ QMLType* QMLType::fromQMLItem(QMLItem* pItem)
     if (pItem != nullptr)
     {
         if (pItem->value().toString().toLower() == "var") return new QMLType(QPoint(), QVariant::Invalid);
-        if (pItem->value().toString().toLower() == "variant") return new QMLType(QPoint(), QVariant::Invalid);
+        if (pItem->value().toString().toLower() == "variant") return new QMLType(QPoint(), (QVariant::Type) QVARIANT_VARIANT);
         if (pItem->value().toString().toLower() == "bool") return new QMLType(QPoint(), QVariant::Bool);
         if (pItem->value().toString().toLower() == "int") return new QMLType(QPoint(), QVariant::Int);
         if (pItem->value().toString().toLower() == "real") return new QMLType(QPoint(), QVariant::Double);

@@ -746,7 +746,7 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
         return c;
     }
 
-    // Literal constant
+    // Literal constants
 
     if (c == '"')
     {
@@ -756,6 +756,21 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
           GET(c);
           if (c == EOF ) return 0;
           if (c == '"' ) break;
+          if (c == '\\') c = parseEscape();
+          STORE(c);
+        }
+        LVAL->String = SCOPE.m_pCurrentTokenValue;
+        return TOKEN_LITERAL;
+    }
+
+    if (c == '\'')
+    {
+        c = ' ';
+        while (1)
+        {
+          GET(c);
+          if (c == EOF ) return 0;
+          if (c == '\'' ) break;
           if (c == '\\') c = parseEscape();
           STORE(c);
         }

@@ -9,10 +9,11 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLImport::QMLImport(const QPoint& pPosition, QMLTreeContext* pContext, const QString& sName, const QString& sVersion)
+QMLImport::QMLImport(const QPoint& pPosition, QMLTreeContext* pContext, const QString& sName, const QString& sVersion, const QString& sAs)
     : QMLItem(pPosition)
     , m_sName(sName)
     , m_sVersion(sVersion)
+    , m_sAs(sAs)
 {
     if (sVersion == "")
     {
@@ -60,14 +61,23 @@ void QMLImport::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pP
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
+    QString sText = "";
+
     if (m_sVersion.isEmpty())
     {
-        dumpIndented(stream, iIdent, QString("import \"%1\"").arg(m_sName));
+        sText = QString("import \"%1\"").arg(m_sName);
     }
     else
     {
-        dumpIndented(stream, iIdent, QString("import %1 %2").arg(m_sName).arg(m_sVersion));
+        sText = QString("import %1 %2").arg(m_sName).arg(m_sVersion);
     }
+
+    if (m_sAs.isEmpty() == false)
+    {
+        sText += (" as " + m_sAs);
+    }
+
+    dumpIndented(stream, iIdent, sText);
 }
 
 //-------------------------------------------------------------------------------------------------

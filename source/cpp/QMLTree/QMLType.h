@@ -12,6 +12,8 @@
 // Application
 #include "QMLItem.h"
 
+#define QVARIANT_VARIANT    ((QVariant::Type) (QVariant::UserType + 1))
+
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a base QML item
