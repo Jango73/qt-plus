@@ -9,6 +9,7 @@ QMLPropertyDeclaration::QMLPropertyDeclaration(const QPoint& pPosition, QMLType*
     , m_pType(pType)
     , m_pName(pName)
     , m_pContent(nullptr)
+    , m_eModifiers(mNone)
 {
 }
 
@@ -19,6 +20,7 @@ QMLPropertyDeclaration::QMLPropertyDeclaration(const QPoint& pPosition, QMLType*
     , m_pType(pType)
     , m_pName(pName)
     , m_pContent(pContent)
+    , m_eModifiers(mNone)
 {
 }
 
@@ -32,6 +34,13 @@ QMLPropertyDeclaration::~QMLPropertyDeclaration()
         delete m_pName;
     if (m_pContent != nullptr)
         delete m_pContent;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void QMLPropertyDeclaration::setModifiers(EModifier eModifiers)
+{
+    m_eModifiers = eModifiers;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -64,6 +73,13 @@ const QMLItem* QMLPropertyDeclaration::content() const
 
 //-------------------------------------------------------------------------------------------------
 
+QMLPropertyDeclaration::EModifier QMLPropertyDeclaration::modifiers() const
+{
+    return m_eModifiers;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 QMap<QString, QMLItem*> QMLPropertyDeclaration::members()
 {
     QMap<QString, QMLItem*> vReturnValue;
@@ -84,7 +100,20 @@ void QMLPropertyDeclaration::toQML(QTextStream& stream, QMLTreeContext* pContext
 
     if (m_pType != nullptr && m_pName != nullptr)
     {
-        dumpIndentedNoNewLine(stream, iIdent, "property ");
+        if (m_eModifiers == mReadonly)
+        {
+            dumpIndentedNoNewLine(stream, iIdent, "readonly ");
+        }
+        else if (m_eModifiers == mDefault)
+        {
+            dumpIndentedNoNewLine(stream, iIdent, "default ");
+        }
+        else
+        {
+            dumpIndentedNoNewLine(stream, iIdent, "");
+        }
+
+        dumpNoIndentNoNewLine(stream, "property ");
         m_pType->toQML(stream, pContext, this, iIdent + 1);
         dumpNoIndentNoNewLine(stream, " ");
         m_pName->toQML(stream, pContext, this, iIdent + 1);
@@ -107,6 +136,8 @@ CXMLNode QMLPropertyDeclaration::toXMLNode(CXMLNodableContext* pContext, CXMLNod
     CXMLNode xType("Type");
     CXMLNode xName("Name");
     CXMLNode xContent("Content");
+
+    xNode.attributes()["Modifiers"] = QString::number((int) m_eModifiers);
 
     if (m_pType != nullptr)
         xType.nodes() << m_pType->toXMLNode(pContext, this);

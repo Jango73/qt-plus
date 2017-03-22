@@ -448,12 +448,15 @@ PropertyDeclarationNoColon :
     {
         PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY Identifier Identifier");
 
+        int iModifiers = $<Integer>1;
         QMLType* pType = QMLType::fromQMLItem(dynamic_cast<QMLItem*>($<Object>3));
         QMLItem* pName = dynamic_cast<QMLItem*>($<Object>4);
 
         if (pType != nullptr && pName != nullptr)
         {
-            $<Object>$ = new QMLPropertyDeclaration(pContext->position(), pType, pName);
+            QMLPropertyDeclaration* pDeclaration = new QMLPropertyDeclaration(pContext->position(), pType, pName);
+            pDeclaration->setModifiers((QMLPropertyDeclaration::EModifier) iModifiers);
+            $<Object>$ = pDeclaration;
         }
         else
         {
@@ -465,12 +468,15 @@ PropertyDeclarationNoColon :
     {
         PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY TOKEN_VAR Identifier");
 
+        int iModifiers = $<Integer>1;
         QMLType* pType = QMLType::fromQMLItem(nullptr);
         QMLItem* pName = dynamic_cast<QMLItem*>($<Object>4);
 
         if (pType != nullptr && pName != nullptr)
         {
-            $<Object>$ = new QMLPropertyDeclaration(pContext->position(), pType, pName);
+            QMLPropertyDeclaration* pDeclaration = new QMLPropertyDeclaration(pContext->position(), pType, pName);
+            pDeclaration->setModifiers((QMLPropertyDeclaration::EModifier) iModifiers);
+            $<Object>$ = pDeclaration;
         }
         else
         {
@@ -482,13 +488,16 @@ PropertyDeclarationNoColon :
     {
         PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY Identifier Identifier ':' PropertyContent");
 
+        int iModifiers = $<Integer>1;
         QMLType* pType = QMLType::fromQMLItem(dynamic_cast<QMLItem*>($<Object>3));
         QMLItem* pName = dynamic_cast<QMLItem*>($<Object>4);
         QMLItem* pData = dynamic_cast<QMLItem*>($<Object>6);
 
         if (pType != nullptr && pName != nullptr)
         {
-            $<Object>$ = new QMLPropertyDeclaration(pContext->position(), pType, pName, pData);
+            QMLPropertyDeclaration* pDeclaration = new QMLPropertyDeclaration(pContext->position(), pType, pName, pData);
+            pDeclaration->setModifiers((QMLPropertyDeclaration::EModifier) iModifiers);
+            $<Object>$ = pDeclaration;
         }
         else
         {
@@ -500,13 +509,16 @@ PropertyDeclarationNoColon :
     {
         PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY TOKEN_VAR Identifier ':' PropertyContent");
 
+        int iModifiers = $<Integer>1;
         QMLType* pType = QMLType::fromQMLItem(nullptr);
         QMLItem* pName = dynamic_cast<QMLItem*>($<Object>4);
         QMLItem* pData = dynamic_cast<QMLItem*>($<Object>6);
 
         if (pType != nullptr && pName != nullptr)
         {
-            $<Object>$ = new QMLPropertyDeclaration(pContext->position(), pType, pName, pData);
+            QMLPropertyDeclaration* pDeclaration = new QMLPropertyDeclaration(pContext->position(), pType, pName, pData);
+            pDeclaration->setModifiers((QMLPropertyDeclaration::EModifier) iModifiers);
+            $<Object>$ = pDeclaration;
         }
         else
         {
@@ -516,14 +528,17 @@ PropertyDeclarationNoColon :
     |
     PropertyModifiersOpt TOKEN_PROPERTY TOKEN_ALIAS Identifier ':' PropertyContent
     {
-        PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY TOKEN_ALIAS Identifier ':' PropertyContent");
+        PARSER_TRACE("PropertyDeclarationNoColon", "TOKEN_PROPERTY TOKEN_ALIAS Identifier ':' PropertyContent");
 
+        int iModifiers = $<Integer>1;
         QMLItem* pName = dynamic_cast<QMLItem*>($<Object>4);
         QMLItem* pData = dynamic_cast<QMLItem*>($<Object>6);
 
         if (pName != nullptr)
         {
-            $<Object>$ = new QMLPropertyAlias(pContext->position(), pName, pData);
+            QMLPropertyAlias* pDeclaration = new QMLPropertyAlias(pContext->position(), pName, pData);
+            pDeclaration->setModifiers((QMLPropertyDeclaration::EModifier) iModifiers);
+            $<Object>$ = pDeclaration;
         }
         else
         {
@@ -535,24 +550,24 @@ PropertyDeclarationNoColon :
 PropertyModifiersOpt :
     Empty
     {
-        $<Object>$ = nullptr;
+        $<Integer>$ = (int) QMLPropertyDeclaration::mNone;
     }
     |
     PropertyModifiers
     {
-        $<Object>$ = $<Object>1;
+        $<Integer>$ = $<Integer>1;
     }
 ;
 
 PropertyModifiers:
     TOKEN_DEFAULT
     {
-        $<Object>$ = nullptr;
+        $<Integer>$ = (int) QMLPropertyDeclaration::mDefault;
     }
     |
     TOKEN_READ_ONLY
     {
-        $<Object>$ = nullptr;
+        $<Integer>$ = (int) QMLPropertyDeclaration::mReadonly;
     }
 ;
 
@@ -2136,55 +2151,56 @@ JSObject :
 JSArrayContents :
     JSArrayContents ',' JSObject
     {
-        PARSER_TRACE("JSObject", "JSArrayContents ',' JSObject");
+        PARSER_TRACE("JSArrayContents", "JSArrayContents ',' JSObject");
 
         QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>1);
-        QMLItem* pItem2 = $<Object>3;
+        QMLItem* pItem = $<Object>3;
 
-        pComplex->contents() << pItem2;
+        pComplex->contents() << pItem;
 
         $<Object>$ = pComplex;
     }
     |
-    JSArrayContents ',' JSExpression
+    JSArrayContents ',' JSExpressionSingle
     {
-        PARSER_TRACE("JSObject", "JSArrayContents ',' JSExpression");
+        PARSER_TRACE("JSArrayContents", "JSArrayContents ',' JSExpressionSingle");
 
         QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>($<Object>1);
-        QMLItem* pItem2 = $<Object>3;
+        QMLItem* pItem = $<Object>3;
 
-        pComplex->contents() << pItem2;
+        pComplex->contents() << pItem;
 
         $<Object>$ = pComplex;
     }
     |
     JSObject
     {
-        PARSER_TRACE("JSObject", "JSArrayContents");
+        PARSER_TRACE("JSArrayContents", "JSObject");
 
-        QMLItem* pItem1 = $<Object>1;
+        QMLItem* pItem = $<Object>1;
 
-        QMLComplexItem* pComplex = new QMLComplexItem(pItem1->position());
+        if (pItem == nullptr)
+            pItem = new QMLItem(pContext->position());
+
+        QMLComplexItem* pComplex = new QMLComplexItem(pItem->position());
         pComplex->setIsArray(true);
-        pComplex->contents() << pItem1;
+        pComplex->contents() << pItem;
 
         $<Object>$ = pComplex;
     }
     |
-    JSExpression
+    JSExpressionSingle
     {
-        PARSER_TRACE("JSObject", "JSExpression");
+        PARSER_TRACE("JSArrayContents", "JSExpressionSingle");
 
-        QMLItem* pItem1 = $<Object>1;
+        QMLItem* pItem = $<Object>1;
 
-        if (pItem1 == nullptr)
-        {
-            pItem1 = new QMLItem(pContext->position());
-        }
+        if (pItem == nullptr)
+            pItem = new QMLItem(pContext->position());
 
-        QMLComplexItem* pComplex = new QMLComplexItem(pItem1->position());
+        QMLComplexItem* pComplex = new QMLComplexItem(pItem->position());
         pComplex->setIsArray(true);
-        pComplex->contents() << pItem1;
+        pComplex->contents() << pItem;
 
         $<Object>$ = pComplex;
     }

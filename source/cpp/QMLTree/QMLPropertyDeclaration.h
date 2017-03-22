@@ -20,6 +20,13 @@ class QTPLUSSHARED_EXPORT QMLPropertyDeclaration : public QMLItem
 
 public:
 
+    enum EModifier
+    {
+        mNone = 0,
+        mReadonly = 0x0001,
+        mDefault = 0x0002
+    };
+
     //-------------------------------------------------------------------------------------------------
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
@@ -37,6 +44,9 @@ public:
     // Setters
     //-------------------------------------------------------------------------------------------------
 
+    //!
+    void setModifiers(EModifier eModifiers);
+
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
@@ -52,6 +62,9 @@ public:
 
     //!
     const QMLItem* content() const;
+
+    //!
+    EModifier modifiers() const;
 
     //! Returns all members
     virtual QMap<QString, QMLItem*> members() Q_DECL_OVERRIDE;
@@ -75,4 +88,5 @@ protected:
     QMLType*    m_pType;
     QMLItem*    m_pName;
     QMLItem*    m_pContent;
+    EModifier   m_eModifiers;
 };
