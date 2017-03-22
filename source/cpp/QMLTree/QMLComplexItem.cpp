@@ -298,10 +298,17 @@ CXMLNode QMLComplexItem::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pP
         xNode.attributes()["Name"] = m_pName->value().toString();
     }
 
-    xNode.attributes()["IsArray"] = m_bIsArray ? "true" : "false";
-    xNode.attributes()["IsObject"] = m_bIsObject ? "true" : "false";
-    xNode.attributes()["IsBlock"] = m_bIsBlock ? "true" : "false";
-    xNode.attributes()["IsArgumentList"] = m_bIsArgumentList ? "true" : "false";
+    if (m_bIsArray)
+        xNode.attributes()["IsArray"] = "true";
+
+    if (m_bIsObject)
+        xNode.attributes()["IsObject"] = "true";
+
+    if (m_bIsBlock)
+        xNode.attributes()["IsBlock"] = "true";
+
+    if (m_bIsArgumentList)
+        xNode.attributes()["IsArgumentList"] = "true";
 
     foreach (QMLItem* pItem, m_vContents)
     {

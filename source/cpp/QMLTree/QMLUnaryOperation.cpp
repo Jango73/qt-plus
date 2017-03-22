@@ -58,6 +58,8 @@ QString QMLUnaryOperation::operatorToString(EUnaryOperator eOperator) const
             return "!";
         case uoTypeof:
             return "typeof";
+        case uoNew:
+            return "new";
     }
 
     return "??";

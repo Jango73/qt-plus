@@ -125,6 +125,7 @@ int yyerror (void*, char*);
 %token TOKEN_ON                 526
 %token TOKEN_AS                 527
 %token TOKEN_SIGNAL             528
+%token TOKEN_NEW                529
 
 %nonassoc TOKEN_IF
 %nonassoc TOKEN_ELSE
@@ -1940,6 +1941,13 @@ JSUnaryExpression :
         QMLItem* pItem = $<Object>2;
 
         $<Object>$ = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoMinus);
+    }
+    |
+    TOKEN_NEW JSMemberExpression
+    {
+        QMLItem* pItem = $<Object>2;
+
+        $<Object>$ = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoNew);
     }
 ;
 

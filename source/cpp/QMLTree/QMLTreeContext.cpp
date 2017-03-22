@@ -161,6 +161,7 @@
 #define TOKEN_ON                526
 #define TOKEN_AS                527
 #define TOKEN_SIGNAL            528
+#define TOKEN_NEW               529
 
 //-------------------------------------------------------------------------------------------------
 
@@ -232,7 +233,7 @@ void QMLAnalyzerError::clear()
 */
 QMLTreeContext::QMLTreeContext(const QString& sFileName)
     : m_tItem(QPoint())
-    ,  m_eError(peSuccess)
+    , m_eError(peSuccess)
     , m_bIncludeImports(false)
 {
     QFileInfo info(sFileName);
@@ -263,6 +264,7 @@ QMLTreeContext::QMLTreeContext(const QString& sFileName)
     m_mTokens["as"] = TOKEN_AS;
     m_mTokens["signal"] = TOKEN_SIGNAL;
     m_mTokens["var"] = TOKEN_VAR;
+    m_mTokens["new"] = TOKEN_NEW;
 }
 
 //-------------------------------------------------------------------------------------------------

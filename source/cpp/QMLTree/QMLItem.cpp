@@ -237,5 +237,8 @@ CXMLNode QMLItem::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
         xNode.attributes()["Value"] = sValue;
     }
 
+    if (m_bIsParenthesized)
+        xNode.attributes()["IsParenthesized"] = "true";
+
     return xNode;
 }
