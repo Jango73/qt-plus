@@ -4,8 +4,8 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLFunctionCall::QMLFunctionCall(const QPoint& pPosition, QMLItem* pName, QMLComplexItem *pArguments)
-    : QMLItem(pPosition)
+QMLFunctionCall::QMLFunctionCall(const QPoint& pPosition, QMLEntity* pName, QMLComplexEntity *pArguments)
+    : QMLEntity(pPosition)
     , m_pName(pName)
     , m_pArguments(pArguments)
 {
@@ -24,28 +24,28 @@ QMLFunctionCall::~QMLFunctionCall()
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLFunctionCall::name() const
+QMLEntity* QMLFunctionCall::name() const
 {
     return m_pName;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLComplexItem* QMLFunctionCall::arguments()
+QMLComplexEntity* QMLFunctionCall::arguments()
 {
     return m_pArguments;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-const QMLComplexItem* QMLFunctionCall::arguments() const
+const QMLComplexEntity* QMLFunctionCall::arguments() const
 {
     return m_pArguments;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLFunctionCall::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLFunctionCall::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
@@ -59,7 +59,7 @@ void QMLFunctionCall::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIt
     {
         bool putDot = false;
 
-        foreach (QMLItem* pItem, m_pArguments->contents())
+        foreach (QMLEntity* pItem, m_pArguments->contents())
         {
             if (putDot == true)
             {
@@ -82,7 +82,7 @@ void QMLFunctionCall::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIt
 
 CXMLNode QMLFunctionCall::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
-    CXMLNode xNode = QMLItem::toXMLNode(pContext, pParent);
+    CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
     CXMLNode xName("Name");
     CXMLNode xArguments("Arguments");
 

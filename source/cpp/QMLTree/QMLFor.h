@@ -9,12 +9,12 @@
 #include <QObject>
 
 // Application
-#include "QMLItem.h"
+#include "QMLEntity.h"
 
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a property declaration
-class QTPLUSSHARED_EXPORT QMLFor : public QMLItem
+class QTPLUSSHARED_EXPORT QMLFor : public QMLEntity
 {
     Q_OBJECT
 
@@ -25,7 +25,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with condition, then and else
-    QMLFor(const QPoint& pPosition, QMLItem* pInitialization, QMLItem* pCondition, QMLItem* pIncrementation, QMLItem* pContent);
+    QMLFor(const QPoint& pPosition, QMLEntity* pInitialization, QMLEntity* pCondition, QMLEntity* pIncrementation, QMLEntity* pContent);
 
     //! Destructor
     virtual ~QMLFor();
@@ -39,29 +39,29 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    QMLItem* initialization() const;
+    QMLEntity* initialization() const;
 
     //!
-    QMLItem* condition() const;
+    QMLEntity* condition() const;
 
     //!
-    QMLItem* incrementation() const;
+    QMLEntity* incrementation() const;
 
     //!
-    QMLItem* content() const;
+    QMLEntity* content() const;
 
     //! Returns all members
-    virtual QMap<QString, QMLItem*> members() Q_DECL_OVERRIDE;
+    virtual QMap<QString, QMLEntity*> members() Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual QMap<QString, QMLItem*> getDeclaredVariables() Q_DECL_OVERRIDE;
+    virtual QMap<QString, QMLEntity*> getDeclaredVariables() Q_DECL_OVERRIDE;
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
@@ -72,8 +72,8 @@ public:
 
 protected:
 
-    QMLItem*    m_pInitialization;
-    QMLItem*    m_pCondition;
-    QMLItem*    m_pIncrementation;
-    QMLItem*    m_pContent;
+    QMLEntity*  m_pInitialization;
+    QMLEntity*  m_pCondition;
+    QMLEntity*  m_pIncrementation;
+    QMLEntity*  m_pContent;
 };

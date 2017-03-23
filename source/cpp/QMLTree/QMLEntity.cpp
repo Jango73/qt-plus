@@ -1,12 +1,12 @@
 
 // Application
-#include "QMLItem.h"
+#include "QMLEntity.h"
 
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    \class QMLItem
-    \inmodule qt-plus
+    \class QMLEntity
+    \inmodule unis-lib
     \brief The base item for a QML tree.
 */
 
@@ -16,7 +16,7 @@
     Constructs a QMLItem. \br\br
     \a pPosition is the position of the token in the file
 */
-QMLItem::QMLItem(const QPoint& pPosition)
+QMLEntity::QMLEntity(const QPoint& pPosition)
     : m_pPosition(pPosition)
     , m_pOrigin(nullptr)
     , m_bIsParenthesized(false)
@@ -28,7 +28,7 @@ QMLItem::QMLItem(const QPoint& pPosition)
 /*!
     Constructs a QMLItem with \a value.
 */
-QMLItem::QMLItem(const QPoint& pPosition, const QVariant& value)
+QMLEntity::QMLEntity(const QPoint& pPosition, const QVariant& value)
     : m_vValue(value)
     , m_pPosition(pPosition)
     , m_pOrigin(nullptr)
@@ -41,7 +41,7 @@ QMLItem::QMLItem(const QPoint& pPosition, const QVariant& value)
 /*!
     Destroys a QMLItem.
 */
-QMLItem::~QMLItem()
+QMLEntity::~QMLEntity()
 {
 }
 
@@ -50,7 +50,7 @@ QMLItem::~QMLItem()
 /*!
     Sets the item's value to \a value.
 */
-void QMLItem::setValue(const QVariant& value)
+void QMLEntity::setValue(const QVariant& value)
 {
     m_vValue = value;
 }
@@ -60,7 +60,7 @@ void QMLItem::setValue(const QVariant& value)
 /*!
     Sets the item's position to \a point.
 */
-void QMLItem::setPosition(const QPoint& point)
+void QMLEntity::setPosition(const QPoint& point)
 {
     m_pPosition = point;
 }
@@ -70,7 +70,7 @@ void QMLItem::setPosition(const QPoint& point)
 /*!
     Sets the item's origin to \a pItem.
 */
-void QMLItem::setOrigin(QMLItem* pItem)
+void QMLEntity::setOrigin(QMLEntity* pItem)
 {
     m_pOrigin = pItem;
 }
@@ -80,7 +80,7 @@ void QMLItem::setOrigin(QMLItem* pItem)
 /*!
     Sets the item's isParenthesized flag to \a bValue.
 */
-void QMLItem::setIsParenthesized(bool bValue)
+void QMLEntity::setIsParenthesized(bool bValue)
 {
     m_bIsParenthesized = bValue;
 }
@@ -90,7 +90,7 @@ void QMLItem::setIsParenthesized(bool bValue)
 /*!
     Returns the item's position in the file.
 */
-QPoint QMLItem::position() const
+QPoint QMLEntity::position() const
 {
     return m_pPosition;
 }
@@ -100,7 +100,7 @@ QPoint QMLItem::position() const
 /*!
     Returns the item's origin.
 */
-QMLItem* QMLItem::origin() const
+QMLEntity* QMLEntity::origin() const
 {
     return m_pOrigin;
 }
@@ -110,7 +110,7 @@ QMLItem* QMLItem::origin() const
 /*!
     Returns the item's value.
 */
-QVariant QMLItem::value() const
+QVariant QMLEntity::value() const
 {
     return m_vValue;
 }
@@ -120,7 +120,7 @@ QVariant QMLItem::value() const
 /*!
     Returns the item's isParenthesized flag.
 */
-bool QMLItem::isParenthesized() const
+bool QMLEntity::isParenthesized() const
 {
     return m_bIsParenthesized;
 }
@@ -130,7 +130,7 @@ bool QMLItem::isParenthesized() const
 /*!
     Returns the item as a string.
 */
-QString QMLItem::toString() const
+QString QMLEntity::toString() const
 {
     return m_vValue.toString();
 }
@@ -140,9 +140,9 @@ QString QMLItem::toString() const
 /*!
     Returns a map of class members.
 */
-QMap<QString, QMLItem*> QMLItem::members()
+QMap<QString, QMLEntity*> QMLEntity::members()
 {
-    return QMap<QString, QMLItem*>();
+    return QMap<QString, QMLEntity*>();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ QMap<QString, QMLItem*> QMLItem::members()
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLItem::solveOrigins(QMLTreeContext* pContext, QMLItem* pParent)
+void QMLEntity::solveOrigins(QMLTreeContext* pContext, QMLEntity* pParent)
 {
 }
 
@@ -161,9 +161,9 @@ void QMLItem::solveOrigins(QMLTreeContext* pContext, QMLItem* pParent)
 /*!
     Returns a list of all declared variables.
 */
-QMap<QString, QMLItem*> QMLItem::getDeclaredVariables()
+QMap<QString, QMLEntity*> QMLEntity::getDeclaredVariables()
 {
-    QMap<QString, QMLItem*> mReturnValue;
+    QMap<QString, QMLEntity*> mReturnValue;
 
     return mReturnValue;
 }
@@ -173,7 +173,7 @@ QMap<QString, QMLItem*> QMLItem::getDeclaredVariables()
 /*!
     Returns the item named \a sName, for identifier resolution.
 */
-QMLItem* QMLItem::findNamedItem(const QString& sName)
+QMLEntity* QMLEntity::findNamedItem(const QString& sName)
 {
     return nullptr;
 }
@@ -185,7 +185,7 @@ QMLItem* QMLItem::findNamedItem(const QString& sName)
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLEntity::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
@@ -227,7 +227,7 @@ void QMLItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pPar
     \a pContext is a user defined context. \br
     \a pParent is the caller of this method.
 */
-CXMLNode QMLItem::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
+CXMLNode QMLEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
     CXMLNode xNode(metaObject()->className());
     QString sValue = m_vValue.value<QString>();

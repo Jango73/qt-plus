@@ -4,13 +4,13 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLOnExpression::QMLOnExpression(const QPoint& pPosition, QMLItem* pTarget, QMLItem* pName, QMLComplexItem* pContents)
-    : QMLComplexItem(pPosition, pName)
+QMLOnExpression::QMLOnExpression(const QPoint& pPosition, QMLEntity* pTarget, QMLEntity* pName, QMLComplexEntity* pContents)
+    : QMLComplexEntity(pPosition, pName)
     , m_pTarget(pTarget)
 {
     if (pContents != nullptr)
     {
-        foreach (QMLItem* pItem, pContents->contents())
+        foreach (QMLEntity* pItem, pContents->contents())
         {
             m_vContents << pItem;
         }
@@ -28,9 +28,9 @@ QMLOnExpression::~QMLOnExpression()
 
 //-------------------------------------------------------------------------------------------------
 
-QMap<QString, QMLItem*> QMLOnExpression::members()
+QMap<QString, QMLEntity*> QMLOnExpression::members()
 {
-    QMap<QString, QMLItem*> vReturnValue = QMLComplexItem::members();
+    QMap<QString, QMLEntity*> vReturnValue = QMLComplexEntity::members();
 
     vReturnValue["target"] = m_pTarget;
 
@@ -39,7 +39,7 @@ QMap<QString, QMLItem*> QMLOnExpression::members()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLOnExpression::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLOnExpression::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
@@ -63,7 +63,7 @@ void QMLOnExpression::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIt
         dumpOpenBlock(stream, iIdent);
     }
 
-    foreach (QMLItem* pItem, m_vContents)
+    foreach (QMLEntity* pItem, m_vContents)
     {
         if (pItem != nullptr)
         {

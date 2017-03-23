@@ -9,7 +9,7 @@
 #include <QObject>
 
 // Application
-#include "QMLItem.h"
+#include "QMLEntity.h"
 
 //-------------------------------------------------------------------------------------------------
 // Forward declarations
@@ -19,7 +19,7 @@ class QMLTreeContext;
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a property declaration
-class QTPLUSSHARED_EXPORT QMLImport : public QMLItem
+class QTPLUSSHARED_EXPORT QMLImport : public QMLEntity
 {
     Q_OBJECT
 
@@ -54,7 +54,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;

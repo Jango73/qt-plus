@@ -11,7 +11,7 @@
     Constructs a QMLFunctionParameter. \br\br
     \a pPosition is the position of the token in the file \br
 */
-QMLFunctionParameter::QMLFunctionParameter(const QPoint& pPosition, QMLType* pType, QMLItem* pName)
+QMLFunctionParameter::QMLFunctionParameter(const QPoint& pPosition, QMLType* pType, QMLEntity* pName)
     : QMLPropertyDeclaration(pPosition, pType, pName)
 {
 }
@@ -27,7 +27,7 @@ QMLFunctionParameter::~QMLFunctionParameter()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLFunctionParameter::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLFunctionParameter::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);

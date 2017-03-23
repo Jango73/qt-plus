@@ -5,14 +5,14 @@
 //-------------------------------------------------------------------------------------------------
 
 QMLType::QMLType(const QPoint& pPosition)
-    : QMLItem(pPosition)
+    : QMLEntity(pPosition)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 
 QMLType::QMLType(const QPoint& pPosition, QVariant::Type type)
-    : QMLItem(pPosition)
+    : QMLEntity(pPosition)
     , m_vType(type)
 {
 }
@@ -46,7 +46,7 @@ QString QMLType::toString() const
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLType::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLType::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
@@ -58,7 +58,7 @@ void QMLType::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pPar
 
 CXMLNode QMLType::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
-    CXMLNode xNode = QMLItem::toXMLNode(pContext, pParent);
+    CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
 
     xNode.attributes()["Type"] = typeToString(m_vType);
 
@@ -97,7 +97,7 @@ QString QMLType::typeToString(QVariant::Type eType)
 /*!
     Returns a QMLType from a \a pItem.
 */
-QMLType* QMLType::fromQMLItem(QMLItem* pItem)
+QMLType* QMLType::fromQMLEntity(QMLEntity* pItem)
 {
     if (pItem != nullptr)
     {

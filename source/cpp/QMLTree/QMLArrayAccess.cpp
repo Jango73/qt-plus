@@ -4,8 +4,8 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLArrayAccess::QMLArrayAccess(const QPoint& pPosition, QMLItem* pLeft)
-    : QMLComplexItem(pPosition)
+QMLArrayAccess::QMLArrayAccess(const QPoint& pPosition, QMLEntity* pLeft)
+    : QMLComplexEntity(pPosition)
     , m_pLeft(pLeft)
 {
 }
@@ -20,16 +20,16 @@ QMLArrayAccess::~QMLArrayAccess()
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLArrayAccess::left() const
+QMLEntity* QMLArrayAccess::left() const
 {
     return m_pLeft;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMap<QString, QMLItem*> QMLArrayAccess::members()
+QMap<QString, QMLEntity*> QMLArrayAccess::members()
 {
-    QMap<QString, QMLItem*> vReturnValue;
+    QMap<QString, QMLEntity*> vReturnValue;
 
     vReturnValue["left"] = m_pLeft;
 
@@ -41,13 +41,13 @@ QMap<QString, QMLItem*> QMLArrayAccess::members()
 /*!
     Returns a list of all declared variables.
 */
-QMap<QString, QMLItem*> QMLArrayAccess::getDeclaredVariables()
+QMap<QString, QMLEntity*> QMLArrayAccess::getDeclaredVariables()
 {
-    QMap<QString, QMLItem*> mReturnValue;
+    QMap<QString, QMLEntity*> mReturnValue;
 
     if (m_pLeft != nullptr)
     {
-        QMap<QString, QMLItem*> leftVariables = m_pLeft->getDeclaredVariables();
+        QMap<QString, QMLEntity*> leftVariables = m_pLeft->getDeclaredVariables();
 
         foreach (QString sKey, leftVariables.keys())
         {
@@ -65,7 +65,7 @@ QMap<QString, QMLItem*> QMLArrayAccess::getDeclaredVariables()
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLArrayAccess::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLArrayAccess::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
@@ -75,7 +75,7 @@ void QMLArrayAccess::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIte
         m_pLeft->toQML(stream, pContext, this, iIdent + 1);
     }
 
-    foreach(QMLItem* pItem, m_vContents)
+    foreach(QMLEntity* pItem, m_vContents)
     {
         dumpNoIndentNoNewLine(stream, "[");
         pItem->toQML(stream, pContext, this, iIdent + 1);
@@ -87,7 +87,7 @@ void QMLArrayAccess::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIte
 
 CXMLNode QMLArrayAccess::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
-    CXMLNode xNode = QMLComplexItem::toXMLNode(pContext, pParent);
+    CXMLNode xNode = QMLComplexEntity::toXMLNode(pContext, pParent);
     CXMLNode xLeft("Left");
 
     if (m_pLeft != nullptr)

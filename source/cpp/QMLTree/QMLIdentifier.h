@@ -9,12 +9,12 @@
 #include <QObject>
 
 // Library
-#include "QMLItem.h"
+#include "QMLEntity.h"
 
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a base QML item
-class QTPLUSSHARED_EXPORT QMLIdentifier : public QMLItem
+class QTPLUSSHARED_EXPORT QMLIdentifier : public QMLEntity
 {
     Q_OBJECT
 
@@ -38,10 +38,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void solveOrigins(QMLTreeContext* pContext, QMLItem* pParent = nullptr);
+    virtual void solveOrigins(QMLTreeContext* pContext, QMLEntity* pParent = nullptr);
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Properties

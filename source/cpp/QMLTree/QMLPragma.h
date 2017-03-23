@@ -9,12 +9,12 @@
 #include <QObject>
 
 // Application
-#include "QMLItem.h"
+#include "QMLEntity.h"
 
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a property declaration
-class QTPLUSSHARED_EXPORT QMLPragma : public QMLItem
+class QTPLUSSHARED_EXPORT QMLPragma : public QMLEntity
 {
     Q_OBJECT
 
@@ -25,7 +25,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with name and content
-    QMLPragma(const QPoint& pPosition, QMLItem* pStatement);
+    QMLPragma(const QPoint& pPosition, QMLEntity* pStatement);
 
     //! Destructor
     virtual ~QMLPragma();
@@ -39,17 +39,17 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    QMLItem* statement() const;
+    QMLEntity* statement() const;
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------
 
     //! Returns all members
-    virtual QMap<QString, QMLItem*> members() Q_DECL_OVERRIDE;
+    virtual QMap<QString, QMLEntity*> members() Q_DECL_OVERRIDE;
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
@@ -60,5 +60,5 @@ public:
 
 protected:
 
-    QMLItem*    m_pStatement;
+    QMLEntity*  m_pStatement;
 };

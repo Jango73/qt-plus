@@ -14,7 +14,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a property declaration
-class QTPLUSSHARED_EXPORT QMLBinaryOperation : public QMLItem
+class QTPLUSSHARED_EXPORT QMLBinaryOperation : public QMLEntity
 {
     Q_OBJECT
 
@@ -51,10 +51,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with type and name
-    QMLBinaryOperation(const QPoint& pPosition, QMLItem *pLeft, QMLItem* pRight, EOperator eOperator);
+    QMLBinaryOperation(const QPoint& pPosition, QMLEntity *pLeft, QMLEntity* pRight, EOperator eOperator);
 
     //! Constructor with type, name and content
-    QMLBinaryOperation(const QPoint& pPosition, QMLType *pType, QMLItem* pName, QMLItem *pContent);
+    QMLBinaryOperation(const QPoint& pPosition, QMLType *pType, QMLEntity* pName, QMLEntity *pContent);
 
     //! Destructor
     virtual ~QMLBinaryOperation();
@@ -68,10 +68,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    QMLItem* left() const;
+    QMLEntity* left() const;
 
     //!
-    QMLItem* right() const;
+    QMLEntity* right() const;
 
     //!
     EOperator oper() const;
@@ -88,10 +88,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual QMap<QString, QMLItem*> getDeclaredVariables() Q_DECL_OVERRIDE;
+    virtual QMap<QString, QMLEntity*> getDeclaredVariables() Q_DECL_OVERRIDE;
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
@@ -102,7 +102,7 @@ public:
 
 protected:
 
-    QMLItem*    m_pLeft;
-    QMLItem*    m_pRight;
+    QMLEntity*  m_pLeft;
+    QMLEntity*  m_pRight;
     EOperator   m_eOperator;
 };

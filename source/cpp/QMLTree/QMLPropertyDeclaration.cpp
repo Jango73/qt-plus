@@ -4,8 +4,8 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLPropertyDeclaration::QMLPropertyDeclaration(const QPoint& pPosition, QMLType* pType, QMLItem* pName)
-    : QMLItem(pPosition)
+QMLPropertyDeclaration::QMLPropertyDeclaration(const QPoint& pPosition, QMLType* pType, QMLEntity* pName)
+    : QMLEntity(pPosition)
     , m_pType(pType)
     , m_pName(pName)
     , m_pContent(nullptr)
@@ -15,8 +15,8 @@ QMLPropertyDeclaration::QMLPropertyDeclaration(const QPoint& pPosition, QMLType*
 
 //-------------------------------------------------------------------------------------------------
 
-QMLPropertyDeclaration::QMLPropertyDeclaration(const QPoint& pPosition, QMLType* pType, QMLItem* pName, QMLItem* pContent)
-    : QMLItem(pPosition)
+QMLPropertyDeclaration::QMLPropertyDeclaration(const QPoint& pPosition, QMLType* pType, QMLEntity* pName, QMLEntity* pContent)
+    : QMLEntity(pPosition)
     , m_pType(pType)
     , m_pName(pName)
     , m_pContent(pContent)
@@ -52,21 +52,21 @@ QMLType* QMLPropertyDeclaration::type() const
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLPropertyDeclaration::name() const
+QMLEntity* QMLPropertyDeclaration::name() const
 {
     return m_pName;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLPropertyDeclaration::content()
+QMLEntity* QMLPropertyDeclaration::content()
 {
     return m_pContent;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-const QMLItem* QMLPropertyDeclaration::content() const
+const QMLEntity* QMLPropertyDeclaration::content() const
 {
     return m_pContent;
 }
@@ -80,9 +80,9 @@ QMLPropertyDeclaration::EModifier QMLPropertyDeclaration::modifiers() const
 
 //-------------------------------------------------------------------------------------------------
 
-QMap<QString, QMLItem*> QMLPropertyDeclaration::members()
+QMap<QString, QMLEntity*> QMLPropertyDeclaration::members()
 {
-    QMap<QString, QMLItem*> vReturnValue;
+    QMap<QString, QMLEntity*> vReturnValue;
 
     vReturnValue["type"] = m_pType;
     vReturnValue["name"] = m_pName;
@@ -93,7 +93,7 @@ QMap<QString, QMLItem*> QMLPropertyDeclaration::members()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLPropertyDeclaration::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLPropertyDeclaration::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
@@ -132,7 +132,7 @@ void QMLPropertyDeclaration::toQML(QTextStream& stream, QMLTreeContext* pContext
 
 CXMLNode QMLPropertyDeclaration::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
-    CXMLNode xNode = QMLItem::toXMLNode(pContext, pParent);
+    CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
     CXMLNode xType("Type");
     CXMLNode xName("Name");
     CXMLNode xContent("Content");

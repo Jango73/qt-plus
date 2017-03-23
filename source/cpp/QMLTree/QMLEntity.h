@@ -7,15 +7,23 @@
 
 // Qt
 #include <QObject>
-#include <QVector>
+#include <QVariant>
+#include <QTextStream>
+#include <QPoint>
 
 // Library
-#include "QMLItem.h"
+#include "../CDumpable.h"
+#include "../CXMLNodable.h"
+
+//-------------------------------------------------------------------------------------------------
+// Forward declarations
+
+class QMLTreeContext;
 
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a base QML item
-class QTPLUSSHARED_EXPORT QMLComplexItem : public QMLItem
+class QTPLUSSHARED_EXPORT QMLEntity : public QObject, public CDumpable, public CXMLNodable
 {
     Q_OBJECT
 
@@ -26,99 +34,78 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Default constructor
-    QMLComplexItem(const QPoint& pPosition, QMLItem* pName = nullptr);
+    QMLEntity(const QPoint& pPosition);
+
+    //! Constructor with QVariant
+    QMLEntity(const QPoint& pPosition, const QVariant& value);
 
     //! Destructor
-    virtual ~QMLComplexItem();
+    virtual ~QMLEntity();
 
     //-------------------------------------------------------------------------------------------------
     // Setters
     //-------------------------------------------------------------------------------------------------
 
     //!
-    void setName(QMLItem* pName);
+    virtual void setValue(const QVariant& value);
 
     //!
-    void setIsArray(bool bValue);
+    virtual void setPosition(const QPoint& point);
 
     //!
-    void setIsObject(bool bValue);
+    virtual void setOrigin(QMLEntity* pItem);
 
     //!
-    void setIsBlock(bool bValue);
-
-    //!
-    void setIsArgumentList(bool bValue);
+    void setIsParenthesized(bool bValue);
 
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
 
     //!
-    QMLItem* name() const;
+    QPoint position() const;
 
     //!
-    QVector<QMLItem*>& contents();
+    QMLEntity* origin() const;
 
     //!
-    bool isNamed() const;
+    bool isParenthesized() const;
 
     //!
-    bool isArray() const;
+    virtual QVariant value() const;
 
     //!
-    bool isObject() const;
+    virtual QString toString() const;
 
-    //!
-    bool isBlock() const;
-
-    //!
-    bool isArgumentList() const;
-
-    //!
-    const QVector<QMLItem*>& contents() const;
+    //! Returns all members
+    virtual QMap<QString, QMLEntity*> members();
 
     //-------------------------------------------------------------------------------------------------
     // Control methods
     //-------------------------------------------------------------------------------------------------
 
+    //-------------------------------------------------------------------------------------------------
+    // Virtual control methods
+    //-------------------------------------------------------------------------------------------------
+
     //!
-    QVector<QMLItem*> grabContents();
+    virtual void solveOrigins(QMLTreeContext* pContext, QMLEntity* pParent = nullptr);
+
+    //!
+    virtual QMap<QString, QMLEntity*> getDeclaredVariables();
+
+    //!
+    virtual QMLEntity* findNamedItem(const QString& sName);
+
+    //!
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = nullptr, int iIdent = 0);
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual QString toString() const Q_DECL_OVERRIDE;
-
-    //! Returns all members
-    virtual QMap<QString, QMLItem*> members() Q_DECL_OVERRIDE;
-
-    //!
-    virtual void solveOrigins(QMLTreeContext* pContext, QMLItem* pParent = nullptr) Q_DECL_OVERRIDE;
-
-    //!
-    virtual QMap<QString, QMLItem*> getDeclaredVariables() Q_DECL_OVERRIDE;
-
-    //!
-    virtual QMLItem* findNamedItem(const QString& sName) Q_DECL_OVERRIDE;
-
-    //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
-
-    //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
-
-    //-------------------------------------------------------------------------------------------------
-    // Static methods
-    //-------------------------------------------------------------------------------------------------
-
-    //!
-    static QMLComplexItem* fromItem(QMLItem* pItem);
-
-    //!
-    static QMLComplexItem* makeBlock(QMLItem* pItem);
 
     //-------------------------------------------------------------------------------------------------
     // Properties
@@ -126,10 +113,8 @@ public:
 
 protected:
 
-    QMLItem*            m_pName;
-    QVector<QMLItem*>   m_vContents;
-    bool                m_bIsArray;
-    bool                m_bIsObject;
-    bool                m_bIsBlock;
-    bool                m_bIsArgumentList;
+    QVariant    m_vValue;
+    QPoint      m_pPosition;
+    QMLEntity*  m_pOrigin;
+    bool        m_bIsParenthesized;
 };

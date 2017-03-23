@@ -25,7 +25,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with name and content
-    QMLPropertyAssignment(const QPoint& pPosition, QMLItem* pName, QMLItem *pContent);
+    QMLPropertyAssignment(const QPoint& pPosition, QMLEntity* pName, QMLEntity *pContent);
 
     //! Destructor
     virtual ~QMLPropertyAssignment();
@@ -43,7 +43,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Properties

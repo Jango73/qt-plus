@@ -9,12 +9,12 @@
 #include <QObject>
 
 // Application
-#include "QMLItem.h"
+#include "QMLEntity.h"
 
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a property declaration
-class QTPLUSSHARED_EXPORT QMLForIn : public QMLItem
+class QTPLUSSHARED_EXPORT QMLForIn : public QMLEntity
 {
     Q_OBJECT
 
@@ -25,7 +25,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with condition, then and else
-    QMLForIn(const QPoint& pPosition, QMLItem* pVariable, QMLItem* pExpression, QMLItem* pContent);
+    QMLForIn(const QPoint& pPosition, QMLEntity* pVariable, QMLEntity* pExpression, QMLEntity* pContent);
 
     //! Destructor
     virtual ~QMLForIn();
@@ -39,23 +39,23 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    QMLItem* variable() const;
+    QMLEntity* variable() const;
 
     //!
-    QMLItem* expression() const;
+    QMLEntity* expression() const;
 
     //!
-    QMLItem* content() const;
+    QMLEntity* content() const;
 
     //! Returns all members
-    virtual QMap<QString, QMLItem*> members() Q_DECL_OVERRIDE;
+    virtual QMap<QString, QMLEntity*> members() Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
@@ -66,7 +66,7 @@ public:
 
 protected:
 
-    QMLItem*    m_pVariable;
-    QMLItem*    m_pExpression;
-    QMLItem*    m_pContent;
+    QMLEntity*  m_pVariable;
+    QMLEntity*  m_pExpression;
+    QMLEntity*  m_pContent;
 };

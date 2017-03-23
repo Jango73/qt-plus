@@ -10,12 +10,12 @@
 #include <QVector>
 
 // Library
-#include "QMLComplexItem.h"
+#include "QMLComplexEntity.h"
 
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a base QML item
-class QTPLUSSHARED_EXPORT QMLOnExpression : public QMLComplexItem
+class QTPLUSSHARED_EXPORT QMLOnExpression : public QMLComplexEntity
 {
     Q_OBJECT
 
@@ -26,7 +26,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Default constructor
-    QMLOnExpression(const QPoint& pPosition, QMLItem* pSource, QMLItem* pName, QMLComplexItem* pContents);
+    QMLOnExpression(const QPoint& pPosition, QMLEntity* pSource, QMLEntity* pName, QMLComplexEntity* pContents);
 
     //! Destructor
     virtual ~QMLOnExpression();
@@ -36,14 +36,14 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Returns all members
-    virtual QMap<QString, QMLItem*> members() Q_DECL_OVERRIDE;
+    virtual QMap<QString, QMLEntity*> members() Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Properties
@@ -51,5 +51,5 @@ public:
 
 protected:
 
-    QMLItem*    m_pTarget;
+    QMLEntity*  m_pTarget;
 };

@@ -11,12 +11,12 @@
 #include <QTextStream>
 
 // Library
-#include "QMLItem.h"
+#include "QMLEntity.h"
 
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a base QML item
-class QTPLUSSHARED_EXPORT QMLNameValue : public QMLItem
+class QTPLUSSHARED_EXPORT QMLNameValue : public QMLEntity
 {
     Q_OBJECT
 

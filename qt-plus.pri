@@ -43,9 +43,9 @@ HEADERS += \
     source/cpp/GeoTools/utm.h \
     source/cpp/GeoTools/UtmMgrs.h \
     source/cpp/CGeoUtilities.h \
-    source/cpp/QMLTree/QMLItem.h \
+    source/cpp/QMLTree/QMLEntity.h \
+    source/cpp/QMLTree/QMLComplexEntity.h \
     source/cpp/QMLTree/QMLNameValue.h \
-    source/cpp/QMLTree/QMLComplexItem.h \
     source/cpp/QMLTree/QMLIdentifier.h \
     source/cpp/QMLTree/QMLType.h \
     source/cpp/QMLTree/QMLFile.h \
@@ -110,9 +110,9 @@ SOURCES += \
     source/cpp/GeoTools/utm.cpp \
     source/cpp/GeoTools/UtmMgrs.cpp \
     source/cpp/CGeoUtilities.cpp \
-    source/cpp/QMLTree/QMLItem.cpp \
+    source/cpp/QMLTree/QMLEntity.cpp \
+    source/cpp/QMLTree/QMLComplexEntity.cpp \
     source/cpp/QMLTree/QMLNameValue.cpp \
-    source/cpp/QMLTree/QMLComplexItem.cpp \
     source/cpp/QMLTree/QMLIdentifier.cpp \
     source/cpp/QMLTree/QMLType.cpp \
     source/cpp/QMLTree/QMLFile.cpp \

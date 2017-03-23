@@ -14,7 +14,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a property declaration
-class QTPLUSSHARED_EXPORT QMLUnaryOperation : public QMLItem
+class QTPLUSSHARED_EXPORT QMLUnaryOperation : public QMLEntity
 {
     Q_OBJECT
 
@@ -40,7 +40,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with type and name
-    QMLUnaryOperation(const QPoint& pPosition, QMLItem* pExpression, EUnaryOperator eOperator, bool bIsPostFix = false);
+    QMLUnaryOperation(const QPoint& pPosition, QMLEntity* pExpression, EUnaryOperator eOperator, bool bIsPostFix = false);
 
     //! Destructor
     virtual ~QMLUnaryOperation();
@@ -54,7 +54,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    QMLItem* expression() const;
+    QMLEntity* expression() const;
 
     //!
     EUnaryOperator oper() const;
@@ -71,7 +71,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
@@ -82,7 +82,7 @@ public:
 
 protected:
 
-    QMLItem*        m_pExpression;
+    QMLEntity*      m_pExpression;
     EUnaryOperator  m_eOperator;
     bool            m_bIsPostFix;
 };

@@ -4,7 +4,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLConditional::QMLConditional(const QPoint& pPosition, QMLItem* pCondition, QMLItem* pThen, QMLItem* pElse)
+QMLConditional::QMLConditional(const QPoint& pPosition, QMLEntity* pCondition, QMLEntity* pThen, QMLEntity* pElse)
     : QMLIf(pPosition, pCondition, pThen, pElse)
 {
 }
@@ -17,7 +17,7 @@ QMLConditional::~QMLConditional()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLConditional::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLConditional::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);

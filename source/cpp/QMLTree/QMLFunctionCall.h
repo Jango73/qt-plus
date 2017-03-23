@@ -9,13 +9,13 @@
 #include <QObject>
 
 // Application
-#include "QMLItem.h"
-#include "QMLComplexItem.h"
+#include "QMLEntity.h"
+#include "QMLComplexEntity.h"
 
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a property declaration
-class QTPLUSSHARED_EXPORT QMLFunctionCall : public QMLItem
+class QTPLUSSHARED_EXPORT QMLFunctionCall : public QMLEntity
 {
     Q_OBJECT
 
@@ -26,7 +26,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with name, parameters and content
-    QMLFunctionCall(const QPoint& pPosition, QMLItem* pName, QMLComplexItem *pArguments);
+    QMLFunctionCall(const QPoint& pPosition, QMLEntity* pName, QMLComplexEntity *pArguments);
 
     //! Destructor
     virtual ~QMLFunctionCall();
@@ -40,20 +40,20 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    QMLItem* name() const;
+    QMLEntity* name() const;
 
     //!
-    QMLComplexItem* arguments();
+    QMLComplexEntity* arguments();
 
     //!
-    const QMLComplexItem* arguments() const;
+    const QMLComplexEntity* arguments() const;
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
@@ -64,6 +64,6 @@ public:
 
 protected:
 
-    QMLItem*        m_pName;
-    QMLComplexItem* m_pArguments;
+    QMLEntity*          m_pName;
+    QMLComplexEntity*   m_pArguments;
 };

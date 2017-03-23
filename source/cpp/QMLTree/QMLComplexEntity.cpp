@@ -1,11 +1,11 @@
 
 // Application
-#include "QMLComplexItem.h"
+#include "QMLComplexEntity.h"
 
 //-------------------------------------------------------------------------------------------------
 
-QMLComplexItem::QMLComplexItem(const QPoint& pPosition, QMLItem* pName)
-    : QMLItem(pPosition)
+QMLComplexEntity::QMLComplexEntity(const QPoint& pPosition, QMLEntity* pName)
+    : QMLEntity(pPosition)
     , m_pName(pName)
     , m_bIsArray(false)
     , m_bIsObject(false)
@@ -16,12 +16,12 @@ QMLComplexItem::QMLComplexItem(const QPoint& pPosition, QMLItem* pName)
 
 //-------------------------------------------------------------------------------------------------
 
-QMLComplexItem::~QMLComplexItem()
+QMLComplexEntity::~QMLComplexEntity()
 {
     if (m_pName != nullptr)
         delete m_pName;
 
-    foreach (QMLItem* pItem, m_vContents)
+    foreach (QMLEntity* pItem, m_vContents)
     {
         if (pItem != nullptr)
         {
@@ -32,7 +32,7 @@ QMLComplexItem::~QMLComplexItem()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLComplexItem::setName(QMLItem* pName)
+void QMLComplexEntity::setName(QMLEntity* pName)
 {
     if (m_pName != nullptr)
         delete m_pName;
@@ -42,95 +42,95 @@ void QMLComplexItem::setName(QMLItem* pName)
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLComplexItem::setIsArray(bool bValue)
+void QMLComplexEntity::setIsArray(bool bValue)
 {
     m_bIsArray = bValue;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLComplexItem::setIsObject(bool bValue)
+void QMLComplexEntity::setIsObject(bool bValue)
 {
     m_bIsObject = bValue;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLComplexItem::setIsBlock(bool bValue)
+void QMLComplexEntity::setIsBlock(bool bValue)
 {
     m_bIsBlock = bValue;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLComplexItem::setIsArgumentList(bool bValue)
+void QMLComplexEntity::setIsArgumentList(bool bValue)
 {
     m_bIsArgumentList = bValue;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLComplexItem::name() const
+QMLEntity* QMLComplexEntity::name() const
 {
     return m_pName;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QVector<QMLItem*>& QMLComplexItem::contents()
+QVector<QMLEntity*>& QMLComplexEntity::contents()
 {
     return m_vContents;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-bool QMLComplexItem::isNamed() const
+bool QMLComplexEntity::isNamed() const
 {
     return (m_pName != nullptr && m_pName->value().toString().isEmpty() == false);
 }
 
 //-------------------------------------------------------------------------------------------------
 
-bool QMLComplexItem::isArray() const
+bool QMLComplexEntity::isArray() const
 {
     return m_bIsArray;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-bool QMLComplexItem::isObject() const
+bool QMLComplexEntity::isObject() const
 {
     return m_bIsObject;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-bool QMLComplexItem::isBlock() const
+bool QMLComplexEntity::isBlock() const
 {
     return m_bIsBlock;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-bool QMLComplexItem::isArgumentList() const
+bool QMLComplexEntity::isArgumentList() const
 {
     return m_bIsArgumentList;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-const QVector<QMLItem*>& QMLComplexItem::contents() const
+const QVector<QMLEntity*>& QMLComplexEntity::contents() const
 {
     return m_vContents;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QString QMLComplexItem::toString() const
+QString QMLComplexEntity::toString() const
 {
     QString sReturnValue;
 
-    foreach (QMLItem* pItem, m_vContents)
+    foreach (QMLEntity* pItem, m_vContents)
     {
         if (pItem != nullptr)
         {
@@ -148,9 +148,9 @@ QString QMLComplexItem::toString() const
 
 //-------------------------------------------------------------------------------------------------
 
-QMap<QString, QMLItem*> QMLComplexItem::members()
+QMap<QString, QMLEntity*> QMLComplexEntity::members()
 {
-    QMap<QString, QMLItem*> vReturnValue;
+    QMap<QString, QMLEntity*> vReturnValue;
 
     vReturnValue["name"] = m_pName;
 
@@ -159,9 +159,9 @@ QMap<QString, QMLItem*> QMLComplexItem::members()
 
 //-------------------------------------------------------------------------------------------------
 
-QVector<QMLItem*> QMLComplexItem::grabContents()
+QVector<QMLEntity*> QMLComplexEntity::grabContents()
 {
-    QVector<QMLItem*> vReturnValue = m_vContents;
+    QVector<QMLEntity*> vReturnValue = m_vContents;
     m_vContents.clear();
     return vReturnValue;
 }
@@ -173,9 +173,9 @@ QVector<QMLItem*> QMLComplexItem::grabContents()
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLComplexItem::solveOrigins(QMLTreeContext* pContext, QMLItem* pParent)
+void QMLComplexEntity::solveOrigins(QMLTreeContext* pContext, QMLEntity* pParent)
 {
-    foreach(QMLItem* pItem, m_vContents)
+    foreach(QMLEntity* pItem, m_vContents)
     {
         pItem->solveOrigins(pContext, this);
     }
@@ -186,13 +186,13 @@ void QMLComplexItem::solveOrigins(QMLTreeContext* pContext, QMLItem* pParent)
 /*!
     Returns a list of all declared variables.
 */
-QMap<QString, QMLItem*> QMLComplexItem::getDeclaredVariables()
+QMap<QString, QMLEntity*> QMLComplexEntity::getDeclaredVariables()
 {
-    QMap<QString, QMLItem*> mReturnValue;
+    QMap<QString, QMLEntity*> mReturnValue;
 
-    foreach(QMLItem* pItem, m_vContents)
+    foreach(QMLEntity* pItem, m_vContents)
     {
-        QMap<QString, QMLItem*> itemVariables = pItem->getDeclaredVariables();
+        QMap<QString, QMLEntity*> itemVariables = pItem->getDeclaredVariables();
 
         foreach (QString sKey, itemVariables.keys())
         {
@@ -211,14 +211,14 @@ QMap<QString, QMLItem*> QMLComplexItem::getDeclaredVariables()
 /*!
     Returns the item named \a sName, for identifier resolution.
 */
-QMLItem* QMLComplexItem::findNamedItem(const QString& sName)
+QMLEntity* QMLComplexEntity::findNamedItem(const QString& sName)
 {
     return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLComplexItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLComplexEntity::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
@@ -247,7 +247,7 @@ void QMLComplexItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIte
 
         int iCount = 0;
 
-        foreach (QMLItem* pItem, m_vContents)
+        foreach (QMLEntity* pItem, m_vContents)
         {
             if (pItem != nullptr)
             {
@@ -289,9 +289,9 @@ void QMLComplexItem::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLIte
 
 //-------------------------------------------------------------------------------------------------
 
-CXMLNode QMLComplexItem::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
+CXMLNode QMLComplexEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
-    CXMLNode xNode = QMLItem::toXMLNode(pContext, pParent);
+    CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
 
     if (m_pName != nullptr)
     {
@@ -310,7 +310,7 @@ CXMLNode QMLComplexItem::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pP
     if (m_bIsArgumentList)
         xNode.attributes()["IsArgumentList"] = "true";
 
-    foreach (QMLItem* pItem, m_vContents)
+    foreach (QMLEntity* pItem, m_vContents)
     {
         if (pItem != nullptr)
         {
@@ -324,13 +324,13 @@ CXMLNode QMLComplexItem::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pP
 
 //-------------------------------------------------------------------------------------------------
 
-QMLComplexItem* QMLComplexItem::fromItem(QMLItem* pItem)
+QMLComplexEntity* QMLComplexEntity::fromItem(QMLEntity* pItem)
 {
-    QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(pItem);
+    QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(pItem);
 
     if (pComplex == nullptr)
     {
-        pComplex = new QMLComplexItem(pItem->position());
+        pComplex = new QMLComplexEntity(pItem->position());
         pComplex->contents() << pItem;
     }
 
@@ -339,9 +339,9 @@ QMLComplexItem* QMLComplexItem::fromItem(QMLItem* pItem)
 
 //-------------------------------------------------------------------------------------------------
 
-QMLComplexItem* QMLComplexItem::makeBlock(QMLItem* pItem)
+QMLComplexEntity* QMLComplexEntity::makeBlock(QMLEntity* pItem)
 {
-    QMLComplexItem* pComplex = fromItem(pItem);
+    QMLComplexEntity* pComplex = fromItem(pItem);
 
     pComplex->setIsBlock(true);
 

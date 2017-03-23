@@ -5,7 +5,7 @@
 //-------------------------------------------------------------------------------------------------
 
 QMLQualifiedExpression::QMLQualifiedExpression(const QPoint& pPosition)
-    : QMLComplexItem(pPosition)
+    : QMLComplexEntity(pPosition)
 {
 }
 
@@ -17,7 +17,7 @@ QMLQualifiedExpression::~QMLQualifiedExpression()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLQualifiedExpression::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLQualifiedExpression::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
@@ -29,7 +29,7 @@ void QMLQualifiedExpression::toQML(QTextStream& stream, QMLTreeContext* pContext
 
     bool putDot = false;
 
-    foreach (QMLItem* pItem, m_vContents)
+    foreach (QMLEntity* pItem, m_vContents)
     {
         if (putDot == true)
         {

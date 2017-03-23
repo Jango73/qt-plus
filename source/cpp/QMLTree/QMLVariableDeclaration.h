@@ -11,12 +11,12 @@
 #include <QTextStream>
 
 // Library
-#include "QMLComplexItem.h"
+#include "QMLComplexEntity.h"
 
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a QML file item
-class QTPLUSSHARED_EXPORT QMLVariableDeclaration : public QMLComplexItem
+class QTPLUSSHARED_EXPORT QMLVariableDeclaration : public QMLComplexEntity
 {
     Q_OBJECT
 
@@ -48,10 +48,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual QMap<QString, QMLItem*> getDeclaredVariables() Q_DECL_OVERRIDE;
+    virtual QMap<QString, QMLEntity*> getDeclaredVariables() Q_DECL_OVERRIDE;
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Properties

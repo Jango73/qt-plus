@@ -4,7 +4,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLPropertyAssignment::QMLPropertyAssignment(const QPoint& pPosition, QMLItem* pName, QMLItem* pContent)
+QMLPropertyAssignment::QMLPropertyAssignment(const QPoint& pPosition, QMLEntity* pName, QMLEntity* pContent)
     : QMLPropertyDeclaration(pPosition, NULL, pName, pContent)
 {
 }
@@ -17,7 +17,7 @@ QMLPropertyAssignment::~QMLPropertyAssignment()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLPropertyAssignment::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLPropertyAssignment::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);

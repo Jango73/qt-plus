@@ -5,8 +5,8 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLSwitch::QMLSwitch(const QPoint& pPosition, QMLItem* pExpression, QMLComplexItem* pCases)
-    : QMLItem(pPosition)
+QMLSwitch::QMLSwitch(const QPoint& pPosition, QMLEntity* pExpression, QMLComplexEntity* pCases)
+    : QMLEntity(pPosition)
     , m_pExpression(pExpression)
     , m_pCases(pCases)
 {
@@ -24,23 +24,23 @@ QMLSwitch::~QMLSwitch()
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLSwitch::expression() const
+QMLEntity* QMLSwitch::expression() const
 {
     return m_pExpression;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLSwitch::cases() const
+QMLEntity* QMLSwitch::cases() const
 {
     return m_pCases;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMap<QString, QMLItem*> QMLSwitch::members()
+QMap<QString, QMLEntity*> QMLSwitch::members()
 {
-    QMap<QString, QMLItem*> vReturnValue;
+    QMap<QString, QMLEntity*> vReturnValue;
 
     vReturnValue["expression"] = m_pExpression;
     vReturnValue["cases"] = m_pCases;
@@ -55,7 +55,7 @@ QMap<QString, QMLItem*> QMLSwitch::members()
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLSwitch::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLSwitch::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
@@ -74,7 +74,7 @@ void QMLSwitch::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pP
 
     if (m_pCases != nullptr)
     {
-        foreach (QMLItem* pItem, m_pCases->contents())
+        foreach (QMLEntity* pItem, m_pCases->contents())
         {
             if (pItem != nullptr)
             {
@@ -103,7 +103,7 @@ void QMLSwitch::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pP
 
 CXMLNode QMLSwitch::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
-    CXMLNode xNode = QMLItem::toXMLNode(pContext, pParent);
+    CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
     CXMLNode xExpression("Expression");
     CXMLNode xCases("Cases");
 

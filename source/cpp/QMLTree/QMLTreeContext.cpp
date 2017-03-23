@@ -467,7 +467,7 @@ QMLTreeContext::EParseError QMLTreeContext::parse()
             // Clear scope stack
             m_sScopes.clear();
 
-            foreach (QMLItem* pItem, pFile->contents())
+            foreach (QMLEntity* pItem, pFile->contents())
             {
                 // Solve internal references
                 pItem->solveOrigins(this, nullptr);

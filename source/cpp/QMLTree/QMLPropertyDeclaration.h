@@ -14,7 +14,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a property declaration
-class QTPLUSSHARED_EXPORT QMLPropertyDeclaration : public QMLItem
+class QTPLUSSHARED_EXPORT QMLPropertyDeclaration : public QMLEntity
 {
     Q_OBJECT
 
@@ -32,10 +32,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with type and name
-    QMLPropertyDeclaration(const QPoint& pPosition, QMLType *pType, QMLItem* pName);
+    QMLPropertyDeclaration(const QPoint& pPosition, QMLType *pType, QMLEntity* pName);
 
     //! Constructor with type, name and content
-    QMLPropertyDeclaration(const QPoint& pPosition, QMLType *pType, QMLItem* pName, QMLItem *pContent);
+    QMLPropertyDeclaration(const QPoint& pPosition, QMLType *pType, QMLEntity* pName, QMLEntity *pContent);
 
     //! Destructor
     virtual ~QMLPropertyDeclaration();
@@ -55,26 +55,26 @@ public:
     QMLType* type() const;
 
     //!
-    QMLItem* name() const;
+    QMLEntity* name() const;
 
     //!
-    QMLItem* content();
+    QMLEntity* content();
 
     //!
-    const QMLItem* content() const;
+    const QMLEntity* content() const;
 
     //!
     EModifier modifiers() const;
 
     //! Returns all members
-    virtual QMap<QString, QMLItem*> members() Q_DECL_OVERRIDE;
+    virtual QMap<QString, QMLEntity*> members() Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
@@ -86,7 +86,7 @@ public:
 protected:
 
     QMLType*    m_pType;
-    QMLItem*    m_pName;
-    QMLItem*    m_pContent;
+    QMLEntity*  m_pName;
+    QMLEntity*  m_pContent;
     EModifier   m_eModifiers;
 };

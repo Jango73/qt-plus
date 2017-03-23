@@ -16,7 +16,7 @@
 
 // Library
 #include "../CXMLNodable.h"
-#include "QMLComplexItem.h"
+#include "QMLComplexEntity.h"
 #include "QMLFile.h"
 
 #define PURE_PARSER
@@ -29,7 +29,7 @@ typedef union
     int         Integer;
     double      Real;
     QString*    String;
-    QMLItem*    Object;
+    QMLEntity*  Object;
 } UParserValue;
 
 //-------------------------------------------------------------------------------------------------

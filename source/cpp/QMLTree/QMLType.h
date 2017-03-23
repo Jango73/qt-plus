@@ -10,14 +10,14 @@
 #include <QVariant>
 
 // Application
-#include "QMLItem.h"
+#include "QMLEntity.h"
 
 #define QVARIANT_VARIANT    ((QVariant::Type) (QVariant::UserType + 1))
 
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a base QML item
-class QTPLUSSHARED_EXPORT QMLType : public QMLItem
+class QTPLUSSHARED_EXPORT QMLType : public QMLEntity
 {
     Q_OBJECT
 
@@ -58,7 +58,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
@@ -71,7 +71,7 @@ public:
     static QString typeToString(QVariant::Type eType);
 
     //!
-    static QMLType* fromQMLItem(QMLItem* pItem);
+    static QMLType* fromQMLEntity(QMLEntity* pItem);
 
     //-------------------------------------------------------------------------------------------------
     // Properties

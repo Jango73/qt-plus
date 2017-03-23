@@ -27,7 +27,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with filename
-    QMLFunctionParameter(const QPoint& pPosition, QMLType* pType, QMLItem* pName);
+    QMLFunctionParameter(const QPoint& pPosition, QMLType* pType, QMLEntity* pName);
 
     //! Destructor
     virtual ~QMLFunctionParameter();
@@ -45,7 +45,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Properties

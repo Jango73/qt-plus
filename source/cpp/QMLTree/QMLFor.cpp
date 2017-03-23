@@ -1,12 +1,12 @@
 
 // Application
 #include "QMLFor.h"
-#include "QMLComplexItem.h"
+#include "QMLComplexEntity.h"
 
 //-------------------------------------------------------------------------------------------------
 
-QMLFor::QMLFor(const QPoint& pPosition, QMLItem* pInitialization, QMLItem* pCondition, QMLItem* pIncrementation, QMLItem* pContent)
-    : QMLItem(pPosition)
+QMLFor::QMLFor(const QPoint& pPosition, QMLEntity* pInitialization, QMLEntity* pCondition, QMLEntity* pIncrementation, QMLEntity* pContent)
+    : QMLEntity(pPosition)
     , m_pInitialization(pInitialization)
     , m_pCondition(pCondition)
     , m_pIncrementation(pIncrementation)
@@ -30,37 +30,37 @@ QMLFor::~QMLFor()
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLFor::initialization() const
+QMLEntity* QMLFor::initialization() const
 {
     return m_pInitialization;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLFor::condition() const
+QMLEntity* QMLFor::condition() const
 {
     return m_pCondition;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLFor::incrementation() const
+QMLEntity* QMLFor::incrementation() const
 {
     return m_pIncrementation;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLFor::content() const
+QMLEntity* QMLFor::content() const
 {
     return m_pContent;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMap<QString, QMLItem*> QMLFor::members()
+QMap<QString, QMLEntity*> QMLFor::members()
 {
-    QMap<QString, QMLItem*> vReturnValue;
+    QMap<QString, QMLEntity*> vReturnValue;
 
     vReturnValue["initialization"] = m_pInitialization;
     vReturnValue["condition"] = m_pCondition;
@@ -75,13 +75,13 @@ QMap<QString, QMLItem*> QMLFor::members()
 /*!
     Returns a list of all declared variables.
 */
-QMap<QString, QMLItem*> QMLFor::getDeclaredVariables()
+QMap<QString, QMLEntity*> QMLFor::getDeclaredVariables()
 {
-    QMap<QString, QMLItem*> mReturnValue;
+    QMap<QString, QMLEntity*> mReturnValue;
 
     if (m_pInitialization != nullptr)
     {
-        QMap<QString, QMLItem*> initVariables = m_pInitialization->getDeclaredVariables();
+        QMap<QString, QMLEntity*> initVariables = m_pInitialization->getDeclaredVariables();
 
         foreach (QString sKey, initVariables.keys())
         {
@@ -91,7 +91,7 @@ QMap<QString, QMLItem*> QMLFor::getDeclaredVariables()
 
     if (m_pContent != nullptr)
     {
-        QMap<QString, QMLItem*> contentVariables = m_pContent->getDeclaredVariables();
+        QMap<QString, QMLEntity*> contentVariables = m_pContent->getDeclaredVariables();
 
         foreach (QString sKey, contentVariables.keys())
         {
@@ -112,7 +112,7 @@ QMap<QString, QMLItem*> QMLFor::getDeclaredVariables()
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLFor::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLFor::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
@@ -147,7 +147,7 @@ void QMLFor::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pPare
 
 CXMLNode QMLFor::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
-    CXMLNode xNode = QMLItem::toXMLNode(pContext, pParent);
+    CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
     CXMLNode xInitialization("Initialization");
     CXMLNode xCondition("Condition");
     CXMLNode xIncrementation("Incrementation");

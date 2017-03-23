@@ -11,7 +11,7 @@
 #include <QTextStream>
 
 // Library
-#include "QMLComplexItem.h"
+#include "QMLComplexEntity.h"
 
 //-------------------------------------------------------------------------------------------------
 // Forward declarations
@@ -21,7 +21,7 @@ class QMLTreeContext;
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a QML file item
-class QTPLUSSHARED_EXPORT QMLFile : public QMLComplexItem
+class QTPLUSSHARED_EXPORT QMLFile : public QMLComplexEntity
 {
     Q_OBJECT
 

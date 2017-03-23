@@ -9,8 +9,8 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLFunction::QMLFunction(const QPoint& pPosition, QMLItem* pName, QMLItem* pParameters, QMLItem* pContent)
-    : QMLItem(pPosition)
+QMLFunction::QMLFunction(const QPoint& pPosition, QMLEntity* pName, QMLEntity* pParameters, QMLEntity* pContent)
+    : QMLEntity(pPosition)
     , m_pName(pName)
     , m_pParameters(pParameters)
     , m_pContent(pContent)
@@ -39,21 +39,21 @@ void QMLFunction::setIsSignal(bool bValue)
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLFunction::name() const
+QMLEntity* QMLFunction::name() const
 {
     return m_pName;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLFunction::parameters() const
+QMLEntity* QMLFunction::parameters() const
 {
     return m_pParameters;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLFunction::content() const
+QMLEntity* QMLFunction::content() const
 {
     return m_pContent;
 }
@@ -80,9 +80,9 @@ QString QMLFunction::toString() const
 
 //-------------------------------------------------------------------------------------------------
 
-QMap<QString, QMLItem*> QMLFunction::members()
+QMap<QString, QMLEntity*> QMLFunction::members()
 {
-    QMap<QString, QMLItem*> vReturnValue;
+    QMap<QString, QMLEntity*> vReturnValue;
 
     vReturnValue["name"] = m_pName;
     vReturnValue["parameters"] = m_pParameters;
@@ -98,7 +98,7 @@ QMap<QString, QMLItem*> QMLFunction::members()
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLFunction::solveOrigins(QMLTreeContext* pContext, QMLItem* pParent)
+void QMLFunction::solveOrigins(QMLTreeContext* pContext, QMLEntity* pParent)
 {
     if (m_pContent != nullptr)
     {
@@ -112,7 +112,7 @@ void QMLFunction::solveOrigins(QMLTreeContext* pContext, QMLItem* pParent)
 /*!
     Returns the item named \a sName, for identifier resolution.
 */
-QMLItem* QMLFunction::findNamedItem(const QString& sName)
+QMLEntity* QMLFunction::findNamedItem(const QString& sName)
 {
     return nullptr;
 }
@@ -124,7 +124,7 @@ QMLItem* QMLFunction::findNamedItem(const QString& sName)
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
@@ -169,7 +169,7 @@ void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* 
 
 CXMLNode QMLFunction::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
-    CXMLNode xNode = QMLItem::toXMLNode(pContext, pParent);
+    CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
     CXMLNode xName("Name");
     CXMLNode xParameters("Parameters");
     CXMLNode xContent("Content");

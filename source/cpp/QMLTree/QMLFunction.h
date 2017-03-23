@@ -9,14 +9,14 @@
 #include <QObject>
 
 // Application
-#include "QMLItem.h"
-#include "QMLComplexItem.h"
+#include "QMLEntity.h"
+#include "QMLComplexEntity.h"
 #include "QMLIdentifier.h"
 
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a property declaration
-class QTPLUSSHARED_EXPORT QMLFunction : public QMLItem
+class QTPLUSSHARED_EXPORT QMLFunction : public QMLEntity
 {
     Q_OBJECT
 
@@ -27,7 +27,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with name, parameters and content
-    QMLFunction(const QPoint& pPosition, QMLItem* pName, QMLItem *pParameters, QMLItem *pContent);
+    QMLFunction(const QPoint& pPosition, QMLEntity* pName, QMLEntity *pParameters, QMLEntity *pContent);
 
     //! Destructor
     virtual ~QMLFunction();
@@ -44,13 +44,13 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    QMLItem* name() const;
+    QMLEntity* name() const;
 
     //!
-    QMLItem* parameters() const;
+    QMLEntity* parameters() const;
 
     //!
-    QMLItem* content() const;
+    QMLEntity* content() const;
 
     //!
     bool isSignal() const;
@@ -59,20 +59,20 @@ public:
     virtual QString toString() const Q_DECL_OVERRIDE;
 
     //! Returns all members
-    virtual QMap<QString, QMLItem*> members() Q_DECL_OVERRIDE;
+    virtual QMap<QString, QMLEntity*> members() Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void solveOrigins(QMLTreeContext* pContext, QMLItem* pParent = nullptr) Q_DECL_OVERRIDE;
+    virtual void solveOrigins(QMLTreeContext* pContext, QMLEntity* pParent = nullptr) Q_DECL_OVERRIDE;
 
     //!
-    virtual QMLItem* findNamedItem(const QString& sName) Q_DECL_OVERRIDE;
+    virtual QMLEntity* findNamedItem(const QString& sName) Q_DECL_OVERRIDE;
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
@@ -83,11 +83,11 @@ public:
 
 protected:
 
-    QMLItem*                m_pName;
-    QMLItem*                m_pParameters;
-    QMLItem*                m_pContent;
+    QMLEntity*              m_pName;
+    QMLEntity*              m_pParameters;
+    QMLEntity*              m_pContent;
     bool                    m_bIsSignal;
 
     // Constructed after parsing
-    QMap<QString, QMLItem*> m_mVariables;
+    QMap<QString, QMLEntity*> m_mVariables;
 };

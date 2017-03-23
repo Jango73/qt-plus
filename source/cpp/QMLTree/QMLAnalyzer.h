@@ -3,10 +3,12 @@
 
 #include "../qtplus_global.h"
 
+//-------------------------------------------------------------------------------------------------
+
 // Foundations
 #include "../CXMLNode.h"
 #include "QMLTreeContext.h"
-#include "QMLComplexItem.h"
+#include "QMLComplexEntity.h"
 #include "QMLImport.h"
 #include "QMLPropertyDeclaration.h"
 #include "QMLPropertyAssignment.h"
@@ -116,10 +118,10 @@ protected:
     void runGrammar(const QString& sFileName, QMLFile* pFile);
 
     //!
-    void runGrammar_Recurse(const QString& sFileName, QMLItem* pItem);
+    void runGrammar_Recurse(const QString& sFileName, QMLEntity* pItem);
 
     //!
-    int runGrammar_CountNested(const QString& sClassName, QMLItem* pItem);
+    int runGrammar_CountNested(const QString& sClassName, QMLEntity* pItem);
 
     //!
     void outputError(const QString& sFileName, const QPoint& pPosition, const QString& sText);

@@ -8,8 +8,8 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLPragma::QMLPragma(const QPoint& pPosition, QMLItem* pStatement)
-    : QMLItem(pPosition)
+QMLPragma::QMLPragma(const QPoint& pPosition, QMLEntity* pStatement)
+    : QMLEntity(pPosition)
     , m_pStatement(pStatement)
 {
 }
@@ -26,16 +26,16 @@ QMLPragma::~QMLPragma()
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLPragma::statement() const
+QMLEntity* QMLPragma::statement() const
 {
     return m_pStatement;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMap<QString, QMLItem*> QMLPragma::members()
+QMap<QString, QMLEntity*> QMLPragma::members()
 {
-    QMap<QString, QMLItem*> vReturnValue;
+    QMap<QString, QMLEntity*> vReturnValue;
 
     vReturnValue["statement"] = m_pStatement;
 
@@ -44,7 +44,7 @@ QMap<QString, QMLItem*> QMLPragma::members()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLPragma::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLPragma::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
@@ -63,7 +63,7 @@ void QMLPragma::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pP
 
 CXMLNode QMLPragma::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
-    CXMLNode xNode = QMLItem::toXMLNode(pContext, pParent);
+    CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
     CXMLNode xStatement("Statement");
 
     if (m_pStatement != nullptr)

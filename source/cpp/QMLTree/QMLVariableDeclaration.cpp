@@ -14,7 +14,7 @@
     \a pPosition is the position of the token in the file \br
 */
 QMLVariableDeclaration::QMLVariableDeclaration(const QPoint& pPosition)
-    : QMLComplexItem(pPosition)
+    : QMLComplexEntity(pPosition)
 {
 }
 
@@ -24,7 +24,7 @@ QMLVariableDeclaration::QMLVariableDeclaration(const QPoint& pPosition)
     Constructs a QMLVariableDeclaration as copy of \a target. Does nothing, exists only to make containers happy.
 */
 QMLVariableDeclaration::QMLVariableDeclaration(const QMLVariableDeclaration& target)
-    : QMLComplexItem(target.position())
+    : QMLComplexEntity(target.position())
 {
 }
 
@@ -42,11 +42,11 @@ QMLVariableDeclaration::~QMLVariableDeclaration()
 /*!
     Returns a list of all declared variables.
 */
-QMap<QString, QMLItem*> QMLVariableDeclaration::getDeclaredVariables()
+QMap<QString, QMLEntity*> QMLVariableDeclaration::getDeclaredVariables()
 {
-    QMap<QString, QMLItem*> mReturnValue;
+    QMap<QString, QMLEntity*> mReturnValue;
 
-    foreach (QMLItem* pVariable, m_vContents)
+    foreach (QMLEntity* pVariable, m_vContents)
     {
         QMLIdentifier* pIdentifier = dynamic_cast<QMLIdentifier*>(pVariable);
 
@@ -71,12 +71,12 @@ QMap<QString, QMLItem*> QMLVariableDeclaration::getDeclaredVariables()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLVariableDeclaration::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLVariableDeclaration::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
     dumpNoIndentNoNewLine(stream, "var ");
 
-    QMLComplexItem::toQML(stream, pContext, this, iIdent);
+    QMLComplexEntity::toQML(stream, pContext, this, iIdent);
 }

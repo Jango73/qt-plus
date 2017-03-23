@@ -1,12 +1,12 @@
 
 // Application
 #include "QMLForIn.h"
-#include "QMLComplexItem.h"
+#include "QMLComplexEntity.h"
 
 //-------------------------------------------------------------------------------------------------
 
-QMLForIn::QMLForIn(const QPoint& pPosition, QMLItem* pVariable, QMLItem* pExpression, QMLItem* pContent)
-    : QMLItem(pPosition)
+QMLForIn::QMLForIn(const QPoint& pPosition, QMLEntity* pVariable, QMLEntity* pExpression, QMLEntity* pContent)
+    : QMLEntity(pPosition)
     , m_pVariable(pVariable)
     , m_pExpression(pExpression)
     , m_pContent(pContent)
@@ -27,30 +27,30 @@ QMLForIn::~QMLForIn()
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLForIn::variable() const
+QMLEntity* QMLForIn::variable() const
 {
     return m_pVariable;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLForIn::expression() const
+QMLEntity* QMLForIn::expression() const
 {
     return m_pExpression;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLForIn::content() const
+QMLEntity* QMLForIn::content() const
 {
     return m_pContent;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMap<QString, QMLItem*> QMLForIn::members()
+QMap<QString, QMLEntity*> QMLForIn::members()
 {
-    QMap<QString, QMLItem*> vReturnValue;
+    QMap<QString, QMLEntity*> vReturnValue;
 
     vReturnValue["variable"] = m_pVariable;
     vReturnValue["expression"] = m_pExpression;
@@ -66,7 +66,7 @@ QMap<QString, QMLItem*> QMLForIn::members()
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLForIn::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLForIn::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
@@ -94,7 +94,7 @@ void QMLForIn::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pPa
 
 CXMLNode QMLForIn::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
-    CXMLNode xNode = QMLItem::toXMLNode(pContext, pParent);
+    CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
     CXMLNode xVariable("Variable");
     CXMLNode xExpression("Expression");
     CXMLNode xContent("Content");

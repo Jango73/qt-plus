@@ -1,12 +1,12 @@
 
 // Application
 #include "QMLIf.h"
-#include "QMLComplexItem.h"
+#include "QMLComplexEntity.h"
 
 //-------------------------------------------------------------------------------------------------
 
-QMLIf::QMLIf(const QPoint& pPosition, QMLItem* pCondition, QMLItem* pThen, QMLItem* pElse)
-    : QMLItem(pPosition)
+QMLIf::QMLIf(const QPoint& pPosition, QMLEntity* pCondition, QMLEntity* pThen, QMLEntity* pElse)
+    : QMLEntity(pPosition)
     , m_pCondition(pCondition)
     , m_pThen(pThen)
     , m_pElse(pElse)
@@ -27,30 +27,30 @@ QMLIf::~QMLIf()
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLIf::condition() const
+QMLEntity* QMLIf::condition() const
 {
     return m_pCondition;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLIf::then() const
+QMLEntity* QMLIf::then() const
 {
     return m_pThen;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLIf::Else() const
+QMLEntity* QMLIf::Else() const
 {
     return m_pElse;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMap<QString, QMLItem*> QMLIf::members()
+QMap<QString, QMLEntity*> QMLIf::members()
 {
-    QMap<QString, QMLItem*> vReturnValue;
+    QMap<QString, QMLEntity*> vReturnValue;
 
     vReturnValue["condition"] = m_pCondition;
     vReturnValue["then"] = m_pThen;
@@ -64,13 +64,13 @@ QMap<QString, QMLItem*> QMLIf::members()
 /*!
     Returns a list of all declared variables.
 */
-QMap<QString, QMLItem*> QMLIf::getDeclaredVariables()
+QMap<QString, QMLEntity*> QMLIf::getDeclaredVariables()
 {
-    QMap<QString, QMLItem*> mReturnValue;
+    QMap<QString, QMLEntity*> mReturnValue;
 
     if (m_pThen != nullptr)
     {
-        QMap<QString, QMLItem*> thenVariables = m_pThen->getDeclaredVariables();
+        QMap<QString, QMLEntity*> thenVariables = m_pThen->getDeclaredVariables();
 
         foreach (QString sKey, thenVariables.keys())
         {
@@ -80,7 +80,7 @@ QMap<QString, QMLItem*> QMLIf::getDeclaredVariables()
 
     if (m_pElse != nullptr)
     {
-        QMap<QString, QMLItem*> elseVariables = m_pElse->getDeclaredVariables();
+        QMap<QString, QMLEntity*> elseVariables = m_pElse->getDeclaredVariables();
 
         foreach (QString sKey, elseVariables.keys())
         {
@@ -101,7 +101,7 @@ QMap<QString, QMLItem*> QMLIf::getDeclaredVariables()
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLIf::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLIf::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
@@ -128,7 +128,7 @@ void QMLIf::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParen
 
 CXMLNode QMLIf::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
-    CXMLNode xNode = QMLItem::toXMLNode(pContext, pParent);
+    CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
     CXMLNode xCondition("Condition");
     CXMLNode xThen("Then");
     CXMLNode xElse("Else");

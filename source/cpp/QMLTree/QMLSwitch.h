@@ -9,13 +9,13 @@
 #include <QObject>
 
 // Application
-#include "QMLItem.h"
-#include "QMLComplexItem.h"
+#include "QMLEntity.h"
+#include "QMLComplexEntity.h"
 
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a switch/case statement
-class QTPLUSSHARED_EXPORT QMLSwitch : public QMLItem
+class QTPLUSSHARED_EXPORT QMLSwitch : public QMLEntity
 {
     Q_OBJECT
 
@@ -26,7 +26,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with condition, then and else
-    QMLSwitch(const QPoint& pPosition, QMLItem* pExpression, QMLComplexItem* pCases);
+    QMLSwitch(const QPoint& pPosition, QMLEntity* pExpression, QMLComplexEntity* pCases);
 
     //! Destructor
     virtual ~QMLSwitch();
@@ -40,20 +40,20 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    QMLItem* expression() const;
+    QMLEntity* expression() const;
 
     //!
-    QMLItem* cases() const;
+    QMLEntity* cases() const;
 
     //! Returns all members
-    virtual QMap<QString, QMLItem*> members() Q_DECL_OVERRIDE;
+    virtual QMap<QString, QMLEntity*> members() Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
@@ -64,6 +64,6 @@ public:
 
 protected:
 
-    QMLItem*            m_pExpression;
-    QMLComplexItem*     m_pCases;
+    QMLEntity*          m_pExpression;
+    QMLComplexEntity*   m_pCases;
 };

@@ -18,7 +18,7 @@
     \a pContext if the parser.
 */
 QMLFile::QMLFile(const QPoint& pPosition, QMLTreeContext* pContext, const QString& sFileName)
-    : QMLComplexItem(pPosition)
+    : QMLComplexEntity(pPosition)
     , m_pContext(pContext)
     , m_sFileName(sFileName)
     , m_bParsed(false)
@@ -31,7 +31,7 @@ QMLFile::QMLFile(const QPoint& pPosition, QMLTreeContext* pContext, const QStrin
     Constructs a QMLFile as copy of \a target. Does nothing, exists only to make containers happy.
 */
 QMLFile::QMLFile(const QMLFile& target)
-    : QMLComplexItem(target.position())
+    : QMLComplexEntity(target.position())
     , m_bParsed(false)
 {
 }
@@ -84,7 +84,7 @@ bool QMLFile::parsed() const
 */
 CXMLNode QMLFile::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
-    CXMLNode xNode = QMLComplexItem::toXMLNode(pContext, pParent);
+    CXMLNode xNode = QMLComplexEntity::toXMLNode(pContext, pParent);
 
     xNode.attributes()["FileName"] = m_sFileName;
     xNode.attributes()["Parsed"] = m_bParsed ? "true" : "false";

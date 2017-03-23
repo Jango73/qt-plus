@@ -10,7 +10,7 @@
 //-------------------------------------------------------------------------------------------------
 
 QMLImport::QMLImport(const QPoint& pPosition, QMLTreeContext* pContext, const QString& sName, const QString& sVersion, const QString& sAs)
-    : QMLItem(pPosition)
+    : QMLEntity(pPosition)
     , m_sName(sName)
     , m_sVersion(sVersion)
     , m_sAs(sAs)
@@ -56,7 +56,7 @@ QString QMLImport::version() const
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLImport::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLImport::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
@@ -84,7 +84,7 @@ void QMLImport::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pP
 
 CXMLNode QMLImport::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
-    CXMLNode xNode = QMLItem::toXMLNode(pContext, pParent);
+    CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
 
     xNode.attributes()["Name"] = m_sName;
     xNode.attributes()["Version"] = m_sVersion;

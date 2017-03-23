@@ -218,13 +218,13 @@ bool QMLAnalyzer::analyze_Recurse(QString sDirectory)
 
 void QMLAnalyzer::runGrammar(const QString& sFileName, QMLFile* pFile)
 {
-    foreach (QMLItem* pItem, pFile->contents())
+    foreach (QMLEntity* pItem, pFile->contents())
     {
         runGrammar_Recurse(sFileName, pItem);
     }
 }
 
-void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem)
+void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pItem)
 {
     if (pItem == nullptr)
     {
@@ -233,7 +233,7 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem)
 
     bool bHasRejects = false;
 
-    QMap<QString, QMLItem*> mMembers = pItem->members();
+    QMap<QString, QMLEntity*> mMembers = pItem->members();
 
     QVector<CXMLNode> vChecks = m_xGrammar.getNodesByTagName(ANALYZER_TOKEN_CHECK);
 
@@ -287,7 +287,7 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem)
                     else if (sCount.isEmpty() == false)
                     {
                         int iCountToCheck = sCount.toInt();
-                        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(mMembers[sMember]);
+                        QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(mMembers[sMember]);
 
                         if (pComplex != nullptr && pComplex->contents().count() > iCountToCheck)
                         {
@@ -325,11 +325,11 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem)
             runGrammar_Recurse(sFileName, mMembers[sKey]);
         }
 
-        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(pItem);
+        QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(pItem);
 
         if (pComplex != nullptr)
         {
-            foreach (QMLItem* pChildItem, pComplex->contents())
+            foreach (QMLEntity* pChildItem, pComplex->contents())
             {
                 runGrammar_Recurse(sFileName, pChildItem);
             }
@@ -337,13 +337,13 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem)
     }
 }
 
-int QMLAnalyzer::runGrammar_CountNested(const QString& sClassName, QMLItem* pItem)
+int QMLAnalyzer::runGrammar_CountNested(const QString& sClassName, QMLEntity* pItem)
 {
     int iCount = 0;
 
     if (pItem != nullptr)
     {
-        QMap<QString, QMLItem*> mMembers = pItem->members();
+        QMap<QString, QMLEntity*> mMembers = pItem->members();
 
         foreach (QString sKey, mMembers.keys())
         {
@@ -353,11 +353,11 @@ int QMLAnalyzer::runGrammar_CountNested(const QString& sClassName, QMLItem* pIte
                 iCount = iNewCount;
         }
 
-        QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(pItem);
+        QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(pItem);
 
         if (pComplex != nullptr)
         {
-            foreach (QMLItem* pChildItem, pComplex->contents())
+            foreach (QMLEntity* pChildItem, pComplex->contents())
             {
                 int iNewCount = runGrammar_CountNested(sClassName, pChildItem);
 

@@ -4,8 +4,8 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLBinaryOperation::QMLBinaryOperation(const QPoint& pPosition, QMLItem* pLeft, QMLItem* pRight, EOperator eOperator)
-    : QMLItem(pPosition)
+QMLBinaryOperation::QMLBinaryOperation(const QPoint& pPosition, QMLEntity* pLeft, QMLEntity* pRight, EOperator eOperator)
+    : QMLEntity(pPosition)
     , m_pLeft(pLeft)
     , m_pRight(pRight)
     , m_eOperator(eOperator)
@@ -24,14 +24,14 @@ QMLBinaryOperation::~QMLBinaryOperation()
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLBinaryOperation::left() const
+QMLEntity* QMLBinaryOperation::left() const
 {
     return m_pLeft;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLBinaryOperation::right() const
+QMLEntity* QMLBinaryOperation::right() const
 {
     return m_pRight;
 }
@@ -97,12 +97,12 @@ QString QMLBinaryOperation::operatorToString(EOperator eOperator) const
 /*!
     Returns a list of all declared variables.
 */
-QMap<QString, QMLItem*> QMLBinaryOperation::getDeclaredVariables()
+QMap<QString, QMLEntity*> QMLBinaryOperation::getDeclaredVariables()
 {
-    QMap<QString, QMLItem*> mReturnValue;
+    QMap<QString, QMLEntity*> mReturnValue;
 
-    QMap<QString, QMLItem*> leftVariables = m_pLeft->getDeclaredVariables();
-    QMap<QString, QMLItem*> rightVariables = m_pLeft->getDeclaredVariables();
+    QMap<QString, QMLEntity*> leftVariables = m_pLeft->getDeclaredVariables();
+    QMap<QString, QMLEntity*> rightVariables = m_pLeft->getDeclaredVariables();
 
     foreach (QString sKey, leftVariables.keys())
     {
@@ -122,7 +122,7 @@ QMap<QString, QMLItem*> QMLBinaryOperation::getDeclaredVariables()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLBinaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLBinaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
@@ -154,7 +154,7 @@ void QMLBinaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QM
 
 CXMLNode QMLBinaryOperation::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
-    CXMLNode xNode = QMLItem::toXMLNode(pContext, pParent);
+    CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
     CXMLNode xLeft("Left");
     CXMLNode xRight("Right");
 

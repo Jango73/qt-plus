@@ -4,8 +4,8 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLUnaryOperation::QMLUnaryOperation(const QPoint& pPosition, QMLItem* pExpression, EUnaryOperator eOperator, bool bIsPostFix)
-    : QMLItem(pPosition)
+QMLUnaryOperation::QMLUnaryOperation(const QPoint& pPosition, QMLEntity* pExpression, EUnaryOperator eOperator, bool bIsPostFix)
+    : QMLEntity(pPosition)
     , m_pExpression(pExpression)
     , m_eOperator(eOperator)
     , m_bIsPostFix(bIsPostFix)
@@ -22,7 +22,7 @@ QMLUnaryOperation::~QMLUnaryOperation()
 
 //-------------------------------------------------------------------------------------------------
 
-QMLItem* QMLUnaryOperation::expression() const
+QMLEntity* QMLUnaryOperation::expression() const
 {
     return m_pExpression;
 }
@@ -67,7 +67,7 @@ QString QMLUnaryOperation::operatorToString(EUnaryOperator eOperator) const
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLUnaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLUnaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
@@ -116,7 +116,7 @@ void QMLUnaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QML
 
 CXMLNode QMLUnaryOperation::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
-    CXMLNode xNode = QMLItem::toXMLNode(pContext, pParent);
+    CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
     CXMLNode xExpression("Expression");
 
     xNode.attributes()["Operator"] = operatorToString(m_eOperator);

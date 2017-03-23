@@ -5,14 +5,14 @@
 //-------------------------------------------------------------------------------------------------
 
 QMLIdentifier::QMLIdentifier(const QPoint& pPosition)
-    : QMLItem(pPosition)
+    : QMLEntity(pPosition)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 
 QMLIdentifier::QMLIdentifier(const QPoint& pPosition, const QString& value)
-    : QMLItem(pPosition, value)
+    : QMLEntity(pPosition, value)
 {
 }
 
@@ -29,7 +29,7 @@ QMLIdentifier::~QMLIdentifier()
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLIdentifier::solveOrigins(QMLTreeContext* pContext, QMLItem* pParent)
+void QMLIdentifier::solveOrigins(QMLTreeContext* pContext, QMLEntity* pParent)
 {
     if (m_vValue.toString().isEmpty() == false)
     {
@@ -44,7 +44,7 @@ void QMLIdentifier::solveOrigins(QMLTreeContext* pContext, QMLItem* pParent)
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLIdentifier::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLItem* pParent, int iIdent)
+void QMLIdentifier::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);

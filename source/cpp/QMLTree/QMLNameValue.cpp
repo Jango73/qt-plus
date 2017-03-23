@@ -17,7 +17,7 @@
     \a pPosition is the position of the token in the file \br
 */
 QMLNameValue::QMLNameValue(const QPoint& pPosition)
-    : QMLItem(pPosition)
+    : QMLEntity(pPosition)
 {
 }
 
@@ -27,7 +27,7 @@ QMLNameValue::QMLNameValue(const QPoint& pPosition)
     Constructs a QMLNameValue with \a sName and \a sValue.
 */
 QMLNameValue::QMLNameValue(const QPoint& pPosition, const QString& sName, const QVariant& sValue)
-    : QMLItem(pPosition, sValue)
+    : QMLEntity(pPosition, sValue)
     , m_sName(sName)
 {
 }
@@ -70,7 +70,7 @@ QString QMLNameValue::name() const
 */
 CXMLNode QMLNameValue::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
-    CXMLNode xNode = QMLItem::toXMLNode(pContext, pParent);
+    CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
 
     if (m_sName.isEmpty() == false)
     {
