@@ -470,7 +470,7 @@ QMLTreeContext::EParseError QMLTreeContext::parse()
             foreach (QMLEntity* pItem, pFile->contents())
             {
                 // Solve internal references
-                pItem->solveOrigins(this, nullptr);
+                pItem->solveOrigins(this);
             }
 
             // Mark the file as parsed

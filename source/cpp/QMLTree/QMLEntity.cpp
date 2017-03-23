@@ -1,4 +1,7 @@
 
+// Qt
+#include <QDebug>
+
 // Application
 #include "QMLEntity.h"
 
@@ -150,9 +153,8 @@ QMap<QString, QMLEntity*> QMLEntity::members()
 /*!
     Finds the origin of the item. \br\br
     \a pContext is the context of this item. \br
-    \a pParent is the caller of this method.
 */
-void QMLEntity::solveOrigins(QMLTreeContext* pContext, QMLEntity* pParent)
+void QMLEntity::solveOrigins(QMLTreeContext* pContext)
 {
 }
 
@@ -161,7 +163,7 @@ void QMLEntity::solveOrigins(QMLTreeContext* pContext, QMLEntity* pParent)
 /*!
     Returns a list of all declared variables.
 */
-QMap<QString, QMLEntity*> QMLEntity::getDeclaredVariables()
+QMap<QString, QMLEntity*> QMLEntity::getDeclaredSymbols()
 {
     QMap<QString, QMLEntity*> mReturnValue;
 
@@ -171,10 +173,25 @@ QMap<QString, QMLEntity*> QMLEntity::getDeclaredVariables()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns the item named \a sName, for identifier resolution.
+    Returns the item named \a sName, for identifier resolution. \br\br
+    \a bDescending tells if we are coming from a parent. \br
 */
-QMLEntity* QMLEntity::findNamedItem(const QString& sName)
+QMLEntity* QMLEntity::findSymbolDeclaration(const QString& sName, bool bDescending)
 {
+    if (bDescending == false)
+    {
+        QMLEntity* pParent = dynamic_cast<QMLEntity*>(parent());
+
+        if (pParent != nullptr)
+        {
+            return pParent->findSymbolDeclaration(sName, bDescending);
+        }
+        else
+        {
+            qDebug() << "QMLEntity::findSymbolDeclaration() : parent is not an entity for " << toString();
+        }
+    }
+
     return nullptr;
 }
 
@@ -238,7 +255,14 @@ CXMLNode QMLEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent
     }
 
     if (m_bIsParenthesized)
+    {
         xNode.attributes()["IsParenthesized"] = "true";
+    }
+
+    if (m_pOrigin != nullptr)
+    {
+        xNode.attributes()["Origin"] = m_pOrigin->metaObject()->className();
+    }
 
     return xNode;
 }

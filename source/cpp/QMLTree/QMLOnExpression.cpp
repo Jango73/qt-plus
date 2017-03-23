@@ -10,14 +10,21 @@ QMLOnExpression::QMLOnExpression(const QPoint& pPosition, QMLEntity* pTarget, QM
 {
     if (pContents != nullptr)
     {
+        /*
         foreach (QMLEntity* pItem, pContents->contents())
         {
             m_vContents << pItem;
         }
 
         pContents->contents().clear();
+        */
+
+        m_vContents = pContents->grabContents();
+
         delete pContents;
     }
+
+    if (m_pTarget != nullptr) m_pTarget->setParent(this);
 }
 
 //-------------------------------------------------------------------------------------------------

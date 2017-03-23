@@ -89,13 +89,13 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void solveOrigins(QMLTreeContext* pContext, QMLEntity* pParent = nullptr);
+    virtual void solveOrigins(QMLTreeContext* pContext);
 
     //!
-    virtual QMap<QString, QMLEntity*> getDeclaredVariables();
+    virtual QMap<QString, QMLEntity*> getDeclaredSymbols();
 
     //!
-    virtual QMLEntity* findNamedItem(const QString& sName);
+    virtual QMLEntity* findSymbolDeclaration(const QString& sName, bool bDescending);
 
     //!
     virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = nullptr, int iIdent = 0);

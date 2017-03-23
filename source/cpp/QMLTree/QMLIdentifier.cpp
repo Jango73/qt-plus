@@ -27,13 +27,22 @@ QMLIdentifier::~QMLIdentifier()
 /*!
     Finds the origin of the item. \br\br
     \a pContext is the context of this item. \br
-    \a pParent is the caller of this method.
 */
-void QMLIdentifier::solveOrigins(QMLTreeContext* pContext, QMLEntity* pParent)
+void QMLIdentifier::solveOrigins(QMLTreeContext* pContext)
 {
     if (m_vValue.toString().isEmpty() == false)
     {
-        m_pOrigin = pParent->findNamedItem(m_vValue.toString());
+        QMLEntity* pParent = dynamic_cast<QMLEntity*>(parent());
+
+        if (pParent != nullptr)
+        {
+            m_pOrigin = pParent->findSymbolDeclaration(m_vValue.toString(), false);
+
+            if (m_pOrigin == this)
+            {
+                m_pOrigin = nullptr;
+            }
+        }
     }
 }
 

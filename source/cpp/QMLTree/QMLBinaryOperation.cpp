@@ -10,6 +10,8 @@ QMLBinaryOperation::QMLBinaryOperation(const QPoint& pPosition, QMLEntity* pLeft
     , m_pRight(pRight)
     , m_eOperator(eOperator)
 {
+    if (m_pLeft != nullptr) m_pLeft->setParent(this);
+    if (m_pRight != nullptr) m_pRight->setParent(this);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -97,12 +99,12 @@ QString QMLBinaryOperation::operatorToString(EOperator eOperator) const
 /*!
     Returns a list of all declared variables.
 */
-QMap<QString, QMLEntity*> QMLBinaryOperation::getDeclaredVariables()
+QMap<QString, QMLEntity*> QMLBinaryOperation::getDeclaredSymbols()
 {
     QMap<QString, QMLEntity*> mReturnValue;
 
-    QMap<QString, QMLEntity*> leftVariables = m_pLeft->getDeclaredVariables();
-    QMap<QString, QMLEntity*> rightVariables = m_pLeft->getDeclaredVariables();
+    QMap<QString, QMLEntity*> leftVariables = m_pLeft->getDeclaredSymbols();
+    QMap<QString, QMLEntity*> rightVariables = m_pLeft->getDeclaredSymbols();
 
     foreach (QString sKey, leftVariables.keys())
     {

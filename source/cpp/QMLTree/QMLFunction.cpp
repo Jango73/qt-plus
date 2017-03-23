@@ -16,6 +16,9 @@ QMLFunction::QMLFunction(const QPoint& pPosition, QMLEntity* pName, QMLEntity* p
     , m_pContent(pContent)
     , m_bIsSignal(false)
 {
+    if (m_pName != nullptr) m_pName->setParent(this);
+    if (m_pParameters != nullptr) m_pParameters->setParent(this);
+    if (m_pContent != nullptr) m_pContent->setParent(this);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -96,25 +99,48 @@ QMap<QString, QMLEntity*> QMLFunction::members()
 /*!
     Finds the origin of the item. \br\br
     \a pContext is the context of this item. \br
-    \a pParent is the caller of this method.
 */
-void QMLFunction::solveOrigins(QMLTreeContext* pContext, QMLEntity* pParent)
+void QMLFunction::solveOrigins(QMLTreeContext* pContext)
 {
     if (m_pContent != nullptr)
     {
-        m_mVariables = m_pContent->getDeclaredVariables();
-        m_pContent->solveOrigins(pContext, this);
+        m_mVariables = m_pContent->getDeclaredSymbols();
+        m_pContent->solveOrigins(pContext);
+
+        /*
+        qDebug() << "QMLFunction::solveOrigins() : variables";
+        foreach (QString sKey, m_mVariables.keys())
+        {
+            qDebug() << sKey << " = " << m_mVariables[sKey];
+        }
+        */
     }
 }
 
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns the item named \a sName, for identifier resolution.
+    Returns the item named \a sName, for identifier resolution. \br\br
+    \a bDescending tells if we are coming from a parent. \br
 */
-QMLEntity* QMLFunction::findNamedItem(const QString& sName)
+QMLEntity* QMLFunction::findSymbolDeclaration(const QString& sName, bool bDescending)
 {
-    return nullptr;
+    if (m_pName != nullptr)
+    {
+        QMLEntity* pFoundEntity = m_pName->findSymbolDeclaration(sName, true);
+
+        if (pFoundEntity != nullptr)
+        {
+            return pFoundEntity;
+        }
+    }
+
+    if (m_mVariables.contains(sName))
+    {
+        return m_mVariables[sName];
+    }
+
+    return QMLEntity::findSymbolDeclaration(sName, bDescending);
 }
 
 //-------------------------------------------------------------------------------------------------

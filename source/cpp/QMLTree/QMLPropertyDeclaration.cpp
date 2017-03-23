@@ -11,6 +11,8 @@ QMLPropertyDeclaration::QMLPropertyDeclaration(const QPoint& pPosition, QMLType*
     , m_pContent(nullptr)
     , m_eModifiers(mNone)
 {
+    if (m_pType != nullptr) m_pType->setParent(this);
+    if (m_pName != nullptr) m_pName->setParent(this);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -22,6 +24,9 @@ QMLPropertyDeclaration::QMLPropertyDeclaration(const QPoint& pPosition, QMLType*
     , m_pContent(pContent)
     , m_eModifiers(mNone)
 {
+    if (m_pType != nullptr) m_pType->setParent(this);
+    if (m_pName != nullptr) m_pName->setParent(this);
+    if (m_pContent != nullptr) m_pContent->setParent(this);
 }
 
 //-------------------------------------------------------------------------------------------------

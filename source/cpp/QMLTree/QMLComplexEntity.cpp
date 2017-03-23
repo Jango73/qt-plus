@@ -171,13 +171,12 @@ QVector<QMLEntity*> QMLComplexEntity::grabContents()
 /*!
     Finds the origin of the item. \br\br
     \a pContext is the context of this item. \br
-    \a pParent is the caller of this method.
 */
-void QMLComplexEntity::solveOrigins(QMLTreeContext* pContext, QMLEntity* pParent)
+void QMLComplexEntity::solveOrigins(QMLTreeContext* pContext)
 {
-    foreach(QMLEntity* pItem, m_vContents)
+    foreach (QMLEntity* pItem, m_vContents)
     {
-        pItem->solveOrigins(pContext, this);
+        pItem->solveOrigins(pContext);
     }
 }
 
@@ -186,13 +185,13 @@ void QMLComplexEntity::solveOrigins(QMLTreeContext* pContext, QMLEntity* pParent
 /*!
     Returns a list of all declared variables.
 */
-QMap<QString, QMLEntity*> QMLComplexEntity::getDeclaredVariables()
+QMap<QString, QMLEntity*> QMLComplexEntity::getDeclaredSymbols()
 {
     QMap<QString, QMLEntity*> mReturnValue;
 
     foreach(QMLEntity* pItem, m_vContents)
     {
-        QMap<QString, QMLEntity*> itemVariables = pItem->getDeclaredVariables();
+        QMap<QString, QMLEntity*> itemVariables = pItem->getDeclaredSymbols();
 
         foreach (QString sKey, itemVariables.keys())
         {
@@ -204,16 +203,6 @@ QMap<QString, QMLEntity*> QMLComplexEntity::getDeclaredVariables()
     }
 
     return mReturnValue;
-}
-
-//-------------------------------------------------------------------------------------------------
-
-/*!
-    Returns the item named \a sName, for identifier resolution.
-*/
-QMLEntity* QMLComplexEntity::findNamedItem(const QString& sName)
-{
-    return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------

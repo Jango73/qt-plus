@@ -12,6 +12,7 @@ QMLPragma::QMLPragma(const QPoint& pPosition, QMLEntity* pStatement)
     : QMLEntity(pPosition)
     , m_pStatement(pStatement)
 {
+    if (m_pStatement != nullptr) m_pStatement->setParent(this);
 }
 
 //-------------------------------------------------------------------------------------------------

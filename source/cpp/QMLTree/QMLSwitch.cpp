@@ -10,6 +10,8 @@ QMLSwitch::QMLSwitch(const QPoint& pPosition, QMLEntity* pExpression, QMLComplex
     , m_pExpression(pExpression)
     , m_pCases(pCases)
 {
+    if (m_pExpression != nullptr) m_pExpression->setParent(this);
+    if (m_pCases != nullptr) m_pCases->setParent(this);
 }
 
 //-------------------------------------------------------------------------------------------------

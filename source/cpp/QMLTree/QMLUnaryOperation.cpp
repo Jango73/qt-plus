@@ -10,6 +10,7 @@ QMLUnaryOperation::QMLUnaryOperation(const QPoint& pPosition, QMLEntity* pExpres
     , m_eOperator(eOperator)
     , m_bIsPostFix(bIsPostFix)
 {
+    if (m_pExpression != nullptr) m_pExpression->setParent(this);
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -42,7 +42,7 @@ QMLVariableDeclaration::~QMLVariableDeclaration()
 /*!
     Returns a list of all declared variables.
 */
-QMap<QString, QMLEntity*> QMLVariableDeclaration::getDeclaredVariables()
+QMap<QString, QMLEntity*> QMLVariableDeclaration::getDeclaredSymbols()
 {
     QMap<QString, QMLEntity*> mReturnValue;
 

@@ -1,0 +1,1508 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="QMLFile">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="QMLImport" maxOccurs="unbounded" minOccurs="0">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="Version" use="optional"/>
+                <xs:attribute type="xs:string" name="Name" use="optional"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="QMLComplexItem">
+          <xs:complexType>
+            <xs:choice maxOccurs="unbounded" minOccurs="0">
+              <xs:element name="QMLPropertyAssignment" maxOccurs="unbounded" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element type="xs:string" name="Type"/>
+                    <xs:element name="Name">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="QMLIdentifier">
+                            <xs:complexType>
+                              <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                  <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                </xs:extension>
+                              </xs:simpleContent>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Content">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="QMLIdentifier" minOccurs="0">
+                            <xs:complexType>
+                              <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                  <xs:attribute type="xs:string" name="Value"/>
+                                </xs:extension>
+                              </xs:simpleContent>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="QMLQualifiedExpression" minOccurs="0">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                  <xs:complexType>
+                                    <xs:simpleContent>
+                                      <xs:extension base="xs:string">
+                                        <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                      </xs:extension>
+                                    </xs:simpleContent>
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="QMLQualifiedExpression" minOccurs="0">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                        <xs:complexType>
+                                          <xs:simpleContent>
+                                            <xs:extension base="xs:string">
+                                              <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                            </xs:extension>
+                                          </xs:simpleContent>
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute type="xs:byte" name="Modifiers" use="optional"/>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="QMLPropertyDeclaration" maxOccurs="unbounded" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Type">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="QMLType">
+                            <xs:complexType>
+                              <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                  <xs:attribute type="xs:string" name="Type" use="optional"/>
+                                </xs:extension>
+                              </xs:simpleContent>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Name">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="QMLIdentifier">
+                            <xs:complexType>
+                              <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                  <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                </xs:extension>
+                              </xs:simpleContent>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Content">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="QMLComplexItem">
+                            <xs:complexType>
+                              <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                  <xs:attribute type="xs:string" name="IsArray" use="optional"/>
+                                </xs:extension>
+                              </xs:simpleContent>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute type="xs:byte" name="Modifiers" use="optional"/>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="QMLFunction">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element type="xs:string" name="Type" minOccurs="0"/>
+                    <xs:element name="Name">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="QMLIdentifier">
+                            <xs:complexType>
+                              <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                  <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                </xs:extension>
+                              </xs:simpleContent>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element type="xs:string" name="Parameters" minOccurs="0"/>
+                    <xs:element name="Content">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="QMLComplexItem">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="QMLFor" minOccurs="0">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="Initialization">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="QMLVariableDeclaration">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="QMLBinaryOperation">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="Left">
+                                                          <xs:complexType>
+                                                            <xs:sequence>
+                                                              <xs:element name="QMLIdentifier">
+                                                                <xs:complexType>
+                                                                  <xs:simpleContent>
+                                                                    <xs:extension base="xs:string">
+                                                                      <xs:attribute type="xs:string" name="Value"/>
+                                                                    </xs:extension>
+                                                                  </xs:simpleContent>
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                            </xs:sequence>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                        <xs:element name="Right">
+                                                          <xs:complexType>
+                                                            <xs:sequence>
+                                                              <xs:element name="QMLItem">
+                                                                <xs:complexType>
+                                                                  <xs:simpleContent>
+                                                                    <xs:extension base="xs:string">
+                                                                      <xs:attribute type="xs:byte" name="Value"/>
+                                                                    </xs:extension>
+                                                                  </xs:simpleContent>
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                            </xs:sequence>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                      <xs:attribute type="xs:string" name="Operator"/>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                                <xs:attribute type="xs:string" name="IsArgumentList"/>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                      <xs:element name="Condition">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="QMLBinaryOperation">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="Left">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="QMLIdentifier">
+                                                          <xs:complexType>
+                                                            <xs:simpleContent>
+                                                              <xs:extension base="xs:string">
+                                                                <xs:attribute type="xs:string" name="Value"/>
+                                                              </xs:extension>
+                                                            </xs:simpleContent>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                  <xs:element name="Right">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="QMLQualifiedExpression">
+                                                          <xs:complexType>
+                                                            <xs:sequence>
+                                                              <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                                                <xs:complexType>
+                                                                  <xs:simpleContent>
+                                                                    <xs:extension base="xs:string">
+                                                                      <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                    </xs:extension>
+                                                                  </xs:simpleContent>
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                            </xs:sequence>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                                <xs:attribute type="xs:string" name="Operator"/>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                      <xs:element name="Incrementation">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="QMLUnaryOperation">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="Expression">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="QMLIdentifier">
+                                                          <xs:complexType>
+                                                            <xs:simpleContent>
+                                                              <xs:extension base="xs:string">
+                                                                <xs:attribute type="xs:string" name="Value"/>
+                                                              </xs:extension>
+                                                            </xs:simpleContent>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                                <xs:attribute type="xs:string" name="Operator"/>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                      <xs:element name="Content">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="QMLComplexItem">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="QMLIf">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="Condition">
+                                                          <xs:complexType>
+                                                            <xs:sequence>
+                                                              <xs:element name="QMLBinaryOperation">
+                                                                <xs:complexType>
+                                                                  <xs:sequence>
+                                                                    <xs:element name="Left">
+                                                                      <xs:complexType>
+                                                                        <xs:sequence>
+                                                                          <xs:element name="QMLQualifiedExpression">
+                                                                            <xs:complexType>
+                                                                              <xs:sequence>
+                                                                                <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                                                                  <xs:complexType>
+                                                                                    <xs:simpleContent>
+                                                                                      <xs:extension base="xs:string">
+                                                                                        <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                                      </xs:extension>
+                                                                                    </xs:simpleContent>
+                                                                                  </xs:complexType>
+                                                                                </xs:element>
+                                                                              </xs:sequence>
+                                                                            </xs:complexType>
+                                                                          </xs:element>
+                                                                        </xs:sequence>
+                                                                      </xs:complexType>
+                                                                    </xs:element>
+                                                                    <xs:element name="Right">
+                                                                      <xs:complexType>
+                                                                        <xs:sequence>
+                                                                          <xs:element name="QMLIdentifier">
+                                                                            <xs:complexType>
+                                                                              <xs:simpleContent>
+                                                                                <xs:extension base="xs:string">
+                                                                                  <xs:attribute type="xs:string" name="Value"/>
+                                                                                </xs:extension>
+                                                                              </xs:simpleContent>
+                                                                            </xs:complexType>
+                                                                          </xs:element>
+                                                                        </xs:sequence>
+                                                                      </xs:complexType>
+                                                                    </xs:element>
+                                                                  </xs:sequence>
+                                                                  <xs:attribute type="xs:string" name="Operator"/>
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                            </xs:sequence>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                        <xs:element name="Then">
+                                                          <xs:complexType>
+                                                            <xs:sequence>
+                                                              <xs:element name="QMLComplexItem">
+                                                                <xs:complexType>
+                                                                  <xs:sequence>
+                                                                    <xs:element name="QMLBinaryOperation" maxOccurs="unbounded" minOccurs="0">
+                                                                      <xs:complexType>
+                                                                        <xs:sequence>
+                                                                          <xs:element name="Left">
+                                                                            <xs:complexType>
+                                                                              <xs:sequence>
+                                                                                <xs:element name="QMLQualifiedExpression">
+                                                                                  <xs:complexType>
+                                                                                    <xs:sequence>
+                                                                                      <xs:element name="QMLIdentifier">
+                                                                                        <xs:complexType>
+                                                                                          <xs:simpleContent>
+                                                                                            <xs:extension base="xs:string">
+                                                                                              <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                                            </xs:extension>
+                                                                                          </xs:simpleContent>
+                                                                                        </xs:complexType>
+                                                                                      </xs:element>
+                                                                                      <xs:element name="QMLQualifiedExpression">
+                                                                                        <xs:complexType>
+                                                                                          <xs:sequence>
+                                                                                            <xs:element name="QMLFunctionCall">
+                                                                                              <xs:complexType>
+                                                                                                <xs:sequence>
+                                                                                                  <xs:element name="Name">
+                                                                                                    <xs:complexType>
+                                                                                                      <xs:sequence>
+                                                                                                        <xs:element name="QMLIdentifier">
+                                                                                                          <xs:complexType>
+                                                                                                            <xs:simpleContent>
+                                                                                                              <xs:extension base="xs:string">
+                                                                                                                <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                                                              </xs:extension>
+                                                                                                            </xs:simpleContent>
+                                                                                                          </xs:complexType>
+                                                                                                        </xs:element>
+                                                                                                      </xs:sequence>
+                                                                                                    </xs:complexType>
+                                                                                                  </xs:element>
+                                                                                                  <xs:element name="Arguments">
+                                                                                                    <xs:complexType>
+                                                                                                      <xs:sequence>
+                                                                                                        <xs:element name="QMLComplexItem">
+                                                                                                          <xs:complexType>
+                                                                                                            <xs:sequence>
+                                                                                                              <xs:element name="QMLIdentifier">
+                                                                                                                <xs:complexType>
+                                                                                                                  <xs:simpleContent>
+                                                                                                                    <xs:extension base="xs:string">
+                                                                                                                      <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                                                                    </xs:extension>
+                                                                                                                  </xs:simpleContent>
+                                                                                                                </xs:complexType>
+                                                                                                              </xs:element>
+                                                                                                            </xs:sequence>
+                                                                                                            <xs:attribute type="xs:string" name="IsArgumentList" use="optional"/>
+                                                                                                          </xs:complexType>
+                                                                                                        </xs:element>
+                                                                                                      </xs:sequence>
+                                                                                                    </xs:complexType>
+                                                                                                  </xs:element>
+                                                                                                </xs:sequence>
+                                                                                              </xs:complexType>
+                                                                                            </xs:element>
+                                                                                            <xs:element name="QMLIdentifier">
+                                                                                              <xs:complexType>
+                                                                                                <xs:simpleContent>
+                                                                                                  <xs:extension base="xs:string">
+                                                                                                    <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                                                  </xs:extension>
+                                                                                                </xs:simpleContent>
+                                                                                              </xs:complexType>
+                                                                                            </xs:element>
+                                                                                          </xs:sequence>
+                                                                                        </xs:complexType>
+                                                                                      </xs:element>
+                                                                                    </xs:sequence>
+                                                                                  </xs:complexType>
+                                                                                </xs:element>
+                                                                              </xs:sequence>
+                                                                            </xs:complexType>
+                                                                          </xs:element>
+                                                                          <xs:element name="Right">
+                                                                            <xs:complexType>
+                                                                              <xs:sequence>
+                                                                                <xs:element name="QMLItem" minOccurs="0">
+                                                                                  <xs:complexType>
+                                                                                    <xs:simpleContent>
+                                                                                      <xs:extension base="xs:string">
+                                                                                        <xs:attribute type="xs:float" name="Value"/>
+                                                                                      </xs:extension>
+                                                                                    </xs:simpleContent>
+                                                                                  </xs:complexType>
+                                                                                </xs:element>
+                                                                                <xs:element name="QMLQualifiedExpression" minOccurs="0">
+                                                                                  <xs:complexType>
+                                                                                    <xs:sequence>
+                                                                                      <xs:element name="QMLIdentifier">
+                                                                                        <xs:complexType>
+                                                                                          <xs:simpleContent>
+                                                                                            <xs:extension base="xs:string">
+                                                                                              <xs:attribute type="xs:string" name="Value"/>
+                                                                                            </xs:extension>
+                                                                                          </xs:simpleContent>
+                                                                                        </xs:complexType>
+                                                                                      </xs:element>
+                                                                                      <xs:element name="QMLQualifiedExpression">
+                                                                                        <xs:complexType>
+                                                                                          <xs:sequence>
+                                                                                            <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                                                                              <xs:complexType>
+                                                                                                <xs:simpleContent>
+                                                                                                  <xs:extension base="xs:string">
+                                                                                                    <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                                                  </xs:extension>
+                                                                                                </xs:simpleContent>
+                                                                                              </xs:complexType>
+                                                                                            </xs:element>
+                                                                                          </xs:sequence>
+                                                                                        </xs:complexType>
+                                                                                      </xs:element>
+                                                                                    </xs:sequence>
+                                                                                  </xs:complexType>
+                                                                                </xs:element>
+                                                                              </xs:sequence>
+                                                                            </xs:complexType>
+                                                                          </xs:element>
+                                                                        </xs:sequence>
+                                                                        <xs:attribute type="xs:string" name="Operator" use="optional"/>
+                                                                      </xs:complexType>
+                                                                    </xs:element>
+                                                                  </xs:sequence>
+                                                                  <xs:attribute type="xs:string" name="IsBlock"/>
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                            </xs:sequence>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                        <xs:element name="Else">
+                                                          <xs:complexType>
+                                                            <xs:sequence>
+                                                              <xs:element name="QMLComplexItem">
+                                                                <xs:complexType>
+                                                                  <xs:sequence>
+                                                                    <xs:element name="QMLBinaryOperation" maxOccurs="unbounded" minOccurs="0">
+                                                                      <xs:complexType>
+                                                                        <xs:sequence>
+                                                                          <xs:element name="Left">
+                                                                            <xs:complexType>
+                                                                              <xs:sequence>
+                                                                                <xs:element name="QMLQualifiedExpression">
+                                                                                  <xs:complexType>
+                                                                                    <xs:sequence>
+                                                                                      <xs:element name="QMLIdentifier">
+                                                                                        <xs:complexType>
+                                                                                          <xs:simpleContent>
+                                                                                            <xs:extension base="xs:string">
+                                                                                              <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                                            </xs:extension>
+                                                                                          </xs:simpleContent>
+                                                                                        </xs:complexType>
+                                                                                      </xs:element>
+                                                                                      <xs:element name="QMLQualifiedExpression">
+                                                                                        <xs:complexType>
+                                                                                          <xs:sequence>
+                                                                                            <xs:element name="QMLFunctionCall">
+                                                                                              <xs:complexType>
+                                                                                                <xs:sequence>
+                                                                                                  <xs:element name="Name">
+                                                                                                    <xs:complexType>
+                                                                                                      <xs:sequence>
+                                                                                                        <xs:element name="QMLIdentifier">
+                                                                                                          <xs:complexType>
+                                                                                                            <xs:simpleContent>
+                                                                                                              <xs:extension base="xs:string">
+                                                                                                                <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                                                              </xs:extension>
+                                                                                                            </xs:simpleContent>
+                                                                                                          </xs:complexType>
+                                                                                                        </xs:element>
+                                                                                                      </xs:sequence>
+                                                                                                    </xs:complexType>
+                                                                                                  </xs:element>
+                                                                                                  <xs:element name="Arguments">
+                                                                                                    <xs:complexType>
+                                                                                                      <xs:sequence>
+                                                                                                        <xs:element name="QMLComplexItem">
+                                                                                                          <xs:complexType>
+                                                                                                            <xs:sequence>
+                                                                                                              <xs:element name="QMLIdentifier">
+                                                                                                                <xs:complexType>
+                                                                                                                  <xs:simpleContent>
+                                                                                                                    <xs:extension base="xs:string">
+                                                                                                                      <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                                                                    </xs:extension>
+                                                                                                                  </xs:simpleContent>
+                                                                                                                </xs:complexType>
+                                                                                                              </xs:element>
+                                                                                                            </xs:sequence>
+                                                                                                            <xs:attribute type="xs:string" name="IsArgumentList" use="optional"/>
+                                                                                                          </xs:complexType>
+                                                                                                        </xs:element>
+                                                                                                      </xs:sequence>
+                                                                                                    </xs:complexType>
+                                                                                                  </xs:element>
+                                                                                                </xs:sequence>
+                                                                                              </xs:complexType>
+                                                                                            </xs:element>
+                                                                                            <xs:element name="QMLIdentifier">
+                                                                                              <xs:complexType>
+                                                                                                <xs:simpleContent>
+                                                                                                  <xs:extension base="xs:string">
+                                                                                                    <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                                                  </xs:extension>
+                                                                                                </xs:simpleContent>
+                                                                                              </xs:complexType>
+                                                                                            </xs:element>
+                                                                                          </xs:sequence>
+                                                                                        </xs:complexType>
+                                                                                      </xs:element>
+                                                                                    </xs:sequence>
+                                                                                  </xs:complexType>
+                                                                                </xs:element>
+                                                                              </xs:sequence>
+                                                                            </xs:complexType>
+                                                                          </xs:element>
+                                                                          <xs:element name="Right">
+                                                                            <xs:complexType>
+                                                                              <xs:sequence>
+                                                                                <xs:element name="QMLItem" minOccurs="0">
+                                                                                  <xs:complexType>
+                                                                                    <xs:simpleContent>
+                                                                                      <xs:extension base="xs:string">
+                                                                                        <xs:attribute type="xs:byte" name="Value"/>
+                                                                                      </xs:extension>
+                                                                                    </xs:simpleContent>
+                                                                                  </xs:complexType>
+                                                                                </xs:element>
+                                                                                <xs:element name="QMLQualifiedExpression" minOccurs="0">
+                                                                                  <xs:complexType>
+                                                                                    <xs:sequence>
+                                                                                      <xs:element name="QMLIdentifier">
+                                                                                        <xs:complexType>
+                                                                                          <xs:simpleContent>
+                                                                                            <xs:extension base="xs:string">
+                                                                                              <xs:attribute type="xs:string" name="Value"/>
+                                                                                            </xs:extension>
+                                                                                          </xs:simpleContent>
+                                                                                        </xs:complexType>
+                                                                                      </xs:element>
+                                                                                      <xs:element name="QMLQualifiedExpression">
+                                                                                        <xs:complexType>
+                                                                                          <xs:sequence>
+                                                                                            <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                                                                              <xs:complexType>
+                                                                                                <xs:simpleContent>
+                                                                                                  <xs:extension base="xs:string">
+                                                                                                    <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                                                  </xs:extension>
+                                                                                                </xs:simpleContent>
+                                                                                              </xs:complexType>
+                                                                                            </xs:element>
+                                                                                          </xs:sequence>
+                                                                                        </xs:complexType>
+                                                                                      </xs:element>
+                                                                                    </xs:sequence>
+                                                                                  </xs:complexType>
+                                                                                </xs:element>
+                                                                              </xs:sequence>
+                                                                            </xs:complexType>
+                                                                          </xs:element>
+                                                                        </xs:sequence>
+                                                                        <xs:attribute type="xs:string" name="Operator" use="optional"/>
+                                                                      </xs:complexType>
+                                                                    </xs:element>
+                                                                  </xs:sequence>
+                                                                  <xs:attribute type="xs:string" name="IsBlock"/>
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                            </xs:sequence>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                                <xs:attribute type="xs:string" name="IsBlock"/>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="QMLBinaryOperation">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="Left">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="QMLQualifiedExpression" minOccurs="0">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                                    <xs:complexType>
+                                                      <xs:simpleContent>
+                                                        <xs:extension base="xs:string">
+                                                          <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                        </xs:extension>
+                                                      </xs:simpleContent>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                              </xs:complexType>
+                                            </xs:element>
+                                            <xs:element name="QMLIdentifier" minOccurs="0">
+                                              <xs:complexType>
+                                                <xs:simpleContent>
+                                                  <xs:extension base="xs:string">
+                                                    <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                  </xs:extension>
+                                                </xs:simpleContent>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                      <xs:element name="Right">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="QMLIdentifier" minOccurs="0">
+                                              <xs:complexType>
+                                                <xs:simpleContent>
+                                                  <xs:extension base="xs:string">
+                                                    <xs:attribute type="xs:string" name="Value"/>
+                                                  </xs:extension>
+                                                </xs:simpleContent>
+                                              </xs:complexType>
+                                            </xs:element>
+                                            <xs:element name="QMLQualifiedExpression" minOccurs="0">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                                    <xs:complexType>
+                                                      <xs:simpleContent>
+                                                        <xs:extension base="xs:string">
+                                                          <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                        </xs:extension>
+                                                      </xs:simpleContent>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                  <xs:element name="QMLFunctionCall" minOccurs="0">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="Name">
+                                                          <xs:complexType>
+                                                            <xs:sequence>
+                                                              <xs:element name="QMLIdentifier">
+                                                                <xs:complexType>
+                                                                  <xs:simpleContent>
+                                                                    <xs:extension base="xs:string">
+                                                                      <xs:attribute type="xs:string" name="Value"/>
+                                                                    </xs:extension>
+                                                                  </xs:simpleContent>
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                            </xs:sequence>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                        <xs:element name="Arguments">
+                                                          <xs:complexType>
+                                                            <xs:sequence>
+                                                              <xs:element type="xs:string" name="QMLComplexItem"/>
+                                                            </xs:sequence>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute type="xs:string" name="Operator" use="optional"/>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute type="xs:string" name="IsBlock" use="optional"/>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute type="xs:byte" name="Modifiers" use="optional"/>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="QMLComplexItem" maxOccurs="unbounded" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="QMLPropertyAssignment" maxOccurs="unbounded" minOccurs="0">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element type="xs:string" name="Type"/>
+                          <xs:element name="Name">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="QMLIdentifier">
+                                  <xs:complexType>
+                                    <xs:simpleContent>
+                                      <xs:extension base="xs:string">
+                                        <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                      </xs:extension>
+                                    </xs:simpleContent>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="Content">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="QMLIdentifier" minOccurs="0">
+                                  <xs:complexType>
+                                    <xs:simpleContent>
+                                      <xs:extension base="xs:string">
+                                        <xs:attribute type="xs:string" name="Value"/>
+                                      </xs:extension>
+                                    </xs:simpleContent>
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="QMLQualifiedExpression" minOccurs="0">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                        <xs:complexType>
+                                          <xs:simpleContent>
+                                            <xs:extension base="xs:string">
+                                              <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                            </xs:extension>
+                                          </xs:simpleContent>
+                                        </xs:complexType>
+                                      </xs:element>
+                                      <xs:element name="QMLQualifiedExpression" minOccurs="0">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                              <xs:complexType>
+                                                <xs:simpleContent>
+                                                  <xs:extension base="xs:string">
+                                                    <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                  </xs:extension>
+                                                </xs:simpleContent>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute type="xs:byte" name="Modifiers" use="optional"/>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="QMLComplexItem" maxOccurs="unbounded" minOccurs="0">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="QMLPropertyAssignment" maxOccurs="unbounded" minOccurs="0">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element type="xs:string" name="Type"/>
+                                <xs:element name="Name">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="QMLIdentifier">
+                                        <xs:complexType>
+                                          <xs:simpleContent>
+                                            <xs:extension base="xs:string">
+                                              <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                            </xs:extension>
+                                          </xs:simpleContent>
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="Content">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="QMLBinaryOperation" minOccurs="0">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="Left">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="QMLQualifiedExpression">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                                          <xs:complexType>
+                                                            <xs:simpleContent>
+                                                              <xs:extension base="xs:string">
+                                                                <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                              </xs:extension>
+                                                            </xs:simpleContent>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                              </xs:complexType>
+                                            </xs:element>
+                                            <xs:element name="Right">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="QMLBinaryOperation">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="Left">
+                                                          <xs:complexType>
+                                                            <xs:sequence>
+                                                              <xs:element name="QMLItem">
+                                                                <xs:complexType>
+                                                                  <xs:simpleContent>
+                                                                    <xs:extension base="xs:string">
+                                                                      <xs:attribute type="xs:byte" name="Value"/>
+                                                                    </xs:extension>
+                                                                  </xs:simpleContent>
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                            </xs:sequence>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                        <xs:element name="Right">
+                                                          <xs:complexType>
+                                                            <xs:sequence>
+                                                              <xs:element name="QMLQualifiedExpression">
+                                                                <xs:complexType>
+                                                                  <xs:sequence>
+                                                                    <xs:element name="QMLIdentifier">
+                                                                      <xs:complexType>
+                                                                        <xs:simpleContent>
+                                                                          <xs:extension base="xs:string">
+                                                                            <xs:attribute type="xs:string" name="Value"/>
+                                                                          </xs:extension>
+                                                                        </xs:simpleContent>
+                                                                      </xs:complexType>
+                                                                    </xs:element>
+                                                                    <xs:element name="QMLQualifiedExpression">
+                                                                      <xs:complexType>
+                                                                        <xs:sequence>
+                                                                          <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                                                            <xs:complexType>
+                                                                              <xs:simpleContent>
+                                                                                <xs:extension base="xs:string">
+                                                                                  <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                                </xs:extension>
+                                                                              </xs:simpleContent>
+                                                                            </xs:complexType>
+                                                                          </xs:element>
+                                                                        </xs:sequence>
+                                                                      </xs:complexType>
+                                                                    </xs:element>
+                                                                  </xs:sequence>
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                            </xs:sequence>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                      <xs:attribute type="xs:string" name="IsParenthesized"/>
+                                                      <xs:attribute type="xs:string" name="Operator"/>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                          <xs:attribute type="xs:byte" name="Operator"/>
+                                        </xs:complexType>
+                                      </xs:element>
+                                      <xs:element name="QMLIdentifier" minOccurs="0">
+                                        <xs:complexType>
+                                          <xs:simpleContent>
+                                            <xs:extension base="xs:string">
+                                              <xs:attribute type="xs:string" name="Value"/>
+                                            </xs:extension>
+                                          </xs:simpleContent>
+                                        </xs:complexType>
+                                      </xs:element>
+                                      <xs:element name="QMLQualifiedExpression" minOccurs="0">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                              <xs:complexType>
+                                                <xs:simpleContent>
+                                                  <xs:extension base="xs:string">
+                                                    <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                  </xs:extension>
+                                                </xs:simpleContent>
+                                              </xs:complexType>
+                                            </xs:element>
+                                            <xs:element name="QMLQualifiedExpression" minOccurs="0">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                                    <xs:complexType>
+                                                      <xs:simpleContent>
+                                                        <xs:extension base="xs:string">
+                                                          <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                        </xs:extension>
+                                                      </xs:simpleContent>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                      <xs:element name="QMLItem" minOccurs="0">
+                                        <xs:complexType>
+                                          <xs:simpleContent>
+                                            <xs:extension base="xs:string">
+                                              <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                            </xs:extension>
+                                          </xs:simpleContent>
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute type="xs:byte" name="Modifiers" use="optional"/>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="QMLComplexItem" maxOccurs="unbounded" minOccurs="0">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="QMLPropertyAssignment" maxOccurs="unbounded" minOccurs="0">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element type="xs:string" name="Type"/>
+                                      <xs:element name="Name">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="QMLIdentifier">
+                                              <xs:complexType>
+                                                <xs:simpleContent>
+                                                  <xs:extension base="xs:string">
+                                                    <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                  </xs:extension>
+                                                </xs:simpleContent>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                      <xs:element name="Content">
+                                        <xs:complexType>
+                                          <xs:choice maxOccurs="unbounded" minOccurs="0">
+                                            <xs:element name="QMLQualifiedExpression">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                                    <xs:complexType>
+                                                      <xs:simpleContent>
+                                                        <xs:extension base="xs:string">
+                                                          <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                        </xs:extension>
+                                                      </xs:simpleContent>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                  <xs:element name="QMLQualifiedExpression" minOccurs="0">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                                          <xs:complexType>
+                                                            <xs:simpleContent>
+                                                              <xs:extension base="xs:string">
+                                                                <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                              </xs:extension>
+                                                            </xs:simpleContent>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                  <xs:element name="QMLFunctionCall" minOccurs="0">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="Name">
+                                                          <xs:complexType>
+                                                            <xs:sequence>
+                                                              <xs:element name="QMLIdentifier">
+                                                                <xs:complexType>
+                                                                  <xs:simpleContent>
+                                                                    <xs:extension base="xs:string">
+                                                                      <xs:attribute type="xs:string" name="Value"/>
+                                                                    </xs:extension>
+                                                                  </xs:simpleContent>
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                            </xs:sequence>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                        <xs:element name="Arguments">
+                                                          <xs:complexType>
+                                                            <xs:sequence>
+                                                              <xs:element type="xs:string" name="QMLComplexItem"/>
+                                                            </xs:sequence>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                              </xs:complexType>
+                                            </xs:element>
+                                            <xs:element name="QMLBinaryOperation">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="Left">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="QMLQualifiedExpression">
+                                                          <xs:complexType>
+                                                            <xs:sequence>
+                                                              <xs:element name="QMLIdentifier">
+                                                                <xs:complexType>
+                                                                  <xs:simpleContent>
+                                                                    <xs:extension base="xs:string">
+                                                                      <xs:attribute type="xs:string" name="Value"/>
+                                                                    </xs:extension>
+                                                                  </xs:simpleContent>
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                              <xs:element name="QMLQualifiedExpression">
+                                                                <xs:complexType>
+                                                                  <xs:sequence>
+                                                                    <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                                                      <xs:complexType>
+                                                                        <xs:simpleContent>
+                                                                          <xs:extension base="xs:string">
+                                                                            <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                          </xs:extension>
+                                                                        </xs:simpleContent>
+                                                                      </xs:complexType>
+                                                                    </xs:element>
+                                                                  </xs:sequence>
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                            </xs:sequence>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                  <xs:element name="Right">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="QMLItem">
+                                                          <xs:complexType>
+                                                            <xs:simpleContent>
+                                                              <xs:extension base="xs:string">
+                                                                <xs:attribute type="xs:float" name="Value"/>
+                                                              </xs:extension>
+                                                            </xs:simpleContent>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                                <xs:attribute type="xs:string" name="Operator"/>
+                                              </xs:complexType>
+                                            </xs:element>
+                                            <xs:element name="QMLIdentifier">
+                                              <xs:complexType>
+                                                <xs:simpleContent>
+                                                  <xs:extension base="xs:string">
+                                                    <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                  </xs:extension>
+                                                </xs:simpleContent>
+                                              </xs:complexType>
+                                            </xs:element>
+                                            <xs:element name="QMLItem">
+                                              <xs:complexType>
+                                                <xs:simpleContent>
+                                                  <xs:extension base="xs:string">
+                                                    <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                  </xs:extension>
+                                                </xs:simpleContent>
+                                              </xs:complexType>
+                                            </xs:element>
+                                            <xs:element name="QMLComplexItem">
+                                              <xs:complexType>
+                                                <xs:simpleContent>
+                                                  <xs:extension base="xs:string">
+                                                    <xs:attribute type="xs:string" name="IsArray"/>
+                                                  </xs:extension>
+                                                </xs:simpleContent>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:choice>
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute type="xs:byte" name="Modifiers" use="optional"/>
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="QMLComplexItem" minOccurs="0">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="QMLPropertyAssignment" maxOccurs="unbounded" minOccurs="0">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element type="xs:string" name="Type"/>
+                                            <xs:element name="Name">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="QMLIdentifier">
+                                                    <xs:complexType>
+                                                      <xs:simpleContent>
+                                                        <xs:extension base="xs:string">
+                                                          <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                        </xs:extension>
+                                                      </xs:simpleContent>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                              </xs:complexType>
+                                            </xs:element>
+                                            <xs:element name="Content">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="QMLIdentifier" minOccurs="0">
+                                                    <xs:complexType>
+                                                      <xs:simpleContent>
+                                                        <xs:extension base="xs:string">
+                                                          <xs:attribute type="xs:string" name="Value"/>
+                                                        </xs:extension>
+                                                      </xs:simpleContent>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                  <xs:element name="QMLQualifiedExpression" minOccurs="0">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                                          <xs:complexType>
+                                                            <xs:simpleContent>
+                                                              <xs:extension base="xs:string">
+                                                                <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                              </xs:extension>
+                                                            </xs:simpleContent>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                          <xs:attribute type="xs:byte" name="Modifiers" use="optional"/>
+                                        </xs:complexType>
+                                      </xs:element>
+                                      <xs:element name="QMLComplexItem">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="QMLPropertyAssignment" maxOccurs="unbounded" minOccurs="0">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element type="xs:string" name="Type"/>
+                                                  <xs:element name="Name">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="QMLIdentifier">
+                                                          <xs:complexType>
+                                                            <xs:simpleContent>
+                                                              <xs:extension base="xs:string">
+                                                                <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                              </xs:extension>
+                                                            </xs:simpleContent>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                  <xs:element name="Content">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="QMLItem" minOccurs="0">
+                                                          <xs:complexType>
+                                                            <xs:simpleContent>
+                                                              <xs:extension base="xs:string">
+                                                                <xs:attribute type="xs:byte" name="Value" use="optional"/>
+                                                              </xs:extension>
+                                                            </xs:simpleContent>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                        <xs:element name="QMLConditional" minOccurs="0">
+                                                          <xs:complexType>
+                                                            <xs:sequence>
+                                                              <xs:element name="Condition">
+                                                                <xs:complexType>
+                                                                  <xs:sequence>
+                                                                    <xs:element name="QMLBinaryOperation">
+                                                                      <xs:complexType>
+                                                                        <xs:sequence>
+                                                                          <xs:element name="Left">
+                                                                            <xs:complexType>
+                                                                              <xs:sequence>
+                                                                                <xs:element name="QMLQualifiedExpression">
+                                                                                  <xs:complexType>
+                                                                                    <xs:sequence>
+                                                                                      <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                                                                        <xs:complexType>
+                                                                                          <xs:simpleContent>
+                                                                                            <xs:extension base="xs:string">
+                                                                                              <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                                            </xs:extension>
+                                                                                          </xs:simpleContent>
+                                                                                        </xs:complexType>
+                                                                                      </xs:element>
+                                                                                    </xs:sequence>
+                                                                                  </xs:complexType>
+                                                                                </xs:element>
+                                                                              </xs:sequence>
+                                                                            </xs:complexType>
+                                                                          </xs:element>
+                                                                          <xs:element name="Right">
+                                                                            <xs:complexType>
+                                                                              <xs:sequence>
+                                                                                <xs:element name="QMLQualifiedExpression">
+                                                                                  <xs:complexType>
+                                                                                    <xs:sequence>
+                                                                                      <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                                                                        <xs:complexType>
+                                                                                          <xs:simpleContent>
+                                                                                            <xs:extension base="xs:string">
+                                                                                              <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                                            </xs:extension>
+                                                                                          </xs:simpleContent>
+                                                                                        </xs:complexType>
+                                                                                      </xs:element>
+                                                                                    </xs:sequence>
+                                                                                  </xs:complexType>
+                                                                                </xs:element>
+                                                                              </xs:sequence>
+                                                                            </xs:complexType>
+                                                                          </xs:element>
+                                                                        </xs:sequence>
+                                                                        <xs:attribute type="xs:string" name="IsParenthesized" use="optional"/>
+                                                                        <xs:attribute type="xs:string" name="Operator" use="optional"/>
+                                                                      </xs:complexType>
+                                                                    </xs:element>
+                                                                  </xs:sequence>
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                              <xs:element name="Then">
+                                                                <xs:complexType>
+                                                                  <xs:sequence>
+                                                                    <xs:element name="QMLItem" minOccurs="0">
+                                                                      <xs:complexType>
+                                                                        <xs:simpleContent>
+                                                                          <xs:extension base="xs:string">
+                                                                            <xs:attribute type="xs:float" name="Value"/>
+                                                                          </xs:extension>
+                                                                        </xs:simpleContent>
+                                                                      </xs:complexType>
+                                                                    </xs:element>
+                                                                    <xs:element name="QMLQualifiedExpression" minOccurs="0">
+                                                                      <xs:complexType>
+                                                                        <xs:sequence>
+                                                                          <xs:element name="QMLIdentifier">
+                                                                            <xs:complexType>
+                                                                              <xs:simpleContent>
+                                                                                <xs:extension base="xs:string">
+                                                                                  <xs:attribute type="xs:string" name="Value"/>
+                                                                                </xs:extension>
+                                                                              </xs:simpleContent>
+                                                                            </xs:complexType>
+                                                                          </xs:element>
+                                                                          <xs:element name="QMLQualifiedExpression">
+                                                                            <xs:complexType>
+                                                                              <xs:sequence>
+                                                                                <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                                                                  <xs:complexType>
+                                                                                    <xs:simpleContent>
+                                                                                      <xs:extension base="xs:string">
+                                                                                        <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                                      </xs:extension>
+                                                                                    </xs:simpleContent>
+                                                                                  </xs:complexType>
+                                                                                </xs:element>
+                                                                              </xs:sequence>
+                                                                            </xs:complexType>
+                                                                          </xs:element>
+                                                                        </xs:sequence>
+                                                                      </xs:complexType>
+                                                                    </xs:element>
+                                                                  </xs:sequence>
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                              <xs:element name="Else">
+                                                                <xs:complexType>
+                                                                  <xs:sequence>
+                                                                    <xs:element name="QMLItem" minOccurs="0">
+                                                                      <xs:complexType>
+                                                                        <xs:simpleContent>
+                                                                          <xs:extension base="xs:string">
+                                                                            <xs:attribute type="xs:byte" name="Value"/>
+                                                                          </xs:extension>
+                                                                        </xs:simpleContent>
+                                                                      </xs:complexType>
+                                                                    </xs:element>
+                                                                    <xs:element name="QMLQualifiedExpression" minOccurs="0">
+                                                                      <xs:complexType>
+                                                                        <xs:sequence>
+                                                                          <xs:element name="QMLIdentifier">
+                                                                            <xs:complexType>
+                                                                              <xs:simpleContent>
+                                                                                <xs:extension base="xs:string">
+                                                                                  <xs:attribute type="xs:string" name="Value"/>
+                                                                                </xs:extension>
+                                                                              </xs:simpleContent>
+                                                                            </xs:complexType>
+                                                                          </xs:element>
+                                                                          <xs:element name="QMLQualifiedExpression">
+                                                                            <xs:complexType>
+                                                                              <xs:sequence>
+                                                                                <xs:element name="QMLIdentifier" maxOccurs="unbounded" minOccurs="0">
+                                                                                  <xs:complexType>
+                                                                                    <xs:simpleContent>
+                                                                                      <xs:extension base="xs:string">
+                                                                                        <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                                      </xs:extension>
+                                                                                    </xs:simpleContent>
+                                                                                  </xs:complexType>
+                                                                                </xs:element>
+                                                                              </xs:sequence>
+                                                                            </xs:complexType>
+                                                                          </xs:element>
+                                                                        </xs:sequence>
+                                                                      </xs:complexType>
+                                                                    </xs:element>
+                                                                  </xs:sequence>
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                            </xs:sequence>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                                <xs:attribute type="xs:byte" name="Modifiers" use="optional"/>
+                                              </xs:complexType>
+                                            </xs:element>
+                                            <xs:element name="QMLOnExpression" maxOccurs="unbounded" minOccurs="0">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="QMLComplexItem">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="QMLPropertyAssignment">
+                                                          <xs:complexType>
+                                                            <xs:sequence>
+                                                              <xs:element type="xs:string" name="Type"/>
+                                                              <xs:element name="Name">
+                                                                <xs:complexType>
+                                                                  <xs:sequence>
+                                                                    <xs:element name="QMLIdentifier">
+                                                                      <xs:complexType>
+                                                                        <xs:simpleContent>
+                                                                          <xs:extension base="xs:string">
+                                                                            <xs:attribute type="xs:string" name="Value" use="optional"/>
+                                                                          </xs:extension>
+                                                                        </xs:simpleContent>
+                                                                      </xs:complexType>
+                                                                    </xs:element>
+                                                                  </xs:sequence>
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                              <xs:element name="Content">
+                                                                <xs:complexType>
+                                                                  <xs:sequence>
+                                                                    <xs:element name="QMLItem">
+                                                                      <xs:complexType>
+                                                                        <xs:simpleContent>
+                                                                          <xs:extension base="xs:string">
+                                                                            <xs:attribute type="xs:short" name="Value" use="optional"/>
+                                                                          </xs:extension>
+                                                                        </xs:simpleContent>
+                                                                      </xs:complexType>
+                                                                    </xs:element>
+                                                                  </xs:sequence>
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                            </xs:sequence>
+                                                            <xs:attribute type="xs:byte" name="Modifiers" use="optional"/>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                      <xs:attribute type="xs:string" name="Name" use="optional"/>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                                <xs:attribute type="xs:string" name="Name" use="optional"/>
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                          <xs:attribute type="xs:string" name="Name"/>
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute type="xs:string" name="Name"/>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute type="xs:string" name="Name" use="optional"/>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute type="xs:string" name="Name" use="optional"/>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute type="xs:string" name="Name" use="optional"/>
+                </xs:complexType>
+              </xs:element>
+            </xs:choice>
+            <xs:attribute type="xs:string" name="Name"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="FileName"/>
+      <xs:attribute type="xs:string" name="Parsed"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

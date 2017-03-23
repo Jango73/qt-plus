@@ -8,6 +8,7 @@ QMLArrayAccess::QMLArrayAccess(const QPoint& pPosition, QMLEntity* pLeft)
     : QMLComplexEntity(pPosition)
     , m_pLeft(pLeft)
 {
+    if (m_pLeft != nullptr) m_pLeft->setParent(this);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -41,13 +42,13 @@ QMap<QString, QMLEntity*> QMLArrayAccess::members()
 /*!
     Returns a list of all declared variables.
 */
-QMap<QString, QMLEntity*> QMLArrayAccess::getDeclaredVariables()
+QMap<QString, QMLEntity*> QMLArrayAccess::getDeclaredSymbols()
 {
     QMap<QString, QMLEntity*> mReturnValue;
 
     if (m_pLeft != nullptr)
     {
-        QMap<QString, QMLEntity*> leftVariables = m_pLeft->getDeclaredVariables();
+        QMap<QString, QMLEntity*> leftVariables = m_pLeft->getDeclaredSymbols();
 
         foreach (QString sKey, leftVariables.keys())
         {

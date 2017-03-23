@@ -11,6 +11,9 @@ QMLForIn::QMLForIn(const QPoint& pPosition, QMLEntity* pVariable, QMLEntity* pEx
     , m_pExpression(pExpression)
     , m_pContent(pContent)
 {
+    if (m_pVariable != nullptr) m_pVariable->setParent(this);
+    if (m_pExpression != nullptr) m_pExpression->setParent(this);
+    if (m_pContent != nullptr) m_pContent->setParent(this);
 }
 
 //-------------------------------------------------------------------------------------------------

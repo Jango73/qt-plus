@@ -11,6 +11,9 @@ QMLIf::QMLIf(const QPoint& pPosition, QMLEntity* pCondition, QMLEntity* pThen, Q
     , m_pThen(pThen)
     , m_pElse(pElse)
 {
+    if (m_pCondition != nullptr) m_pCondition->setParent(this);
+    if (m_pThen != nullptr) m_pThen->setParent(this);
+    if (m_pElse != nullptr) m_pElse->setParent(this);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -62,15 +65,34 @@ QMap<QString, QMLEntity*> QMLIf::members()
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Finds the origin of the item. \br\br
+    \a pContext is the context of this item. \br
+*/
+void QMLIf::solveOrigins(QMLTreeContext* pContext)
+{
+    if (m_pThen != nullptr)
+    {
+        m_pThen->solveOrigins(pContext);
+    }
+
+    if (m_pElse != nullptr)
+    {
+        m_pElse->solveOrigins(pContext);
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Returns a list of all declared variables.
 */
-QMap<QString, QMLEntity*> QMLIf::getDeclaredVariables()
+QMap<QString, QMLEntity*> QMLIf::getDeclaredSymbols()
 {
     QMap<QString, QMLEntity*> mReturnValue;
 
     if (m_pThen != nullptr)
     {
-        QMap<QString, QMLEntity*> thenVariables = m_pThen->getDeclaredVariables();
+        QMap<QString, QMLEntity*> thenVariables = m_pThen->getDeclaredSymbols();
 
         foreach (QString sKey, thenVariables.keys())
         {
@@ -80,7 +102,7 @@ QMap<QString, QMLEntity*> QMLIf::getDeclaredVariables()
 
     if (m_pElse != nullptr)
     {
-        QMap<QString, QMLEntity*> elseVariables = m_pElse->getDeclaredVariables();
+        QMap<QString, QMLEntity*> elseVariables = m_pElse->getDeclaredSymbols();
 
         foreach (QString sKey, elseVariables.keys())
         {

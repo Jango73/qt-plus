@@ -4,11 +4,13 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLFunctionCall::QMLFunctionCall(const QPoint& pPosition, QMLEntity* pName, QMLComplexEntity *pArguments)
+QMLFunctionCall::QMLFunctionCall(const QPoint& pPosition, QMLEntity* pName, QMLComplexEntity* pArguments)
     : QMLEntity(pPosition)
     , m_pName(pName)
     , m_pArguments(pArguments)
 {
+    if (m_pName != nullptr) m_pName->setParent(this);
+    if (m_pArguments != nullptr) m_pArguments->setParent(this);
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -12,6 +12,10 @@ QMLFor::QMLFor(const QPoint& pPosition, QMLEntity* pInitialization, QMLEntity* p
     , m_pIncrementation(pIncrementation)
     , m_pContent(pContent)
 {
+    if (m_pInitialization != nullptr) m_pInitialization->setParent(this);
+    if (m_pCondition != nullptr) m_pCondition->setParent(this);
+    if (m_pIncrementation != nullptr) m_pIncrementation->setParent(this);
+    if (m_pContent != nullptr) m_pContent->setParent(this);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -73,15 +77,34 @@ QMap<QString, QMLEntity*> QMLFor::members()
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Finds the origin of the item. \br\br
+    \a pContext is the context of this item. \br
+*/
+void QMLFor::solveOrigins(QMLTreeContext* pContext)
+{
+    if (m_pInitialization != nullptr)
+    {
+        m_pInitialization->solveOrigins(pContext);
+    }
+
+    if (m_pContent != nullptr)
+    {
+        m_pContent->solveOrigins(pContext);
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Returns a list of all declared variables.
 */
-QMap<QString, QMLEntity*> QMLFor::getDeclaredVariables()
+QMap<QString, QMLEntity*> QMLFor::getDeclaredSymbols()
 {
     QMap<QString, QMLEntity*> mReturnValue;
 
     if (m_pInitialization != nullptr)
     {
-        QMap<QString, QMLEntity*> initVariables = m_pInitialization->getDeclaredVariables();
+        QMap<QString, QMLEntity*> initVariables = m_pInitialization->getDeclaredSymbols();
 
         foreach (QString sKey, initVariables.keys())
         {
@@ -91,7 +114,7 @@ QMap<QString, QMLEntity*> QMLFor::getDeclaredVariables()
 
     if (m_pContent != nullptr)
     {
-        QMap<QString, QMLEntity*> contentVariables = m_pContent->getDeclaredVariables();
+        QMap<QString, QMLEntity*> contentVariables = m_pContent->getDeclaredSymbols();
 
         foreach (QString sKey, contentVariables.keys())
         {
