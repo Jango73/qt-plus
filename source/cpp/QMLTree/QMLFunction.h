@@ -55,6 +55,9 @@ public:
     //!
     bool isSignal() const;
 
+    //!
+    virtual QString toString() const Q_DECL_OVERRIDE;
+
     //! Returns all members
     virtual QMap<QString, QMLItem*> members() Q_DECL_OVERRIDE;
 

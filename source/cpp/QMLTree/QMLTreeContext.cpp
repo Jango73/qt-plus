@@ -214,8 +214,8 @@ QString QMLAnalyzerError::toString() const
 {
     return QString("%1 (%2, %3) : %4")
             .arg(m_sFileName)
-            .arg(m_pPosition.y())
-            .arg(m_pPosition.x())
+            .arg(m_pPosition.y() + 1)
+            .arg(m_pPosition.x() + 1)
             .arg(m_sText);
 }
 
@@ -355,7 +355,7 @@ QPoint QMLTreeContext::position() const
 {
     if (m_sScopes.count() > 0)
     {
-        return QPoint(SCOPE.m_iPreviousColumn + 1, SCOPE.m_iPreviousLine - 1);
+        return QPoint(SCOPE.m_iPreviousColumn, SCOPE.m_iPreviousLine);
     }
 
     return QPoint(0, 0);

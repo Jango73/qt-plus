@@ -67,6 +67,19 @@ bool QMLFunction::isSignal() const
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns the item as a string.
+*/
+QString QMLFunction::toString() const
+{
+    if (m_pName != nullptr)
+        return m_pName->toString();
+
+    return "";
+}
+
+//-------------------------------------------------------------------------------------------------
+
 QMap<QString, QMLItem*> QMLFunction::members()
 {
     QMap<QString, QMLItem*> vReturnValue;

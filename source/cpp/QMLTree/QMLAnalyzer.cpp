@@ -4,6 +4,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QDebug>
+#include <QRegExp>
 
 // Application
 #include "QMLAnalyzer.h"
@@ -19,6 +20,7 @@
 #define ANALYZER_TOKEN_TEXT         "Text"
 #define ANALYZER_TOKEN_TYPE         "Type"
 #define ANALYZER_TOKEN_VALUE        "Value"
+#define ANALYZER_TOKEN_REGEXP       "RegExp"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -27,6 +29,7 @@
 */
 QMLAnalyzer::QMLAnalyzer()
     : QThread(NULL)
+    , m_pContext(nullptr)
     , m_bIncludeImports(false)
     , m_bIncludeSubFolders(false)
     , m_bRewriteFiles(false)
@@ -250,6 +253,7 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem)
                 QString sText = xReject.attributes()[ANALYZER_TOKEN_TEXT];
                 QString sNestedCount = xReject.attributes()[ANALYZER_TOKEN_NESTED_COUNT];
                 QString sCount = xReject.attributes()[ANALYZER_TOKEN_COUNT];
+                QString sRegExp = xReject.attributes()[ANALYZER_TOKEN_REGEXP];
 
                 if (sNestedCount.isEmpty() == false)
                 {
@@ -268,7 +272,19 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem)
                 }
                 else if (mMembers.contains(sMember) && mMembers[sMember] != nullptr)
                 {
-                    if (sCount.isEmpty() == false)
+                    QString sMemberToString = mMembers[sMember]->toString();
+
+                    if (sRegExp.isEmpty() == false && sMemberToString.isEmpty() == false)
+                    {
+                        QRegExp tRegExp(sRegExp);
+
+                        if (tRegExp.exactMatch(sMemberToString) == false)
+                        {
+                            bHasRejects = true;
+                            outputError(sFileName, pItem->position(), sText);
+                        }
+                    }
+                    else if (sCount.isEmpty() == false)
                     {
                         int iCountToCheck = sCount.toInt();
                         QMLComplexItem* pComplex = dynamic_cast<QMLComplexItem*>(mMembers[sMember]);
@@ -291,8 +307,6 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem)
                     }
                     else
                     {
-                        QString sMemberToString = mMembers[sMember]->toString();
-
                         if (sMemberToString == sValue)
                         {
                             bHasRejects = true;

@@ -455,7 +455,7 @@ PropertyDeclarationNoColon :
 
         if (pType != nullptr && pName != nullptr)
         {
-            QMLPropertyDeclaration* pDeclaration = new QMLPropertyDeclaration(pContext->position(), pType, pName);
+            QMLPropertyDeclaration* pDeclaration = new QMLPropertyDeclaration(pName->position(), pType, pName);
             pDeclaration->setModifiers((QMLPropertyDeclaration::EModifier) iModifiers);
             $<Object>$ = pDeclaration;
         }
@@ -475,7 +475,7 @@ PropertyDeclarationNoColon :
 
         if (pType != nullptr && pName != nullptr)
         {
-            QMLPropertyDeclaration* pDeclaration = new QMLPropertyDeclaration(pContext->position(), pType, pName);
+            QMLPropertyDeclaration* pDeclaration = new QMLPropertyDeclaration(pName->position(), pType, pName);
             pDeclaration->setModifiers((QMLPropertyDeclaration::EModifier) iModifiers);
             $<Object>$ = pDeclaration;
         }
@@ -496,7 +496,7 @@ PropertyDeclarationNoColon :
 
         if (pType != nullptr && pName != nullptr)
         {
-            QMLPropertyDeclaration* pDeclaration = new QMLPropertyDeclaration(pContext->position(), pType, pName, pData);
+            QMLPropertyDeclaration* pDeclaration = new QMLPropertyDeclaration(pName->position(), pType, pName, pData);
             pDeclaration->setModifiers((QMLPropertyDeclaration::EModifier) iModifiers);
             $<Object>$ = pDeclaration;
         }
@@ -517,7 +517,7 @@ PropertyDeclarationNoColon :
 
         if (pType != nullptr && pName != nullptr)
         {
-            QMLPropertyDeclaration* pDeclaration = new QMLPropertyDeclaration(pContext->position(), pType, pName, pData);
+            QMLPropertyDeclaration* pDeclaration = new QMLPropertyDeclaration(pName->position(), pType, pName, pData);
             pDeclaration->setModifiers((QMLPropertyDeclaration::EModifier) iModifiers);
             $<Object>$ = pDeclaration;
         }
@@ -537,7 +537,7 @@ PropertyDeclarationNoColon :
 
         if (pName != nullptr)
         {
-            QMLPropertyAlias* pDeclaration = new QMLPropertyAlias(pContext->position(), pName, pData);
+            QMLPropertyAlias* pDeclaration = new QMLPropertyAlias(pName->position(), pName, pData);
             pDeclaration->setModifiers((QMLPropertyDeclaration::EModifier) iModifiers);
             $<Object>$ = pDeclaration;
         }
@@ -579,9 +579,20 @@ PropertyAssignment :
 
         QMLItem* pName = $<Object>1;
         QMLItem* pContent = $<Object>3;
-        QMLPropertyAssignment* pAssignment = new QMLPropertyAssignment(pContext->position(), pName, pContent);
 
-        $<Object>$ = pAssignment;
+        if (pName != nullptr)
+        {
+            QMLPropertyAssignment* pAssignment = new QMLPropertyAssignment(pName->position(), pName, pContent);
+
+            $<Object>$ = pAssignment;
+        }
+        else
+        {
+            SAFE_DELETE(pName);
+            SAFE_DELETE(pContent);
+
+            $<Object>$ = nullptr;
+        }
     }
 ;
 
@@ -693,10 +704,20 @@ SignalDeclarationNoColon :
         QMLItem* pName = $<Object>2;
         QMLItem* pParameters = $<Object>3;
 
-        QMLFunction* pFunction = new QMLFunction(pContext->position(), pName, pParameters, nullptr);
-        pFunction->setIsSignal(true);
+        if (pName != nullptr)
+        {
+            QMLFunction* pFunction = new QMLFunction(pName->position(), pName, pParameters, nullptr);
+            pFunction->setIsSignal(true);
 
-        $<Object>$ = pFunction;
+            $<Object>$ = pFunction;
+        }
+        else
+        {
+            SAFE_DELETE(pName);
+            SAFE_DELETE(pParameters);
+
+            $<Object>$ = nullptr;
+        }
     }
 ;
 
@@ -1536,42 +1557,16 @@ JSConditionalExpression :
 ;
 
 JSOrExpression :
-    JSXorExpression
-    {
-        PARSER_TRACE("JSOrExpression", "JSXorExpression");
-
-        $<Object>$ = $<Object>1;
-    }
-    |
-    JSXorExpression TOKEN_LOGICAL_OR JSOrExpression
-    {
-        PARSER_TRACE("JSOrExpression", "JSXorExpression TOKEN_LOGICAL_OR JSOrExpression");
-
-        QMLItem* pLeft = $<Object>1;
-        QMLItem* pRight = $<Object>3;
-
-        if (pLeft != nullptr && pRight != nullptr)
-        {
-            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boLogicOr);
-        }
-        else
-        {
-            $<Object>$ = new QMLItem(pContext->position());
-        }
-    }
-;
-
-JSXorExpression :
     JSAndExpression
     {
-        PARSER_TRACE("JSXorExpression", "JSAndExpression");
+        PARSER_TRACE("JSOrExpression", "JSAndExpression");
 
         $<Object>$ = $<Object>1;
     }
     |
-    JSAndExpression TOKEN_XOR JSXorExpression
+    JSAndExpression TOKEN_LOGICAL_OR JSOrExpression
     {
-        PARSER_TRACE("JSXorExpression", "JSAndExpression TOKEN_XOR JSOrExpression");
+        PARSER_TRACE("JSOrExpression", "JSAndExpression TOKEN_LOGICAL_OR JSOrExpression");
 
         QMLItem* pLeft = $<Object>1;
         QMLItem* pRight = $<Object>3;
@@ -1623,6 +1618,36 @@ JSBitwiseAndExpression :
         if (pLeft != nullptr && pRight != nullptr)
         {
             $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAnd);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
+    }
+    |
+    JSEqualityExpression TOKEN_OR JSBitwiseAndExpression
+    {
+        QMLItem* pLeft = $<Object>1;
+        QMLItem* pRight = $<Object>3;
+
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boOr);
+        }
+        else
+        {
+            $<Object>$ = new QMLItem(pContext->position());
+        }
+    }
+    |
+    JSEqualityExpression TOKEN_XOR JSBitwiseAndExpression
+    {
+        QMLItem* pLeft = $<Object>1;
+        QMLItem* pRight = $<Object>3;
+
+        if (pLeft != nullptr && pRight != nullptr)
+        {
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boXor);
         }
         else
         {
