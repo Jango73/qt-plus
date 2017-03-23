@@ -17,6 +17,7 @@
 // Library
 #include "../CXMLNodable.h"
 #include "QMLComplexItem.h"
+#include "QMLFile.h"
 
 #define PURE_PARSER
 
@@ -92,13 +93,77 @@ public:
     };
 
     //-------------------------------------------------------------------------------------------------
+    // Inner classes
+    //-------------------------------------------------------------------------------------------------
+
+public:
+
+    class QMLScope
+    {
+    public:
+        QMLScope()
+            : m_pFile(nullptr)
+            , m_eError(peSuccess)
+            , m_iLine(1)
+            , m_iColumn(1)
+            , m_bParsingFloat(false)
+            , m_bParsingHexa(false)
+        {
+        }
+
+        QMLScope(QMLFile* pFile)
+            : m_pFile(pFile)
+            , m_eError(peSuccess)
+            , m_fInputFile(pFile->fileName())
+            , m_iLine(1)
+            , m_iColumn(1)
+            , m_bParsingFloat(false)
+            , m_bParsingHexa(false)
+        {
+            m_fInputFile.open(QFile::ReadOnly);
+            m_sStream.setDevice(&m_fInputFile);
+            m_pCurrentTokenValue = new QString();
+        }
+
+        ~QMLScope()
+        {
+            m_fInputFile.close();
+        }
+
+        QMLScope(const QMLScope& target)
+        {
+            Q_UNUSED(target);
+        }
+
+        bool operator == (const QMLScope& target)
+        {
+            Q_UNUSED(target);
+
+            return false;
+        }
+
+        QMLFile*            m_pFile;
+        EParseError         m_eError;
+        QFile               m_fInputFile;
+        QTextStream         m_sStream;
+        QString*            m_pCurrentTokenValue;
+        int                 m_iLine;
+        int                 m_iColumn;
+        int                 m_iPreviousLine;
+        int                 m_iPreviousColumn;
+        int                 m_iCommentLevel;
+        bool                m_bParsingFloat;
+        bool                m_bParsingHexa;
+    };
+
+    //-------------------------------------------------------------------------------------------------
     // Constructeurs et destructeur
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
     //! Constructeur par défaut
     //! Default constructor
-    QMLTreeContext(const QString &sFileName);
+    QMLTreeContext();
 
     //! Destructeur
     //! Destructor
@@ -111,15 +176,15 @@ public:
     //!
     void setIncludeImports(bool bValue);
 
+    //!
+    void setFileParsed(const QString& sFileName, bool bValue);
+
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
 
     //!
     QString folder() const;
-
-    //!
-    QMLComplexItem& item();
 
     //!
     bool success() const;
@@ -133,10 +198,25 @@ public:
     //!
     QPoint position() const;
 
+    //!
+    QVector<QMLFile*>& files();
+
+    //!
+    QMLFile* fileByFileName(const QString& sFileName);
+
+    //!
+    bool fileParsed(const QString& sFileName);
+
+    //!
+    QStack<QMLTreeContext::QMLScope*>& scopes();
+
     //-------------------------------------------------------------------------------------------------
     // Méthodes de contrôle
     // Control methods
     //-------------------------------------------------------------------------------------------------
+
+    //!
+    void addFile(const QString& sFileName);
 
     //!
     EParseError parse();
@@ -199,72 +279,11 @@ private:
     //!
     int ungetChar(int iChar);
 
-protected:
-
-    //-------------------------------------------------------------------------------------------------
-    // Protected classes
-    //-------------------------------------------------------------------------------------------------
-
-    class QMLScope
-    {
-    public:
-        QMLScope()
-            : m_eError(peSuccess)
-            , m_iLine(1)
-            , m_iColumn(1)
-            , m_bParsingFloat(false)
-            , m_bParsingHexa(false)
-        {
-        }
-
-        QMLScope(const QString& sFileName)
-            : m_eError(peSuccess)
-            , m_sFileName(sFileName)
-            , m_fInputFile(sFileName)
-            , m_iLine(1)
-            , m_iColumn(1)
-            , m_bParsingFloat(false)
-            , m_bParsingHexa(false)
-        {
-            m_fInputFile.open(QFile::ReadOnly);
-            m_sStream.setDevice(&m_fInputFile);
-            m_pCurrentTokenValue = new QString();
-        }
-
-        ~QMLScope()
-        {
-            m_fInputFile.close();
-        }
-
-        QMLScope(const QMLScope& target)
-        {
-            Q_UNUSED(target);
-        }
-
-        bool operator == (const QMLScope& target)
-        {
-            Q_UNUSED(target);
-
-            return false;
-        }
-
-        EParseError         m_eError;
-        QString             m_sFileName;
-        QFile               m_fInputFile;
-        QTextStream         m_sStream;
-        QString*            m_pCurrentTokenValue;
-        int                 m_iLine;
-        int                 m_iColumn;
-        int                 m_iPreviousLine;
-        int                 m_iPreviousColumn;
-        int                 m_iCommentLevel;
-        bool                m_bParsingFloat;
-        bool                m_bParsingHexa;
-    };
-
     //-------------------------------------------------------------------------------------------------
     // Protected control methods
     //-------------------------------------------------------------------------------------------------
+
+protected:
 
     EParseError parse_Internal();
 
@@ -273,12 +292,13 @@ protected:
     // Properties
     //-------------------------------------------------------------------------------------------------
 
+protected:
+
     EParseError             m_eError;
     QMLAnalyzerError        m_tErrorObject;
     QString                 m_sFolder;
-    QStack<QMLScope*>       m_sScopes;
-    QVector<QString>        m_vFiles;
-    QMLComplexItem          m_tItem;
     QMap<QString, int>      m_mTokens;
+    QVector<QMLFile*>       m_vFiles;
+    QStack<QMLScope*>       m_sScopes;
     bool                    m_bIncludeImports;
 };

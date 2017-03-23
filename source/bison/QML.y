@@ -155,7 +155,7 @@ Declarations :
 
         if (pItem != nullptr)
         {
-            pContext->item().contents() << pItem;
+            pContext->scopes().last()->m_pFile->contents() << pItem;
         }
     }
     |
@@ -167,7 +167,7 @@ Declarations :
 
         if (pItem != nullptr)
         {
-            pContext->item().contents() << pItem;
+            pContext->scopes().last()->m_pFile->contents() << pItem;
         }
     }
 ;

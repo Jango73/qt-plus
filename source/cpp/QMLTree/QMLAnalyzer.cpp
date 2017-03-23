@@ -38,9 +38,9 @@ QMLAnalyzer::QMLAnalyzer()
 */
 QMLAnalyzer::~QMLAnalyzer()
 {
-    foreach (QString sKey, m_mContexts.keys())
+    if (m_pContext != nullptr)
     {
-        delete m_mContexts[sKey];
+        delete m_pContext;
     }
 }
 
@@ -104,12 +104,17 @@ bool QMLAnalyzer::analyze(CXMLNode xGrammar)
 {
     m_xGrammar = xGrammar;
 
-    foreach (QString sKey, m_mContexts.keys())
+    if (m_pContext != nullptr)
     {
-        delete m_mContexts[sKey];
+        delete m_pContext;
     }
 
-    m_mContexts.clear();
+    m_pContext = new QMLTreeContext();
+
+    connect(m_pContext, SIGNAL(parsingStarted(QString)), this, SIGNAL(parsingStarted(QString)), Qt::DirectConnection);
+    connect(m_pContext, SIGNAL(parsingFinished(QString)), this, SIGNAL(parsingFinished(QString)), Qt::DirectConnection);
+    connect(m_pContext, SIGNAL(importParsingStarted(QString)), this, SIGNAL(importParsingStarted(QString)), Qt::DirectConnection);
+
     m_vErrors.clear();
 
     if (m_sFolder.isEmpty() == false)
@@ -136,17 +141,15 @@ void QMLAnalyzer::threadedAnalyze(CXMLNode xGrammar)
 
 bool QMLAnalyzer::analyzeFile(const QString& sFileName)
 {
-    m_mContexts[sFileName] = new QMLTreeContext(sFileName);
+    m_pContext->addFile(sFileName);
 
-    connect(m_mContexts[sFileName], SIGNAL(parsingStarted(QString)), this, SIGNAL(parsingStarted(QString)), Qt::DirectConnection);
-    connect(m_mContexts[sFileName], SIGNAL(parsingFinished(QString)), this, SIGNAL(parsingFinished(QString)), Qt::DirectConnection);
-    connect(m_mContexts[sFileName], SIGNAL(importParsingStarted(QString)), this, SIGNAL(importParsingStarted(QString)), Qt::DirectConnection);
+    m_pContext->setIncludeImports(m_bIncludeImports);
 
-    m_mContexts[sFileName]->setIncludeImports(m_bIncludeImports);
-
-    if (m_mContexts[sFileName]->parse() == QMLTreeContext::peSuccess)
+    if (m_pContext->parse() == QMLTreeContext::peSuccess)
     {
-        runGrammar(sFileName, m_mContexts[sFileName]);
+        QMLFile* pFile = m_pContext->fileByFileName(sFileName);
+
+        runGrammar(sFileName, pFile);
 
         if (m_bRewriteFiles)
         {
@@ -155,14 +158,14 @@ bool QMLAnalyzer::analyzeFile(const QString& sFileName)
             if (file.open(QFile::WriteOnly))
             {
                 QTextStream stream(&file);
-                m_mContexts[sFileName]->item().toQML(stream, m_mContexts[sFileName]);
+                pFile->toQML(stream, m_pContext);
                 file.close();
             }
         }
     }
     else
     {
-        m_vErrors << m_mContexts[sFileName]->error();
+        m_vErrors << m_pContext->error();
 
         emit analyzeError(m_vErrors.last());
     }
@@ -210,9 +213,12 @@ bool QMLAnalyzer::analyze_Recurse(QString sDirectory)
     return true;
 }
 
-void QMLAnalyzer::runGrammar(const QString& sFileName, QMLTreeContext* pContext)
+void QMLAnalyzer::runGrammar(const QString& sFileName, QMLFile* pFile)
 {
-    runGrammar_Recurse(sFileName, &(pContext->item()));
+    foreach (QMLItem* pItem, pFile->contents())
+    {
+        runGrammar_Recurse(sFileName, pItem);
+    }
 }
 
 void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLItem* pItem)

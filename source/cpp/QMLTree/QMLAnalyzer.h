@@ -113,7 +113,7 @@ protected:
     bool analyze_Recurse(QString sDirectory);
 
     //!
-    void runGrammar(const QString& sFileName, QMLTreeContext* pContext);
+    void runGrammar(const QString& sFileName, QMLFile* pFile);
 
     //!
     void runGrammar_Recurse(const QString& sFileName, QMLItem* pItem);
@@ -128,7 +128,7 @@ protected:
 
     QString                         m_sFolder;
     QString                         m_sFile;
-    QMap<QString, QMLTreeContext*>  m_mContexts;     // The QML context used for parsing
+    QMLTreeContext*                 m_pContext;
     QVector<QMLAnalyzerError>       m_vErrors;
     CXMLNode                        m_xGrammar;
     bool                            m_bIncludeImports;

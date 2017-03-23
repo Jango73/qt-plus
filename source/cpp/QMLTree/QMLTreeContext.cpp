@@ -15,9 +15,9 @@
 */
 
 /*!
-    \fn QMLTreeContext::QMLScope::QMLScope(const QString& sFileName)
+    \fn QMLTreeContext::QMLScope::QMLScope(QMLFile* pFile)
 
-    Constructs a QMLScope using \a sFileName. Opens the file for reading.
+    Constructs a QMLScope using \a pFile. Opens the file for reading.
 */
 
 /*!
@@ -229,18 +229,12 @@ void QMLAnalyzerError::clear()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Constructs a QMLTreeContext with a file named \a sFileName.
+    Constructs a QMLTreeContext.
 */
-QMLTreeContext::QMLTreeContext(const QString& sFileName)
-    : m_tItem(QPoint())
-    , m_eError(peSuccess)
+QMLTreeContext::QMLTreeContext()
+    : m_eError(peSuccess)
     , m_bIncludeImports(false)
 {
-    QFileInfo info(sFileName);
-    m_sFolder = info.absoluteDir().path();
-
-    m_vFiles << sFileName;
-
     m_mTokens["import"] = TOKEN_IMPORT;
     m_mTokens["property"] = TOKEN_PROPERTY;
     m_mTokens["default"] = TOKEN_DEFAULT;
@@ -278,6 +272,11 @@ QMLTreeContext::~QMLTreeContext()
     {
         delete pScope;
     }
+
+    foreach (QMLFile* pFile, m_vFiles)
+    {
+        delete pFile;
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -293,21 +292,28 @@ void QMLTreeContext::setIncludeImports(bool bValue)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns the folder.
+    Sets the parsed flag for \a sFileName to \a bValue.
 */
-QString QMLTreeContext::folder() const
+void QMLTreeContext::setFileParsed(const QString& sFileName, bool bValue)
 {
-    return m_sFolder;
+    foreach (QMLFile* pFile, m_vFiles)
+    {
+        if (pFile->fileName() == sFileName)
+        {
+            pFile->setParsed(bValue);
+            return;
+        }
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns the root item.
+    Returns the folder.
 */
-QMLComplexItem& QMLTreeContext::item()
+QString QMLTreeContext::folder() const
 {
-    return m_tItem;
+    return m_sFolder;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -358,6 +364,76 @@ QPoint QMLTreeContext::position() const
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Returns the list of QMLFile objects.
+*/
+QVector<QMLFile*>& QMLTreeContext::files()
+{
+    return m_vFiles;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns the QMLFile object for \a sFileName.
+*/
+QMLFile* QMLTreeContext::fileByFileName(const QString& sFileName)
+{
+    foreach (QMLFile* pFile, m_vFiles)
+    {
+        if (pFile->fileName() == sFileName)
+        {
+            return pFile;
+        }
+    }
+
+    QMLFile* pFile = new QMLFile(QPoint(), this, sFileName);
+
+    m_vFiles << pFile;
+
+    return pFile;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns \c true if \a sFileName was parsed.
+*/
+bool QMLTreeContext::fileParsed(const QString& sFileName)
+{
+    foreach (QMLFile* pFile, m_vFiles)
+    {
+        if (pFile->fileName() == sFileName && pFile->parsed())
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns the scope stack.
+*/
+QStack<QMLTreeContext::QMLScope*>& QMLTreeContext::scopes()
+{
+    return m_sScopes;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Adds \a sFileName for parsing.
+*/
+void QMLTreeContext::addFile(const QString& sFileName)
+{
+    fileByFileName(sFileName);
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Parses the input file.
 */
 QMLTreeContext::EParseError QMLTreeContext::parse()
@@ -365,33 +441,41 @@ QMLTreeContext::EParseError QMLTreeContext::parse()
     m_eError = peSuccess;
     m_tErrorObject.clear();
 
-    if (m_vFiles.count() > 0)
+    foreach (QMLFile* pFile, m_vFiles)
     {
-        // Stack a new scope with the first file
-        m_sScopes.push(new QMLScope(m_vFiles[0]));
-
-        // Tell the world parsing started
-        emit parsingStarted(SCOPE.m_sFileName);
-
-        m_eError = parse_Internal();
-
-        emit parsingFinished(SCOPE.m_sFileName);
-
-        // Delete all scopes
-        foreach (QMLScope* pScope, m_sScopes)
+        if (pFile->parsed() == false)
         {
-            delete pScope;
+            QFileInfo info(pFile->fileName());
+            m_sFolder = info.absoluteDir().path();
+
+            // Stack a new scope with the first file
+            m_sScopes.push(new QMLScope(pFile));
+
+            // Tell the world parsing started
+            emit parsingStarted(SCOPE.m_pFile->fileName());
+
+            m_eError = parse_Internal();
+
+            emit parsingFinished(SCOPE.m_pFile->fileName());
+
+            // Delete all scopes
+            foreach (QMLScope* pScope, m_sScopes)
+            {
+                delete pScope;
+            }
+
+            // Clear scope stack
+            m_sScopes.clear();
+
+            foreach (QMLItem* pItem, pFile->contents())
+            {
+                // Solve internal references
+                pItem->solveOrigins(this, nullptr);
+            }
+
+            // Mark the file as parsed
+            pFile->setParsed(true);
         }
-
-        // Clear scope stack
-        m_sScopes.clear();
-
-        // Solve internal references
-        m_tItem.solveOrigins(this, nullptr);
-    }
-    else
-    {
-        m_eError = peNoFile;
     }
 
     return m_eError;
@@ -437,20 +521,18 @@ QMLTreeContext::EParseError QMLTreeContext::parseImportFile(const QString& sFile
 {
     if (m_bIncludeImports)
     {
-        if (m_vFiles.contains(sFileName) == false)
+        if (fileParsed(sFileName) == false)
         {
-            if (QFile::exists(sFileName))
-            {
-                m_vFiles << sFileName;
-                m_sScopes.push(new QMLScope(sFileName));
+            QMLFile* pFile = fileByFileName(sFileName);
 
-                // Tell the world parsing started
-                emit importParsingStarted(SCOPE.m_sFileName);
+            m_sScopes.push(new QMLScope(pFile));
 
-                parse_Internal();
+            // Tell the world parsing started
+            emit importParsingStarted(SCOPE.m_pFile->fileName());
 
-                delete m_sScopes.pop();
-            }
+            parse_Internal();
+
+            delete m_sScopes.pop();
         }
     }
 
@@ -486,7 +568,7 @@ QString QMLTreeContext::tokenValue() const
 void QMLTreeContext::showError(const QString& sText)
 {
     m_eError = SCOPE.m_eError = peSyntaxError;
-    m_tErrorObject = QMLAnalyzerError(SCOPE.m_sFileName, QPoint(SCOPE.m_iColumn, SCOPE.m_iLine), sText);
+    m_tErrorObject = QMLAnalyzerError(SCOPE.m_pFile->fileName(), QPoint(SCOPE.m_iColumn, SCOPE.m_iLine), sText);
 
     qDebug() << m_tErrorObject.toString();
 }
