@@ -12,11 +12,11 @@ INCLUDEPATH += $$PWD
 
 # Uncomment the following to generate QML grammar with Bison
 
-PRE_TARGETDEPS += $$PWD/source/cpp/QMLTree/QMLGrammarParser.cpp
-qmlGrammarTarget.target = $$PWD/source/cpp/QMLTree/QMLGrammarParser.cpp
-qmlGrammarTarget.depends = $$PWD/source/bison/QML.y
-qmlGrammarTarget.commands = bison "$$PWD/source/bison/QML.y" -o "$$PWD/source/cpp/QMLTree/QMLGrammarParser.cpp"
-QMAKE_EXTRA_TARGETS += qmlGrammarTarget
+# PRE_TARGETDEPS += $$PWD/source/cpp/QMLTree/QMLGrammarParser.cpp
+# qmlGrammarTarget.target = $$PWD/source/cpp/QMLTree/QMLGrammarParser.cpp
+# qmlGrammarTarget.depends = $$PWD/source/bison/QML.y
+# qmlGrammarTarget.commands = bison "$$PWD/source/bison/QML.y" -o "$$PWD/source/cpp/QMLTree/QMLGrammarParser.cpp"
+# QMAKE_EXTRA_TARGETS += qmlGrammarTarget
 
 include(qt-plus.pri)
 
