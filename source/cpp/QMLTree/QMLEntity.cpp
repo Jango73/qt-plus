@@ -22,6 +22,7 @@
 QMLEntity::QMLEntity(const QPoint& pPosition)
     : m_pPosition(pPosition)
     , m_pOrigin(nullptr)
+    , m_iUsageCount(0)
     , m_bIsParenthesized(false)
 {
 }
@@ -35,6 +36,7 @@ QMLEntity::QMLEntity(const QPoint& pPosition, const QVariant& value)
     : m_vValue(value)
     , m_pPosition(pPosition)
     , m_pOrigin(nullptr)
+    , m_iUsageCount(0)
     , m_bIsParenthesized(false)
 {
 }
@@ -111,6 +113,16 @@ QMLEntity* QMLEntity::origin() const
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Returns the item's usage count.
+*/
+int QMLEntity::usageCount() const
+{
+    return m_iUsageCount;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Returns the item's value.
 */
 QVariant QMLEntity::value() const
@@ -146,6 +158,13 @@ QString QMLEntity::toString() const
 QMap<QString, QMLEntity*> QMLEntity::members()
 {
     return QMap<QString, QMLEntity*>();
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void QMLEntity::incUsageCount()
+{
+    m_iUsageCount++;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -221,6 +240,21 @@ QMLEntity* QMLEntity::findSymbolDeclaration(const QString& sName)
 
 //-------------------------------------------------------------------------------------------------
 
+void QMLEntity::checkSymbolUsages(QMLTreeContext* pContext)
+{
+    QMap<QString, QMLEntity*> mMembers = members();
+
+    foreach (QString sMemberKey, mMembers.keys())
+    {
+        if (mMembers[sMemberKey] != nullptr)
+        {
+            mMembers[sMemberKey]->checkSymbolUsages(pContext);
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
 /*!
     Dumps the item to \a stream using \a iIdent for indentation. \br\br
     \a pContext is the context of this item. \br
@@ -286,6 +320,11 @@ CXMLNode QMLEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent
     if (m_pOrigin != nullptr)
     {
         xNode.attributes()["Origin"] = m_pOrigin->metaObject()->className();
+    }
+
+    if (m_iUsageCount > 0)
+    {
+        xNode.attributes()["UsageCount"] = QString::number(m_iUsageCount);
     }
 
     return xNode;

@@ -69,6 +69,9 @@ public:
     QMLEntity* origin() const;
 
     //!
+    int usageCount() const;
+
+    //!
     bool isParenthesized() const;
 
     //!
@@ -84,6 +87,9 @@ public:
     // Control methods
     //-------------------------------------------------------------------------------------------------
 
+    //!
+    void incUsageCount();
+
     //-------------------------------------------------------------------------------------------------
     // Virtual control methods
     //-------------------------------------------------------------------------------------------------
@@ -96,6 +102,9 @@ public:
 
     //!
     virtual QMLEntity* findSymbolDeclaration(const QString& sName);
+
+    //!
+    virtual void checkSymbolUsages(QMLTreeContext* pContext);
 
     //!
     virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = nullptr, int iIdent = 0);
@@ -116,5 +125,6 @@ protected:
     QVariant    m_vValue;
     QPoint      m_pPosition;
     QMLEntity*  m_pOrigin;
+    int         m_iUsageCount;
     bool        m_bIsParenthesized;
 };

@@ -53,6 +53,16 @@ void QMLIdentifier::solveOrigins(QMLTreeContext* pContext)
 
 //-------------------------------------------------------------------------------------------------
 
+void QMLIdentifier::checkSymbolUsages(QMLTreeContext* pContext)
+{
+    if (m_pOrigin != nullptr)
+    {
+        m_pOrigin->incUsageCount();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
 /*!
     Dumps the item to \a stream using \a iIdent for indentation. \br\br
     \a pContext is the context of this item. \br

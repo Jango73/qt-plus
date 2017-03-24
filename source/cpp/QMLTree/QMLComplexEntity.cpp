@@ -215,6 +215,21 @@ QMap<QString, QMLEntity*> QMLComplexEntity::getDeclaredSymbols()
 
 //-------------------------------------------------------------------------------------------------
 
+void QMLComplexEntity::checkSymbolUsages(QMLTreeContext* pContext)
+{
+    QMLEntity::checkSymbolUsages(pContext);
+
+    foreach (QMLEntity* pItem, m_vContents)
+    {
+        if (pItem != nullptr)
+        {
+            pItem->checkSymbolUsages(pContext);
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void QMLComplexEntity::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);

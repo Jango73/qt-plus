@@ -127,7 +127,10 @@ QMLEntity* QMLFunction::findSymbolDeclaration(const QString& sName)
     {
         // qDebug() << "QMLFunction::findSymbolDeclaration() : found self " << pFoundEntity->metaObject()->className();
 
-        return pFoundEntity;
+        if (pFoundEntity->value().toString() == sName)
+        {
+            return pFoundEntity;
+        }
     }
 
     if (m_mParameters.contains(sName))

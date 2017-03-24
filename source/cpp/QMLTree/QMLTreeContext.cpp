@@ -471,6 +471,7 @@ QMLTreeContext::EParseError QMLTreeContext::parse()
             {
                 // Solve internal references
                 pItem->solveOrigins(this);
+                pItem->checkSymbolUsages(this);
             }
 
             // Mark the file as parsed
