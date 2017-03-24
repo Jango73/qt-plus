@@ -69,7 +69,7 @@ public:
     virtual void solveOrigins(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
 
     //!
-    virtual QMLEntity* findSymbolDeclaration(const QString& sName, bool bDescending) Q_DECL_OVERRIDE;
+    virtual QMLEntity* findSymbolDeclaration(const QString& sName) Q_DECL_OVERRIDE;
 
     //!
     virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
@@ -89,5 +89,6 @@ protected:
     bool                        m_bIsSignal;
 
     // Constructed after parsing
+    QMap<QString, QMLEntity*>   m_mParameters;
     QMap<QString, QMLEntity*>   m_mVariables;
 };

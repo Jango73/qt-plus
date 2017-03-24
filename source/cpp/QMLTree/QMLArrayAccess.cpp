@@ -40,28 +40,6 @@ QMap<QString, QMLEntity*> QMLArrayAccess::members()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns a list of all declared variables.
-*/
-QMap<QString, QMLEntity*> QMLArrayAccess::getDeclaredSymbols()
-{
-    QMap<QString, QMLEntity*> mReturnValue;
-
-    if (m_pLeft != nullptr)
-    {
-        QMap<QString, QMLEntity*> leftVariables = m_pLeft->getDeclaredSymbols();
-
-        foreach (QString sKey, leftVariables.keys())
-        {
-            mReturnValue[sKey] = leftVariables[sKey];
-        }
-    }
-
-    return mReturnValue;
-}
-
-//-------------------------------------------------------------------------------------------------
-
-/*!
     Dumps the item to \a stream using \a iIdent for indentation. \br\br
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.

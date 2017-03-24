@@ -2110,6 +2110,7 @@ JSArgumentList :
 
         QMLComplexEntity* pList = new QMLComplexEntity(pArgument->position());
         pList->setIsArgumentList(true);
+
         pList->contents() << pArgument;
 
         $<Object>$ = pList;
@@ -2131,7 +2132,7 @@ JSArgumentList :
 JSArgument:
     TOKEN_PROPERTY
     {
-        $<Object>$ = nullptr;
+        $<Object>$ = new QMLIdentifier(pContext->position(), "property");
     }
     |
     JSObject

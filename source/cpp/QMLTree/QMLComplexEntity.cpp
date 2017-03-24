@@ -19,7 +19,9 @@ QMLComplexEntity::QMLComplexEntity(const QPoint& pPosition, QMLEntity* pName)
 QMLComplexEntity::~QMLComplexEntity()
 {
     if (m_pName != nullptr)
+    {
         delete m_pName;
+    }
 
     foreach (QMLEntity* pItem, m_vContents)
     {
@@ -174,8 +176,11 @@ QVector<QMLEntity*> QMLComplexEntity::grabContents()
 */
 void QMLComplexEntity::solveOrigins(QMLTreeContext* pContext)
 {
+    QMLEntity::solveOrigins(pContext);
+
     foreach (QMLEntity* pItem, m_vContents)
     {
+        pItem->setParent(this);
         pItem->solveOrigins(pContext);
     }
 }
@@ -183,21 +188,24 @@ void QMLComplexEntity::solveOrigins(QMLTreeContext* pContext)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns a list of all declared variables.
+    Returns a list of all declared symbols.
 */
 QMap<QString, QMLEntity*> QMLComplexEntity::getDeclaredSymbols()
 {
-    QMap<QString, QMLEntity*> mReturnValue;
+    QMap<QString, QMLEntity*> mReturnValue = QMLEntity::getDeclaredSymbols();
 
-    foreach(QMLEntity* pItem, m_vContents)
+    foreach (QMLEntity* pItem, m_vContents)
     {
-        QMap<QString, QMLEntity*> itemVariables = pItem->getDeclaredSymbols();
-
-        foreach (QString sKey, itemVariables.keys())
+        if (pItem != nullptr)
         {
-            if (mReturnValue.contains(sKey) == false)
+            QMap<QString, QMLEntity*> itemSymbols = pItem->getDeclaredSymbols();
+
+            foreach (QString sKey, itemSymbols.keys())
             {
-                mReturnValue[sKey] = itemVariables[sKey];
+                if (mReturnValue.contains(sKey) == false)
+                {
+                    mReturnValue[sKey] = itemSymbols[sKey];
+                }
             }
         }
     }

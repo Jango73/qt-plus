@@ -68,6 +68,17 @@ QString QMLUnaryOperation::operatorToString(EUnaryOperator eOperator) const
 
 //-------------------------------------------------------------------------------------------------
 
+QMap<QString, QMLEntity*> QMLUnaryOperation::members()
+{
+    QMap<QString, QMLEntity*> vReturnValue;
+
+    vReturnValue["expression"] = m_pExpression;
+
+    return vReturnValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void QMLUnaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);

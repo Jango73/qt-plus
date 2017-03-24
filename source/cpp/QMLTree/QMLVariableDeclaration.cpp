@@ -40,7 +40,7 @@ QMLVariableDeclaration::~QMLVariableDeclaration()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns a list of all declared variables.
+    Returns a list of all declared symbols.
 */
 QMap<QString, QMLEntity*> QMLVariableDeclaration::getDeclaredSymbols()
 {
@@ -57,6 +57,19 @@ QMap<QString, QMLEntity*> QMLVariableDeclaration::getDeclaredSymbols()
             if (pAssign != nullptr)
             {
                 pIdentifier = dynamic_cast<QMLIdentifier*>(pAssign->left());
+
+                if (pAssign->right() != nullptr)
+                {
+                    QMap<QString, QMLEntity*> rightVariables = pAssign->right()->getDeclaredSymbols();
+
+                    foreach (QString sKey, rightVariables.keys())
+                    {
+                        if (mReturnValue.contains(sKey) == false)
+                        {
+                            mReturnValue[sKey] = rightVariables[sKey];
+                        }
+                    }
+                }
             }
         }
 

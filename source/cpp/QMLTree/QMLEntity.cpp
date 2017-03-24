@@ -156,16 +156,44 @@ QMap<QString, QMLEntity*> QMLEntity::members()
 */
 void QMLEntity::solveOrigins(QMLTreeContext* pContext)
 {
+    QMap<QString, QMLEntity*> mMembers = members();
+
+    foreach (QString sMemberKey, mMembers.keys())
+    {
+        if (mMembers[sMemberKey] != nullptr)
+        {
+            mMembers[sMemberKey]->setParent(this);
+            mMembers[sMemberKey]->solveOrigins(pContext);
+        }
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns a list of all declared variables.
+    Returns a list of all declared symbols.
 */
 QMap<QString, QMLEntity*> QMLEntity::getDeclaredSymbols()
 {
     QMap<QString, QMLEntity*> mReturnValue;
+
+    QMap<QString, QMLEntity*> mMembers = members();
+
+    foreach (QString sMemberKey, mMembers.keys())
+    {
+        if (mMembers[sMemberKey] != nullptr)
+        {
+            QMap<QString, QMLEntity*> memberSymbols = mMembers[sMemberKey]->getDeclaredSymbols();
+
+            foreach (QString sSymbolKey, memberSymbols.keys())
+            {
+                if (mReturnValue.contains(sSymbolKey) == false)
+                {
+                    mReturnValue[sSymbolKey] = memberSymbols[sSymbolKey];
+                }
+            }
+        }
+    }
 
     return mReturnValue;
 }
@@ -174,23 +202,19 @@ QMap<QString, QMLEntity*> QMLEntity::getDeclaredSymbols()
 
 /*!
     Returns the item named \a sName, for identifier resolution. \br\br
-    \a bDescending tells if we are coming from a parent. \br
 */
-QMLEntity* QMLEntity::findSymbolDeclaration(const QString& sName, bool bDescending)
+QMLEntity* QMLEntity::findSymbolDeclaration(const QString& sName)
 {
-    if (bDescending == false)
-    {
-        QMLEntity* pParent = dynamic_cast<QMLEntity*>(parent());
+    QMLEntity* pParent = dynamic_cast<QMLEntity*>(parent());
 
-        if (pParent != nullptr)
-        {
-            return pParent->findSymbolDeclaration(sName, bDescending);
-        }
-        else
-        {
-            qDebug() << "QMLEntity::findSymbolDeclaration() : parent is not an entity for " << toString();
-        }
+    if (pParent != nullptr)
+    {
+        // qDebug() << "QMLEntity::findSymbolDeclaration() : returning parent " << pParent->metaObject()->className();
+
+        return pParent->findSymbolDeclaration(sName);
     }
+
+    // qDebug() << "QMLEntity::findSymbolDeclaration() : returning null";
 
     return nullptr;
 }

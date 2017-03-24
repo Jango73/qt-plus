@@ -1,6 +1,10 @@
 
+// Qt
+#include <QDebug>
+
 // Application
 #include "QMLPropertyDeclaration.h"
+#include "QMLIdentifier.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -11,8 +15,6 @@ QMLPropertyDeclaration::QMLPropertyDeclaration(const QPoint& pPosition, QMLType*
     , m_pContent(nullptr)
     , m_eModifiers(mNone)
 {
-    if (m_pType != nullptr) m_pType->setParent(this);
-    if (m_pName != nullptr) m_pName->setParent(this);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -24,9 +26,6 @@ QMLPropertyDeclaration::QMLPropertyDeclaration(const QPoint& pPosition, QMLType*
     , m_pContent(pContent)
     , m_eModifiers(mNone)
 {
-    if (m_pType != nullptr) m_pType->setParent(this);
-    if (m_pName != nullptr) m_pName->setParent(this);
-    if (m_pContent != nullptr) m_pContent->setParent(this);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -94,6 +93,53 @@ QMap<QString, QMLEntity*> QMLPropertyDeclaration::members()
     vReturnValue["content"] = m_pContent;
 
     return vReturnValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Finds the origin of the item. \br\br
+    \a pContext is the context of this item. \br
+*/
+void QMLPropertyDeclaration::solveOrigins(QMLTreeContext* pContext)
+{
+    if (m_pType != nullptr) m_pType->setParent(this);
+    if (m_pName != nullptr) m_pName->setParent(this);
+    if (m_pContent != nullptr) m_pContent->setParent(this);
+
+    if (m_pType != nullptr)
+    {
+        m_pType->solveOrigins(pContext);
+    }
+
+    if (m_pName != nullptr)
+    {
+        m_pName->solveOrigins(pContext);
+    }
+
+    if (m_pContent != nullptr)
+    {
+        m_pContent->solveOrigins(pContext);
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns a list of all declared symbols.
+*/
+QMap<QString, QMLEntity*> QMLPropertyDeclaration::getDeclaredSymbols()
+{
+    QMap<QString, QMLEntity*> mReturnValue;
+
+    QMLIdentifier* pIdentifier = dynamic_cast<QMLIdentifier*>(m_pName);
+
+    if (pIdentifier != nullptr)
+    {
+        mReturnValue[pIdentifier->value().toString()] = pIdentifier;
+    }
+
+    return mReturnValue;
 }
 
 //-------------------------------------------------------------------------------------------------

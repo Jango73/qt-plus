@@ -95,7 +95,7 @@ public:
     virtual QMap<QString, QMLEntity*> getDeclaredSymbols();
 
     //!
-    virtual QMLEntity* findSymbolDeclaration(const QString& sName, bool bDescending);
+    virtual QMLEntity* findSymbolDeclaration(const QString& sName);
 
     //!
     virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = nullptr, int iIdent = 0);

@@ -17,6 +17,18 @@ QMLPropertyAssignment::~QMLPropertyAssignment()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns a list of all declared symbols.
+*/
+QMap<QString, QMLEntity*> QMLPropertyAssignment::getDeclaredSymbols()
+{
+    QMap<QString, QMLEntity*> mReturnValue;
+
+    return mReturnValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void QMLPropertyAssignment::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);

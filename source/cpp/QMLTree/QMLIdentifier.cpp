@@ -1,4 +1,7 @@
 
+// Qt
+#include <QDebug>
+
 // Application
 #include "QMLIdentifier.h"
 
@@ -36,7 +39,9 @@ void QMLIdentifier::solveOrigins(QMLTreeContext* pContext)
 
         if (pParent != nullptr)
         {
-            m_pOrigin = pParent->findSymbolDeclaration(m_vValue.toString(), false);
+            // qDebug() << "QMLIdentifier::solveOrigins() : calling pParent->findSymbolDeclaration";
+
+            m_pOrigin = pParent->findSymbolDeclaration(m_vValue.toString());
 
             if (m_pOrigin == this)
             {

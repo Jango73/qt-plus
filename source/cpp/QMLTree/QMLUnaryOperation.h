@@ -59,6 +59,9 @@ public:
     //!
     EUnaryOperator oper() const;
 
+    //! Returns all members
+    virtual QMap<QString, QMLEntity*> members() Q_DECL_OVERRIDE;
+
     //-------------------------------------------------------------------------------------------------
     // Control methods
     //-------------------------------------------------------------------------------------------------

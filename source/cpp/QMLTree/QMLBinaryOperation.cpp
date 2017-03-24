@@ -96,30 +96,14 @@ QString QMLBinaryOperation::operatorToString(EOperator eOperator) const
 
 //-------------------------------------------------------------------------------------------------
 
-/*!
-    Returns a list of all declared variables.
-*/
-QMap<QString, QMLEntity*> QMLBinaryOperation::getDeclaredSymbols()
+QMap<QString, QMLEntity*> QMLBinaryOperation::members()
 {
-    QMap<QString, QMLEntity*> mReturnValue;
+    QMap<QString, QMLEntity*> vReturnValue;
 
-    QMap<QString, QMLEntity*> leftVariables = m_pLeft->getDeclaredSymbols();
-    QMap<QString, QMLEntity*> rightVariables = m_pLeft->getDeclaredSymbols();
+    vReturnValue["Left"] = m_pLeft;
+    vReturnValue["Right"] = m_pRight;
 
-    foreach (QString sKey, leftVariables.keys())
-    {
-        mReturnValue[sKey] = leftVariables[sKey];
-    }
-
-    foreach (QString sKey, rightVariables.keys())
-    {
-        if (mReturnValue.contains(sKey) == false)
-        {
-            mReturnValue[sKey] = rightVariables[sKey];
-        }
-    }
-
-    return mReturnValue;
+    return vReturnValue;
 }
 
 //-------------------------------------------------------------------------------------------------

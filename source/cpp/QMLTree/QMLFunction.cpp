@@ -16,9 +16,6 @@ QMLFunction::QMLFunction(const QPoint& pPosition, QMLEntity* pName, QMLEntity* p
     , m_pContent(pContent)
     , m_bIsSignal(false)
 {
-    if (m_pName != nullptr) m_pName->setParent(this);
-    if (m_pParameters != nullptr) m_pParameters->setParent(this);
-    if (m_pContent != nullptr) m_pContent->setParent(this);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -102,19 +99,18 @@ QMap<QString, QMLEntity*> QMLFunction::members()
 */
 void QMLFunction::solveOrigins(QMLTreeContext* pContext)
 {
-    if (m_pContent != nullptr)
-    {
-        m_mVariables = m_pContent->getDeclaredSymbols();
-        m_pContent->solveOrigins(pContext);
+    if (m_pName != nullptr) m_pName->setParent(this);
+    if (m_pParameters != nullptr) m_pParameters->setParent(this);
+    if (m_pContent != nullptr) m_pContent->setParent(this);
 
-        /*
-        qDebug() << "QMLFunction::solveOrigins() : variables";
-        foreach (QString sKey, m_mVariables.keys())
-        {
-            qDebug() << sKey << " = " << m_mVariables[sKey];
-        }
-        */
-    }
+    if (m_pContent != nullptr)
+        m_mVariables = m_pContent->getDeclaredSymbols();
+
+    if (m_pParameters != nullptr)
+        m_mParameters = m_pParameters->getDeclaredSymbols();
+
+    if (m_pContent != nullptr)
+        m_pContent->solveOrigins(pContext);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -123,24 +119,32 @@ void QMLFunction::solveOrigins(QMLTreeContext* pContext)
     Returns the item named \a sName, for identifier resolution. \br\br
     \a bDescending tells if we are coming from a parent. \br
 */
-QMLEntity* QMLFunction::findSymbolDeclaration(const QString& sName, bool bDescending)
+QMLEntity* QMLFunction::findSymbolDeclaration(const QString& sName)
 {
-    if (m_pName != nullptr)
-    {
-        QMLEntity* pFoundEntity = m_pName->findSymbolDeclaration(sName, true);
+    QMLIdentifier* pFoundEntity = dynamic_cast<QMLIdentifier*>(m_pName);
 
-        if (pFoundEntity != nullptr)
-        {
-            return pFoundEntity;
-        }
+    if (pFoundEntity != nullptr)
+    {
+        // qDebug() << "QMLFunction::findSymbolDeclaration() : found self " << pFoundEntity->metaObject()->className();
+
+        return pFoundEntity;
+    }
+
+    if (m_mParameters.contains(sName))
+    {
+        // qDebug() << "QMLFunction::findSymbolDeclaration() : found in parameters " << m_mParameters[sName]->metaObject()->className();
+
+        return m_mParameters[sName];
     }
 
     if (m_mVariables.contains(sName))
     {
+        // qDebug() << "QMLFunction::findSymbolDeclaration() : found in variables " << m_mVariables[sName]->metaObject()->className();
+
         return m_mVariables[sName];
     }
 
-    return QMLEntity::findSymbolDeclaration(sName, bDescending);
+    return QMLEntity::findSymbolDeclaration(sName);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -197,6 +201,8 @@ CXMLNode QMLFunction::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pPare
 {
     CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
     CXMLNode xName("Name");
+    CXMLNode xParameterList("ParameterList");
+    CXMLNode xVariableList("VariableList");
     CXMLNode xParameters("Parameters");
     CXMLNode xContent("Content");
 
@@ -209,7 +215,23 @@ CXMLNode QMLFunction::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pPare
     if (m_pContent != nullptr)
         xContent.nodes() << m_pContent->toXMLNode(pContext, this);
 
+    foreach (QString sKey, m_mParameters.keys())
+    {
+        CXMLNode xParameter("Parameter");
+        xParameter.attributes()["Name"] = sKey;
+        xParameterList << xParameter;
+    }
+
+    foreach (QString sKey, m_mVariables.keys())
+    {
+        CXMLNode xVariable("Variable");
+        xVariable.attributes()["Name"] = sKey;
+        xVariableList << xVariable;
+    }
+
     xNode.nodes() << xName;
+    xNode.nodes() << xParameterList;
+    xNode.nodes() << xVariableList;
     xNode.nodes() << xParameters;
     xNode.nodes() << xContent;
 
