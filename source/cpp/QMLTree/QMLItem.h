@@ -52,6 +52,9 @@ public:
     //!
     virtual QMLEntity* findSymbolDeclaration(const QString& sName) Q_DECL_OVERRIDE;
 
+    //!
+    virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
+
     //-------------------------------------------------------------------------------------------------
     // Properties
     //-------------------------------------------------------------------------------------------------

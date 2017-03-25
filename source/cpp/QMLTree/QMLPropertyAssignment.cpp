@@ -22,9 +22,7 @@ QMLPropertyAssignment::~QMLPropertyAssignment()
 */
 QMap<QString, QMLEntity*> QMLPropertyAssignment::getDeclaredSymbols()
 {
-    QMap<QString, QMLEntity*> mReturnValue;
-
-    return mReturnValue;
+    return QMap<QString, QMLEntity*>();
 }
 
 //-------------------------------------------------------------------------------------------------

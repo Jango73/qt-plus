@@ -12,7 +12,6 @@
 QMLItem::QMLItem(const QPoint& pPosition, QMLEntity* pName)
     : QMLComplexEntity(pPosition, pName)
 {
-    m_mPropertyList["id"] = this;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -72,6 +71,8 @@ void QMLItem::solveOrigins(QMLTreeContext* pContext)
             pEntity->solveOrigins(pContext);
         }
     }
+
+    m_mPropertyList["id"] = this;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -97,4 +98,23 @@ QMLEntity* QMLItem::findSymbolDeclaration(const QString& sName)
     }
 
     return QMLComplexEntity::findSymbolDeclaration(sName);
+}
+
+//-------------------------------------------------------------------------------------------------
+
+CXMLNode QMLItem::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
+{
+    CXMLNode xNode = QMLComplexEntity::toXMLNode(pContext, pParent);
+    CXMLNode xPropertyList("PropertyList");
+
+    foreach (QString sKey, m_mPropertyList.keys())
+    {
+        CXMLNode xProperty("Property");
+        xProperty.attributes()["Name"] = sKey;
+        xPropertyList << xProperty;
+    }
+
+    xNode.nodes() << xPropertyList;
+
+    return xNode;
 }
