@@ -7,6 +7,7 @@
 
 // Application
 #include "QMLAnalyzer.h"
+#include "QMLFunction.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -226,6 +227,26 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pItem)
     if (pItem == nullptr)
     {
         return;
+    }
+
+    // Check symbol usage if it is a function
+    QMLFunction* pFunction = dynamic_cast<QMLFunction*>(pItem);
+
+    if (pFunction != nullptr)
+    {
+        QMap<QString, QMLEntity*> unusedVariables = pFunction->unusedVariables();
+
+        foreach (QString sKey, unusedVariables.keys())
+        {
+            outputError(sFileName, unusedVariables[sKey]->position(), "Unreferenced variable");
+        }
+
+        QMap<QString, QMLEntity*> unusedParameters = pFunction->unusedParameters();
+
+        foreach (QString sKey, unusedParameters.keys())
+        {
+            outputError(sFileName, unusedParameters[sKey]->position(), "Unreferenced parameter");
+        }
     }
 
     bool bHasRejects = false;

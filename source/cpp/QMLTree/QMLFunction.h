@@ -56,6 +56,12 @@ public:
     bool isSignal() const;
 
     //!
+    QMap<QString, QMLEntity*> unusedParameters();
+
+    //!
+    QMap<QString, QMLEntity*> unusedVariables();
+
+    //!
     virtual QString toString() const Q_DECL_OVERRIDE;
 
     //! Returns all members
@@ -89,6 +95,6 @@ protected:
     bool                        m_bIsSignal;
 
     // Constructed after parsing
-    QMap<QString, QMLEntity*>   m_mParameters;
-    QMap<QString, QMLEntity*>   m_mVariables;
+    QMap<QString, QMLEntity*>   m_mParameterList;
+    QMap<QString, QMLEntity*>   m_mVariableList;
 };

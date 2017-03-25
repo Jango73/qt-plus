@@ -12,13 +12,14 @@ Item {
 
     // Nested conditionals error
     property bool prop5: prop1 > 0 ? prop1 : Prop_2 > 0 ? Prop_2 : prop3 > 0 ? prop3 : prop4;
+    property variant prop6: []
 
     function func1(someParameter1, someParameter2) {
         var someVariable1 = 10, someVariable2 = 20;
         var someVariable3 = 30, someVariable4 = 40;
         var someVariable5 = 50;
         var someVariable6 = 60;
-        var SomeVariable7 = 70;   // Camel casing error
+        var SomeVariable7 = 70;   // Camel casing error and unreferenced symbol
 
         // Too many nested ifs error
         if (someVariable1 > 0) {
@@ -27,6 +28,7 @@ Item {
                     if (someVariable4 > 0) {
                         if (someVariable5 > 0) {
                             if (someVariable6 > 0) {
+                                someParameter1 = someParameter2
                             }
                         }
                     }
@@ -42,7 +44,8 @@ Item {
         someVariable6 += 10;
     }
 
+    // Camel casing error
     function Func2(someParameter1) {
-        var someVariable1 = 10, someVariable2 = 20;
+        var someVariable1 = 10, someVariable2 = 20; // Unreferenced symbols
     }
 }

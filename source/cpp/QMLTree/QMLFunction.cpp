@@ -67,6 +67,40 @@ bool QMLFunction::isSignal() const
 
 //-------------------------------------------------------------------------------------------------
 
+QMap<QString, QMLEntity*> QMLFunction::unusedParameters()
+{
+    QMap<QString, QMLEntity*> mReturnValue;
+
+    foreach (QString sKey, m_mParameterList.keys())
+    {
+        if (m_mParameterList[sKey]->usageCount() == 0)
+        {
+            mReturnValue[sKey] = m_mParameterList[sKey];
+        }
+    }
+
+    return mReturnValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+QMap<QString, QMLEntity*> QMLFunction::unusedVariables()
+{
+    QMap<QString, QMLEntity*> mReturnValue;
+
+    foreach (QString sKey, m_mVariableList.keys())
+    {
+        if (m_mVariableList[sKey]->usageCount() == 0)
+        {
+            mReturnValue[sKey] = m_mVariableList[sKey];
+        }
+    }
+
+    return mReturnValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 /*!
     Returns the item as a string.
 */
@@ -104,10 +138,10 @@ void QMLFunction::solveOrigins(QMLTreeContext* pContext)
     if (m_pContent != nullptr) m_pContent->setParent(this);
 
     if (m_pContent != nullptr)
-        m_mVariables = m_pContent->getDeclaredSymbols();
+        m_mVariableList = m_pContent->getDeclaredSymbols();
 
     if (m_pParameters != nullptr)
-        m_mParameters = m_pParameters->getDeclaredSymbols();
+        m_mParameterList = m_pParameters->getDeclaredSymbols();
 
     if (m_pContent != nullptr)
         m_pContent->solveOrigins(pContext);
@@ -133,18 +167,18 @@ QMLEntity* QMLFunction::findSymbolDeclaration(const QString& sName)
         }
     }
 
-    if (m_mParameters.contains(sName))
+    if (m_mParameterList.contains(sName))
     {
         // qDebug() << "QMLFunction::findSymbolDeclaration() : found in parameters " << m_mParameters[sName]->metaObject()->className();
 
-        return m_mParameters[sName];
+        return m_mParameterList[sName];
     }
 
-    if (m_mVariables.contains(sName))
+    if (m_mVariableList.contains(sName))
     {
         // qDebug() << "QMLFunction::findSymbolDeclaration() : found in variables " << m_mVariables[sName]->metaObject()->className();
 
-        return m_mVariables[sName];
+        return m_mVariableList[sName];
     }
 
     return QMLEntity::findSymbolDeclaration(sName);
@@ -218,14 +252,14 @@ CXMLNode QMLFunction::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pPare
     if (m_pContent != nullptr)
         xContent.nodes() << m_pContent->toXMLNode(pContext, this);
 
-    foreach (QString sKey, m_mParameters.keys())
+    foreach (QString sKey, m_mParameterList.keys())
     {
         CXMLNode xParameter("Parameter");
         xParameter.attributes()["Name"] = sKey;
         xParameterList << xParameter;
     }
 
-    foreach (QString sKey, m_mVariables.keys())
+    foreach (QString sKey, m_mVariableList.keys())
     {
         CXMLNode xVariable("Variable");
         xVariable.attributes()["Name"] = sKey;
