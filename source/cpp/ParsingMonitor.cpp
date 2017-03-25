@@ -18,7 +18,7 @@ ParsingMonitor::ParsingMonitor(QMLAnalyzer* pAnalyzer)
 
 void ParsingMonitor::onParsingStarted(QString sFileName)
 {
-    qDebug() << "------------------------------------------------------------" << sFileName;
+    qDebug() << "------------------------------------------------------------";
     qDebug() << "Parsing " << sFileName << " ...";
 }
 

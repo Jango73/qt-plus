@@ -62,6 +62,9 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
+    virtual void solveOrigins(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
+
+    //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
@@ -73,4 +76,5 @@ protected:
     QMLTreeContext*     m_pContext;
     QString             m_sFileName;
     bool                m_bParsed;
+    bool                m_bIsSingleton;
 };

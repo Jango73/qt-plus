@@ -11,6 +11,7 @@
 
 QMLItem::QMLItem(const QPoint& pPosition, QMLEntity* pName)
     : QMLComplexEntity(pPosition, pName)
+    , m_bIsSingleton(false)
 {
     m_iUsageCount = 1;
 }
@@ -27,15 +28,25 @@ QMap<QString, QMLEntity*> QMLItem::unusedProperties()
 {
     QMap<QString, QMLEntity*> mReturnValue;
 
-    foreach (QString sKey, m_mPropertyList.keys())
+    if (m_bIsSingleton == false)
     {
-        if (m_mPropertyList[sKey]->usageCount() == 0)
+        foreach (QString sKey, m_mPropertyList.keys())
         {
-            mReturnValue[sKey] = m_mPropertyList[sKey];
+            if (m_mPropertyList[sKey]->usageCount() == 0)
+            {
+                mReturnValue[sKey] = m_mPropertyList[sKey];
+            }
         }
     }
 
     return mReturnValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void QMLItem::markAsSingleton()
+{
+    m_bIsSingleton = true;
 }
 
 //-------------------------------------------------------------------------------------------------

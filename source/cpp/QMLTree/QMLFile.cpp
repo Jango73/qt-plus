@@ -1,6 +1,9 @@
 
 // Application
 #include "QMLFile.h"
+#include "QMLPragma.h"
+#include "QMLIdentifier.h"
+#include "QMLItem.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -22,6 +25,7 @@ QMLFile::QMLFile(const QPoint& pPosition, QMLTreeContext* pContext, const QStrin
     , m_pContext(pContext)
     , m_sFileName(sFileName)
     , m_bParsed(false)
+    , m_bIsSingleton(false)
 {
 }
 
@@ -33,6 +37,7 @@ QMLFile::QMLFile(const QPoint& pPosition, QMLTreeContext* pContext, const QStrin
 QMLFile::QMLFile(const QMLFile& target)
     : QMLComplexEntity(target.position())
     , m_bParsed(false)
+    , m_bIsSingleton(false)
 {
 }
 
@@ -78,6 +83,44 @@ bool QMLFile::parsed() const
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Finds the origin of the item. \br\br
+    \a pContext is the context of this item. \br
+*/
+void QMLFile::solveOrigins(QMLTreeContext* pContext)
+{
+    QMLComplexEntity::solveOrigins(pContext);
+
+    foreach (QMLEntity* pEntity, m_vContents)
+    {
+        QMLPragma* pPragma = dynamic_cast<QMLPragma*>(pEntity);
+
+        if (pPragma != nullptr)
+        {
+            QMLIdentifier* pIdentifier = dynamic_cast<QMLIdentifier*>(pPragma->statement());
+
+            if (pIdentifier != nullptr && pIdentifier->value().toString().toLower() == "singleton")
+            {
+                m_bIsSingleton = true;
+            }
+        }
+        else
+        {
+            if (m_bIsSingleton)
+            {
+                QMLItem* pItem = dynamic_cast<QMLItem*>(pEntity);
+
+                if (pItem != nullptr)
+                {
+                    pItem->markAsSingleton();
+                }
+            }
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Returns a CXMLNode representation of this item. \br\br
     \a pContext is a user defined context. \br
     \a pParent is the caller of this method.
@@ -88,6 +131,11 @@ CXMLNode QMLFile::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 
     xNode.attributes()["FileName"] = m_sFileName;
     xNode.attributes()["Parsed"] = m_bParsed ? "true" : "false";
+
+    if (m_bIsSingleton)
+    {
+        xNode.attributes()["Singleton"] = "true";
+    }
 
     return xNode;
 }
