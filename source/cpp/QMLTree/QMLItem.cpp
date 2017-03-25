@@ -12,6 +12,7 @@
 QMLItem::QMLItem(const QPoint& pPosition, QMLEntity* pName)
     : QMLComplexEntity(pPosition, pName)
 {
+    m_iUsageCount = 1;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -64,7 +65,10 @@ void QMLItem::solveOrigins(QMLTreeContext* pContext)
                 m_mPropertyList[sName] = pDeclaration;
             }
 
-            pDeclaration->content()->solveOrigins(pContext);
+            if (pDeclaration->content() != nullptr)
+            {
+                pDeclaration->content()->solveOrigins(pContext);
+            }
         }
         else
         {

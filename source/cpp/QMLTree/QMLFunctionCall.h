@@ -48,6 +48,9 @@ public:
     //!
     const QMLComplexEntity* arguments() const;
 
+    //! Returns all members
+    virtual QMap<QString, QMLEntity*> members() Q_DECL_OVERRIDE;
+
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------

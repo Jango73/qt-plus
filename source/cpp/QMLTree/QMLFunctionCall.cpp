@@ -47,6 +47,18 @@ const QMLComplexEntity* QMLFunctionCall::arguments() const
 
 //-------------------------------------------------------------------------------------------------
 
+QMap<QString, QMLEntity*> QMLFunctionCall::members()
+{
+    QMap<QString, QMLEntity*> vReturnValue;
+
+    vReturnValue["name"] = m_pName;
+    vReturnValue["arguments"] = m_pArguments;
+
+    return vReturnValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void QMLFunctionCall::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);
