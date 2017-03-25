@@ -147,8 +147,11 @@ void QMLFunction::solveOrigins(QMLTreeContext* pContext)
     if (m_pContent != nullptr)
         m_mVariableList = m_pContent->getDeclaredSymbols();
 
-    if (m_pParameters != nullptr)
-        m_mParameterList = m_pParameters->getDeclaredSymbols();
+    if (m_bIsSignal == false)
+    {
+        if (m_pParameters != nullptr)
+            m_mParameterList = m_pParameters->getDeclaredSymbols();
+    }
 
     if (m_pContent != nullptr)
         m_pContent->solveOrigins(pContext);
