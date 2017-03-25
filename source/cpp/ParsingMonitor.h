@@ -24,4 +24,6 @@ protected slots:
     void onParsingFinished(QString sFileName);
 
     void onImportParsingStarted(QString sFileName);
+
+    void onAnalyzeError(QMLAnalyzerError sError);
 };

@@ -27,4 +27,13 @@
     <Check Class="QMLFunction">
         <Reject Member="content" Count="20" Text="Too many statements, consider refactor..."/>
     </Check>
+    <Check Class="QMLVariableDeclaration">
+        <Reject Member="name" RegExp="([a-z])([a-zA-Z0-9]*)" Text="Only camel casing allowed in names"/>
+    </Check>
+    <Check Class="QMLPropertyDeclaration">
+        <Reject Member="name" RegExp="([a-z])([a-zA-Z0-9]*)" Text="Only camel casing allowed in names"/>
+    </Check>
+    <Check Class="QMLFunction">
+        <Reject Member="name" RegExp="([a-z])([a-zA-Z0-9]*)" Text="Only camel casing allowed in names"/>
+    </Check>
 </Root>

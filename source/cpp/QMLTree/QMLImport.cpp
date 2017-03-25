@@ -1,6 +1,5 @@
 
 // Qt
-#include <QDebug>
 #include <QDir>
 
 // Application

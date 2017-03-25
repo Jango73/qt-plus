@@ -3,7 +3,6 @@
 #include "math.h"
 
 // Qt
-#include <QDebug>
 #include <QBuffer>
 
 // Library

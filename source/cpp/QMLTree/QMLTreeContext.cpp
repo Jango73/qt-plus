@@ -571,7 +571,7 @@ void QMLTreeContext::showError(const QString& sText)
     m_eError = SCOPE.m_eError = peSyntaxError;
     m_tErrorObject = QMLAnalyzerError(SCOPE.m_pFile->fileName(), QPoint(SCOPE.m_iColumn, SCOPE.m_iLine), sText);
 
-    qDebug() << m_tErrorObject.toString();
+    // qDebug() << m_tErrorObject.toString();
 }
 
 //-------------------------------------------------------------------------------------------------

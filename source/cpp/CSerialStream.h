@@ -8,6 +8,7 @@
 
 // Qt
 #include <QObject>
+#include <QMap>
 #include <QString>
 #include <QTimer>
 #include <QMutex>

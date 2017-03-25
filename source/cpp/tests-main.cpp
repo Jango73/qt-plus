@@ -1,8 +1,11 @@
 
+#include <QCoreApplication>
+
 #include "CGeoUtilities.h"
 #include "QTree.h"
 #include "QMLTree/QMLTreeContext.h"
 #include "QMLTree/QMLAnalyzer.h"
+#include "ParsingMonitor.h"
 
 QString Vector3DString(const QVector3D& vec)
 {
@@ -150,29 +153,38 @@ int main()
     qDebug() << "--------------------------------------------------------------------";
 
     // QMLTree
-    QString sInputFile = "D:/Work/SomeFile.qml";
+    QString sInputFile = "../source/misc/Test.qml";
+    QString sGrammarFile = "../source/misc/CodingRules.xml";
 
-    QMLTreeContext context(sInputFile);
+    QMLTreeContext context;
+    context.addFile(sInputFile);
     context.setIncludeImports(false);
     QMLTreeContext::EParseError error = context.parse();
 
+    CDumpable::m_bJavaStyle = true;
+
     if (error == QMLTreeContext::peSuccess)
     {
-        context.item().toXMLNode(&context, NULL).saveXMLToFile("Output.xml");
-
-        QFile file("Output.qml");
-        if (file.open(QFile::WriteOnly))
+        if (context.files().count() > 0)
         {
-            QTextStream stream(&file);
-            context.item().toQML(stream, &context);
-            file.close();
+            context.files().first()->toXMLNode(&context, NULL).saveXMLToFile("Test_Output.xml");
+
+            QFile file("Test_Output.qml");
+
+            if (file.open(QFile::WriteOnly))
+            {
+                QTextStream stream(&file);
+                context.files().first()->toQML(stream, &context);
+                file.close();
+            }
         }
     }
 
+    // QMLAnalyzer
     QMLAnalyzer tAnalyzer;
 
     tAnalyzer.setFile(sInputFile);
-    tAnalyzer.analyze(CXMLNode::load("CodingRules.xml"));
+    tAnalyzer.analyze(CXMLNode::load(sGrammarFile));
 
     qDebug() << "";
     qDebug() << "--------------------------------------------------------------------";
@@ -188,10 +200,19 @@ int main()
 
     // QMLAnalyzer
     QMLAnalyzer tAnalyzer;
+    ParsingMonitor monitor(&tAnalyzer);
 
-    tAnalyzer.setFolder("D:/Work/SomeFolder");
-    tAnalyzer.analyze(CXMLNode::load("CodingRules.xml"));
+    tAnalyzer.setIncludeSubFolders(true);
+    tAnalyzer.setFolder("SomeFolder");
+    tAnalyzer.threadedAnalyze(CXMLNode::load(sGrammarFile));
 
+    while (tAnalyzer.isRunning())
+    {
+        QCoreApplication::processEvents();
+    }
+    */
+
+    /*
     qDebug() << "";
     qDebug() << "--------------------------------------------------------------------";
 

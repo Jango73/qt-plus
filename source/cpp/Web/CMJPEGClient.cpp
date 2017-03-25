@@ -103,7 +103,7 @@ const QImage& CMJPEGClient::getImage() const
 */
 void CMJPEGClient::onDoConnection()
 {
-    qDebug() << QString("CMJPEGClient::onDoConnection() : connecting to %1:%2").arg(m_sIP).arg(m_iPort);
+    // qDebug() << QString("CMJPEGClient::onDoConnection() : connecting to %1:%2").arg(m_sIP).arg(m_iPort);
 
     QHostAddress address(m_sIP);
 
@@ -114,7 +114,7 @@ void CMJPEGClient::onDoConnection()
     {
         QString sGet = QString("GET %1\r\n").arg(m_sResource);
 
-        qDebug() << QString("CMJPEGClient::onDoConnection() : getting %1").arg(sGet);
+        // qDebug() << QString("CMJPEGClient::onDoConnection() : getting %1").arg(sGet);
 
         // Envoi d'un GET au serveur HTTP
         m_pClient.write(sGet.toLatin1());

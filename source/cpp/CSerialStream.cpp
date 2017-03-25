@@ -1,7 +1,4 @@
 
-// Qt
-#include <QDebug>
-
 // Application
 #include "CSerialStream.h"
 

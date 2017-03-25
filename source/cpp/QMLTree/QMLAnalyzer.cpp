@@ -3,7 +3,6 @@
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QDir>
-#include <QDebug>
 #include <QRegExp>
 
 // Application
@@ -185,8 +184,6 @@ bool QMLAnalyzer::analyze_Recurse(QString sDirectory)
 {
     QStringList slNameFilter;
     slNameFilter << "*.qml" << "*.js";
-
-    // qDebug() << sDirectory;
 
     QDir dDirectory(sDirectory);
 

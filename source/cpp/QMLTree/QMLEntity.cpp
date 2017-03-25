@@ -162,6 +162,9 @@ QMap<QString, QMLEntity*> QMLEntity::members()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Increments the usage count for this object.
+*/
 void QMLEntity::incUsageCount()
 {
     m_iUsageCount++;
@@ -240,6 +243,10 @@ QMLEntity* QMLEntity::findSymbolDeclaration(const QString& sName)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Checks how many times each symbol is used. \br\br
+    \a pContext is the context of this item.
+*/
 void QMLEntity::checkSymbolUsages(QMLTreeContext* pContext)
 {
     QMap<QString, QMLEntity*> mMembers = members();

@@ -1,7 +1,4 @@
 
-// Qt
-#include <QDebug>
-
 // Application
 #include "QMLPropertyDeclaration.h"
 #include "QMLIdentifier.h"
