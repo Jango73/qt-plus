@@ -14,7 +14,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a base QML item
+//! Defines a Something on Item expression
 class QTPLUSSHARED_EXPORT QMLOnExpression : public QMLComplexEntity
 {
     Q_OBJECT

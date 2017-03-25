@@ -22,7 +22,7 @@ class QMLTreeContext;
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a base QML item
+//! Defines the base entity of a QML tree
 class QTPLUSSHARED_EXPORT QMLEntity : public QObject, public CDumpable, public CXMLNodable
 {
     Q_OBJECT

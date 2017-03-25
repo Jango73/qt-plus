@@ -16,6 +16,7 @@
 #include "QMLType.h"
 #include "QMLPragma.h"
 #include "QMLImport.h"
+#include "QMLItem.h"
 #include "QMLPropertyDeclaration.h"
 #include "QMLPropertyAssignment.h"
 #include "QMLPropertyAlias.h"
@@ -291,11 +292,15 @@ Item :
         PARSER_TRACE("Item", "Identifier '{' ItemContents '}'");
 
         QMLEntity* pName = $<Object>1;
-        QMLComplexEntity* pComplexItem = dynamic_cast<QMLComplexEntity*>($<Object>3);
+        QMLItem* pComplexItem = dynamic_cast<QMLItem*>($<Object>3);
 
-        if (pComplexItem != nullptr)
+        if (pName != nullptr && pComplexItem != nullptr)
         {
             pComplexItem->setName(pName);
+        }
+        else
+        {
+            SAFE_DELETE(pName);
         }
 
         $<Object>$ = pComplexItem;
@@ -306,7 +311,16 @@ Item :
         PARSER_TRACE("Item", "Identifier '{' '}'");
 
         QMLEntity* pName = $<Object>1;
-        QMLComplexEntity* pComplexItem = new QMLComplexEntity(pContext->position(), pName);
+        QMLItem* pComplexItem = new QMLItem(pContext->position());
+
+        if (pName != nullptr)
+        {
+            pComplexItem->setName(pName);
+        }
+        else
+        {
+            SAFE_DELETE(pName);
+        }
 
         $<Object>$ = pComplexItem;
     }
@@ -317,7 +331,7 @@ Item :
 
         QMLEntity* pName = $<Object>1;
         QMLEntity* pTarget = $<Object>3;
-        QMLComplexEntity* pContents = dynamic_cast<QMLComplexEntity*>($<Object>5);
+        QMLItem* pContents = dynamic_cast<QMLItem*>($<Object>5);
 
         if (pName == nullptr)
         {
@@ -331,7 +345,7 @@ Item :
 
         if (pContents == nullptr)
         {
-            pContents = new QMLComplexEntity(pContext->position(), pName);
+            pContents = new QMLItem(pContext->position(), pName);
         }
 
         QMLOnExpression* pExpression = new QMLOnExpression(pName->position(), pTarget, pName, pContents);
@@ -349,7 +363,7 @@ ItemContents :
 
         if (pOldItem != nullptr)
         {
-            QMLComplexEntity* pComplexItem = new QMLComplexEntity(pContext->position());
+            QMLItem* pComplexItem = new QMLItem(pContext->position());
             pComplexItem->contents() << pOldItem;
 
             $<Object>$ = pComplexItem;
@@ -364,7 +378,7 @@ ItemContents :
     {
         PARSER_TRACE("ItemContents", "ItemContents ItemContent");
 
-        QMLComplexEntity* pComplexItem = dynamic_cast<QMLComplexEntity*>($<Object>1);
+        QMLItem* pComplexItem = dynamic_cast<QMLItem*>($<Object>1);
         QMLEntity* pNewItem = $<Object>2;
 
         if (pComplexItem != nullptr && pNewItem != nullptr)
@@ -379,7 +393,7 @@ ItemContents :
     {
         PARSER_TRACE("ItemContents", "ItemContents ',' ItemContent");
 
-        QMLComplexEntity* pComplexItem = dynamic_cast<QMLComplexEntity*>($<Object>1);
+        QMLItem* pComplexItem = dynamic_cast<QMLItem*>($<Object>1);
         QMLEntity* pNewItem = $<Object>3;
 
         if (pComplexItem != nullptr && pNewItem != nullptr)

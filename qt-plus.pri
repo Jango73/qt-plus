@@ -51,6 +51,7 @@ HEADERS += \
     source/cpp/QMLTree/QMLFile.h \
     source/cpp/QMLTree/QMLImport.h \
     source/cpp/QMLTree/QMLPragma.h \
+    source/cpp/QMLTree/QMLItem.h \
     source/cpp/QMLTree/QMLPropertyDeclaration.h \
     source/cpp/QMLTree/QMLPropertyAssignment.h \
     source/cpp/QMLTree/QMLPropertyAlias.h \
@@ -118,6 +119,7 @@ SOURCES += \
     source/cpp/QMLTree/QMLFile.cpp \
     source/cpp/QMLTree/QMLImport.cpp \
     source/cpp/QMLTree/QMLPragma.cpp \
+    source/cpp/QMLTree/QMLItem.cpp \
     source/cpp/QMLTree/QMLPropertyDeclaration.cpp \
     source/cpp/QMLTree/QMLPropertyAssignment.cpp \
     source/cpp/QMLTree/QMLPropertyAlias.cpp \

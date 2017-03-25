@@ -9,13 +9,13 @@
 #include <QObject>
 
 // Application
-#include "QMLEntity.h"
 #include "QMLComplexEntity.h"
+#include "QMLIdentifier.h"
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a function call
-class QTPLUSSHARED_EXPORT QMLFunctionCall : public QMLEntity
+//! Defines a QML item
+class QTPLUSSHARED_EXPORT QMLItem : public QMLComplexEntity
 {
     Q_OBJECT
 
@@ -26,10 +26,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with name, parameters and content
-    QMLFunctionCall(const QPoint& pPosition, QMLEntity* pName, QMLComplexEntity *pArguments);
+    QMLItem(const QPoint& pPosition, QMLEntity* pName = nullptr);
 
     //! Destructor
-    virtual ~QMLFunctionCall();
+    virtual ~QMLItem();
 
     //-------------------------------------------------------------------------------------------------
     // Setters
@@ -40,23 +40,17 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    QMLEntity* name() const;
-
-    //!
-    QMLComplexEntity* arguments();
-
-    //!
-    const QMLComplexEntity* arguments() const;
+    QMap<QString, QMLEntity*> unusedProperties();
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+    virtual void solveOrigins(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
 
     //!
-    virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
+    virtual QMLEntity* findSymbolDeclaration(const QString& sName) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Properties
@@ -64,6 +58,6 @@ public:
 
 protected:
 
-    QMLEntity*          m_pName;
-    QMLComplexEntity*   m_pArguments;
+    // Constructed after parsing
+    QMap<QString, QMLEntity*>   m_mPropertyList;
 };

@@ -13,7 +13,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a property declaration
+//! Defines an unary expression
 class QTPLUSSHARED_EXPORT QMLUnaryOperation : public QMLEntity
 {
     Q_OBJECT

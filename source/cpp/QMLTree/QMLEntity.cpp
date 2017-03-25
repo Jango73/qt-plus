@@ -231,12 +231,8 @@ QMLEntity* QMLEntity::findSymbolDeclaration(const QString& sName)
 
     if (pParent != nullptr)
     {
-        // qDebug() << "QMLEntity::findSymbolDeclaration() : returning parent " << pParent->metaObject()->className();
-
         return pParent->findSymbolDeclaration(sName);
     }
-
-    // qDebug() << "QMLEntity::findSymbolDeclaration() : returning null";
 
     return nullptr;
 }
@@ -324,9 +320,14 @@ CXMLNode QMLEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent
         xNode.attributes()["IsParenthesized"] = "true";
     }
 
+    if (parent() == nullptr)
+    {
+        xNode.attributes()["Parent"] = "NULL";
+    }
+
     if (m_pOrigin != nullptr)
     {
-        xNode.attributes()["Origin"] = m_pOrigin->metaObject()->className();
+        xNode.attributes()["Origin"] = m_pOrigin->toString() + " (" + m_pOrigin->metaObject()->className() + ")";
     }
 
     if (m_iUsageCount > 0)

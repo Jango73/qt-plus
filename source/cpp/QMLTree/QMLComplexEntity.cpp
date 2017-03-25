@@ -1,4 +1,7 @@
 
+// Qt
+#include <QDebug>
+
 // Application
 #include "QMLComplexEntity.h"
 
@@ -130,13 +133,18 @@ const QVector<QMLEntity*>& QMLComplexEntity::contents() const
 
 QString QMLComplexEntity::toString() const
 {
+    if (m_pName != nullptr)
+    {
+        return m_pName->toString();
+    }
+
     QString sReturnValue;
 
     foreach (QMLEntity* pEntity, m_vContents)
     {
         if (pEntity != nullptr)
         {
-            if (sReturnValue.isEmpty())
+            if (sReturnValue.isEmpty() == false)
             {
                 sReturnValue += ", ";
             }
@@ -181,6 +189,10 @@ void QMLComplexEntity::solveOrigins(QMLTreeContext* pContext)
     foreach (QMLEntity* pEntity, m_vContents)
     {
         pEntity->setParent(this);
+    }
+
+    foreach (QMLEntity* pEntity, m_vContents)
+    {
         pEntity->solveOrigins(pContext);
     }
 }

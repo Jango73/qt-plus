@@ -74,9 +74,6 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void solveOrigins(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
-
-    //!
     virtual QMap<QString, QMLEntity*> getDeclaredSymbols() Q_DECL_OVERRIDE;
 
     //!

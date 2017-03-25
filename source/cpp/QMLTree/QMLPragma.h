@@ -13,7 +13,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a property declaration
+//! Defines a pragma statement
 class QTPLUSSHARED_EXPORT QMLPragma : public QMLEntity
 {
     Q_OBJECT

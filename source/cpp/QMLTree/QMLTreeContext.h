@@ -74,7 +74,7 @@ protected:
 
 //-------------------------------------------------------------------------------------------------
 
-//!
+//! Defines a context for parsing QML and JS files
 class QTPLUSSHARED_EXPORT QMLTreeContext : public QThread, public CXMLNodableContext
 {
     Q_OBJECT

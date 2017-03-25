@@ -15,7 +15,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a property declaration
+//! Defines a function
 class QTPLUSSHARED_EXPORT QMLFunction : public QMLEntity
 {
     Q_OBJECT

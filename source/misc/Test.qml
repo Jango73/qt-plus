@@ -8,11 +8,11 @@ Item {
     property real prop_2: 20;   // Camel casing error
     property real prop3: 30
     property real prop4: 40
-    property real Prop5: 50   // Camel casing error
+    property real Prop5: 50   // Camel casing error and unreferenced symbol
 
     // Nested conditionals error
-    property bool prop5: prop1 > 0 ? prop1 : Prop_2 > 0 ? Prop_2 : prop3 > 0 ? prop3 : prop4;
-    property variant prop6: []
+    property bool prop6: prop1 > 0 ? prop1 : Prop_2 > 0 ? Prop_2 : prop3 > 0 ? prop3 : prop4;
+    property variant prop7: []
 
     function func1(someParameter1, someParameter2) {
         var someVariable1 = 10, someVariable2 = 20;
@@ -47,5 +47,7 @@ Item {
     // Camel casing error
     function Func2(someParameter1) {
         var someVariable1 = 10, someVariable2 = 20; // Unreferenced symbols
+
+        prop1 = 20;
     }
 }

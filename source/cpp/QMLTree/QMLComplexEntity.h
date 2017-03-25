@@ -14,7 +14,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a base QML item
+//! Defines a container for child entities
 class QTPLUSSHARED_EXPORT QMLComplexEntity : public QMLEntity
 {
     Q_OBJECT

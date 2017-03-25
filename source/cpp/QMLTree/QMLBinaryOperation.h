@@ -13,7 +13,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a property declaration
+//! Defines a binary expression
 class QTPLUSSHARED_EXPORT QMLBinaryOperation : public QMLEntity
 {
     Q_OBJECT

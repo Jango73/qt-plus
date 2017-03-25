@@ -107,7 +107,9 @@ QMap<QString, QMLEntity*> QMLFunction::unusedVariables()
 QString QMLFunction::toString() const
 {
     if (m_pName != nullptr)
+    {
         return m_pName->toString();
+    }
 
     return "";
 }
@@ -133,9 +135,14 @@ QMap<QString, QMLEntity*> QMLFunction::members()
 */
 void QMLFunction::solveOrigins(QMLTreeContext* pContext)
 {
-    if (m_pName != nullptr) m_pName->setParent(this);
-    if (m_pParameters != nullptr) m_pParameters->setParent(this);
-    if (m_pContent != nullptr) m_pContent->setParent(this);
+    if (m_pName != nullptr)
+        m_pName->setParent(this);
+
+    if (m_pParameters != nullptr)
+        m_pParameters->setParent(this);
+
+    if (m_pContent != nullptr)
+        m_pContent->setParent(this);
 
     if (m_pContent != nullptr)
         m_mVariableList = m_pContent->getDeclaredSymbols();
@@ -150,8 +157,7 @@ void QMLFunction::solveOrigins(QMLTreeContext* pContext)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns the item named \a sName, for identifier resolution. \br\br
-    \a bDescending tells if we are coming from a parent. \br
+    Returns the item named \a sName, for identifier resolution.
 */
 QMLEntity* QMLFunction::findSymbolDeclaration(const QString& sName)
 {

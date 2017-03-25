@@ -15,7 +15,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a base QML item
+//! Defines a name->value object
 class QTPLUSSHARED_EXPORT QMLNameValue : public QMLEntity
 {
     Q_OBJECT

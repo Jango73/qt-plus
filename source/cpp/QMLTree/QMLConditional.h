@@ -13,7 +13,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a property declaration
+//! Defines a conditional expression
 class QTPLUSSHARED_EXPORT QMLConditional : public QMLIf
 {
     Q_OBJECT

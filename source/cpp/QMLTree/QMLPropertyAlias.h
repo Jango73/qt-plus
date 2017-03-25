@@ -13,7 +13,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a property declaration
+//! Defines an alias statement
 class QTPLUSSHARED_EXPORT QMLPropertyAlias : public QMLPropertyAssignment
 {
     Q_OBJECT

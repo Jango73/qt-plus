@@ -15,7 +15,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a QML file item
+//! Defines a function parameter
 class QTPLUSSHARED_EXPORT QMLFunctionParameter : public QMLPropertyDeclaration
 {
     Q_OBJECT

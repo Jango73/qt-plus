@@ -7,6 +7,7 @@
 
 // Application
 #include "QMLAnalyzer.h"
+#include "QMLItem.h"
 #include "QMLFunction.h"
 
 //-------------------------------------------------------------------------------------------------
@@ -227,6 +228,19 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pEntit
     if (pEntity == nullptr)
     {
         return;
+    }
+
+    // Check symbol usage if it is an item
+    QMLItem* pItem = dynamic_cast<QMLItem*>(pEntity);
+
+    if (pItem != nullptr)
+    {
+        QMap<QString, QMLEntity*> unusedProperties = pItem->unusedProperties();
+
+        foreach (QString sKey, unusedProperties.keys())
+        {
+            outputError(sFileName, unusedProperties[sKey]->position(), "Unreferenced property");
+        }
     }
 
     // Check symbol usage if it is a function

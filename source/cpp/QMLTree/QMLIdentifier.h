@@ -13,7 +13,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a base QML item
+//! Defines an identifier
 class QTPLUSSHARED_EXPORT QMLIdentifier : public QMLEntity
 {
     Q_OBJECT

@@ -14,7 +14,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a base QML item
+//! Defines a qualified expression (some.qualified.expression)
 class QTPLUSSHARED_EXPORT QMLQualifiedExpression : public QMLComplexEntity
 {
     Q_OBJECT

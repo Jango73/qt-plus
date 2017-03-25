@@ -18,7 +18,7 @@ class QMLTreeContext;
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a property declaration
+//! Defines a file import statement
 class QTPLUSSHARED_EXPORT QMLImport : public QMLEntity
 {
     Q_OBJECT

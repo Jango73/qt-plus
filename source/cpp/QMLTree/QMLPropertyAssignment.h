@@ -13,7 +13,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a property declaration
+//! Defines a property assignment
 class QTPLUSSHARED_EXPORT QMLPropertyAssignment : public QMLPropertyDeclaration
 {
     Q_OBJECT

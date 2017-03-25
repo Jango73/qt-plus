@@ -15,7 +15,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a QML file item
+//! Defines a function variable declaration
 class QTPLUSSHARED_EXPORT QMLVariableDeclaration : public QMLComplexEntity
 {
     Q_OBJECT

@@ -13,7 +13,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a property declaration
+//! Defines a for var in var loop
 class QTPLUSSHARED_EXPORT QMLForIn : public QMLEntity
 {
     Q_OBJECT

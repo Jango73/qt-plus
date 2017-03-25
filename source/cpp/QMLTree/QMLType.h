@@ -16,7 +16,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a base QML item
+//! Defines a type object
 class QTPLUSSHARED_EXPORT QMLType : public QMLEntity
 {
     Q_OBJECT
