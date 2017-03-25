@@ -10,15 +10,6 @@ QMLOnExpression::QMLOnExpression(const QPoint& pPosition, QMLEntity* pTarget, QM
 {
     if (pContents != nullptr)
     {
-        /*
-        foreach (QMLEntity* pItem, pContents->contents())
-        {
-            m_vContents << pItem;
-        }
-
-        pContents->contents().clear();
-        */
-
         m_vContents = pContents->grabContents();
 
         delete pContents;
@@ -70,11 +61,11 @@ void QMLOnExpression::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEn
         dumpOpenBlock(stream, iIdent);
     }
 
-    foreach (QMLEntity* pItem, m_vContents)
+    foreach (QMLEntity* pEntity, m_vContents)
     {
-        if (pItem != nullptr)
+        if (pEntity != nullptr)
         {
-            pItem->toQML(stream, pContext, this, pParent != NULL ? iIdent + 1 : iIdent);
+            pEntity->toQML(stream, pContext, this, pParent != NULL ? iIdent + 1 : iIdent);
         }
     }
 

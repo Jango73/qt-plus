@@ -73,11 +73,11 @@ void QMLEntity::setPosition(const QPoint& point)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Sets the item's origin to \a pItem.
+    Sets the item's origin to \a pEntity.
 */
-void QMLEntity::setOrigin(QMLEntity* pItem)
+void QMLEntity::setOrigin(QMLEntity* pEntity)
 {
-    m_pOrigin = pItem;
+    m_pOrigin = pEntity;
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -29,16 +29,16 @@ void QMLQualifiedExpression::toQML(QTextStream& stream, QMLTreeContext* pContext
 
     bool putDot = false;
 
-    foreach (QMLEntity* pItem, m_vContents)
+    foreach (QMLEntity* pEntity, m_vContents)
     {
         if (putDot == true)
         {
             dumpNoIndentNoNewLine(stream, ".");
         }
 
-        if (pItem != NULL)
+        if (pEntity != nullptr)
         {
-            pItem->toQML(stream, pContext, this, iIdent);
+            pEntity->toQML(stream, pContext, this, iIdent);
         }
 
         putDot = true;

@@ -76,22 +76,22 @@ void QMLSwitch::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* 
 
     if (m_pCases != nullptr)
     {
-        foreach (QMLEntity* pItem, m_pCases->contents())
+        foreach (QMLEntity* pEntity, m_pCases->contents())
         {
-            if (pItem != nullptr)
+            if (pEntity != nullptr)
             {
-                QMLUnaryOperation* pUnary = dynamic_cast<QMLUnaryOperation*>(pItem);
+                QMLUnaryOperation* pUnary = dynamic_cast<QMLUnaryOperation*>(pEntity);
 
                 if (pUnary != nullptr && pUnary->oper() == QMLUnaryOperation::uoCase)
                 {
                     dumpIndentedNoNewLine(stream, iIdent + 1, "");
-                    pItem->toQML(stream, pContext, this, iIdent + 1);
+                    pEntity->toQML(stream, pContext, this, iIdent + 1);
                     dumpNewLine(stream);
                 }
                 else
                 {
                     dumpIndentedNoNewLine(stream, iIdent + 2, "");
-                    pItem->toQML(stream, pContext, this, iIdent + 2);
+                    pEntity->toQML(stream, pContext, this, iIdent + 2);
                     dumpNewLine(stream);
                 }
             }

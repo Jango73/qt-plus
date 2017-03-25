@@ -71,7 +71,7 @@ public:
     static QString typeToString(QVariant::Type eType);
 
     //!
-    static QMLType* fromQMLEntity(QMLEntity* pItem);
+    static QMLType* fromQMLEntity(QMLEntity* pEntity);
 
     //-------------------------------------------------------------------------------------------------
     // Properties

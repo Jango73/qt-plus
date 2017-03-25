@@ -23,11 +23,11 @@ QMLComplexEntity::~QMLComplexEntity()
         delete m_pName;
     }
 
-    foreach (QMLEntity* pItem, m_vContents)
+    foreach (QMLEntity* pEntity, m_vContents)
     {
-        if (pItem != nullptr)
+        if (pEntity != nullptr)
         {
-            delete pItem;
+            delete pEntity;
         }
     }
 }
@@ -132,16 +132,16 @@ QString QMLComplexEntity::toString() const
 {
     QString sReturnValue;
 
-    foreach (QMLEntity* pItem, m_vContents)
+    foreach (QMLEntity* pEntity, m_vContents)
     {
-        if (pItem != nullptr)
+        if (pEntity != nullptr)
         {
             if (sReturnValue.isEmpty())
             {
                 sReturnValue += ", ";
             }
 
-            sReturnValue += pItem->toString();
+            sReturnValue += pEntity->toString();
         }
     }
 
@@ -178,10 +178,10 @@ void QMLComplexEntity::solveOrigins(QMLTreeContext* pContext)
 {
     QMLEntity::solveOrigins(pContext);
 
-    foreach (QMLEntity* pItem, m_vContents)
+    foreach (QMLEntity* pEntity, m_vContents)
     {
-        pItem->setParent(this);
-        pItem->solveOrigins(pContext);
+        pEntity->setParent(this);
+        pEntity->solveOrigins(pContext);
     }
 }
 
@@ -194,11 +194,11 @@ QMap<QString, QMLEntity*> QMLComplexEntity::getDeclaredSymbols()
 {
     QMap<QString, QMLEntity*> mReturnValue = QMLEntity::getDeclaredSymbols();
 
-    foreach (QMLEntity* pItem, m_vContents)
+    foreach (QMLEntity* pEntity, m_vContents)
     {
-        if (pItem != nullptr)
+        if (pEntity != nullptr)
         {
-            QMap<QString, QMLEntity*> itemSymbols = pItem->getDeclaredSymbols();
+            QMap<QString, QMLEntity*> itemSymbols = pEntity->getDeclaredSymbols();
 
             foreach (QString sKey, itemSymbols.keys())
             {
@@ -219,11 +219,11 @@ void QMLComplexEntity::checkSymbolUsages(QMLTreeContext* pContext)
 {
     QMLEntity::checkSymbolUsages(pContext);
 
-    foreach (QMLEntity* pItem, m_vContents)
+    foreach (QMLEntity* pEntity, m_vContents)
     {
-        if (pItem != nullptr)
+        if (pEntity != nullptr)
         {
-            pItem->checkSymbolUsages(pContext);
+            pEntity->checkSymbolUsages(pContext);
         }
     }
 }
@@ -259,9 +259,9 @@ void QMLComplexEntity::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLE
 
         int iCount = 0;
 
-        foreach (QMLEntity* pItem, m_vContents)
+        foreach (QMLEntity* pEntity, m_vContents)
         {
-            if (pItem != nullptr)
+            if (pEntity != nullptr)
             {
                 if (m_bIsArray || m_bIsObject || m_bIsArgumentList)
                 {
@@ -276,7 +276,7 @@ void QMLComplexEntity::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLE
                     dumpIndentedNoNewLine(stream, iIdent, "");
                 }
 
-                pItem->toQML(stream, pContext, this, pParent != nullptr ? iIdent + 1 : iIdent);
+                pEntity->toQML(stream, pContext, this, pParent != nullptr ? iIdent + 1 : iIdent);
 
                 if (m_bIsBlock)
                 {
@@ -322,11 +322,11 @@ CXMLNode QMLComplexEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* 
     if (m_bIsArgumentList)
         xNode.attributes()["IsArgumentList"] = "true";
 
-    foreach (QMLEntity* pItem, m_vContents)
+    foreach (QMLEntity* pEntity, m_vContents)
     {
-        if (pItem != nullptr)
+        if (pEntity != nullptr)
         {
-            CXMLNode xChild = pItem->toXMLNode(pContext, this);
+            CXMLNode xChild = pEntity->toXMLNode(pContext, this);
             xNode.nodes() << xChild;
         }
     }
@@ -336,14 +336,14 @@ CXMLNode QMLComplexEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* 
 
 //-------------------------------------------------------------------------------------------------
 
-QMLComplexEntity* QMLComplexEntity::fromItem(QMLEntity* pItem)
+QMLComplexEntity* QMLComplexEntity::fromEntity(QMLEntity* pEntity)
 {
-    QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(pItem);
+    QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(pEntity);
 
     if (pComplex == nullptr)
     {
-        pComplex = new QMLComplexEntity(pItem->position());
-        pComplex->contents() << pItem;
+        pComplex = new QMLComplexEntity(pEntity->position());
+        pComplex->contents() << pEntity;
     }
 
     return pComplex;
@@ -351,9 +351,9 @@ QMLComplexEntity* QMLComplexEntity::fromItem(QMLEntity* pItem)
 
 //-------------------------------------------------------------------------------------------------
 
-QMLComplexEntity* QMLComplexEntity::makeBlock(QMLEntity* pItem)
+QMLComplexEntity* QMLComplexEntity::makeBlock(QMLEntity* pEntity)
 {
-    QMLComplexEntity* pComplex = fromItem(pItem);
+    QMLComplexEntity* pComplex = fromEntity(pEntity);
 
     pComplex->setIsBlock(true);
 

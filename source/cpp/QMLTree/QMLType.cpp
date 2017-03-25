@@ -95,20 +95,20 @@ QString QMLType::typeToString(QVariant::Type eType)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns a QMLType from a \a pItem.
+    Returns a QMLType from a \a pEntity.
 */
-QMLType* QMLType::fromQMLEntity(QMLEntity* pItem)
+QMLType* QMLType::fromQMLEntity(QMLEntity* pEntity)
 {
-    if (pItem != nullptr)
+    if (pEntity != nullptr)
     {
-        if (pItem->value().toString().toLower() == "var") return new QMLType(QPoint(), QVariant::Invalid);
-        if (pItem->value().toString().toLower() == "variant") return new QMLType(QPoint(), (QVariant::Type) QVARIANT_VARIANT);
-        if (pItem->value().toString().toLower() == "bool") return new QMLType(QPoint(), QVariant::Bool);
-        if (pItem->value().toString().toLower() == "int") return new QMLType(QPoint(), QVariant::Int);
-        if (pItem->value().toString().toLower() == "real") return new QMLType(QPoint(), QVariant::Double);
-        if (pItem->value().toString().toLower() == "string") return new QMLType(QPoint(), QVariant::String);
-        if (pItem->value().toString().toLower() == "color") return new QMLType(QPoint(), QVariant::Color);
-        if (pItem->value().toString().toLower() == "font") return new QMLType(QPoint(), QVariant::Font);
+        if (pEntity->value().toString().toLower() == "var") return new QMLType(QPoint(), QVariant::Invalid);
+        if (pEntity->value().toString().toLower() == "variant") return new QMLType(QPoint(), (QVariant::Type) QVARIANT_VARIANT);
+        if (pEntity->value().toString().toLower() == "bool") return new QMLType(QPoint(), QVariant::Bool);
+        if (pEntity->value().toString().toLower() == "int") return new QMLType(QPoint(), QVariant::Int);
+        if (pEntity->value().toString().toLower() == "real") return new QMLType(QPoint(), QVariant::Double);
+        if (pEntity->value().toString().toLower() == "string") return new QMLType(QPoint(), QVariant::String);
+        if (pEntity->value().toString().toLower() == "color") return new QMLType(QPoint(), QVariant::Color);
+        if (pEntity->value().toString().toLower() == "font") return new QMLType(QPoint(), QVariant::Font);
     }
 
     return new QMLType(QPoint(), QVariant::Invalid);

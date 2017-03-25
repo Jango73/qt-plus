@@ -61,16 +61,16 @@ void QMLFunctionCall::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEn
     {
         bool putDot = false;
 
-        foreach (QMLEntity* pItem, m_pArguments->contents())
+        foreach (QMLEntity* pEntity, m_pArguments->contents())
         {
             if (putDot == true)
             {
                 dumpNoIndentNoNewLine(stream, ", ");
             }
 
-            if (pItem != NULL)
+            if (pEntity != NULL)
             {
-                pItem->toQML(stream, pContext, this, iIdent);
+                pEntity->toQML(stream, pContext, this, iIdent);
             }
 
             putDot = true;

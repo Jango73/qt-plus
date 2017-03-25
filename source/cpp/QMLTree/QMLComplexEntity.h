@@ -115,10 +115,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    static QMLComplexEntity* fromItem(QMLEntity* pItem);
+    static QMLComplexEntity* fromEntity(QMLEntity* pEntity);
 
     //!
-    static QMLComplexEntity* makeBlock(QMLEntity* pItem);
+    static QMLComplexEntity* makeBlock(QMLEntity* pEntity);
 
     //-------------------------------------------------------------------------------------------------
     // Properties

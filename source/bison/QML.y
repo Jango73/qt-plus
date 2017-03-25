@@ -151,11 +151,11 @@ Declarations :
     {
         PARSER_TRACE("Declarations", "Declaration");
 
-        QMLEntity* pItem = $<Object>1;
+        QMLEntity* pEntity = $<Object>1;
 
-        if (pItem != nullptr)
+        if (pEntity != nullptr)
         {
-            pContext->scopes().last()->m_pFile->contents() << pItem;
+            pContext->scopes().last()->m_pFile->contents() << pEntity;
         }
     }
     |
@@ -163,11 +163,11 @@ Declarations :
     {
         PARSER_TRACE("Declarations", "Declarations Declaration");
 
-        QMLEntity* pItem = $<Object>2;
+        QMLEntity* pEntity = $<Object>2;
 
-        if (pItem != nullptr)
+        if (pEntity != nullptr)
         {
-            pContext->scopes().last()->m_pFile->contents() << pItem;
+            pContext->scopes().last()->m_pFile->contents() << pEntity;
         }
     }
 ;
@@ -640,13 +640,13 @@ ItemArrayContents :
     {
         PARSER_TRACE("ItemArrayContents", "Item");
 
-        QMLEntity* pItem1 = $<Object>1;
+        QMLEntity* pEntity1 = $<Object>1;
 
-        if (pItem1 != nullptr)
+        if (pEntity1 != nullptr)
         {
-            QMLComplexEntity* pComplex = new QMLComplexEntity(pItem1->position());
+            QMLComplexEntity* pComplex = new QMLComplexEntity(pEntity1->position());
             pComplex->setIsArray(true);
-            pComplex->contents() << pItem1;
+            pComplex->contents() << pEntity1;
 
             $<Object>$ = pComplex;
         }
@@ -664,11 +664,11 @@ ItemArrayContents :
 
         if (pComplex != nullptr)
         {
-            QMLEntity* pItem2 = $<Object>3;
+            QMLEntity* pEntity2 = $<Object>3;
 
-            if (pItem2 != nullptr)
+            if (pEntity2 != nullptr)
             {
-                pComplex->contents() << pItem2;
+                pComplex->contents() << pEntity2;
             }
 
             $<Object>$ = pComplex;
@@ -883,11 +883,11 @@ JSStatementBlock :
     {
         PARSER_TRACE("JSStatementBlock", "'{' JSStatements '}'");
 
-        QMLEntity* pItem = $<Object>2;
+        QMLEntity* pEntity = $<Object>2;
 
-        pItem = QMLComplexEntity::makeBlock(pItem);
+        pEntity = QMLComplexEntity::makeBlock(pEntity);
 
-        $<Object>$ = pItem;
+        $<Object>$ = pEntity;
     }
 ;
 
@@ -1919,60 +1919,60 @@ JSUnaryExpression :
     {
         PARSER_TRACE("JSUnaryExpression", "JSMemberExpression TOKEN_INC");
 
-        QMLEntity* pItem = $<Object>1;
+        QMLEntity* pEntity = $<Object>1;
 
-        $<Object>$ = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoIncrement, true);
+        $<Object>$ = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoIncrement, true);
     }
     |
     TOKEN_INC JSMemberExpression
     {
-        QMLEntity* pItem = $<Object>2;
+        QMLEntity* pEntity = $<Object>2;
 
-        $<Object>$ = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoIncrement);
+        $<Object>$ = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoIncrement);
     }
     |
     JSMemberExpression TOKEN_DEC
     {
         PARSER_TRACE("JSUnaryExpression", "JSMemberExpression TOKEN_DEC");
 
-        QMLEntity* pItem = $<Object>1;
+        QMLEntity* pEntity = $<Object>1;
 
-        $<Object>$ = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoDecrement, true);
+        $<Object>$ = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoDecrement, true);
     }
     |
     TOKEN_DEC JSMemberExpression
     {
-        QMLEntity* pItem = $<Object>2;
+        QMLEntity* pEntity = $<Object>2;
 
-        $<Object>$ = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoDecrement);
+        $<Object>$ = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoDecrement);
     }
     |
     TOKEN_NOT JSMemberExpression
     {
-        QMLEntity* pItem = $<Object>2;
+        QMLEntity* pEntity = $<Object>2;
 
-        $<Object>$ = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoNot);
+        $<Object>$ = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoNot);
     }
     |
     TOKEN_TYPEOF JSMemberExpression
     {
-        QMLEntity* pItem = $<Object>2;
+        QMLEntity* pEntity = $<Object>2;
 
-        $<Object>$ = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoTypeof);
+        $<Object>$ = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoTypeof);
     }
     |
     TOKEN_SUB JSMemberExpression
     {
-        QMLEntity* pItem = $<Object>2;
+        QMLEntity* pEntity = $<Object>2;
 
-        $<Object>$ = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoMinus);
+        $<Object>$ = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoMinus);
     }
     |
     TOKEN_NEW JSMemberExpression
     {
-        QMLEntity* pItem = $<Object>2;
+        QMLEntity* pEntity = $<Object>2;
 
-        $<Object>$ = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoNew);
+        $<Object>$ = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoNew);
     }
 ;
 
@@ -2077,11 +2077,11 @@ JSPrimaryExpression :
     {
         PARSER_TRACE("JSPrimaryExpression", "'(' JSExpression ')'");
 
-        QMLEntity* pItem = $<Object>2;
+        QMLEntity* pEntity = $<Object>2;
 
-        pItem->setIsParenthesized(true);
+        pEntity->setIsParenthesized(true);
 
-        $<Object>$ = pItem;
+        $<Object>$ = pEntity;
     }
 ;
 
@@ -2188,9 +2188,9 @@ JSArrayContents :
         PARSER_TRACE("JSArrayContents", "JSArrayContents ',' JSObject");
 
         QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>($<Object>1);
-        QMLEntity* pItem = $<Object>3;
+        QMLEntity* pEntity = $<Object>3;
 
-        pComplex->contents() << pItem;
+        pComplex->contents() << pEntity;
 
         $<Object>$ = pComplex;
     }
@@ -2200,9 +2200,9 @@ JSArrayContents :
         PARSER_TRACE("JSArrayContents", "JSArrayContents ',' JSExpressionSingle");
 
         QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>($<Object>1);
-        QMLEntity* pItem = $<Object>3;
+        QMLEntity* pEntity = $<Object>3;
 
-        pComplex->contents() << pItem;
+        pComplex->contents() << pEntity;
 
         $<Object>$ = pComplex;
     }
@@ -2211,14 +2211,14 @@ JSArrayContents :
     {
         PARSER_TRACE("JSArrayContents", "JSObject");
 
-        QMLEntity* pItem = $<Object>1;
+        QMLEntity* pEntity = $<Object>1;
 
-        if (pItem == nullptr)
-            pItem = new QMLEntity(pContext->position());
+        if (pEntity == nullptr)
+            pEntity = new QMLEntity(pContext->position());
 
-        QMLComplexEntity* pComplex = new QMLComplexEntity(pItem->position());
+        QMLComplexEntity* pComplex = new QMLComplexEntity(pEntity->position());
         pComplex->setIsArray(true);
-        pComplex->contents() << pItem;
+        pComplex->contents() << pEntity;
 
         $<Object>$ = pComplex;
     }
@@ -2227,14 +2227,14 @@ JSArrayContents :
     {
         PARSER_TRACE("JSArrayContents", "JSExpressionSingle");
 
-        QMLEntity* pItem = $<Object>1;
+        QMLEntity* pEntity = $<Object>1;
 
-        if (pItem == nullptr)
-            pItem = new QMLEntity(pContext->position());
+        if (pEntity == nullptr)
+            pEntity = new QMLEntity(pContext->position());
 
-        QMLComplexEntity* pComplex = new QMLComplexEntity(pItem->position());
+        QMLComplexEntity* pComplex = new QMLComplexEntity(pEntity->position());
         pComplex->setIsArray(true);
-        pComplex->contents() << pItem;
+        pComplex->contents() << pEntity;
 
         $<Object>$ = pComplex;
     }

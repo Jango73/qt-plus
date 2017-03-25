@@ -118,10 +118,10 @@ protected:
     void runGrammar(const QString& sFileName, QMLFile* pFile);
 
     //!
-    void runGrammar_Recurse(const QString& sFileName, QMLEntity* pItem);
+    void runGrammar_Recurse(const QString& sFileName, QMLEntity* pEntity);
 
     //!
-    int runGrammar_CountNested(const QString& sClassName, QMLEntity* pItem);
+    int runGrammar_CountNested(const QString& sClassName, QMLEntity* pEntity);
 
     //!
     void outputError(const QString& sFileName, const QPoint& pPosition, const QString& sText);

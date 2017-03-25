@@ -1884,11 +1884,11 @@ yyreduce:
     {
         PARSER_TRACE("Declarations", "Declaration");
 
-        QMLEntity* pItem = (yyvsp[(1) - (1)].Object);
+        QMLEntity* pEntity = (yyvsp[(1) - (1)].Object);
 
-        if (pItem != nullptr)
+        if (pEntity != nullptr)
         {
-            pContext->scopes().last()->m_pFile->contents() << pItem;
+            pContext->scopes().last()->m_pFile->contents() << pEntity;
         }
     ;}
     break;
@@ -1900,11 +1900,11 @@ yyreduce:
     {
         PARSER_TRACE("Declarations", "Declarations Declaration");
 
-        QMLEntity* pItem = (yyvsp[(2) - (2)].Object);
+        QMLEntity* pEntity = (yyvsp[(2) - (2)].Object);
 
-        if (pItem != nullptr)
+        if (pEntity != nullptr)
         {
-            pContext->scopes().last()->m_pFile->contents() << pItem;
+            pContext->scopes().last()->m_pFile->contents() << pEntity;
         }
     ;}
     break;
@@ -2501,13 +2501,13 @@ yyreduce:
     {
         PARSER_TRACE("ItemArrayContents", "Item");
 
-        QMLEntity* pItem1 = (yyvsp[(1) - (1)].Object);
+        QMLEntity* pEntity1 = (yyvsp[(1) - (1)].Object);
 
-        if (pItem1 != nullptr)
+        if (pEntity1 != nullptr)
         {
-            QMLComplexEntity* pComplex = new QMLComplexEntity(pItem1->position());
+            QMLComplexEntity* pComplex = new QMLComplexEntity(pEntity1->position());
             pComplex->setIsArray(true);
-            pComplex->contents() << pItem1;
+            pComplex->contents() << pEntity1;
 
             (yyval.Object) = pComplex;
         }
@@ -2529,11 +2529,11 @@ yyreduce:
 
         if (pComplex != nullptr)
         {
-            QMLEntity* pItem2 = (yyvsp[(3) - (3)].Object);
+            QMLEntity* pEntity2 = (yyvsp[(3) - (3)].Object);
 
-            if (pItem2 != nullptr)
+            if (pEntity2 != nullptr)
             {
-                pComplex->contents() << pItem2;
+                pComplex->contents() << pEntity2;
             }
 
             (yyval.Object) = pComplex;
@@ -2790,11 +2790,11 @@ yyreduce:
     {
         PARSER_TRACE("JSStatementBlock", "'{' JSStatements '}'");
 
-        QMLEntity* pItem = (yyvsp[(2) - (3)].Object);
+        QMLEntity* pEntity = (yyvsp[(2) - (3)].Object);
 
-        pItem = QMLComplexEntity::makeBlock(pItem);
+        pEntity = QMLComplexEntity::makeBlock(pEntity);
 
-        (yyval.Object) = pItem;
+        (yyval.Object) = pEntity;
     ;}
     break;
 
@@ -4102,9 +4102,9 @@ yyreduce:
     {
         PARSER_TRACE("JSUnaryExpression", "JSMemberExpression TOKEN_INC");
 
-        QMLEntity* pItem = (yyvsp[(1) - (2)].Object);
+        QMLEntity* pEntity = (yyvsp[(1) - (2)].Object);
 
-        (yyval.Object) = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoIncrement, true);
+        (yyval.Object) = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoIncrement, true);
     ;}
     break;
 
@@ -4113,9 +4113,9 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 1928 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
-        QMLEntity* pItem = (yyvsp[(2) - (2)].Object);
+        QMLEntity* pEntity = (yyvsp[(2) - (2)].Object);
 
-        (yyval.Object) = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoIncrement);
+        (yyval.Object) = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoIncrement);
     ;}
     break;
 
@@ -4126,9 +4126,9 @@ yyreduce:
     {
         PARSER_TRACE("JSUnaryExpression", "JSMemberExpression TOKEN_DEC");
 
-        QMLEntity* pItem = (yyvsp[(1) - (2)].Object);
+        QMLEntity* pEntity = (yyvsp[(1) - (2)].Object);
 
-        (yyval.Object) = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoDecrement, true);
+        (yyval.Object) = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoDecrement, true);
     ;}
     break;
 
@@ -4137,9 +4137,9 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 1944 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
-        QMLEntity* pItem = (yyvsp[(2) - (2)].Object);
+        QMLEntity* pEntity = (yyvsp[(2) - (2)].Object);
 
-        (yyval.Object) = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoDecrement);
+        (yyval.Object) = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoDecrement);
     ;}
     break;
 
@@ -4148,9 +4148,9 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 1951 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
-        QMLEntity* pItem = (yyvsp[(2) - (2)].Object);
+        QMLEntity* pEntity = (yyvsp[(2) - (2)].Object);
 
-        (yyval.Object) = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoNot);
+        (yyval.Object) = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoNot);
     ;}
     break;
 
@@ -4159,9 +4159,9 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 1958 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
-        QMLEntity* pItem = (yyvsp[(2) - (2)].Object);
+        QMLEntity* pEntity = (yyvsp[(2) - (2)].Object);
 
-        (yyval.Object) = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoTypeof);
+        (yyval.Object) = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoTypeof);
     ;}
     break;
 
@@ -4170,9 +4170,9 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 1965 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
-        QMLEntity* pItem = (yyvsp[(2) - (2)].Object);
+        QMLEntity* pEntity = (yyvsp[(2) - (2)].Object);
 
-        (yyval.Object) = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoMinus);
+        (yyval.Object) = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoMinus);
     ;}
     break;
 
@@ -4181,9 +4181,9 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 1972 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
-        QMLEntity* pItem = (yyvsp[(2) - (2)].Object);
+        QMLEntity* pEntity = (yyvsp[(2) - (2)].Object);
 
-        (yyval.Object) = new QMLUnaryOperation(pItem->position(), pItem, QMLUnaryOperation::uoNew);
+        (yyval.Object) = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoNew);
     ;}
     break;
 
@@ -4316,11 +4316,11 @@ yyreduce:
     {
         PARSER_TRACE("JSPrimaryExpression", "'(' JSExpression ')'");
 
-        QMLEntity* pItem = (yyvsp[(2) - (3)].Object);
+        QMLEntity* pEntity = (yyvsp[(2) - (3)].Object);
 
-        pItem->setIsParenthesized(true);
+        pEntity->setIsParenthesized(true);
 
-        (yyval.Object) = pItem;
+        (yyval.Object) = pEntity;
     ;}
     break;
 
@@ -4465,9 +4465,9 @@ yyreduce:
         PARSER_TRACE("JSArrayContents", "JSArrayContents ',' JSObject");
 
         QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>((yyvsp[(1) - (3)].Object));
-        QMLEntity* pItem = (yyvsp[(3) - (3)].Object);
+        QMLEntity* pEntity = (yyvsp[(3) - (3)].Object);
 
-        pComplex->contents() << pItem;
+        pComplex->contents() << pEntity;
 
         (yyval.Object) = pComplex;
     ;}
@@ -4481,9 +4481,9 @@ yyreduce:
         PARSER_TRACE("JSArrayContents", "JSArrayContents ',' JSExpressionSingle");
 
         QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>((yyvsp[(1) - (3)].Object));
-        QMLEntity* pItem = (yyvsp[(3) - (3)].Object);
+        QMLEntity* pEntity = (yyvsp[(3) - (3)].Object);
 
-        pComplex->contents() << pItem;
+        pComplex->contents() << pEntity;
 
         (yyval.Object) = pComplex;
     ;}
@@ -4496,14 +4496,14 @@ yyreduce:
     {
         PARSER_TRACE("JSArrayContents", "JSObject");
 
-        QMLEntity* pItem = (yyvsp[(1) - (1)].Object);
+        QMLEntity* pEntity = (yyvsp[(1) - (1)].Object);
 
-        if (pItem == nullptr)
-            pItem = new QMLEntity(pContext->position());
+        if (pEntity == nullptr)
+            pEntity = new QMLEntity(pContext->position());
 
-        QMLComplexEntity* pComplex = new QMLComplexEntity(pItem->position());
+        QMLComplexEntity* pComplex = new QMLComplexEntity(pEntity->position());
         pComplex->setIsArray(true);
-        pComplex->contents() << pItem;
+        pComplex->contents() << pEntity;
 
         (yyval.Object) = pComplex;
     ;}
@@ -4516,14 +4516,14 @@ yyreduce:
     {
         PARSER_TRACE("JSArrayContents", "JSExpressionSingle");
 
-        QMLEntity* pItem = (yyvsp[(1) - (1)].Object);
+        QMLEntity* pEntity = (yyvsp[(1) - (1)].Object);
 
-        if (pItem == nullptr)
-            pItem = new QMLEntity(pContext->position());
+        if (pEntity == nullptr)
+            pEntity = new QMLEntity(pContext->position());
 
-        QMLComplexEntity* pComplex = new QMLComplexEntity(pItem->position());
+        QMLComplexEntity* pComplex = new QMLComplexEntity(pEntity->position());
         pComplex->setIsArray(true);
-        pComplex->contents() << pItem;
+        pComplex->contents() << pEntity;
 
         (yyval.Object) = pComplex;
     ;}

@@ -216,21 +216,21 @@ bool QMLAnalyzer::analyze_Recurse(QString sDirectory)
 
 void QMLAnalyzer::runGrammar(const QString& sFileName, QMLFile* pFile)
 {
-    foreach (QMLEntity* pItem, pFile->contents())
+    foreach (QMLEntity* pEntity, pFile->contents())
     {
-        runGrammar_Recurse(sFileName, pItem);
+        runGrammar_Recurse(sFileName, pEntity);
     }
 }
 
-void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pItem)
+void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pEntity)
 {
-    if (pItem == nullptr)
+    if (pEntity == nullptr)
     {
         return;
     }
 
     // Check symbol usage if it is a function
-    QMLFunction* pFunction = dynamic_cast<QMLFunction*>(pItem);
+    QMLFunction* pFunction = dynamic_cast<QMLFunction*>(pEntity);
 
     if (pFunction != nullptr)
     {
@@ -251,7 +251,7 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pItem)
 
     bool bHasRejects = false;
 
-    QMap<QString, QMLEntity*> mMembers = pItem->members();
+    QMap<QString, QMLEntity*> mMembers = pEntity->members();
 
     QVector<CXMLNode> vChecks = m_xGrammar.getNodesByTagName(ANALYZER_TOKEN_CHECK);
 
@@ -259,7 +259,7 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pItem)
     {
         QString sClassName = xCheck.attributes()[ANALYZER_TOKEN_CLASS];
 
-        if (pItem->metaObject()->className() == sClassName)
+        if (pEntity->metaObject()->className() == sClassName)
         {
             QVector<CXMLNode> vRejects = xCheck.getNodesByTagName(ANALYZER_TOKEN_REJECT);
 
@@ -279,12 +279,12 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pItem)
 
                     if (iNestedCountAllowed > 0)
                     {
-                        int iNestedCount = runGrammar_CountNested(sClassName, pItem);
+                        int iNestedCount = runGrammar_CountNested(sClassName, pEntity);
 
                         if (iNestedCount > iNestedCountAllowed)
                         {
                             bHasRejects = true;
-                            outputError(sFileName, pItem->position(), sText);
+                            outputError(sFileName, pEntity->position(), sText);
                         }
                     }
                 }
@@ -299,7 +299,7 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pItem)
                         if (tRegExp.exactMatch(sMemberToString) == false)
                         {
                             bHasRejects = true;
-                            outputError(sFileName, pItem->position(), sText);
+                            outputError(sFileName, pEntity->position(), sText);
                         }
                     }
                     else if (sCount.isEmpty() == false)
@@ -310,7 +310,7 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pItem)
                         if (pComplex != nullptr && pComplex->contents().count() > iCountToCheck)
                         {
                             bHasRejects = true;
-                            outputError(sFileName, pItem->position(), sText);
+                            outputError(sFileName, pEntity->position(), sText);
                         }
                     }
                     else if (sType.isEmpty() == false)
@@ -320,7 +320,7 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pItem)
                         if (sTypeToString == sType)
                         {
                             bHasRejects = true;
-                            outputError(sFileName, pItem->position(), sText);
+                            outputError(sFileName, pEntity->position(), sText);
                         }
                     }
                     else
@@ -328,7 +328,7 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pItem)
                         if (sMemberToString == sValue)
                         {
                             bHasRejects = true;
-                            outputError(sFileName, pItem->position(), sText);
+                            outputError(sFileName, pEntity->position(), sText);
                         }
                     }
                 }
@@ -343,7 +343,7 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pItem)
             runGrammar_Recurse(sFileName, mMembers[sKey]);
         }
 
-        QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(pItem);
+        QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(pEntity);
 
         if (pComplex != nullptr)
         {
@@ -355,13 +355,13 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pItem)
     }
 }
 
-int QMLAnalyzer::runGrammar_CountNested(const QString& sClassName, QMLEntity* pItem)
+int QMLAnalyzer::runGrammar_CountNested(const QString& sClassName, QMLEntity* pEntity)
 {
     int iCount = 0;
 
-    if (pItem != nullptr)
+    if (pEntity != nullptr)
     {
-        QMap<QString, QMLEntity*> mMembers = pItem->members();
+        QMap<QString, QMLEntity*> mMembers = pEntity->members();
 
         foreach (QString sKey, mMembers.keys())
         {
@@ -371,7 +371,7 @@ int QMLAnalyzer::runGrammar_CountNested(const QString& sClassName, QMLEntity* pI
                 iCount = iNewCount;
         }
 
-        QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(pItem);
+        QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(pEntity);
 
         if (pComplex != nullptr)
         {
@@ -384,7 +384,7 @@ int QMLAnalyzer::runGrammar_CountNested(const QString& sClassName, QMLEntity* pI
             }
         }
 
-        if (pItem->metaObject()->className() == sClassName)
+        if (pEntity->metaObject()->className() == sClassName)
         {
             iCount++;
         }

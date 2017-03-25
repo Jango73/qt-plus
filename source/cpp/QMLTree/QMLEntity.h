@@ -53,7 +53,7 @@ public:
     virtual void setPosition(const QPoint& point);
 
     //!
-    virtual void setOrigin(QMLEntity* pItem);
+    virtual void setOrigin(QMLEntity* pEntity);
 
     //!
     void setIsParenthesized(bool bValue);
