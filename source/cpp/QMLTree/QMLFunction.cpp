@@ -166,12 +166,11 @@ void QMLFunction::solveReferences(QMLTreeContext* pContext)
 */
 QMLEntity* QMLFunction::findSymbolDeclaration(const QString& sName)
 {
+    /*
     QMLIdentifier* pFoundEntity = dynamic_cast<QMLIdentifier*>(m_pName);
 
     if (pFoundEntity != nullptr)
     {
-        // qDebug() << "QMLFunction::findSymbolDeclaration() : found self " << pFoundEntity->metaObject()->className();
-
         if (pFoundEntity->value().toString() == sName)
         {
             return pFoundEntity;
@@ -180,19 +179,35 @@ QMLEntity* QMLFunction::findSymbolDeclaration(const QString& sName)
 
     if (m_mParameterList.contains(sName))
     {
-        // qDebug() << "QMLFunction::findSymbolDeclaration() : found in parameters " << m_mParameters[sName]->metaObject()->className();
-
         return m_mParameterList[sName];
     }
 
     if (m_mVariableList.contains(sName))
     {
-        // qDebug() << "QMLFunction::findSymbolDeclaration() : found in variables " << m_mVariables[sName]->metaObject()->className();
-
         return m_mVariableList[sName];
     }
 
     return QMLEntity::findSymbolDeclaration(sName);
+    */
+
+    QStringList lQualifiedName = QMLEntity::qualifiedNameAsList(sName);
+
+    if (lQualifiedName.count() > 0)
+    {
+        if (m_mParameterList.contains(lQualifiedName[0]))
+        {
+            return m_mParameterList[lQualifiedName[0]];
+        }
+
+        if (m_mVariableList.contains(lQualifiedName[0]))
+        {
+            return m_mVariableList[lQualifiedName[0]];
+        }
+
+        return QMLEntity::findSymbolDeclaration(QMLEntity::listAsQualifiedName(lQualifiedName));
+    }
+
+    return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------

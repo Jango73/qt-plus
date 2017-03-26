@@ -15,11 +15,13 @@ Item {
     property variant prop7: []  // Unreferenced symbol
     property int prop8: 88
 
+    property string property: ""
+
     states: [
         State {
             name: "state1"
             PropertyChanges {
-                target: object
+                target: root
                 property: "foobar"
             }
         }
@@ -59,10 +61,34 @@ Item {
     function Func2(someParameter1) {
         var someVariable1 = 10, someVariable2 = 20; // Unreferenced symbols
 
-        prop6 = 5;
+        prop6 = Math.ceil(5.2);
+
+        var date = new Date;
+        prop6 = date.getMinutes();
     }
 
     function func3(someParameter1) {
         return { x: 0, y: 0 }
+    }
+
+    function getVisibleItemList(item)
+    {
+        var complexItems = [];
+        getVisibleItemListRecurse(complexItems, item, 0);
+        return complexItems;
+    }
+
+    function getVisibleItemListRecurse(complexItems, item, level)
+    {
+        if (item !== root)
+        {
+            var complexItem = { item: item, level: level, path: [] };
+            complexItems.push(complexItem);
+
+            for (var i = 0; i < item.children.length; i++)
+            {
+                getVisibleItemListRecurse(complexItems, item.children[i], level + 1);
+            }
+        }
     }
 }

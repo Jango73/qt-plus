@@ -1,6 +1,7 @@
 
 // Application
 #include "QMLQualifiedExpression.h"
+#include "QMLIdentifier.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -23,15 +24,17 @@ QString QMLQualifiedExpression::toString() const
 
     foreach (QMLEntity* pEntity, m_vContents)
     {
+        QMLIdentifier* pIdentifier = dynamic_cast<QMLIdentifier*>(pEntity);
+
+        if (pIdentifier == nullptr)
+            break;
+
         if (sReturnValue.isEmpty() == false)
         {
             sReturnValue += ".";
         }
 
-        if (pEntity != nullptr)
-        {
-            sReturnValue += pEntity->toString();
-        }
+        sReturnValue += pIdentifier->toString();
     }
 
     return sReturnValue;
@@ -61,6 +64,8 @@ void QMLQualifiedExpression::solveReferences(QMLTreeContext* pContext)
             }
         }
     }
+
+    QMLComplexEntity::solveReferences(pContext);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -71,6 +76,8 @@ void QMLQualifiedExpression::solveSymbolUsages(QMLTreeContext* pContext)
     {
         m_pOrigin->incUsageCount();
     }
+
+    QMLComplexEntity::solveSymbolUsages(pContext);
 }
 
 //-------------------------------------------------------------------------------------------------

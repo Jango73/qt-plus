@@ -13,19 +13,19 @@
     </Check>
     -->
     <Check Class="QMLConditional">
-        <Reject NestedCount="2" Text="No more than 2 nested conditional expressions allowed..."/>
+        <Reject NestedCount="2" Text="No more than 2 nested conditional expressions allowed"/>
     </Check>
     <Check Class="QMLIf">
-        <Reject NestedCount="5" Text="Too many nested ifs, consider using switch..."/>
+        <Reject NestedCount="5" Text="Too many nested ifs, consider using switch"/>
     </Check>
     <Check Class="QMLIf">
-        <Reject Member="then" Count="20" Text="Too many statements, consider refactor..."/>
+        <Reject Member="then" Count="20" Text="Too many statements, consider refactor"/>
     </Check>
     <Check Class="QMLIf">
-        <Reject Member="else" Count="20" Text="Too many statements, consider refactor..."/>
+        <Reject Member="else" Count="20" Text="Too many statements, consider refactor"/>
     </Check>
     <Check Class="QMLFunction">
-        <Reject Member="content" Count="20" Text="Too many statements, consider refactor..."/>
+        <Reject Member="content" Count="20" Text="Too many statements, consider refactor"/>
     </Check>
     <Check Class="QMLVariableDeclaration">
         <Reject Member="name" RegExp="([a-z])([a-zA-Z0-9]*)" Text="Only camel casing allowed in names"/>

@@ -134,8 +134,6 @@ QMLEntity* QMLItem::findSymbolDeclaration(const QString& sName)
 {
     QStringList lQualifiedName = QMLEntity::qualifiedNameAsList(sName);
 
-    bool bShowDebug = lQualifiedName.contains("prop8");
-
     if (lQualifiedName.count() > 0)
     {
         /*

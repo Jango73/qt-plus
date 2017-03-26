@@ -459,13 +459,39 @@ PropertyDeclaration :
 ;
 
 PropertyDeclarationNoColon :
+    PropertyModifiersOpt TOKEN_PROPERTY Identifier TOKEN_PROPERTY
+    {
+        PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY Identifier TOKEN_PROPERTY");
+
+        int iModifiers = $<Integer>1;
+        QMLEntity* pTypeIdentifier = $<Object>3;
+        QMLType* pType = QMLType::fromQMLEntity(pTypeIdentifier);
+        QMLEntity* pName = new QMLIdentifier(pContext->position(), "property");
+
+        SAFE_DELETE(pTypeIdentifier);
+
+        if (pType != nullptr && pName != nullptr)
+        {
+            QMLPropertyDeclaration* pDeclaration = new QMLPropertyDeclaration(pName->position(), pType, pName);
+            pDeclaration->setModifiers((QMLPropertyDeclaration::EModifier) iModifiers);
+            $<Object>$ = pDeclaration;
+        }
+        else
+        {
+            $<Object>$ = nullptr;
+        }
+    }
+    |
     PropertyModifiersOpt TOKEN_PROPERTY Identifier Identifier
     {
         PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY Identifier Identifier");
 
         int iModifiers = $<Integer>1;
-        QMLType* pType = QMLType::fromQMLEntity(dynamic_cast<QMLEntity*>($<Object>3));
+        QMLEntity* pTypeIdentifier = $<Object>3;
+        QMLType* pType = QMLType::fromQMLEntity(pTypeIdentifier);
         QMLEntity* pName = dynamic_cast<QMLEntity*>($<Object>4);
+
+        SAFE_DELETE(pTypeIdentifier);
 
         if (pType != nullptr && pName != nullptr)
         {
@@ -499,14 +525,41 @@ PropertyDeclarationNoColon :
         }
     }
     |
+    PropertyModifiersOpt TOKEN_PROPERTY Identifier TOKEN_PROPERTY ':' PropertyContent
+    {
+        PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY Identifier TOKEN_PROPERTY ':' PropertyContent");
+
+        int iModifiers = $<Integer>1;
+        QMLEntity* pTypeIdentifier = $<Object>3;
+        QMLType* pType = QMLType::fromQMLEntity(pTypeIdentifier);
+        QMLEntity* pName = new QMLIdentifier(pContext->position(), "property");
+        QMLEntity* pData = dynamic_cast<QMLEntity*>($<Object>6);
+
+        SAFE_DELETE(pTypeIdentifier);
+
+        if (pType != nullptr && pName != nullptr)
+        {
+            QMLPropertyDeclaration* pDeclaration = new QMLPropertyDeclaration(pName->position(), pType, pName, pData);
+            pDeclaration->setModifiers((QMLPropertyDeclaration::EModifier) iModifiers);
+            $<Object>$ = pDeclaration;
+        }
+        else
+        {
+            $<Object>$ = nullptr;
+        }
+    }
+    |
     PropertyModifiersOpt TOKEN_PROPERTY Identifier Identifier ':' PropertyContent
     {
         PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY Identifier Identifier ':' PropertyContent");
 
         int iModifiers = $<Integer>1;
-        QMLType* pType = QMLType::fromQMLEntity(dynamic_cast<QMLEntity*>($<Object>3));
+        QMLEntity* pTypeIdentifier = $<Object>3;
+        QMLType* pType = QMLType::fromQMLEntity(pTypeIdentifier);
         QMLEntity* pName = dynamic_cast<QMLEntity*>($<Object>4);
         QMLEntity* pData = dynamic_cast<QMLEntity*>($<Object>6);
+
+        SAFE_DELETE(pTypeIdentifier);
 
         if (pType != nullptr && pName != nullptr)
         {

@@ -101,14 +101,16 @@ QMLType* QMLType::fromQMLEntity(QMLEntity* pEntity)
 {
     if (pEntity != nullptr)
     {
-        if (pEntity->value().toString().toLower() == "var") return new QMLType(QPoint(), QVariant::Invalid);
-        if (pEntity->value().toString().toLower() == "variant") return new QMLType(QPoint(), (QVariant::Type) QVARIANT_VARIANT);
-        if (pEntity->value().toString().toLower() == "bool") return new QMLType(QPoint(), QVariant::Bool);
-        if (pEntity->value().toString().toLower() == "int") return new QMLType(QPoint(), QVariant::Int);
-        if (pEntity->value().toString().toLower() == "real") return new QMLType(QPoint(), QVariant::Double);
-        if (pEntity->value().toString().toLower() == "string") return new QMLType(QPoint(), QVariant::String);
-        if (pEntity->value().toString().toLower() == "color") return new QMLType(QPoint(), QVariant::Color);
-        if (pEntity->value().toString().toLower() == "font") return new QMLType(QPoint(), QVariant::Font);
+        QString sType = pEntity->value().toString().toLower();
+
+        if (sType == "var") return new QMLType(QPoint(), QVariant::Invalid);
+        if (sType == "variant") return new QMLType(QPoint(), (QVariant::Type) QVARIANT_VARIANT);
+        if (sType == "bool") return new QMLType(QPoint(), QVariant::Bool);
+        if (sType == "int") return new QMLType(QPoint(), QVariant::Int);
+        if (sType == "real") return new QMLType(QPoint(), QVariant::Double);
+        if (sType == "string") return new QMLType(QPoint(), QVariant::String);
+        if (sType == "color") return new QMLType(QPoint(), QVariant::Color);
+        if (sType == "font") return new QMLType(QPoint(), QVariant::Font);
     }
 
     return new QMLType(QPoint(), QVariant::Invalid);
