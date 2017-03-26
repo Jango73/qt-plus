@@ -356,3 +356,35 @@ CXMLNode QMLEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent
 
     return xNode;
 }
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns a string list with each dot separated component of \a sName.
+*/
+QStringList QMLEntity::qualifiedNameAsList(const QString& sName)
+{
+    return sName.split(".");
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns a string composed of each string in \a sNameList, separated with a dot.
+*/
+QString QMLEntity::listAsQualifiedName(const QStringList& sNameList)
+{
+    QString sReturnValue;
+
+    foreach (QString sName, sNameList)
+    {
+        if (sReturnValue.isEmpty() == false)
+        {
+            sReturnValue += ".";
+        }
+
+        sReturnValue += sName;
+    }
+
+    return sReturnValue;
+}

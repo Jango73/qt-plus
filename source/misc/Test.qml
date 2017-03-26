@@ -4,7 +4,7 @@ import QtQuick.Controls 1.4
 Item {
     id: root
 
-    property real prop1: prop8;
+    property real prop1: root.prop8;
     property real prop_2: 20;   // Camel casing error
     property real prop3: 30
     property real prop4: 40

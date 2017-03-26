@@ -120,6 +120,16 @@ public:
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
+    // Static methods
+    //-------------------------------------------------------------------------------------------------
+
+    //!
+    static QStringList qualifiedNameAsList(const QString& sName);
+
+    //!
+    static QString listAsQualifiedName(const QStringList& sNameList);
+
+    //-------------------------------------------------------------------------------------------------
     // Properties
     //-------------------------------------------------------------------------------------------------
 

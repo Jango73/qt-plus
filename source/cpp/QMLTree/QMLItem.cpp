@@ -24,6 +24,33 @@ QMLItem::~QMLItem()
 
 //-------------------------------------------------------------------------------------------------
 
+QString QMLItem::id() const
+{
+    foreach (QMLEntity* pEntity, m_vContents)
+    {
+        QMLPropertyAssignment* pAssignment = dynamic_cast<QMLPropertyAssignment*>(pEntity);
+
+        if (pAssignment != nullptr)
+        {
+            QMLIdentifier* pIdentifier = dynamic_cast<QMLIdentifier*>(pAssignment->name());
+
+            if (pIdentifier != nullptr && pIdentifier->toString() == "id")
+            {
+                QMLIdentifier* pValue = dynamic_cast<QMLIdentifier*>(pAssignment->content());
+
+                if (pValue != nullptr)
+                {
+                    return pValue->toString();
+                }
+            }
+        }
+    }
+
+    return "";
+}
+
+//-------------------------------------------------------------------------------------------------
+
 QMap<QString, QMLEntity*> QMLItem::unusedProperties()
 {
     QMap<QString, QMLEntity*> mReturnValue;
@@ -105,22 +132,57 @@ void QMLItem::solveReferences(QMLTreeContext* pContext)
 */
 QMLEntity* QMLItem::findSymbolDeclaration(const QString& sName)
 {
-    QMLIdentifier* pFoundEntity = dynamic_cast<QMLIdentifier*>(m_pName);
+    QStringList lQualifiedName = QMLEntity::qualifiedNameAsList(sName);
 
-    if (pFoundEntity != nullptr)
+    bool bShowDebug = lQualifiedName.contains("prop8");
+
+    if (lQualifiedName.count() > 0)
     {
-        if (pFoundEntity->value().toString() == sName)
+        /*
+        QMLIdentifier* pFoundEntity = dynamic_cast<QMLIdentifier*>(m_pName);
+
+        if (pFoundEntity != nullptr)
         {
-            return pFoundEntity;
+            if (pFoundEntity->value().toString() == lQualifiedName[0])
+            {
+                if (lQualifiedName.count() > 1)
+                {
+                    if (bShowDebug) qDebug() << "QMLItem::findSymbolDeclaration : removing self in list";
+
+                    lQualifiedName.removeAt(0);
+                }
+                else
+                {
+                    return pFoundEntity;
+                }
+            }
         }
+        */
+
+        if (lQualifiedName[0] == id())
+        {
+            if (lQualifiedName.count() > 1)
+            {
+                lQualifiedName.removeAt(0);
+            }
+            else
+            {
+                return this;
+            }
+        }
+
+        if (lQualifiedName.count() == 1)
+        {
+            if (m_mPropertyList.contains(lQualifiedName[0]))
+            {
+                return m_mPropertyList[lQualifiedName[0]];
+            }
+        }
+
+        return QMLComplexEntity::findSymbolDeclaration(QMLEntity::listAsQualifiedName(lQualifiedName));
     }
 
-    if (m_mPropertyList.contains(sName))
-    {
-        return m_mPropertyList[sName];
-    }
-
-    return QMLComplexEntity::findSymbolDeclaration(sName);
+    return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------

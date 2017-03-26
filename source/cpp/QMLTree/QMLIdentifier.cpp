@@ -28,8 +28,8 @@ QMLIdentifier::~QMLIdentifier()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Finds the origin of the item. \br\br
-    \a pContext is the context of this item. \br
+    Finds the origin of the entity. \br\br
+    \a pContext is the context of this entity. \br
 */
 void QMLIdentifier::solveReferences(QMLTreeContext* pContext)
 {
