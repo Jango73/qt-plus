@@ -587,6 +587,28 @@ PropertyModifiers:
 ;
 
 PropertyAssignment :
+    PropertyModifiersOpt TOKEN_PROPERTY ':' PropertyContent
+    {
+        PARSER_TRACE("PropertyAssignment", "PropertyModifiersOpt TOKEN_PROPERTY ':' PropertyContent");
+
+        QMLEntity* pName = new QMLIdentifier(pContext->position(), "property");
+        QMLEntity* pContent = $<Object>4;
+
+        if (pName != nullptr)
+        {
+            QMLPropertyAssignment* pAssignment = new QMLPropertyAssignment(pName->position(), pName, pContent);
+
+            $<Object>$ = pAssignment;
+        }
+        else
+        {
+            SAFE_DELETE(pName);
+            SAFE_DELETE(pContent);
+
+            $<Object>$ = nullptr;
+        }
+    }
+    |
     QualifiedIdentifier ':' PropertyContent
     {
         PARSER_TRACE("PropertyAssignment", "QualifiedIdentifier ':' PropertyContent");

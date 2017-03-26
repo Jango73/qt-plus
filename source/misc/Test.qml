@@ -4,7 +4,7 @@ import QtQuick.Controls 1.4
 Item {
     id: root
 
-    property real prop1: 10;
+    property real prop1: prop8;
     property real prop_2: 20;   // Camel casing error
     property real prop3: 30
     property real prop4: 40
@@ -13,6 +13,17 @@ Item {
     // Nested conditionals error
     property bool prop6: prop1 > 0 ? prop1 : prop_2 > 0 ? prop_2 : prop3 > 0 ? prop3 : prop4;
     property variant prop7: []
+    property int prop8: 88
+
+    states: [
+        State {
+            name: "state1"
+            PropertyChanges {
+                target: object
+                property: "foobar"
+            }
+        }
+    ]
 
     function func1(someParameter1, someParameter2) {
         var someVariable1 = 10, someVariable2 = 20;
@@ -50,5 +61,9 @@ Item {
 
         prop6 = 5;
         prop7 = 5;
+    }
+
+    function func3(someParameter1) {
+        return { x: 0, y: 0 }
     }
 }
