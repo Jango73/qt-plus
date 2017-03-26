@@ -95,16 +95,19 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void solveOrigins(QMLTreeContext* pContext);
+    virtual void solveSymbols(QMLTreeContext* pContext);
+
+    //!
+    virtual void solveReferences(QMLTreeContext* pContext);
+
+    //!
+    virtual void solveSymbolUsages(QMLTreeContext* pContext);
 
     //!
     virtual QMap<QString, QMLEntity*> getDeclaredSymbols();
 
     //!
     virtual QMLEntity* findSymbolDeclaration(const QString& sName);
-
-    //!
-    virtual void checkSymbolUsages(QMLTreeContext* pContext);
 
     //!
     virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = nullptr, int iIdent = 0);

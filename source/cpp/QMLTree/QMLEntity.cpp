@@ -173,10 +173,10 @@ void QMLEntity::incUsageCount()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Finds the origin of the item. \br\br
-    \a pContext is the context of this item. \br
+    Finds all symbols in the entity. \br\br
+    \a pContext is the context of this entity. \br
 */
-void QMLEntity::solveOrigins(QMLTreeContext* pContext)
+void QMLEntity::solveSymbols(QMLTreeContext* pContext)
 {
     QMap<QString, QMLEntity*> mMembers = members();
 
@@ -185,7 +185,45 @@ void QMLEntity::solveOrigins(QMLTreeContext* pContext)
         if (mMembers[sMemberKey] != nullptr)
         {
             mMembers[sMemberKey]->setParent(this);
-            mMembers[sMemberKey]->solveOrigins(pContext);
+            mMembers[sMemberKey]->solveSymbols(pContext);
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Finds the origin of the entity. \br\br
+    \a pContext is the context of this entity. \br
+*/
+void QMLEntity::solveReferences(QMLTreeContext* pContext)
+{
+    QMap<QString, QMLEntity*> mMembers = members();
+
+    foreach (QString sMemberKey, mMembers.keys())
+    {
+        if (mMembers[sMemberKey] != nullptr)
+        {
+            mMembers[sMemberKey]->solveReferences(pContext);
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Checks how many times each symbol is used. \br\br
+    \a pContext is the context of this item.
+*/
+void QMLEntity::solveSymbolUsages(QMLTreeContext* pContext)
+{
+    QMap<QString, QMLEntity*> mMembers = members();
+
+    foreach (QString sMemberKey, mMembers.keys())
+    {
+        if (mMembers[sMemberKey] != nullptr)
+        {
+            mMembers[sMemberKey]->solveSymbolUsages(pContext);
         }
     }
 }
@@ -235,25 +273,6 @@ QMLEntity* QMLEntity::findSymbolDeclaration(const QString& sName)
     }
 
     return nullptr;
-}
-
-//-------------------------------------------------------------------------------------------------
-
-/*!
-    Checks how many times each symbol is used. \br\br
-    \a pContext is the context of this item.
-*/
-void QMLEntity::checkSymbolUsages(QMLTreeContext* pContext)
-{
-    QMap<QString, QMLEntity*> mMembers = members();
-
-    foreach (QString sMemberKey, mMembers.keys())
-    {
-        if (mMembers[sMemberKey] != nullptr)
-        {
-            mMembers[sMemberKey]->checkSymbolUsages(pContext);
-        }
-    }
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -31,7 +31,7 @@ QMLIdentifier::~QMLIdentifier()
     Finds the origin of the item. \br\br
     \a pContext is the context of this item. \br
 */
-void QMLIdentifier::solveOrigins(QMLTreeContext* pContext)
+void QMLIdentifier::solveReferences(QMLTreeContext* pContext)
 {
     QString sName = m_vValue.toString();
 
@@ -53,7 +53,7 @@ void QMLIdentifier::solveOrigins(QMLTreeContext* pContext)
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLIdentifier::checkSymbolUsages(QMLTreeContext* pContext)
+void QMLIdentifier::solveSymbolUsages(QMLTreeContext* pContext)
 {
     if (m_pOrigin != nullptr)
     {

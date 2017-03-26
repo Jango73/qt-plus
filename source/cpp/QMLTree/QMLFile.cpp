@@ -86,9 +86,9 @@ bool QMLFile::parsed() const
     Finds the origin of the item. \br\br
     \a pContext is the context of this item. \br
 */
-void QMLFile::solveOrigins(QMLTreeContext* pContext)
+void QMLFile::solveReferences(QMLTreeContext* pContext)
 {
-    QMLComplexEntity::solveOrigins(pContext);
+    QMLComplexEntity::solveReferences(pContext);
 
     foreach (QMLEntity* pEntity, m_vContents)
     {

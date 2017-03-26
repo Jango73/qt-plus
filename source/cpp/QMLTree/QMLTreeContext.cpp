@@ -466,8 +466,9 @@ QMLTreeContext::EParseError QMLTreeContext::parse()
             // Clear scope stack
             m_sScopes.clear();
 
-            pFile->solveOrigins(this);
-            pFile->checkSymbolUsages(this);
+            pFile->solveSymbols(this);
+            pFile->solveReferences(this);
+            pFile->solveSymbolUsages(this);
 
             // Mark the file as parsed
             pFile->setParsed(true);

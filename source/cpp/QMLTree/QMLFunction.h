@@ -72,7 +72,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void solveOrigins(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
+    virtual void solveSymbols(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
+
+    //!
+    virtual void solveReferences(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
 
     //!
     virtual QMLEntity* findSymbolDeclaration(const QString& sName) Q_DECL_OVERRIDE;

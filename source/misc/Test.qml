@@ -12,7 +12,7 @@ Item {
 
     // Nested conditionals error
     property bool prop6: prop1 > 0 ? prop1 : prop_2 > 0 ? prop_2 : prop3 > 0 ? prop3 : prop4;
-    property variant prop7: []
+    property variant prop7: []  // Unreferenced symbol
     property int prop8: 88
 
     states: [
@@ -60,7 +60,6 @@ Item {
         var someVariable1 = 10, someVariable2 = 20; // Unreferenced symbols
 
         prop6 = 5;
-        prop7 = 5;
     }
 
     function func3(someParameter1) {

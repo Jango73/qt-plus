@@ -179,21 +179,48 @@ QVector<QMLEntity*> QMLComplexEntity::grabContents()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Finds the origin of the item. \br\br
-    \a pContext is the context of this item. \br
+    Finds all symbols in the entity. \br\br
+    \a pContext is the context of this entity. \br
 */
-void QMLComplexEntity::solveOrigins(QMLTreeContext* pContext)
+void QMLComplexEntity::solveSymbols(QMLTreeContext* pContext)
 {
-    QMLEntity::solveOrigins(pContext);
+    QMLEntity::solveSymbols(pContext);
 
     foreach (QMLEntity* pEntity, m_vContents)
     {
         pEntity->setParent(this);
+        pEntity->solveSymbols(pContext);
     }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Finds the origin of the entity. \br\br
+    \a pContext is the context of this entity. \br
+*/
+void QMLComplexEntity::solveReferences(QMLTreeContext* pContext)
+{
+    QMLEntity::solveReferences(pContext);
 
     foreach (QMLEntity* pEntity, m_vContents)
     {
-        pEntity->solveOrigins(pContext);
+        pEntity->solveReferences(pContext);
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void QMLComplexEntity::solveSymbolUsages(QMLTreeContext* pContext)
+{
+    QMLEntity::solveSymbolUsages(pContext);
+
+    foreach (QMLEntity* pEntity, m_vContents)
+    {
+        if (pEntity != nullptr)
+        {
+            pEntity->solveSymbolUsages(pContext);
+        }
     }
 }
 
@@ -223,21 +250,6 @@ QMap<QString, QMLEntity*> QMLComplexEntity::getDeclaredSymbols()
     }
 
     return mReturnValue;
-}
-
-//-------------------------------------------------------------------------------------------------
-
-void QMLComplexEntity::checkSymbolUsages(QMLTreeContext* pContext)
-{
-    QMLEntity::checkSymbolUsages(pContext);
-
-    foreach (QMLEntity* pEntity, m_vContents)
-    {
-        if (pEntity != nullptr)
-        {
-            pEntity->checkSymbolUsages(pContext);
-        }
-    }
 }
 
 //-------------------------------------------------------------------------------------------------

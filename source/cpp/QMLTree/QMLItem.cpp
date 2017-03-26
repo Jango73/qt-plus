@@ -52,18 +52,15 @@ void QMLItem::markAsSingleton()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Finds the origin of the item. \br\br
-    \a pContext is the context of this item. \br
+    Finds all symbols in the entity. \br\br
+    \a pContext is the context of this entity. \br
 */
-void QMLItem::solveOrigins(QMLTreeContext* pContext)
+void QMLItem::solveSymbols(QMLTreeContext* pContext)
 {
-    QMLComplexEntity::solveOrigins(pContext);
+    QMLComplexEntity::solveSymbols(pContext);
 
-    // Get declared symbols
     foreach (QMLEntity* pEntity, m_vContents)
     {
-        pEntity->setParent(this);
-
         QMLPropertyDeclaration* pDeclaration = dynamic_cast<QMLPropertyDeclaration*>(pEntity);
         QMLPropertyAssignment* pAssignment = dynamic_cast<QMLPropertyAssignment*>(pEntity);
 
@@ -73,21 +70,32 @@ void QMLItem::solveOrigins(QMLTreeContext* pContext)
             {
                 QString sName = pDeclaration->name()->toString();
 
-                m_mPropertyList[sName] = pDeclaration;
-            }
-
-            if (pDeclaration->content() != nullptr)
-            {
-                pDeclaration->content()->solveOrigins(pContext);
+                m_mPropertyList[sName] = pDeclaration->name();
             }
         }
         else
         {
-            pEntity->solveOrigins(pContext);
+            pEntity->solveReferences(pContext);
         }
     }
 
     m_mPropertyList["id"] = this;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Finds the origin of the entity. \br\br
+    \a pContext is the context of this entity. \br
+*/
+void QMLItem::solveReferences(QMLTreeContext* pContext)
+{
+    QMLComplexEntity::solveReferences(pContext);
+
+    foreach (QMLEntity* pEntity, m_vContents)
+    {
+        pEntity->solveReferences(pContext);
+    }
 }
 
 //-------------------------------------------------------------------------------------------------

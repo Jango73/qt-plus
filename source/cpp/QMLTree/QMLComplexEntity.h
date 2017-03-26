@@ -96,13 +96,16 @@ public:
     virtual QMap<QString, QMLEntity*> members() Q_DECL_OVERRIDE;
 
     //!
-    virtual void solveOrigins(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
+    virtual void solveSymbols(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
+
+    //!
+    virtual void solveReferences(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
+
+    //!
+    virtual void solveSymbolUsages(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
 
     //!
     virtual QMap<QString, QMLEntity*> getDeclaredSymbols() Q_DECL_OVERRIDE;
-
-    //!
-    virtual void checkSymbolUsages(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
 
     //!
     virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;

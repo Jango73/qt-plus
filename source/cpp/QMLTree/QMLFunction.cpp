@@ -130,19 +130,12 @@ QMap<QString, QMLEntity*> QMLFunction::members()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Finds the origin of the item. \br\br
-    \a pContext is the context of this item. \br
+    Finds all symbols in the entity. \br\br
+    \a pContext is the context of this entity. \br
 */
-void QMLFunction::solveOrigins(QMLTreeContext* pContext)
+void QMLFunction::solveSymbols(QMLTreeContext* pContext)
 {
-    if (m_pName != nullptr)
-        m_pName->setParent(this);
-
-    if (m_pParameters != nullptr)
-        m_pParameters->setParent(this);
-
-    if (m_pContent != nullptr)
-        m_pContent->setParent(this);
+    QMLEntity::solveSymbols(pContext);
 
     if (m_pContent != nullptr)
         m_mVariableList = m_pContent->getDeclaredSymbols();
@@ -152,9 +145,18 @@ void QMLFunction::solveOrigins(QMLTreeContext* pContext)
         if (m_pParameters != nullptr)
             m_mParameterList = m_pParameters->getDeclaredSymbols();
     }
+}
 
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Finds the origin of the entity. \br\br
+    \a pContext is the context of this entity. \br
+*/
+void QMLFunction::solveReferences(QMLTreeContext* pContext)
+{
     if (m_pContent != nullptr)
-        m_pContent->solveOrigins(pContext);
+        m_pContent->solveReferences(pContext);
 }
 
 //-------------------------------------------------------------------------------------------------
