@@ -15,6 +15,10 @@
 
 //-------------------------------------------------------------------------------------------------
 
+int QMLEntity::s_iEntityCount = 0;
+
+//-------------------------------------------------------------------------------------------------
+
 /*!
     Constructs a QMLItem. \br\br
     \a pPosition is the position of the token in the file
@@ -25,6 +29,7 @@ QMLEntity::QMLEntity(const QPoint& pPosition)
     , m_iUsageCount(0)
     , m_bIsParenthesized(false)
 {
+    s_iEntityCount++;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -39,6 +44,7 @@ QMLEntity::QMLEntity(const QPoint& pPosition, const QVariant& value)
     , m_iUsageCount(0)
     , m_bIsParenthesized(false)
 {
+    s_iEntityCount++;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -48,6 +54,7 @@ QMLEntity::QMLEntity(const QPoint& pPosition, const QVariant& value)
 */
 QMLEntity::~QMLEntity()
 {
+    s_iEntityCount--;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -278,6 +285,16 @@ QMLEntity* QMLEntity::findSymbolDeclaration(const QString& sName)
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Returns the item named \a sName, for identifier resolution. \br\br
+*/
+QMLEntity* QMLEntity::findSymbolDeclarationDescending(QStringList& lQualifiedName)
+{
+    return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Dumps the item to \a stream using \a iIdent for indentation. \br\br
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
@@ -387,4 +404,11 @@ QString QMLEntity::listAsQualifiedName(const QStringList& sNameList)
     }
 
     return sReturnValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+int QMLEntity::entityCount()
+{
+    return s_iEntityCount;
 }

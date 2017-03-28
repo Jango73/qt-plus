@@ -121,6 +121,31 @@ void QMLFile::solveReferences(QMLTreeContext* pContext)
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Returns the item named \a sName, for identifier resolution. \br\br
+*/
+QMLEntity* QMLFile::findSymbolDeclaration(const QString& sName)
+{
+    QStringList sQualified = QMLEntity::qualifiedNameAsList(sName);
+
+    foreach (QMLEntity* pEntity, m_vContents)
+    {
+        if (pEntity != nullptr)
+        {
+            QMLEntity* pFoundEntity = pEntity->findSymbolDeclarationDescending(sQualified);
+
+            if (pFoundEntity != nullptr)
+            {
+                return pFoundEntity;
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Returns a CXMLNode representation of this item. \br\br
     \a pContext is a user defined context. \br
     \a pParent is the caller of this method.

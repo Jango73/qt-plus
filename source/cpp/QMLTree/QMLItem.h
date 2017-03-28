@@ -66,14 +66,23 @@ public:
     virtual QMLEntity* findSymbolDeclaration(const QString& sName) Q_DECL_OVERRIDE;
 
     //!
+    virtual QMLEntity* findSymbolDeclarationDescending(QStringList& lQualifiedName) Q_DECL_OVERRIDE;
+
+    //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
+
+    //-------------------------------------------------------------------------------------------------
+    // Protected methods
+    //-------------------------------------------------------------------------------------------------
 
     //-------------------------------------------------------------------------------------------------
     // Properties
     //-------------------------------------------------------------------------------------------------
 
 protected:
+
     // Constructed after parsing
     QMap<QString, QMLEntity*>   m_mPropertyList;
+    QString                     m_sID;
     bool                        m_bIsSingleton;
 };

@@ -254,6 +254,29 @@ QMap<QString, QMLEntity*> QMLComplexEntity::getDeclaredSymbols()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns the item named \a sName, for identifier resolution. \br\br
+*/
+QMLEntity* QMLComplexEntity::findSymbolDeclarationDescending(QStringList& lQualifiedName)
+{
+    foreach (QMLEntity* pEntity, m_vContents)
+    {
+        if (pEntity != nullptr)
+        {
+            QMLEntity* pFoundEntity = pEntity->findSymbolDeclarationDescending(lQualifiedName);
+
+            if (pFoundEntity != nullptr)
+            {
+                return pFoundEntity;
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void QMLComplexEntity::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
     Q_UNUSED(pContext);

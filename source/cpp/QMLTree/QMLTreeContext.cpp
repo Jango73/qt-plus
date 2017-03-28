@@ -451,11 +451,9 @@ QMLTreeContext::EParseError QMLTreeContext::parse()
             m_sScopes.push(new QMLScope(pFile));
 
             // Tell the world parsing started
-            emit parsingStarted(SCOPE.m_pFile->fileName());
+            emit parsingStarted(pFile->fileName());
 
             m_eError = parse_Internal();
-
-            emit parsingFinished(SCOPE.m_pFile->fileName());
 
             // Delete all scopes
             foreach (QMLScope* pScope, m_sScopes)
@@ -472,6 +470,9 @@ QMLTreeContext::EParseError QMLTreeContext::parse()
 
             // Mark the file as parsed
             pFile->setParsed(true);
+
+            // Tell the world parsing has ended
+            emit parsingFinished(pFile->fileName());
         }
     }
 

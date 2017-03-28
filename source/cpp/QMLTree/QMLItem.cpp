@@ -26,27 +26,7 @@ QMLItem::~QMLItem()
 
 QString QMLItem::id() const
 {
-    foreach (QMLEntity* pEntity, m_vContents)
-    {
-        QMLPropertyAssignment* pAssignment = dynamic_cast<QMLPropertyAssignment*>(pEntity);
-
-        if (pAssignment != nullptr)
-        {
-            QMLIdentifier* pIdentifier = dynamic_cast<QMLIdentifier*>(pAssignment->name());
-
-            if (pIdentifier != nullptr && pIdentifier->toString() == "id")
-            {
-                QMLIdentifier* pValue = dynamic_cast<QMLIdentifier*>(pAssignment->content());
-
-                if (pValue != nullptr)
-                {
-                    return pValue->toString();
-                }
-            }
-        }
-    }
-
-    return "";
+    return m_sID;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -107,6 +87,26 @@ void QMLItem::solveSymbols(QMLTreeContext* pContext)
     }
 
     m_mPropertyList["id"] = this;
+
+    foreach (QMLEntity* pEntity, m_vContents)
+    {
+        QMLPropertyAssignment* pAssignment = dynamic_cast<QMLPropertyAssignment*>(pEntity);
+
+        if (pAssignment != nullptr)
+        {
+            QMLIdentifier* pIdentifier = dynamic_cast<QMLIdentifier*>(pAssignment->name());
+
+            if (pIdentifier != nullptr && pIdentifier->toString() == "id")
+            {
+                QMLIdentifier* pValue = dynamic_cast<QMLIdentifier*>(pAssignment->content());
+
+                if (pValue != nullptr)
+                {
+                    m_sID = pValue->toString();
+                }
+            }
+        }
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -136,27 +136,6 @@ QMLEntity* QMLItem::findSymbolDeclaration(const QString& sName)
 
     if (lQualifiedName.count() > 0)
     {
-        /*
-        QMLIdentifier* pFoundEntity = dynamic_cast<QMLIdentifier*>(m_pName);
-
-        if (pFoundEntity != nullptr)
-        {
-            if (pFoundEntity->value().toString() == lQualifiedName[0])
-            {
-                if (lQualifiedName.count() > 1)
-                {
-                    if (bShowDebug) qDebug() << "QMLItem::findSymbolDeclaration : removing self in list";
-
-                    lQualifiedName.removeAt(0);
-                }
-                else
-                {
-                    return pFoundEntity;
-                }
-            }
-        }
-        */
-
         if (lQualifiedName[0] == id())
         {
             if (lQualifiedName.count() > 1)
@@ -181,6 +160,39 @@ QMLEntity* QMLItem::findSymbolDeclaration(const QString& sName)
     }
 
     return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns the item named \a sName, for identifier resolution.
+*/
+QMLEntity* QMLItem::findSymbolDeclarationDescending(QStringList& lQualifiedName)
+{
+    if (lQualifiedName.count() > 0)
+    {
+        if (lQualifiedName[0] == id())
+        {
+            if (lQualifiedName.count() > 1)
+            {
+                lQualifiedName.removeAt(0);
+            }
+            else
+            {
+                return this;
+            }
+        }
+
+        if (lQualifiedName.count() == 1)
+        {
+            if (m_mPropertyList.contains(lQualifiedName[0]))
+            {
+                return m_mPropertyList[lQualifiedName[0]];
+            }
+        }
+    }
+
+    return QMLComplexEntity::findSymbolDeclarationDescending(lQualifiedName);
 }
 
 //-------------------------------------------------------------------------------------------------

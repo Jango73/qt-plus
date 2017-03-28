@@ -65,6 +65,9 @@ public:
     virtual void solveReferences(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
 
     //!
+    virtual QMLEntity* findSymbolDeclaration(const QString& sName);
+
+    //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------

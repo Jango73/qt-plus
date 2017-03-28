@@ -108,6 +108,9 @@ public:
     virtual QMap<QString, QMLEntity*> getDeclaredSymbols() Q_DECL_OVERRIDE;
 
     //!
+    virtual QMLEntity* findSymbolDeclarationDescending(QStringList& lQualifiedName) Q_DECL_OVERRIDE;
+
+    //!
     virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //!

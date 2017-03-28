@@ -110,6 +110,9 @@ public:
     virtual QMLEntity* findSymbolDeclaration(const QString& sName);
 
     //!
+    virtual QMLEntity* findSymbolDeclarationDescending(QStringList& lQualifiedName);
+
+    //!
     virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = nullptr, int iIdent = 0);
 
     //-------------------------------------------------------------------------------------------------
@@ -129,6 +132,9 @@ public:
     //!
     static QString listAsQualifiedName(const QStringList& sNameList);
 
+    //!
+    static int entityCount();
+
     //-------------------------------------------------------------------------------------------------
     // Properties
     //-------------------------------------------------------------------------------------------------
@@ -140,4 +146,6 @@ protected:
     QMLEntity*  m_pOrigin;
     int         m_iUsageCount;
     bool        m_bIsParenthesized;
+
+    static int  s_iEntityCount;
 };
