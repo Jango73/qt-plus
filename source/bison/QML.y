@@ -173,6 +173,11 @@ Declarations :
             pContext->scopes().last()->m_pFile->contents() << pEntity;
         }
     }
+    |
+    error
+    {
+        // SAFE_DELETE($<Object>1);
+    }
 ;
 
 Declaration :

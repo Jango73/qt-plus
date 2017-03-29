@@ -187,6 +187,10 @@ void runQMLTreeTests()
             }
         }
     }
+    else
+    {
+        qDebug() << pContext->errorString();
+    }
 
     delete pContext;
 }
