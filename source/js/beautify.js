@@ -85,6 +85,7 @@
 
 */
 
+// Addition for QMLTree
 var global = {};
 
 // Object.values polyfill found here:
@@ -2482,4 +2483,5 @@ if (!Object.values) {
 
 }());
 
+// Addition for QMLTree
 global.js_beautify(analyzer.text());
