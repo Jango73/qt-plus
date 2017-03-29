@@ -272,6 +272,7 @@ ImportStatement :
         }
 
         SAFE_DELETE(pName);
+        SAFE_DELETE(pAs);
     }
 ;
 
@@ -479,6 +480,9 @@ PropertyDeclarationNoColon :
         else
         {
             $<Object>$ = nullptr;
+
+            SAFE_DELETE(pType);
+            SAFE_DELETE(pName);
         }
     }
     |
@@ -502,6 +506,9 @@ PropertyDeclarationNoColon :
         else
         {
             $<Object>$ = nullptr;
+
+            SAFE_DELETE(pType);
+            SAFE_DELETE(pName);
         }
     }
     |
@@ -522,6 +529,9 @@ PropertyDeclarationNoColon :
         else
         {
             $<Object>$ = nullptr;
+
+            SAFE_DELETE(pType);
+            SAFE_DELETE(pName);
         }
     }
     |
@@ -546,6 +556,10 @@ PropertyDeclarationNoColon :
         else
         {
             $<Object>$ = nullptr;
+
+            SAFE_DELETE(pType);
+            SAFE_DELETE(pName);
+            SAFE_DELETE(pData);
         }
     }
     |
@@ -570,6 +584,10 @@ PropertyDeclarationNoColon :
         else
         {
             $<Object>$ = nullptr;
+
+            SAFE_DELETE(pType);
+            SAFE_DELETE(pName);
+            SAFE_DELETE(pData);
         }
     }
     |
@@ -591,6 +609,10 @@ PropertyDeclarationNoColon :
         else
         {
             $<Object>$ = nullptr;
+
+            SAFE_DELETE(pType);
+            SAFE_DELETE(pName);
+            SAFE_DELETE(pData);
         }
     }
     |
@@ -611,6 +633,9 @@ PropertyDeclarationNoColon :
         else
         {
             $<Object>$ = nullptr;
+
+            SAFE_DELETE(pName);
+            SAFE_DELETE(pData);
         }
     }
 ;
@@ -1305,7 +1330,7 @@ JSExpressionOpt :
 JSVariablesOrExpression :
     TOKEN_VAR JSVariables
     {
-        PARSER_TRACE("JSVariablesOrExpression", "Identifier JSVariables");
+        PARSER_TRACE("JSVariablesOrExpression", "TOKEN_VAR JSVariables");
 
         QMLEntity* pVariable = $<Object>2;
         QMLComplexEntity* pVariables = dynamic_cast<QMLComplexEntity*>($<Object>2);
@@ -1349,7 +1374,7 @@ JSVariablesOrExpressionOpt :
     |
     TOKEN_VAR JSVariables
     {
-        PARSER_TRACE("JSVariablesOrExpressionOpt", "Identifier JSVariables");
+        PARSER_TRACE("JSVariablesOrExpressionOpt", "TOKEN_VAR JSVariables");
 
         QMLEntity* pVariable = $<Object>2;
         QMLComplexEntity* pVariables = dynamic_cast<QMLComplexEntity*>($<Object>2);
@@ -1438,6 +1463,9 @@ JSVariable :
         else
         {
             $<Object>$ = new QMLEntity(pContext->position());
+
+            SAFE_DELETE(pLeft);
+            SAFE_DELETE(pRight);
         }
     }
     |
@@ -1455,6 +1483,9 @@ JSVariable :
         else
         {
             $<Object>$ = new QMLEntity(pContext->position());
+
+            SAFE_DELETE(pLeft);
+            SAFE_DELETE(pRight);
         }
     }
 ;

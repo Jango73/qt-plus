@@ -51,6 +51,8 @@ QString QMLBinaryOperation::operatorToString(EOperator eOperator) const
 {
     switch (eOperator)
     {
+        case boNone:
+            return "NONE";
         case boAssign:
             return "=";
         case boAdd:

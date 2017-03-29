@@ -1,5 +1,6 @@
 
 // Qt
+#include <QDebug>
 #include <QDir>
 
 // Library
@@ -275,6 +276,12 @@ QMLTreeContext::~QMLTreeContext()
     foreach (QMLFile* pFile, m_vFiles)
     {
         delete pFile;
+    }
+
+    // qDebug() << "Entities : " << QMLEntity::entityCount();
+    foreach (QMLEntity* pEntity, QMLEntity::entities())
+    {
+        qWarning() << "Leaked entity : " << pEntity << " ( " << pEntity->toString() + " )";
     }
 }
 

@@ -15,7 +15,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-int QMLEntity::s_iEntityCount = 0;
+QList<QMLEntity*> QMLEntity::s_vEntities;
 
 //-------------------------------------------------------------------------------------------------
 
@@ -29,7 +29,7 @@ QMLEntity::QMLEntity(const QPoint& pPosition)
     , m_iUsageCount(0)
     , m_bIsParenthesized(false)
 {
-    s_iEntityCount++;
+    s_vEntities << this;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ QMLEntity::QMLEntity(const QPoint& pPosition, const QVariant& value)
     , m_iUsageCount(0)
     , m_bIsParenthesized(false)
 {
-    s_iEntityCount++;
+    s_vEntities << this;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ QMLEntity::QMLEntity(const QPoint& pPosition, const QVariant& value)
 */
 QMLEntity::~QMLEntity()
 {
-    s_iEntityCount--;
+    s_vEntities.removeAll(this);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -285,7 +285,7 @@ QMLEntity* QMLEntity::findSymbolDeclaration(const QString& sName)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns the item named \a sName, for identifier resolution. \br\br
+    Returns the item named \a lQualifiedName, for identifier resolution. \br\br
 */
 QMLEntity* QMLEntity::findSymbolDeclarationDescending(QStringList& lQualifiedName)
 {
@@ -408,7 +408,18 @@ QString QMLEntity::listAsQualifiedName(const QStringList& sNameList)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns number of created QMLEntity objects.
+*/
 int QMLEntity::entityCount()
 {
-    return s_iEntityCount;
+    return s_vEntities.count();
+}
+
+/*!
+    Returns created QMLEntity objects.
+*/
+QList<QMLEntity*>& QMLEntity::entities()
+{
+    return s_vEntities;
 }

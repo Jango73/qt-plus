@@ -8,7 +8,7 @@ QMLArrayAccess::QMLArrayAccess(const QPoint& pPosition, QMLEntity* pLeft)
     : QMLComplexEntity(pPosition)
     , m_pLeft(pLeft)
 {
-    if (m_pLeft != nullptr) m_pLeft->setParent(this);
+    // if (m_pLeft != nullptr) m_pLeft->setParent(this);
 }
 
 //-------------------------------------------------------------------------------------------------

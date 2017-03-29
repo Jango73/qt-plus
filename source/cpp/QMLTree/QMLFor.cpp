@@ -105,7 +105,10 @@ void QMLFor::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pPa
 
     dumpNoIndentNoNewLine(stream, ")");
 
-    m_pContent->toQML(stream, pContext, this, iIdent + 1);
+    if (m_pContent != nullptr)
+    {
+        m_pContent->toQML(stream, pContext, this, iIdent + 1);
+    }
 }
 
 //-------------------------------------------------------------------------------------------------

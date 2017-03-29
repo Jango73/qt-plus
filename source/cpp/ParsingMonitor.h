@@ -17,6 +17,10 @@ public:
 
     ParsingMonitor(QMLAnalyzer* pAnalyzer);
 
+    virtual ~ParsingMonitor();
+
+    void setOutputFileName(const QString& sFileName);
+
 protected slots:
 
     void onParsingStarted(QString sFileName);
@@ -26,4 +30,9 @@ protected slots:
     void onImportParsingStarted(QString sFileName);
 
     void onAnalyzeError(QMLAnalyzerError sError);
+
+private:
+
+    QString m_sOutputFileName;
+    QFile*  m_pOutputFile;
 };

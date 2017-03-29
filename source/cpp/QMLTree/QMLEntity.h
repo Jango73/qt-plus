@@ -135,6 +135,9 @@ public:
     //!
     static int entityCount();
 
+    //!
+    static QList<QMLEntity*>& entities();
+
     //-------------------------------------------------------------------------------------------------
     // Properties
     //-------------------------------------------------------------------------------------------------
@@ -147,5 +150,5 @@ protected:
     int         m_iUsageCount;
     bool        m_bIsParenthesized;
 
-    static int  s_iEntityCount;
+    static QList<QMLEntity*>    s_vEntities;
 };
