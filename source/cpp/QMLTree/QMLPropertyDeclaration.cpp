@@ -122,29 +122,23 @@ void QMLPropertyDeclaration::toQML(QTextStream& stream, QMLTreeContext* pContext
     {
         if (m_eModifiers == mReadonly)
         {
-            dumpIndentedNoNewLine(stream, iIdent, "readonly ");
+            stream << "readonly ";
         }
         else if (m_eModifiers == mDefault)
         {
-            dumpIndentedNoNewLine(stream, iIdent, "default ");
-        }
-        else
-        {
-            dumpIndentedNoNewLine(stream, iIdent, "");
+            stream << "default ";
         }
 
-        dumpNoIndentNoNewLine(stream, "property ");
+        stream << "property ";
         m_pType->toQML(stream, pContext, this, iIdent + 1);
-        dumpNoIndentNoNewLine(stream, " ");
+        stream << " ";
         m_pName->toQML(stream, pContext, this, iIdent + 1);
 
         if (m_pContent != nullptr)
         {
-            dumpNoIndentNoNewLine(stream, ": ");
+            stream << ": ";
             m_pContent->toQML(stream, pContext, this, iIdent + 1);
         }
-
-        dumpNewLine(stream);
     }
 }
 

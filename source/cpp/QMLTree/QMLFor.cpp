@@ -82,28 +82,29 @@ void QMLFor::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pPa
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
-    dumpNoIndentNoNewLine(stream, "for (");
+    stream << "for (";
 
     if (m_pInitialization != nullptr)
     {
         m_pInitialization->toQML(stream, pContext, this, iIdent + 1);
     }
 
-    dumpNoIndentNoNewLine(stream, "; ");
+    stream << "; ";
 
     if (m_pCondition != nullptr)
     {
         m_pCondition->toQML(stream, pContext, this, iIdent + 1);
     }
 
-    dumpNoIndentNoNewLine(stream, "; ");
+    stream << "; ";
 
     if (m_pIncrementation != nullptr)
     {
         m_pIncrementation->toQML(stream, pContext, this, iIdent + 1);
     }
 
-    dumpNoIndentNoNewLine(stream, ")");
+    stream << ")";
+    stream << "\n";
 
     if (m_pContent != nullptr)
     {

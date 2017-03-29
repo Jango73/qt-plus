@@ -76,7 +76,7 @@ void QMLImport::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* 
         sText += (" as " + m_sAs);
     }
 
-    dumpIndented(stream, iIdent, sText);
+    stream << sText << " ";
 }
 
 //-------------------------------------------------------------------------------------------------

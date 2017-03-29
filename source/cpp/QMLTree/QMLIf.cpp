@@ -71,20 +71,20 @@ void QMLIf::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pPar
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
-    dumpNoIndentNoNewLine(stream, "if (");
+    stream << "if ( ";
 
     if (m_pCondition != nullptr)
     {
         m_pCondition->toQML(stream, pContext, this, iIdent + 1);
     }
 
-    dumpNoIndentNoNewLine(stream, ")");
+    stream << " ) ";
 
     m_pThen->toQML(stream, pContext, this, iIdent + 1);
 
     if (m_pElse != nullptr)
     {
-        dumpIndentedNoNewLine(stream, iIdent, "else ");
+        stream << " else ";
         m_pElse->toQML(stream, pContext, this, iIdent + 1);
     }
 }

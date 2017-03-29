@@ -1036,10 +1036,10 @@ int QMLTreeContext::parseEscape()
 
 int QMLTreeContext::getChar()
 {
-    int iChar = SCOPE.m_sStream.read(1)[0].toLatin1();
-
     if (SCOPE.m_sStream.atEnd())
         return EOF;
+
+    int iChar = SCOPE.m_sStream.read(1)[0].toLatin1();
 
     switch (iChar)
     {

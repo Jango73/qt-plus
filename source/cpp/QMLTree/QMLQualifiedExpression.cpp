@@ -89,7 +89,7 @@ void QMLQualifiedExpression::toQML(QTextStream& stream, QMLTreeContext* pContext
 
     if (m_bIsParenthesized)
     {
-        dumpNoIndentNoNewLine(stream, "(");
+        stream << " ( ";
     }
 
     bool putDot = false;
@@ -98,7 +98,7 @@ void QMLQualifiedExpression::toQML(QTextStream& stream, QMLTreeContext* pContext
     {
         if (putDot == true)
         {
-            dumpNoIndentNoNewLine(stream, ".");
+            stream << ".";
         }
 
         if (pItem != NULL)
@@ -111,6 +111,6 @@ void QMLQualifiedExpression::toQML(QTextStream& stream, QMLTreeContext* pContext
 
     if (m_bIsParenthesized)
     {
-        dumpNoIndentNoNewLine(stream, ")");
+        stream << " ) ";
     }
 }

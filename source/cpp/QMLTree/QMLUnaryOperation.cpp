@@ -86,12 +86,17 @@ void QMLUnaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QML
 
     if (m_bIsParenthesized)
     {
-        dumpNoIndentNoNewLine(stream, "(");
+        stream << " ( ";
+    }
+
+    if (m_eOperator == uoBreak)
+    {
+        stream << "\n";
     }
 
     if (m_bIsPostFix == false)
     {
-        dumpNoIndentNoNewLine(stream, QString("%1 ").arg(operatorToString(m_eOperator)));
+        stream << QString("%1 ").arg(operatorToString(m_eOperator));
 
         if (m_pExpression != nullptr)
         {
@@ -99,7 +104,7 @@ void QMLUnaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QML
 
             if (m_eOperator == uoCase)
             {
-                dumpNoIndentNoNewLine(stream, ":");
+                stream << ":";
             }
         }
     }
@@ -111,16 +116,16 @@ void QMLUnaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QML
 
             if (m_eOperator == uoCase)
             {
-                dumpNoIndentNoNewLine(stream, ":");
+                stream << ":";
             }
         }
 
-        dumpNoIndentNoNewLine(stream, QString("%1 ").arg(operatorToString(m_eOperator)));
+        stream << QString("%1 ").arg(operatorToString(m_eOperator));
     }
 
     if (m_bIsParenthesized)
     {
-        dumpNoIndentNoNewLine(stream, ")");
+        stream << " ) ";
     }
 }
 

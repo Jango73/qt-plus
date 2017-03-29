@@ -54,9 +54,9 @@ void QMLArrayAccess::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEnt
 
     foreach (QMLEntity* pEntity, m_vContents)
     {
-        dumpNoIndentNoNewLine(stream, "[");
+        stream << " [ ";
         pEntity->toQML(stream, pContext, this, iIdent + 1);
-        dumpNoIndentNoNewLine(stream, "]");
+        stream << " ] ";
     }
 }
 

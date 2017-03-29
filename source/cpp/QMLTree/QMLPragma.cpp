@@ -49,14 +49,14 @@ void QMLPragma::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* 
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
-    dumpIndentedNoNewLine(stream, iIdent, "pragma ");
+    stream << "pragma ";
 
     if (m_pStatement != nullptr)
     {
         m_pStatement->toQML(stream, pContext, this, iIdent + 1);
     }
 
-    dumpNewLine(stream);
+    stream << " ";
 }
 
 //-------------------------------------------------------------------------------------------------

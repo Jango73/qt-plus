@@ -34,7 +34,16 @@ QMLAnalyzer::QMLAnalyzer()
     , m_bIncludeImports(false)
     , m_bIncludeSubFolders(false)
     , m_bRewriteFiles(false)
+    , m_bRemoveUnreferencedSymbols(false)
 {
+    m_eEngine.globalObject().setProperty("analyzer", m_eEngine.newQObject(this));
+
+    QFile fScript(":/beautify.js");
+    if (fScript.open(QFile::ReadOnly))
+    {
+        m_sBeautifyScript = fScript.readAll();
+        fScript.close();
+    }
 }
 
 /*!
@@ -89,6 +98,14 @@ void QMLAnalyzer::setRewriteFiles(bool bValue)
 }
 
 /*!
+    Sets the remove referenced symbols flag to \a bValue.
+*/
+void QMLAnalyzer::setRemoveUnreferencedSymbols(bool bValue)
+{
+    m_bRemoveUnreferencedSymbols = bValue;
+}
+
+/*!
     Returns the name of the base folder.
 */
 QString QMLAnalyzer::folder() const
@@ -102,6 +119,11 @@ QString QMLAnalyzer::folder() const
 const QVector<QMLAnalyzerError>& QMLAnalyzer::errors() const
 {
     return m_vErrors;
+}
+
+QJSValue QMLAnalyzer::text()
+{
+    return m_eEngine.toScriptValue(m_sText);
 }
 
 bool QMLAnalyzer::analyze(CXMLNode xGrammar)
@@ -157,12 +179,23 @@ bool QMLAnalyzer::analyzeFile(const QString& sFileName)
 
         if (m_bRewriteFiles)
         {
-            QFile file(sFileName);
+            if (m_bRemoveUnreferencedSymbols)
+            {
+                pFile->removeUnreferencedSymbols(m_pContext);
+            }
 
+            QFile file(sFileName);
             if (file.open(QFile::WriteOnly))
             {
-                QTextStream stream(&file);
+                m_sText.clear();
+                QTextStream stream(&m_sText);
+
                 pFile->toQML(stream, m_pContext);
+
+                QJSValue output = m_eEngine.evaluate(m_sBeautifyScript);
+                m_sText = output.toString();
+
+                file.write(m_sText.toLatin1());
                 file.close();
             }
         }

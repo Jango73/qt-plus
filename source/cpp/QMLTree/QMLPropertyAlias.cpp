@@ -24,14 +24,23 @@ void QMLPropertyAlias::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLE
 
     if (m_pName != nullptr && m_pContent != nullptr)
     {
-        dumpIndentedNoNewLine(stream, iIdent, "property alias ");
+        if (m_eModifiers == mReadonly)
+        {
+            stream << "readonly ";
+        }
+        else if (m_eModifiers == mDefault)
+        {
+            stream << "default ";
+        }
 
-        dumpNoIndentNoNewLine(stream, "");
+        stream << "property alias ";
+
         m_pName->toQML(stream, pContext, this, iIdent + 1);
 
-        dumpNoIndentNoNewLine(stream, ": ");
+        stream << ": ";
+
         m_pContent->toQML(stream, pContext, this, iIdent + 1);
 
-        dumpNewLine(stream);
+        stream << "\n";
     }
 }

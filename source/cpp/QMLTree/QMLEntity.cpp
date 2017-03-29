@@ -179,6 +179,19 @@ void QMLEntity::incUsageCount()
 
 //-------------------------------------------------------------------------------------------------
 
+QMLEntity* QMLEntity::clone() const
+{
+    QMLEntity* pEntity = new QMLEntity(m_pPosition);
+
+    pEntity->m_vValue               = m_vValue;
+    pEntity->m_pPosition            = m_pPosition;
+    pEntity->m_pOrigin              = m_pOrigin;
+    pEntity->m_iUsageCount          = m_iUsageCount;
+    pEntity->m_bIsParenthesized     = m_bIsParenthesized;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 /*!
     Finds all symbols in the entity. \br\br
     \a pContext is the context of this entity. \br
@@ -295,7 +308,26 @@ QMLEntity* QMLEntity::findSymbolDeclarationDescending(QStringList& lQualifiedNam
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Dumps the item to \a stream using \a iIdent for indentation. \br\br
+    Remove all unreferenced declarations in this entity. \br\br
+    \a pContext is the context of this entity. \br
+*/
+void QMLEntity::removeUnreferencedSymbols(QMLTreeContext* pContext)
+{
+    QMap<QString, QMLEntity*> mMembers = members();
+
+    foreach (QString sMemberKey, mMembers.keys())
+    {
+        if (mMembers[sMemberKey] != nullptr)
+        {
+            mMembers[sMemberKey]->removeUnreferencedSymbols(pContext);
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Dumps the entity as QML to \a stream using \a iIdent for indentation. \br\br
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
@@ -330,7 +362,7 @@ void QMLEntity::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* 
 
     if (sValue.isEmpty() == false)
     {
-        dumpNoIndentNoNewLine(stream, sValue);
+        stream << sValue;
     }
 }
 

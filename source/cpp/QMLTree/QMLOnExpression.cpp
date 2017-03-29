@@ -42,14 +42,13 @@ void QMLOnExpression::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEn
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
-    dumpIndentedNoNewLine(stream, iIdent, "");
-
     if (m_pName != nullptr)
     {
-        m_pName->toQML(stream, pContext, this, iIdent + 1);
+        // m_pName->toQML(stream, pContext, this, iIdent + 1);
+        stream << m_pName->toString();
     }
 
-    dumpNoIndentNoNewLine(stream, " on ");
+    stream << " on ";
 
     if (m_pTarget != nullptr)
     {
@@ -58,7 +57,7 @@ void QMLOnExpression::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEn
 
     if (pParent != nullptr)
     {
-        dumpOpenBlock(stream, iIdent);
+        stream << " { ";
     }
 
     foreach (QMLEntity* pEntity, m_vContents)
@@ -71,8 +70,6 @@ void QMLOnExpression::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEn
 
     if (pParent != nullptr)
     {
-        dumpCloseBlock(stream, iIdent);
+        stream << " } ";
     }
-
-    // QMLComplexItem::toQML(stream, pContext, pParent, iIdent);
 }

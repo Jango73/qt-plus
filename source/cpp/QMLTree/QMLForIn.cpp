@@ -74,21 +74,22 @@ void QMLForIn::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* p
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
-    dumpNoIndentNoNewLine(stream, "for (");
+    stream << "for (";
 
     if (m_pVariable != nullptr)
     {
         m_pVariable->toQML(stream, pContext, this, iIdent + 1);
     }
 
-    dumpNoIndentNoNewLine(stream, " in ");
+    stream << " in ";
 
     if (m_pExpression != nullptr)
     {
         m_pExpression->toQML(stream, pContext, this, iIdent + 1);
     }
 
-    dumpNoIndentNoNewLine(stream, ")");
+    stream << ")";
+    stream << "\n";
 
     m_pContent->toQML(stream, pContext, this, iIdent + 1);
 }

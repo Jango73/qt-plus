@@ -26,18 +26,18 @@ void QMLConditional::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEnt
     {
         if (m_bIsParenthesized)
         {
-            dumpNoIndentNoNewLine(stream, "(");
+            stream << " ( ";
         }
 
         m_pCondition->toQML(stream, pContext, this, iIdent);
-        dumpNoIndentNoNewLine(stream, " ? ");
+        stream <<  " ? ";
         m_pThen->toQML(stream, pContext, this, iIdent);
-        dumpNoIndentNoNewLine(stream, " : ");
+        stream << " : ";
         m_pElse->toQML(stream, pContext, this, iIdent);
 
         if (m_bIsParenthesized)
         {
-            dumpNoIndentNoNewLine(stream, ")");
+            stream << " ) ";
         }
     }
 }

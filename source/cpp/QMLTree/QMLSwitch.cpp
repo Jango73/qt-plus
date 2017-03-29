@@ -62,17 +62,16 @@ void QMLSwitch::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* 
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
-    dumpNoIndentNoNewLine(stream, "switch (");
+    stream << "switch ( ";
 
     if (m_pExpression != nullptr)
     {
         m_pExpression->toQML(stream, pContext, this, iIdent + 1);
     }
 
-    dumpNoIndentNoNewLine(stream, ")");
-    dumpNewLine(stream);
+    stream << " ) ";
 
-    dumpIndented(stream, iIdent, "{");
+    stream << " { ";
 
     if (m_pCases != nullptr)
     {
@@ -84,21 +83,19 @@ void QMLSwitch::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* 
 
                 if (pUnary != nullptr && pUnary->oper() == QMLUnaryOperation::uoCase)
                 {
-                    dumpIndentedNoNewLine(stream, iIdent + 1, "");
                     pEntity->toQML(stream, pContext, this, iIdent + 1);
-                    dumpNewLine(stream);
+                    stream << "\n";
                 }
                 else
                 {
-                    dumpIndentedNoNewLine(stream, iIdent + 2, "");
                     pEntity->toQML(stream, pContext, this, iIdent + 2);
-                    dumpNewLine(stream);
+                    stream << " ";
                 }
             }
         }
     }
 
-    dumpIndented(stream, iIdent, "}");
+    stream << " } ";
 }
 
 //-------------------------------------------------------------------------------------------------

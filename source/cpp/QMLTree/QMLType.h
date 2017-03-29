@@ -13,6 +13,7 @@
 #include "QMLEntity.h"
 
 #define QVARIANT_VARIANT    ((QVariant::Type) (QVariant::UserType + 1))
+#define QVARIANT_LIST_MODEL ((QVariant::Type) (QVariant::UserType + 2))
 
 //-------------------------------------------------------------------------------------------------
 

@@ -95,6 +95,9 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
+    virtual QMLEntity* clone() const;
+
+    //!
     virtual void solveSymbols(QMLTreeContext* pContext);
 
     //!
@@ -111,6 +114,9 @@ public:
 
     //!
     virtual QMLEntity* findSymbolDeclarationDescending(QStringList& lQualifiedName);
+
+    //!
+    virtual void removeUnreferencedSymbols(QMLTreeContext* pContext);
 
     //!
     virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = nullptr, int iIdent = 0);

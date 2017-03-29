@@ -140,3 +140,6 @@ SOURCES += \
     source/cpp/QMLTree/QMLTreeContext.cpp \
     source/cpp/QMLTree/QMLGrammarParser.cpp \
     source/cpp/QMLTree/QMLAnalyzer.cpp
+
+RESOURCES += \
+    resources.qrc

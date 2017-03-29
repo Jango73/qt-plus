@@ -351,7 +351,7 @@ Item :
             pContents = new QMLItem(pContext->position(), pName);
         }
 
-        QMLOnExpression* pExpression = new QMLOnExpression(pName->position(), pTarget, pName, pContents);
+        QMLOnExpression* pExpression = new QMLOnExpression(pName->position(), pTarget, pName->clone(), pContents);
 
         $<Object>$ = pExpression;
     }

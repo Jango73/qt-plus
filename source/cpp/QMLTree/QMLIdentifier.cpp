@@ -73,5 +73,5 @@ void QMLIdentifier::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEnti
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
-    dumpNoIndentNoNewLine(stream, m_vValue.toString());
+    stream << m_vValue.toString();
 }

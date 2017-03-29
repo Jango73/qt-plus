@@ -281,31 +281,42 @@ QMLEntity* QMLComplexEntity::findSymbolDeclarationDescending(QStringList& lQuali
 
 //-------------------------------------------------------------------------------------------------
 
+void QMLComplexEntity::removeUnreferencedSymbols(QMLTreeContext* pContext)
+{
+    QMLEntity::removeUnreferencedSymbols(pContext);
+
+    foreach (QMLEntity* pEntity, m_vContents)
+    {
+        if (pEntity != nullptr)
+        {
+            pEntity->removeUnreferencedSymbols(pContext);
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void QMLComplexEntity::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
-    Q_UNUSED(pContext);
-    Q_UNUSED(pParent);
-
     if (m_bIsArray && m_vContents.count() == 0)
     {
-        dumpIndentedNoNewLine(stream, iIdent, "[]");
+        stream << "[]";
     }
     else
     {
         if (isNamed())
         {
-            dumpIndentedNoNewLine(stream, iIdent, "");
             m_pName->toQML(stream, pContext, this, iIdent);
         }
 
         if (m_bIsArray)
-            dumpOpenArray(stream, iIdent - 1);
+            stream << " [ ";
         else if (m_bIsObject || m_bIsBlock || isNamed())
-            dumpOpenBlock(stream, iIdent - 1);
+            stream << " { ";
 
         if (m_bIsParenthesized)
         {
-            dumpNoIndentNoNewLine(stream, "(");
+            stream << " ( ";
         }
 
         int iCount = 0;
@@ -318,20 +329,18 @@ void QMLComplexEntity::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLE
                 {
                     if (iCount > 0)
                     {
-                        dumpNoIndentNoNewLine(stream, ", ");
+                        stream << ", ";
                     }
-                }
-
-                if (m_bIsBlock)
-                {
-                    dumpIndentedNoNewLine(stream, iIdent, "");
                 }
 
                 pEntity->toQML(stream, pContext, this, pParent != nullptr ? iIdent + 1 : iIdent);
 
-                if (m_bIsBlock)
+                if (m_bIsArray || m_bIsObject || m_bIsArgumentList)
                 {
-                    dumpNewLine(stream);
+                }
+                else
+                {
+                    stream << "\n";
                 }
 
                 iCount++;
@@ -340,13 +349,13 @@ void QMLComplexEntity::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLE
 
         if (m_bIsParenthesized)
         {
-            dumpNoIndentNoNewLine(stream, ")");
+            stream << " ) ";
         }
 
         if (m_bIsArray)
-            dumpCloseArray(stream, iIdent);
+            stream << " ] ";
         else if (m_bIsObject || m_bIsBlock || isNamed())
-            dumpCloseBlock(stream, iIdent);
+            stream << " } ";
     }
 }
 

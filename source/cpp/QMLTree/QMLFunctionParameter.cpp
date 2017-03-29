@@ -36,7 +36,7 @@ void QMLFunctionParameter::toQML(QTextStream& stream, QMLTreeContext* pContext, 
     {
         m_pType->toQML(stream, pContext, this, iIdent + 1);
 
-        dumpNoIndentNoNewLine(stream, " ");
+        stream << " ";
     }
 
     if (m_pName != nullptr)

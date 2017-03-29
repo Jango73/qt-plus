@@ -5,6 +5,12 @@
 
 //-------------------------------------------------------------------------------------------------
 
+// Qt
+#include <QThread>
+#include <QString>
+#include <QVariant>
+#include <QJSEngine>
+
 // Foundations
 #include "../CXMLNode.h"
 #include "QMLTreeContext.h"
@@ -15,11 +21,6 @@
 #include "QMLIdentifier.h"
 #include "QMLQualifiedExpression.h"
 #include "QMLFunctionCall.h"
-
-// Qt
-#include <QThread>
-#include <QString>
-#include <QVariant>
 
 //-------------------------------------------------------------------------------------------------
 
@@ -58,6 +59,9 @@ public:
     //! Set rewrite files
     void setRewriteFiles(bool bValue);
 
+    //! Set remove unreferenced symbols
+    void setRemoveUnreferencedSymbols(bool bValue);
+
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
@@ -67,6 +71,9 @@ public:
 
     //! Return error list
     const QVector<QMLAnalyzerError>& errors() const;
+
+    //!
+    Q_INVOKABLE QJSValue text();
 
     //-------------------------------------------------------------------------------------------------
     // Control methods
@@ -128,12 +135,16 @@ protected:
 
 protected:
 
+    QJSEngine                       m_eEngine;
     QString                         m_sFolder;
     QString                         m_sFile;
+    QString                         m_sText;
+    QString                         m_sBeautifyScript;
     QMLTreeContext*                 m_pContext;
     QVector<QMLAnalyzerError>       m_vErrors;
     CXMLNode                        m_xGrammar;
     bool                            m_bIncludeImports;
     bool                            m_bIncludeSubFolders;
     bool                            m_bRewriteFiles;
+    bool                            m_bRemoveUnreferencedSymbols;
 };

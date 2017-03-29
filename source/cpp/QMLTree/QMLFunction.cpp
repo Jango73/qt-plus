@@ -219,16 +219,15 @@ QMLEntity* QMLFunction::findSymbolDeclaration(const QString& sName)
 */
 void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
-    Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
     if (m_bIsSignal)
     {
-        dumpIndentedNoNewLine(stream, iIdent, "signal ");
+        stream << "signal ";
     }
     else
     {
-        dumpIndentedNoNewLine(stream, iIdent, "function ");
+        stream << "function ";
     }
 
     if (m_pName != nullptr)
@@ -236,14 +235,15 @@ void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity
         m_pName->toQML(stream, pContext, this, iIdent + 1);
     }
 
-    dumpNoIndentNoNewLine(stream, "(");
+    stream << " ( ";
 
     if (m_pParameters != nullptr)
     {
         m_pParameters->toQML(stream, pContext, this, iIdent + 1);
     }
 
-    dumpNoIndentNoNewLine(stream, ")");
+    stream << " ) ";
+    stream << "\n";
 
     if (m_bIsSignal == false)
     {
@@ -251,10 +251,6 @@ void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity
         {
             m_pContent->toQML(stream, pContext, this, iIdent + 1);
         }
-    }
-    else
-    {
-        dumpNewLine(stream);
     }
 }
 

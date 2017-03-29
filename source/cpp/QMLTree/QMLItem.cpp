@@ -197,6 +197,28 @@ QMLEntity* QMLItem::findSymbolDeclarationDescending(QStringList& lQualifiedName)
 
 //-------------------------------------------------------------------------------------------------
 
+void QMLItem::removeUnreferencedSymbols(QMLTreeContext* pContext)
+{
+    QMLComplexEntity::removeUnreferencedSymbols(pContext);
+
+    for (int index = 0; index < m_vContents.count(); index++)
+    {
+        QMLPropertyDeclaration* pDeclaration = dynamic_cast<QMLPropertyDeclaration*>(m_vContents[index]);
+        QMLPropertyAssignment* pAssignment = dynamic_cast<QMLPropertyAssignment*>(m_vContents[index]);
+
+        if (pDeclaration != nullptr && pAssignment == nullptr)
+        {
+            if (pDeclaration->name() != nullptr && pDeclaration->name()->usageCount() == 0)
+            {
+                m_vContents.removeAt(index);
+                index--;
+            }
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
 CXMLNode QMLItem::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
     CXMLNode xNode = QMLComplexEntity::toXMLNode(pContext, pParent);

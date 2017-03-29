@@ -67,7 +67,7 @@ void QMLFunctionCall::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEn
     if (m_pName != NULL)
         m_pName->toQML(stream, pContext, this, iIdent);
 
-    dumpNoIndentNoNewLine(stream, "(");
+    stream << " ( ";
 
     if (m_pArguments != NULL)
     {
@@ -77,7 +77,7 @@ void QMLFunctionCall::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEn
         {
             if (putDot == true)
             {
-                dumpNoIndentNoNewLine(stream, ", ");
+                stream << ", ";
             }
 
             if (pEntity != NULL)
@@ -89,7 +89,7 @@ void QMLFunctionCall::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEn
         }
     }
 
-    dumpNoIndentNoNewLine(stream, ")");
+    stream << " ) ";
 }
 
 //-------------------------------------------------------------------------------------------------

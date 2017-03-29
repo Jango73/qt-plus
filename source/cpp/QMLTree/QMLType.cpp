@@ -51,7 +51,7 @@ void QMLType::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pP
     Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
-    dumpNoIndentNoNewLine(stream, typeToString(m_vType));
+    stream << typeToString(m_vType);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -85,8 +85,12 @@ QString QMLType::typeToString(QVariant::Type eType)
             return "color";
         case QVariant::Font:
             return "font";
+        case QVariant::Point:
+            return "point";
         case QVARIANT_VARIANT:
             return "variant";
+        case QVARIANT_LIST_MODEL:
+            return "ListModel";
     }
 
     return "";
@@ -104,13 +108,15 @@ QMLType* QMLType::fromQMLEntity(QMLEntity* pEntity)
         QString sType = pEntity->value().toString().toLower();
 
         if (sType == "var") return new QMLType(QPoint(), QVariant::Invalid);
-        if (sType == "variant") return new QMLType(QPoint(), (QVariant::Type) QVARIANT_VARIANT);
         if (sType == "bool") return new QMLType(QPoint(), QVariant::Bool);
         if (sType == "int") return new QMLType(QPoint(), QVariant::Int);
         if (sType == "real") return new QMLType(QPoint(), QVariant::Double);
         if (sType == "string") return new QMLType(QPoint(), QVariant::String);
         if (sType == "color") return new QMLType(QPoint(), QVariant::Color);
         if (sType == "font") return new QMLType(QPoint(), QVariant::Font);
+        if (sType == "point") return new QMLType(QPoint(), QVariant::Point);
+        if (sType == "variant") return new QMLType(QPoint(), (QVariant::Type) QVARIANT_VARIANT);
+        if (sType == "ListModel") return new QMLType(QPoint(), (QVariant::Type) QVARIANT_LIST_MODEL);
     }
 
     return new QMLType(QPoint(), QVariant::Invalid);
