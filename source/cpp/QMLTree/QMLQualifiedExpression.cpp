@@ -92,7 +92,22 @@ void QMLQualifiedExpression::toQML(QTextStream& stream, QMLTreeContext* pContext
         dumpNoIndentNoNewLine(stream, "(");
     }
 
-    dumpNoIndentNoNewLine(stream, toString());
+    bool putDot = false;
+
+    foreach (QMLEntity* pItem, m_vContents)
+    {
+        if (putDot == true)
+        {
+            dumpNoIndentNoNewLine(stream, ".");
+        }
+
+        if (pItem != NULL)
+        {
+            pItem->toQML(stream, pContext, this, iIdent);
+        }
+
+        putDot = true;
+    }
 
     if (m_bIsParenthesized)
     {

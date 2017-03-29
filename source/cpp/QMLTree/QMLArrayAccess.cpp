@@ -8,7 +8,6 @@ QMLArrayAccess::QMLArrayAccess(const QPoint& pPosition, QMLEntity* pLeft)
     : QMLComplexEntity(pPosition)
     , m_pLeft(pLeft)
 {
-    // if (m_pLeft != nullptr) m_pLeft->setParent(this);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -46,7 +45,6 @@ QMap<QString, QMLEntity*> QMLArrayAccess::members()
 */
 void QMLArrayAccess::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
 {
-    Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
     if (m_pLeft != nullptr)
@@ -54,7 +52,7 @@ void QMLArrayAccess::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEnt
         m_pLeft->toQML(stream, pContext, this, iIdent + 1);
     }
 
-    foreach(QMLEntity* pEntity, m_vContents)
+    foreach (QMLEntity* pEntity, m_vContents)
     {
         dumpNoIndentNoNewLine(stream, "[");
         pEntity->toQML(stream, pContext, this, iIdent + 1);

@@ -41,6 +41,8 @@ int yyerror (void*, char*);
 
 #define SAFE_DELETE(a)  if ((a) != nullptr) delete (a);
 
+#define ENSURE_NON_NULL(a)  { if (a == nullptr) a = new QMLEntity(pContext->position()); }
+
 // #define PARSER_TRACE(state, rule)  { qDebug() << state " : " << rule; }
 #define PARSER_TRACE(state, rule)
 
@@ -968,8 +970,11 @@ JSFunctionParameter :
     {
         PARSER_TRACE("JSFunctionParameter", "Identifier Identifier");
 
-        QMLType* pType = QMLType::fromQMLEntity(dynamic_cast<QMLEntity*>($<Object>1));
+        QMLEntity* pTypeIdentifier = $<Object>1;
+        QMLType* pType = QMLType::fromQMLEntity(pTypeIdentifier);
         QMLEntity* pName = dynamic_cast<QMLEntity*>($<Object>2);
+
+        SAFE_DELETE(pTypeIdentifier);
 
         if (pType != nullptr && pName != nullptr)
         {
@@ -1327,6 +1332,22 @@ JSExpressionOpt :
     }
 ;
 
+JSVariablesOrExpressionOpt :
+    Empty
+    {
+        PARSER_TRACE("JSVariablesOrExpressionOpt", "Empty");
+
+        $<Object>$ = $<Object>1;
+    }
+    |
+    JSVariablesOrExpression
+    {
+        PARSER_TRACE("JSVariablesOrExpressionOpt", "JSVariablesOrExpression");
+
+        $<Object>$ = $<Object>1;
+    }
+;
+
 JSVariablesOrExpression :
     TOKEN_VAR JSVariables
     {
@@ -1364,50 +1385,6 @@ JSVariablesOrExpression :
     }
 ;
 
-JSVariablesOrExpressionOpt :
-    Empty
-    {
-        PARSER_TRACE("JSVariablesOrExpressionOpt", "Empty");
-
-        $<Object>$ = nullptr;
-    }
-    |
-    TOKEN_VAR JSVariables
-    {
-        PARSER_TRACE("JSVariablesOrExpressionOpt", "TOKEN_VAR JSVariables");
-
-        QMLEntity* pVariable = $<Object>2;
-        QMLComplexEntity* pVariables = dynamic_cast<QMLComplexEntity*>($<Object>2);
-
-        if (pVariables != nullptr)
-        {
-            QMLVariableDeclaration* pDeclaration = new QMLVariableDeclaration(pVariables->position());
-
-            pDeclaration->setIsArgumentList(true);
-            pDeclaration->contents() = pVariables->grabContents();
-
-            SAFE_DELETE(pVariables);
-
-            $<Object>$ = pDeclaration;
-        }
-        else
-        {
-            QMLVariableDeclaration* pDeclaration = new QMLVariableDeclaration(pVariable->position());
-
-            pDeclaration->contents() << pVariable;
-
-            $<Object>$ = pDeclaration;
-        }
-    }
-    |
-    JSExpression
-    {
-        PARSER_TRACE("JSVariablesOrExpressionOpt", "JSExpression");
-
-        $<Object>$ = $<Object>1;
-    }
-;
-
 JSVariables :
     JSVariable
     {
@@ -1437,6 +1414,9 @@ JSVariables :
         else
         {
             $<Object>$ = nullptr;
+
+            SAFE_DELETE(pVariables);
+            SAFE_DELETE(pVariable);
         }
     }
 ;
@@ -1456,17 +1436,10 @@ JSVariable :
         QMLEntity* pLeft = $<Object>1;
         QMLEntity* pRight = $<Object>3;
 
-        if (pLeft != nullptr && pRight != nullptr)
-        {
-            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
-        }
-        else
-        {
-            $<Object>$ = new QMLEntity(pContext->position());
+        ENSURE_NON_NULL(pLeft);
+        ENSURE_NON_NULL(pRight);
 
-            SAFE_DELETE(pLeft);
-            SAFE_DELETE(pRight);
-        }
+        $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
     }
     |
     Identifier TOKEN_ASSIGN JSObject
@@ -1476,17 +1449,10 @@ JSVariable :
         QMLEntity* pLeft = $<Object>1;
         QMLEntity* pRight = $<Object>3;
 
-        if (pLeft != nullptr && pRight != nullptr)
-        {
-            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
-        }
-        else
-        {
-            $<Object>$ = new QMLEntity(pContext->position());
+        ENSURE_NON_NULL(pLeft);
+        ENSURE_NON_NULL(pRight);
 
-            SAFE_DELETE(pLeft);
-            SAFE_DELETE(pRight);
-        }
+        $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
     }
 ;
 
@@ -1502,13 +1468,17 @@ JSExpression :
     {
         PARSER_TRACE("JSExpression", "JSExpressionSingle ',' JSExpression");
 
-        QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>($<Object>1);
-        QMLEntity* pExpression2 = $<Object>2;
+        QMLEntity* pExpression1 = $<Object>1;
+        QMLEntity* pExpression2 = $<Object>3;
 
-        if (pComplex != nullptr)
-        {
-            pComplex->contents() << pExpression2;
-        }
+        ENSURE_NON_NULL(pExpression1);
+        ENSURE_NON_NULL(pExpression2);
+
+        QMLComplexEntity* pComplex = QMLComplexEntity::fromEntity(pExpression1);
+
+        pComplex->setIsArgumentList(true);
+
+        pComplex->contents() << pExpression2;
 
         $<Object>$ = pComplex;
     }

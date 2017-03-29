@@ -278,11 +278,12 @@ QMLTreeContext::~QMLTreeContext()
         delete pFile;
     }
 
-    // qDebug() << "Entities : " << QMLEntity::entityCount();
+    /*
     foreach (QMLEntity* pEntity, QMLEntity::entities())
     {
-        qWarning() << "Leaked entity : " << pEntity << " ( " << pEntity->toString() + " )";
+        qWarning() << QString("Leaked entity : ") + QString::number((qint64)pEntity) + " ( " + pEntity->toString() + " )";
     }
+    */
 }
 
 //-------------------------------------------------------------------------------------------------

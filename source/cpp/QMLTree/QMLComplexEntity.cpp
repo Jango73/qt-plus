@@ -171,7 +171,11 @@ QMap<QString, QMLEntity*> QMLComplexEntity::members()
 
 QVector<QMLEntity*> QMLComplexEntity::grabContents()
 {
-    QVector<QMLEntity*> vReturnValue = m_vContents;
+    QVector<QMLEntity*> vReturnValue;
+    foreach (QMLEntity* pEntity, m_vContents)
+    {
+        vReturnValue << pEntity;
+    }
     m_vContents.clear();
     return vReturnValue;
 }
