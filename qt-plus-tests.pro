@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT += gui xml network serialport positioning
+QT += gui xml network serialport positioning qml quickwidgets
 
 CONFIG   += console
 

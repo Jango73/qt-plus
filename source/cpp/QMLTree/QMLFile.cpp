@@ -22,7 +22,6 @@
 */
 QMLFile::QMLFile(const QPoint& pPosition, QMLTreeContext* pContext, const QString& sFileName)
     : QMLComplexEntity(pPosition)
-    , m_pContext(pContext)
     , m_sFileName(sFileName)
     , m_bParsed(false)
     , m_bIsSingleton(false)

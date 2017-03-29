@@ -813,6 +813,29 @@ SignalDeclaration :
 ;
 
 SignalDeclarationNoColon :
+    TOKEN_SIGNAL Identifier
+    {
+        PARSER_TRACE("SignalDeclarationNoColon", "TOKEN_SIGNAL Identifier");
+
+        QMLEntity* pName = $<Object>2;
+        QMLEntity* pParameters = new QMLEntity(pContext->position());
+
+        if (pName != nullptr)
+        {
+            QMLFunction* pFunction = new QMLFunction(pName->position(), pName, pParameters, nullptr);
+            pFunction->setIsSignal(true);
+
+            $<Object>$ = pFunction;
+        }
+        else
+        {
+            SAFE_DELETE(pName);
+            SAFE_DELETE(pParameters);
+
+            $<Object>$ = nullptr;
+        }
+    }
+    |
     TOKEN_SIGNAL Identifier JSFunctionParameterList
     {
         PARSER_TRACE("SignalDeclarationNoColon", "TOKEN_SIGNAL Identifier JSFunctionParameterList");

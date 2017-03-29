@@ -41,3 +41,5 @@ Makefile.*
 *.Debug
 *.output
 /_trash
+/debug/*
+/release/*

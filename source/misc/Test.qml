@@ -17,6 +17,9 @@ Item {
 
     property string property: ""
 
+    signal sig1(string someParameter1)
+    signal sig2
+
     states: [
         State {
             name: "state1"

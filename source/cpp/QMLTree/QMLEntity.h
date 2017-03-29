@@ -15,6 +15,8 @@
 #include "../CDumpable.h"
 #include "../CXMLNodable.h"
 
+#define TRACK_ENTITIES
+
 //-------------------------------------------------------------------------------------------------
 // Forward declarations
 
@@ -142,6 +144,12 @@ public:
     static int entityCount();
 
     //!
+    static int createdEntities();
+
+    //!
+    static int deletedEntities();
+
+    //!
     static QList<QMLEntity*>& entities();
 
     //-------------------------------------------------------------------------------------------------
@@ -157,4 +165,6 @@ protected:
     bool        m_bIsParenthesized;
 
     static QList<QMLEntity*>    s_vEntities;
+    static int                  s_iCreatedEntities;
+    static int                  s_iDeletedEntities;
 };

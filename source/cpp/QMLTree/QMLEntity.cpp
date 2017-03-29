@@ -16,6 +16,8 @@
 //-------------------------------------------------------------------------------------------------
 
 QList<QMLEntity*> QMLEntity::s_vEntities;
+int QMLEntity::s_iCreatedEntities = 0;
+int QMLEntity::s_iDeletedEntities = 0;
 
 //-------------------------------------------------------------------------------------------------
 
@@ -29,7 +31,10 @@ QMLEntity::QMLEntity(const QPoint& pPosition)
     , m_iUsageCount(0)
     , m_bIsParenthesized(false)
 {
+#ifdef TRACK_ENTITIES
+    s_iCreatedEntities++;
     s_vEntities << this;
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -44,7 +49,10 @@ QMLEntity::QMLEntity(const QPoint& pPosition, const QVariant& value)
     , m_iUsageCount(0)
     , m_bIsParenthesized(false)
 {
+#ifdef TRACK_ENTITIES
+    s_iCreatedEntities++;
     s_vEntities << this;
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -54,7 +62,10 @@ QMLEntity::QMLEntity(const QPoint& pPosition, const QVariant& value)
 */
 QMLEntity::~QMLEntity()
 {
+#ifdef TRACK_ENTITIES
+    s_iDeletedEntities++;
     s_vEntities.removeAll(this);
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -446,6 +457,22 @@ QString QMLEntity::listAsQualifiedName(const QStringList& sNameList)
 int QMLEntity::entityCount()
 {
     return s_vEntities.count();
+}
+
+/*!
+    Returns number of created QMLEntity objects.
+*/
+int QMLEntity::createdEntities()
+{
+    return s_iCreatedEntities;
+}
+
+/*!
+    Returns number of deleted QMLEntity objects.
+*/
+int QMLEntity::deletedEntities()
+{
+    return s_iDeletedEntities;
 }
 
 /*!

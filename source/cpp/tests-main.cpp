@@ -7,6 +7,9 @@
 #include "QMLTree/QMLAnalyzer.h"
 #include "ParsingMonitor.h"
 
+QString sInputFile = "../source/misc/Test.qml";
+QString sGrammarFile = "../source/misc/CodingRules.xml";
+
 QString Vector3DString(const QVector3D& vec)
 {
     return "<" + QString::number(vec.x(), 'f', 2) + ", " + QString::number(vec.y(), 'f', 2) + ", " + QString::number(vec.z(), 'f', 2) + ">";
@@ -17,7 +20,7 @@ QString GeoCoordinateString(const QGeoCoordinate& vec)
     return "<" + QString::number(vec.latitude(), 'f', 6) + ", " + QString::number(vec.longitude(), 'f', 6) + ", " + QString::number(vec.altitude(), 'f', 6) + ">";
 }
 
-int main()
+void runGeoCoordTests()
 {
     QGeoCoordinate Pos;
     QGeoCoordinate Ref;
@@ -99,8 +102,13 @@ int main()
     vPosition = QVector3D(0.0, -98819.0, 1101919.88);
     Pos = CGeoUtilities::getInstance()->Vector3DToGeoCoordinate(vPosition, Ref);
     qDebug() << "ref 20.0, 0.0 and pos 0.0, -98819.0, 1101919.88 = " << GeoCoordinateString(Pos);
+}
 
-    // QTree
+void runQTreeTests()
+{
+    qDebug() << "";
+    qDebug() << "--------------------------------------------------------------------";
+
     QTree<QString> tTree("Root");
 
     tTree.append("Item 10");
@@ -148,53 +156,64 @@ int main()
     qDebug() << "Item25 parent value = " << tTree.getChildren()[1].getChildren()[4].parent()->value();
 
     // tTree.assignParents();
+}
 
+void runQMLTreeTests()
+{
     qDebug() << "";
     qDebug() << "--------------------------------------------------------------------";
 
-    // QMLTree
-    QString sInputFile = "../source/misc/Test.qml";
-    QString sGrammarFile = "../source/misc/CodingRules.xml";
+    QMLTreeContext* pContext = new QMLTreeContext();
+    pContext->addFile(sInputFile);
+    pContext->setIncludeImports(false);
 
-    QMLTreeContext context;
-    context.addFile(sInputFile);
-    context.setIncludeImports(false);
-    QMLTreeContext::EParseError error = context.parse();
+    QMLTreeContext::EParseError error = pContext->parse();
 
     CDumpable::m_bJavaStyle = true;
 
     if (error == QMLTreeContext::peSuccess)
     {
-        if (context.files().count() > 0)
+        if (pContext->files().count() > 0)
         {
-            context.files().first()->toXMLNode(&context, NULL).saveXMLToFile("Test_Output.xml");
+            pContext->files().first()->toXMLNode(pContext, nullptr).saveXMLToFile("Test_Output.xml");
 
             QFile file("Test_Output.qml");
 
             if (file.open(QFile::WriteOnly))
             {
                 QTextStream stream(&file);
-                context.files().first()->toQML(stream, &context);
+                pContext->files().first()->toQML(stream, pContext);
                 file.close();
             }
         }
     }
 
-    // QMLAnalyzer
-    QMLAnalyzer tAnalyzer;
+    delete pContext;
+}
 
-    tAnalyzer.setFile(sInputFile);
-    tAnalyzer.analyze(CXMLNode::load(sGrammarFile));
+void runQMLAnalyzerTests()
+{
+    qDebug() << "";
+    qDebug() << "--------------------------------------------------------------------";
+
+    QMLAnalyzer* pAnalyzer = new QMLAnalyzer();
+
+    pAnalyzer->setFile(sInputFile);
+    pAnalyzer->analyze(CXMLNode::load(sGrammarFile));
 
     qDebug() << "";
     qDebug() << "--------------------------------------------------------------------";
 
-    foreach (QMLAnalyzerError tError, tAnalyzer.errors())
+    foreach (QMLAnalyzerError tError, pAnalyzer->errors())
     {
         qDebug() << tError.toString();
     }
 
-    /*
+    delete pAnalyzer;
+}
+
+void runThreadedQMLAnalyzerTests()
+{
     qDebug() << "";
     qDebug() << "--------------------------------------------------------------------";
 
@@ -208,11 +227,9 @@ int main()
 
     while (tAnalyzer.isRunning())
     {
-        QCoreApplication::processEvents();
+        QCoreApplication::instance()->processEvents();
     }
-    */
 
-    /*
     qDebug() << "";
     qDebug() << "--------------------------------------------------------------------";
 
@@ -220,7 +237,17 @@ int main()
     {
         qDebug() << tError.toString();
     }
-    */
+}
+
+int main()
+{
+    QCoreApplication::instance()->processEvents();
+
+    runGeoCoordTests();
+    runQTreeTests();
+    runQMLTreeTests();
+    // runQMLAnalyzerTests();
+    // runThreadedQMLAnalyzerTests();
 
     return 0;
 }

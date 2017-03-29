@@ -76,8 +76,7 @@ public:
 
 protected:
 
-    QMLTreeContext*     m_pContext;
-    QString             m_sFileName;
-    bool                m_bParsed;
-    bool                m_bIsSingleton;
+    QString m_sFileName;
+    bool    m_bParsed;
+    bool    m_bIsSingleton;
 };

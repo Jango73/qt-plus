@@ -278,12 +278,18 @@ QMLTreeContext::~QMLTreeContext()
         delete pFile;
     }
 
-    /*
+    m_sScopes.clear();
+    m_vFiles.clear();
+
+#ifdef TRACK_ENTITIES
+    qWarning() << QString("Created entities : %1").arg(QMLEntity::createdEntities());
+    qWarning() << QString("Deleted entities : %1").arg(QMLEntity::deletedEntities());
+
     foreach (QMLEntity* pEntity, QMLEntity::entities())
     {
-        qWarning() << QString("Leaked entity : ") + QString::number((qint64)pEntity) + " ( " + pEntity->toString() + " )";
+        qWarning() << QString("Leaked entity : ") + QString::number((qint64)pEntity) + " < " + pEntity->metaObject()->className() + " > " + " ( " + pEntity->toString() + " )";
     }
-    */
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
