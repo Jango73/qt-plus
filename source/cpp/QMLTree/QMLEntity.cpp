@@ -190,6 +190,9 @@ void QMLEntity::incUsageCount()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns a clone of this entity.
+*/
 QMLEntity* QMLEntity::clone() const
 {
     QMLEntity* pEntity = new QMLEntity(m_pPosition);

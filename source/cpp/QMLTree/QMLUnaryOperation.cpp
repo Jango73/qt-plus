@@ -57,6 +57,8 @@ QString QMLUnaryOperation::operatorToString(EUnaryOperator eOperator) const
             return "-";
         case uoNot:
             return "!";
+        case uoNotNot:
+            return "!!";
         case uoTypeof:
             return "typeof";
         case uoNew:

@@ -31,6 +31,7 @@ public:
         uoDecrement,
         uoMinus,
         uoNot,
+        uoNotNot,
         uoTypeof,
         uoNew
     };

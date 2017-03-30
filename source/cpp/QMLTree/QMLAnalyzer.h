@@ -7,6 +7,7 @@
 
 // Qt
 #include <QThread>
+#include <QMutex>
 #include <QString>
 #include <QVariant>
 #include <QJSEngine>
@@ -72,6 +73,9 @@ public:
     //! Return error list
     const QVector<QMLAnalyzerError>& errors() const;
 
+    //! Return the parse context
+    QMLTreeContext* context();
+
     //!
     Q_INVOKABLE QJSValue text();
 
@@ -84,6 +88,9 @@ public:
 
     //!
     void threadedAnalyze(CXMLNode xGrammar);
+
+    //!
+    void stopThreadedAnalyze();
 
     //!
     bool analyzeFile(const QString& sFileName);
@@ -135,6 +142,7 @@ protected:
 
 protected:
 
+    QMutex                          m_mContextMutex;
     QJSEngine                       m_eEngine;
     QString                         m_sFolder;
     QString                         m_sFile;
@@ -147,4 +155,5 @@ protected:
     bool                            m_bIncludeSubFolders;
     bool                            m_bRewriteFiles;
     bool                            m_bRemoveUnreferencedSymbols;
+    bool                            m_bStopAnalyzeRequested;
 };

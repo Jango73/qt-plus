@@ -4,6 +4,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QRegExp>
+#include <QMutexLocker>
 
 // Application
 #include "QMLAnalyzer.h"
@@ -30,11 +31,13 @@
 */
 QMLAnalyzer::QMLAnalyzer()
     : QThread(NULL)
+    , m_mContextMutex(QMutex::Recursive)
     , m_pContext(nullptr)
     , m_bIncludeImports(false)
     , m_bIncludeSubFolders(false)
     , m_bRewriteFiles(false)
     , m_bRemoveUnreferencedSymbols(false)
+    , m_bStopAnalyzeRequested(false)
 {
     m_eEngine.globalObject().setProperty("analyzer", m_eEngine.newQObject(this));
 
@@ -121,6 +124,19 @@ const QVector<QMLAnalyzerError>& QMLAnalyzer::errors() const
     return m_vErrors;
 }
 
+/*!
+    Returns the parsing context.
+*/
+QMLTreeContext* QMLAnalyzer::context()
+{
+    QMutexLocker locker(&m_mContextMutex);
+
+    return m_pContext;
+}
+
+/*!
+    Returns the current code text for JS scripts.
+*/
 QJSValue QMLAnalyzer::text()
 {
     return m_eEngine.toScriptValue(m_sText);
@@ -130,18 +146,22 @@ bool QMLAnalyzer::analyze(CXMLNode xGrammar)
 {
     m_xGrammar = xGrammar;
 
-    if (m_pContext != nullptr)
     {
-        delete m_pContext;
-    }
+        QMutexLocker locker(&m_mContextMutex);
 
-    m_pContext = new QMLTreeContext();
+        if (m_pContext != nullptr)
+        {
+            delete m_pContext;
+        }
+
+        m_pContext = new QMLTreeContext();
+
+        m_vErrors.clear();
+    }
 
     connect(m_pContext, SIGNAL(parsingStarted(QString)), this, SIGNAL(parsingStarted(QString)), Qt::DirectConnection);
     connect(m_pContext, SIGNAL(parsingFinished(QString)), this, SIGNAL(parsingFinished(QString)), Qt::DirectConnection);
     connect(m_pContext, SIGNAL(importParsingStarted(QString)), this, SIGNAL(importParsingStarted(QString)), Qt::DirectConnection);
-
-    m_vErrors.clear();
 
     if (m_sFolder.isEmpty() == false)
     {
@@ -163,6 +183,21 @@ void QMLAnalyzer::threadedAnalyze(CXMLNode xGrammar)
 
         start();
     }
+}
+
+void QMLAnalyzer::stopThreadedAnalyze()
+{
+    if (isRunning())
+    {
+        m_bStopAnalyzeRequested = true;
+        wait();
+        m_bStopAnalyzeRequested = false;
+    }
+}
+
+void QMLAnalyzer::run()
+{
+    analyze(m_xGrammar);
 }
 
 bool QMLAnalyzer::analyzeFile(const QString& sFileName)
@@ -210,13 +245,11 @@ bool QMLAnalyzer::analyzeFile(const QString& sFileName)
     return true;
 }
 
-void QMLAnalyzer::run()
-{
-    analyze(m_xGrammar);
-}
-
 bool QMLAnalyzer::analyze_Recurse(QString sDirectory)
 {
+    if (m_bStopAnalyzeRequested)
+        return false;
+
     QStringList slNameFilter;
     slNameFilter << "*.qml" << "*.js";
 
@@ -230,6 +263,9 @@ bool QMLAnalyzer::analyze_Recurse(QString sDirectory)
         QString sFullName = QString("%1/%2").arg(sDirectory).arg(sFile);
 
         analyzeFile(sFullName);
+
+        if (m_bStopAnalyzeRequested)
+            return false;
     }
 
     if (m_bIncludeSubFolders)
@@ -241,7 +277,10 @@ bool QMLAnalyzer::analyze_Recurse(QString sDirectory)
         {
             QString sFullName = QString("%1/%2").arg(sDirectory).arg(sNewDirectory);
 
-            analyze_Recurse(sFullName);
+            if (analyze_Recurse(sFullName) == false)
+            {
+                return false;
+            }
         }
     }
 

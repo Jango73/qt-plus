@@ -127,10 +127,11 @@
 #define TOKEN_LOGICAL_AND       339
 #define TOKEN_LOGICAL_OR        340
 #define TOKEN_NOT               341
-#define TOKEN_INC               342
-#define TOKEN_DEC               343
-#define TOKEN_COMPLEMENT        344
-#define TOKEN_DIMENSION         345
+#define TOKEN_NOT_NOT           342
+#define TOKEN_INC               343
+#define TOKEN_DEC               344
+#define TOKEN_COMPLEMENT        345
+#define TOKEN_DIMENSION         346
 
 #define TOKEN_IMPORT            500
 #define TOKEN_PROPERTY          501
@@ -794,11 +795,16 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
         UNGET(d); return TOKEN_ASSIGN;
     }
 
-    // Not, not equals
+    // Not, not not, not equals
     if (c == '!')
     {
         STORE(c); GET(d);
-        if (d == '=')
+        if (d == '!')
+        {
+            STORE(d);
+            return TOKEN_NOT_NOT;
+        }
+        else if (d == '=')
         {
             STORE(d); GET(e);
             if (e == '=')

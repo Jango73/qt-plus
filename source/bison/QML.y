@@ -94,10 +94,11 @@ int yyerror (void*, char*);
 %token TOKEN_LOGICAL_AND        339
 %token TOKEN_LOGICAL_OR         340
 %token TOKEN_NOT                341
-%token TOKEN_INC                342
-%token TOKEN_DEC                343
-%token TOKEN_COMPLEMENT         344
-%token TOKEN_DIMENSION          345
+%token TOKEN_NOT_NOT            342
+%token TOKEN_INC                343
+%token TOKEN_DEC                344
+%token TOKEN_COMPLEMENT         345
+%token TOKEN_DIMENSION          346
 
 %token TOKEN_IMPORT             500
 %token TOKEN_PROPERTY           501
@@ -269,7 +270,7 @@ ImportStatement :
         QMLEntity* pName = $<Object>2;
         QMLEntity* pAs = $<Object>4;
 
-        if (pName != nullptr)
+        if (pName != nullptr && pAs != nullptr)
         {
             $<Object>$ = new QMLImport(pContext->position(), pContext, pName->value().toString(), "", pAs->value().toString());
         }
@@ -2070,6 +2071,13 @@ JSUnaryExpression :
         QMLEntity* pEntity = $<Object>2;
 
         $<Object>$ = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoNot);
+    }
+    |
+    TOKEN_NOT_NOT JSMemberExpression
+    {
+        QMLEntity* pEntity = $<Object>2;
+
+        $<Object>$ = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoNotNot);
     }
     |
     TOKEN_TYPEOF JSMemberExpression
