@@ -854,7 +854,6 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
 
     if (c == '"')
     {
-        c = ' ';
         while (1)
         {
           GET(c);
@@ -870,7 +869,6 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
 
     if (c == '\'')
     {
-        c = ' ';
         while (1)
         {
           GET(c);

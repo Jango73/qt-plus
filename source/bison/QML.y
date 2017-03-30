@@ -1423,7 +1423,7 @@ JSVariables :
 
         QMLEntity* pVariable = $<Object>1;
 
-        QMLComplexEntity* pVariables = new QMLComplexEntity(pVariables->position());
+        QMLComplexEntity* pVariables = new QMLComplexEntity(pVariable->position());
         pVariables->contents() << pVariable;
 
         $<Object>$ = pVariables;
