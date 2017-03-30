@@ -39,7 +39,7 @@ QMLAnalyzer::QMLAnalyzer()
     , m_bRemoveUnreferencedSymbols(false)
     , m_bStopAnalyzeRequested(false)
 {
-    m_eEngine.globalObject().setProperty("analyzer", m_eEngine.newQObject(this));
+    m_eEngine.globalObject().setProperty("analyzer", m_eEngine.newQObject(new QMLAnalyzerWrapper(this)));
 
     QFile fScript(":/beautify.js");
     if (fScript.open(QFile::ReadOnly))
@@ -54,6 +54,8 @@ QMLAnalyzer::QMLAnalyzer()
 */
 QMLAnalyzer::~QMLAnalyzer()
 {
+    m_eEngine.globalObject().setProperty("analyzer", m_eEngine.newQObject(nullptr));
+
     if (m_pContext != nullptr)
     {
         delete m_pContext;
@@ -132,14 +134,6 @@ QMLTreeContext* QMLAnalyzer::context()
     QMutexLocker locker(&m_mContextMutex);
 
     return m_pContext;
-}
-
-/*!
-    Returns the current code text for JS scripts.
-*/
-QJSValue QMLAnalyzer::text()
-{
-    return m_eEngine.toScriptValue(m_sText);
 }
 
 bool QMLAnalyzer::analyze(CXMLNode xGrammar)

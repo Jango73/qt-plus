@@ -29,6 +29,8 @@ class QTPLUSSHARED_EXPORT QMLAnalyzer : public QThread
 {
     Q_OBJECT
 
+    friend class QMLAnalyzerWrapper;
+
 public:
 
     //-------------------------------------------------------------------------------------------------
@@ -75,9 +77,6 @@ public:
 
     //! Return the parse context
     QMLTreeContext* context();
-
-    //!
-    Q_INVOKABLE QJSValue text();
 
     //-------------------------------------------------------------------------------------------------
     // Control methods
@@ -156,4 +155,29 @@ protected:
     bool                            m_bRewriteFiles;
     bool                            m_bRemoveUnreferencedSymbols;
     bool                            m_bStopAnalyzeRequested;
+};
+
+//-------------------------------------------------------------------------------------------------
+
+class UNISLIBSHARED_EXPORT QMLAnalyzerWrapper : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    //!
+    QMLAnalyzerWrapper(QMLAnalyzer* pAnalyzer)
+        : m_pAnalyzer(pAnalyzer)
+    {
+    }
+
+    //!
+    Q_INVOKABLE QJSValue text()
+    {
+        return m_pAnalyzer->m_eEngine.toScriptValue(m_pAnalyzer->m_sText);
+    }
+
+protected:
+
+    QMLAnalyzer* m_pAnalyzer;
 };
