@@ -132,6 +132,8 @@ public:
         ~QMLScope()
         {
             m_fInputFile.close();
+
+            delete m_pCurrentTokenValue;
         }
 
         QMLScope(const QMLScope& target)

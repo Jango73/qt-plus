@@ -283,12 +283,16 @@ QMLTreeContext::~QMLTreeContext()
     m_vFiles.clear();
 
 #ifdef TRACK_ENTITIES
-    qWarning() << QString("Created entities : %1").arg(QMLEntity::createdEntities());
-    qWarning() << QString("Deleted entities : %1").arg(QMLEntity::deletedEntities());
 
-    foreach (QMLEntity* pEntity, QMLEntity::entities())
+    if (QMLEntity::createdEntities() != QMLEntity::deletedEntities())
     {
-        qWarning() << QString("Leaked entity : ") + QString::number((qint64)pEntity) + " < " + pEntity->metaObject()->className() + " > " + " ( " + pEntity->toString() + " )";
+        qWarning() << QString("Created entities : %1").arg(QMLEntity::createdEntities());
+        qWarning() << QString("Deleted entities : %1").arg(QMLEntity::deletedEntities());
+
+        foreach (QMLEntity* pEntity, QMLEntity::entities())
+        {
+            qWarning() << QString("Leaked entity : ") + QString::number((qint64)pEntity) + " < " + pEntity->metaObject()->className() + " > " + " ( " + pEntity->toString() + " )";
+        }
     }
 #endif
 }
@@ -859,6 +863,7 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
           if (c == '\\') c = parseEscape();
           STORE(c);
         }
+
         LVAL->String = SCOPE.m_pCurrentTokenValue;
         return TOKEN_LITERAL;
     }
@@ -874,6 +879,7 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
           if (c == '\\') c = parseEscape();
           STORE(c);
         }
+
         LVAL->String = SCOPE.m_pCurrentTokenValue;
         return TOKEN_LITERAL;
     }
@@ -920,14 +926,6 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
 
         UNGET(c);
 
-        // Check if this is a keyword
-        /*
-        for (Index = 0; Index < NumTokens; Index++)
-        {
-            if (strcmp(TokenTable[Index].Name, TokenValue) == 0) return TokenTable[Index].ID;
-        }
-        */
-
         if (SCOPE.m_pCurrentTokenValue->toLower() == "true")
         {
             LVAL->Boolean = true;
@@ -940,14 +938,14 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
             return TOKEN_BOOLCONSTANT;
         }
 
+        // Check if this is a keyword
         if (m_mTokens.contains(*(SCOPE.m_pCurrentTokenValue)))
         {
             return m_mTokens[*(SCOPE.m_pCurrentTokenValue)];
         }
 
         // This must be an identifier
-        LVAL->String = new QString(*(SCOPE.m_pCurrentTokenValue));
-
+        LVAL->String = SCOPE.m_pCurrentTokenValue;
         return TOKEN_IDENTIFIER;
     }
 
@@ -1004,18 +1002,12 @@ int QMLTreeContext::parseNumber(UParserValue* LVAL)
     }
     else if (SCOPE.m_bParsingHexa)
     {
-        // LVAL->Integer = xtol(m_sCurrentTokenValue);
-        LVAL->Integer = SCOPE.m_pCurrentTokenValue->toInt();
-        return TOKEN_INTEGERCONSTANT;
-    }
-    else
-    {
         LVAL->Integer = SCOPE.m_pCurrentTokenValue->toInt();
         return TOKEN_INTEGERCONSTANT;
     }
 
-    // Make the compiler happy
-    return 0;
+    LVAL->Integer = SCOPE.m_pCurrentTokenValue->toInt();
+    return TOKEN_INTEGERCONSTANT;
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -354,10 +354,12 @@ Item :
 
         if (pContents == nullptr)
         {
-            pContents = new QMLItem(pContext->position(), pName);
+            pContents = new QMLItem(pContext->position(), pName->clone());
         }
 
         QMLOnExpression* pExpression = new QMLOnExpression(pName->position(), pTarget, pName->clone(), pContents);
+
+        SAFE_DELETE(pName);
 
         $<Object>$ = pExpression;
     }
