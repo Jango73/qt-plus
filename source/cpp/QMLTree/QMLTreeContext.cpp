@@ -45,9 +45,164 @@
     \inmodule qt-plus
     \brief A QML parser using a Bison grammar file. \br
     \section1 How it works
-    After parsing a QML file, a single item holds all QML declarations and JS code as a tree.
-    This tree can be traversed in code or exported as a XML or JSON document (via item().toXMLNode()). \br
-    As of now, the import statements do not lead to recursive parsing (might be implemented later).
+    After parsing one or many QML files, QMLFile entites hold all QML declarations and JS code as a tree.
+    This tree can be traversed in code or exported as a XML or JSON document. \br
+    \section1 Example of file parsing
+    \code
+    QMLTreeContext context;
+    context.addFile("SomeFile.qml");
+    context.setIncludeImports(true);    // This tells the parse engine to parse all included files
+    if (context.parse() == QMLTreeContext::peSuccess)
+    {
+        // do something in case of success
+    }
+    else
+    {
+        qWarning() << context.error();
+    }
+    \endcode
+    \section1 Example of parsing result usage
+    We suppose here that the context contains parsed files.
+    \code
+    // Check if the context has at least one parsed file
+    if (context.files().count() > 0 && context.files().first()->parsed())
+    {
+        // Iterate through the contents of the first parsed file
+        foreach (QMLEntity* pEntity, context.files().first()->contents())
+        {
+            QMLImport* pImport = dynamic_cast<QMLImport*>(pEntity);
+
+            // Check that this entity is an import statement
+            if (pImport != nullptr)
+            {
+                // Return the import's name
+                return pImport->name();
+            }
+        }
+    }
+    \endcode
+    \section1 Example of the structure of a QML file
+    With this input file named MyQMLFile.qml,
+    \code
+    import QtQuick 2.0
+    Item {
+        id: root
+        width: 400
+        height: 200
+
+        property real myNumber: 5.0
+
+        Rectangle {
+            id: myRectangle
+            width: parent.width * 0.5
+            height: parent.height
+        }
+
+        function update() {
+            root.myNumber = 100
+        }
+    }
+    \endcode
+    the QML tree will look like
+    \code
+    QMLFile
+    |-- fileName() : "MyQMLFile.qml"
+    |-- parsed() : true
+    |-- isSingleton() : false
+    |-- contents() [0]
+        |-- QMLItem
+            |-- name() : "Item"
+            |-- id() : "root"
+            |-- contents() [0]
+            |   |-- QMLPropertyAssignment
+            |       |-- type() : nullptr    (No type since this is not a declaration)
+            |       |-- name() : "id"
+            |       |-- content()
+            |           |-- QMLIdentifier
+            |               |-- value() : "root"
+            |-- contents() [1]
+            |   |-- QMLPropertyAssignment
+            |       |-- type() : nullptr    (No type since this is not a declaration)
+            |       |-- name() : "width"
+            |       |-- content()
+            |           |-- QMLIdentifier
+            |               |-- value() : 400
+            |-- contents() [2]
+            |   |-- QMLPropertyAssignment
+            |       |-- type() : nullptr    (No type since this is not a declaration)
+            |       |-- name() : "height"
+            |       |-- content()
+            |           |-- QMLIdentifier
+            |               |-- value() : 200
+            |-- contents() [3]
+            |   |-- QMLPropertyDeclaration
+            |       |-- type()
+            |           |-- QMLType
+            |               |-- type() : QVariant::Double
+            |       |-- name() : "myNumber"
+            |       |-- content()
+            |           |-- QMLIdentifier
+            |               |-- value() : 5.0
+            |-- contents() [4]
+            |   |-- QMLItem
+            |       |-- name() : "Rectangle"
+            |       |-- id() : "myRectangle"
+            |       |-- contents() [0]
+            |       |   |-- QMLPropertyAssignment
+            |       |       |-- type() : nullptr    (No type since this is not a declaration)
+            |       |       |-- name() : "id"
+            |       |       |-- content()
+            |       |           |-- QMLIdentifier
+            |       |               |-- value() : "myRectangle"
+            |       |-- contents() [1]
+            |       |   |-- QMLPropertyAssignment
+            |       |       |-- type() : nullptr    (No type since this is not a declaration)
+            |       |       |-- name() : "width"
+            |       |       |-- content()
+            |       |           |-- QMLBinaryOperation
+            |       |               |-- operator() : QMLBinaryOperation::boMul
+            |       |               |-- left()
+            |       |               |   |-- QMLQualifiedExpression
+            |       |               |       |-- contents() [0]
+            |       |               |       |   |-- QMLIdentifier
+            |       |               |       |       |-- name() : "parent"
+            |       |               |       |-- contents() [1]
+            |       |               |           |-- QMLIdentifier
+            |       |               |               |-- name() : "width"
+            |       |               |-- right()
+            |       |                   |-- QMLIdentifier
+            |       |                       |-- value() : 0.5
+            |       |-- contents() [2]
+            |           |-- QMLPropertyAssignment
+            |               |-- type() : nullptr    (No type since this is not a declaration)
+            |               |-- name() : "height"
+            |               |-- content()
+            |                   |-- QMLQualifiedExpression
+            |                       |-- contents() [0]
+            |                       |   |-- QMLIdentifier
+            |                       |       |-- name() : "parent"
+            |                       |-- contents() [1]
+            |                           |-- QMLIdentifier
+            |                               |-- name() : "height"
+            |-- contents() [5]
+                |-- QMLFunction
+                    |-- name() : "update"
+                    |-- parameters() : nullptr      (No arguments)
+                    |-- content()
+                        |-- QMLBinaryOperation
+                            |-- operator() : QMLBinaryOperation::boAssign
+                            |-- left()
+                            |   |-- QMLQualifiedExpression
+                            |       |-- contents() [0]
+                            |       |   |-- QMLIdentifier
+                            |       |       |-- name() : "root"
+                            |       |-- contents() [1]
+                            |           |-- QMLIdentifier
+                            |               |-- name() : "myNumber"
+                            |-- right()
+                                |-- QMLIdentifier
+                                    |-- value() : 100
+    \endcode
 */
 
 /*!
@@ -94,6 +249,8 @@
 #define TOKEN_BOOLCONSTANT      302
 #define TOKEN_INTEGERCONSTANT   303
 #define TOKEN_REALCONSTANT      304
+#define TOKEN_NULL              305
+#define TOKEN_UNDEFINED         306
 
 #define TOKEN_ASSIGN            310
 #define TOKEN_ADD               311
@@ -260,6 +417,8 @@ QMLTreeContext::QMLTreeContext()
     m_mTokens["signal"] = TOKEN_SIGNAL;
     m_mTokens["var"] = TOKEN_VAR;
     m_mTokens["new"] = TOKEN_NEW;
+    m_mTokens["null"] = TOKEN_NULL;
+    m_mTokens["undefined"] = TOKEN_UNDEFINED;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -367,7 +526,9 @@ QString QMLTreeContext::errorString() const
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns the item's position in the file.
+    Returns the current position in the file. \br\br
+    The x component is the column (from 0).\br
+    The y component is the line (from 0).
 */
 QPoint QMLTreeContext::position() const
 {
@@ -392,7 +553,8 @@ QVector<QMLFile*>& QMLTreeContext::files()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns the QMLFile object for \a sFileName.
+    Returns the QMLFile object for \a sFileName. \br\br
+    If no QMLFile object refers to \a sFileName, one will be created and returned.
 */
 QMLFile* QMLTreeContext::fileByFileName(const QString& sFileName)
 {

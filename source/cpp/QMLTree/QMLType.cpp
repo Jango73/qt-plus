@@ -6,6 +6,7 @@
 
 QMLType::QMLType(const QPoint& pPosition)
     : QMLEntity(pPosition)
+    , m_vType(QVariant::Invalid)
 {
 }
 
@@ -111,6 +112,7 @@ QMLType* QMLType::fromQMLEntity(QMLEntity* pEntity)
         if (sType == "bool") return new QMLType(QPoint(), QVariant::Bool);
         if (sType == "int") return new QMLType(QPoint(), QVariant::Int);
         if (sType == "real") return new QMLType(QPoint(), QVariant::Double);
+        if (sType == "double") return new QMLType(QPoint(), QVariant::Double);
         if (sType == "string") return new QMLType(QPoint(), QVariant::String);
         if (sType == "color") return new QMLType(QPoint(), QVariant::Color);
         if (sType == "font") return new QMLType(QPoint(), QVariant::Font);

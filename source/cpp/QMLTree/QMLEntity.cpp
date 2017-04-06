@@ -9,8 +9,8 @@
 
 /*!
     \class QMLEntity
-    \inmodule unis-lib
-    \brief The base item for a QML tree.
+    \inmodule qt-plus
+    \brief The base entity for a QML tree.
 */
 
 //-------------------------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ int QMLEntity::s_iDeletedEntities = 0;
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Constructs a QMLItem. \br\br
+    Constructs a QMLEntity. \br\br
     \a pPosition is the position of the token in the file
 */
 QMLEntity::QMLEntity(const QPoint& pPosition)
@@ -40,7 +40,7 @@ QMLEntity::QMLEntity(const QPoint& pPosition)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Constructs a QMLItem with \a value.
+    Constructs a QMLEntity with \a value.
 */
 QMLEntity::QMLEntity(const QPoint& pPosition, const QVariant& value)
     : m_vValue(value)
@@ -58,7 +58,7 @@ QMLEntity::QMLEntity(const QPoint& pPosition, const QVariant& value)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Destroys a QMLItem.
+    Destroys a QMLEntity.
 */
 QMLEntity::~QMLEntity()
 {
@@ -71,7 +71,7 @@ QMLEntity::~QMLEntity()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Sets the item's value to \a value.
+    Sets the entity's value to \a value.
 */
 void QMLEntity::setValue(const QVariant& value)
 {
@@ -81,7 +81,7 @@ void QMLEntity::setValue(const QVariant& value)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Sets the item's position to \a point.
+    Sets the entity's position to \a point.
 */
 void QMLEntity::setPosition(const QPoint& point)
 {
@@ -91,7 +91,7 @@ void QMLEntity::setPosition(const QPoint& point)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Sets the item's origin to \a pEntity.
+    Sets the entity's origin to \a pEntity.
 */
 void QMLEntity::setOrigin(QMLEntity* pEntity)
 {
@@ -101,7 +101,7 @@ void QMLEntity::setOrigin(QMLEntity* pEntity)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Sets the item's isParenthesized flag to \a bValue.
+    Sets the entity's isParenthesized flag to \a bValue.
 */
 void QMLEntity::setIsParenthesized(bool bValue)
 {
@@ -111,7 +111,9 @@ void QMLEntity::setIsParenthesized(bool bValue)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns the item's position in the file.
+    Returns the entity's position in the file. \br\br
+    The x component is the column (from 0).\br
+    The y component is the line (from 0).
 */
 QPoint QMLEntity::position() const
 {
@@ -121,7 +123,7 @@ QPoint QMLEntity::position() const
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns the item's origin.
+    Returns the entity's origin, i.e where it was declared.
 */
 QMLEntity* QMLEntity::origin() const
 {
@@ -131,7 +133,7 @@ QMLEntity* QMLEntity::origin() const
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns the item's usage count.
+    Returns the entity's usage count.
 */
 int QMLEntity::usageCount() const
 {
@@ -141,7 +143,7 @@ int QMLEntity::usageCount() const
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns the item's value.
+    Returns the entity's value.
 */
 QVariant QMLEntity::value() const
 {
@@ -151,7 +153,7 @@ QVariant QMLEntity::value() const
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns the item's isParenthesized flag.
+    Returns the entity's isParenthesized flag.
 */
 bool QMLEntity::isParenthesized() const
 {
@@ -161,7 +163,7 @@ bool QMLEntity::isParenthesized() const
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns the item as a string.
+    Returns the entity as a string.
 */
 QString QMLEntity::toString() const
 {
@@ -209,6 +211,7 @@ QMLEntity* QMLEntity::clone() const
 /*!
     Finds all symbols in the entity. \br\br
     \a pContext is the context of this entity. \br
+    This is used by the parser for symbol resolution, there is no need to call it from anywhere else.
 */
 void QMLEntity::solveSymbols(QMLTreeContext* pContext)
 {
@@ -229,6 +232,7 @@ void QMLEntity::solveSymbols(QMLTreeContext* pContext)
 /*!
     Finds the origin of the entity. \br\br
     \a pContext is the context of this entity. \br
+    This is used by the parser for symbol resolution, there is no need to call it from anywhere else.
 */
 void QMLEntity::solveReferences(QMLTreeContext* pContext)
 {
@@ -248,6 +252,7 @@ void QMLEntity::solveReferences(QMLTreeContext* pContext)
 /*!
     Checks how many times each symbol is used. \br\br
     \a pContext is the context of this item.
+    This is used by the parser for symbol resolution, there is no need to call it from anywhere else.
 */
 void QMLEntity::solveSymbolUsages(QMLTreeContext* pContext)
 {
@@ -266,6 +271,7 @@ void QMLEntity::solveSymbolUsages(QMLTreeContext* pContext)
 
 /*!
     Returns a list of all declared symbols.
+    This is used by the parser for symbol resolution, there is no need to call it from anywhere else.
 */
 QMap<QString, QMLEntity*> QMLEntity::getDeclaredSymbols()
 {
@@ -295,7 +301,8 @@ QMap<QString, QMLEntity*> QMLEntity::getDeclaredSymbols()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns the item named \a sName, for identifier resolution. \br\br
+    Returns the entity named \a sName, for identifier resolution. \br\br
+    This is used by the parser for symbol resolution, there is no need to call it from anywhere else.
 */
 QMLEntity* QMLEntity::findSymbolDeclaration(const QString& sName)
 {
@@ -312,7 +319,8 @@ QMLEntity* QMLEntity::findSymbolDeclaration(const QString& sName)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns the item named \a lQualifiedName, for identifier resolution. \br\br
+    Returns the entity named \a lQualifiedName, for identifier resolution. \br\br
+    This is used by the parser for symbol resolution, there is no need to call it from anywhere else.
 */
 QMLEntity* QMLEntity::findSymbolDeclarationDescending(QStringList& lQualifiedName)
 {
@@ -423,7 +431,7 @@ CXMLNode QMLEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns a string list with each dot separated component of \a sName.
+    Returns a string list with each dot-separated component of \a sName.
 */
 QStringList QMLEntity::qualifiedNameAsList(const QString& sName)
 {

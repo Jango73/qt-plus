@@ -1,85 +1,72 @@
 
 #pragma once
 
-#include "../qtplus_global.h"
+#include "../unislib_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
 // Qt
 #include <QObject>
+#include <QVariant>
 
 // Application
-#include "QMLComplexEntity.h"
-#include "QMLIdentifier.h"
+#include "QMLEntity.h"
 
 //-------------------------------------------------------------------------------------------------
 
-//! Defines a QML item
-class QTPLUSSHARED_EXPORT QMLItem : public QMLComplexEntity
+//! Defines a type object
+class UNISLIBSHARED_EXPORT QMLSpecialValue : public QMLEntity
 {
     Q_OBJECT
 
 public:
 
+    enum ESpecialValue
+    {
+        svNone,
+        svNull,
+        svUndefined
+    };
+
     //-------------------------------------------------------------------------------------------------
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //! Constructor with name, parameters and content
-    QMLItem(const QPoint& pPosition, QMLEntity* pName = nullptr);
+    //! Default constructor
+    QMLSpecialValue(const QPoint& pPosition);
+
+    //! Constructor with QVariant
+    QMLSpecialValue(const QPoint& pPosition, ESpecialValue value);
 
     //! Destructor
-    virtual ~QMLItem();
+    virtual ~QMLSpecialValue();
 
     //-------------------------------------------------------------------------------------------------
     // Setters
     //-------------------------------------------------------------------------------------------------
+
+    //!
+    void setSpecialValue(ESpecialValue value);
 
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
 
     //!
-    QString id() const;
+    ESpecialValue specialValue() const;
 
     //!
-    bool isSingleton() const;
-
-    //!
-    QMap<QString, QMLEntity*> unusedProperties();
-
-    //-------------------------------------------------------------------------------------------------
-    // Control methods
-    //-------------------------------------------------------------------------------------------------
-
-    //!
-    void markAsSingleton();
+    virtual QString toString() const Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void solveSymbols(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
-
-    //!
-    virtual void solveReferences(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
-
-    //!
-    virtual QMLEntity* findSymbolDeclaration(const QString& sName) Q_DECL_OVERRIDE;
-
-    //!
-    virtual QMLEntity* findSymbolDeclarationDescending(QStringList& lQualifiedName) Q_DECL_OVERRIDE;
-
-    //!
-    virtual void removeUnreferencedSymbols(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
 
     //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
-
-    //-------------------------------------------------------------------------------------------------
-    // Protected methods
-    //-------------------------------------------------------------------------------------------------
 
     //-------------------------------------------------------------------------------------------------
     // Properties
@@ -87,8 +74,5 @@ public:
 
 protected:
 
-    // Constructed after parsing
-    QMap<QString, QMLEntity*>   m_mPropertyList;
-    QString                     m_sID;
-    bool                        m_bIsSingleton;
+    ESpecialValue   m_eValue;
 };

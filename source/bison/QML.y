@@ -13,6 +13,7 @@
 #include "QMLComplexEntity.h"
 #include "QMLNameValue.h"
 #include "QMLIdentifier.h"
+#include "QMLSpecialValue.h"
 #include "QMLType.h"
 #include "QMLPragma.h"
 #include "QMLImport.h"
@@ -61,6 +62,8 @@ int yyerror (void*, char*);
 %token TOKEN_BOOLCONSTANT       302
 %token TOKEN_INTEGERCONSTANT    303
 %token TOKEN_REALCONSTANT       304
+%token TOKEN_NULL               305
+%token TOKEN_UNDEFINED          306
 
 %token TOKEN_ASSIGN             310
 %token TOKEN_ADD                311
@@ -2540,6 +2543,11 @@ Value :
     {
         $<Object>$ = $<Object>1;
     }
+    |
+    SpecialValue
+    {
+        $<Object>$ = $<Object>1;
+    }
 ;
 
 Boolean :
@@ -2576,6 +2584,18 @@ Literal :
         {
             $<Object>$ = nullptr;
         }
+    }
+;
+
+SpecialValue :
+    TOKEN_NULL
+    {
+        $<Object>$ = new QMLSpecialValue(pContext->position(), QMLSpecialValue::svNull);
+    }
+    |
+    TOKEN_UNDEFINED
+    {
+        $<Object>$ = new QMLSpecialValue(pContext->position(), QMLSpecialValue::svUndefined);
     }
 ;
 

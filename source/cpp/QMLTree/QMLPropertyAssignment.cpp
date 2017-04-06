@@ -5,7 +5,7 @@
 //-------------------------------------------------------------------------------------------------
 
 QMLPropertyAssignment::QMLPropertyAssignment(const QPoint& pPosition, QMLEntity* pName, QMLEntity* pContent)
-    : QMLPropertyDeclaration(pPosition, NULL, pName, pContent)
+    : QMLPropertyDeclaration(pPosition, nullptr, pName, pContent)
 {
 }
 

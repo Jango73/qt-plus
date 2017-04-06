@@ -31,6 +31,16 @@ QString QMLItem::id() const
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns the is singleton flag.
+*/
+bool QMLItem::isSingleton() const
+{
+    return m_bIsSingleton;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 QMap<QString, QMLEntity*> QMLItem::unusedProperties()
 {
     QMap<QString, QMLEntity*> mReturnValue;

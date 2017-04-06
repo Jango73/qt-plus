@@ -82,6 +82,16 @@ bool QMLFile::parsed() const
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Returns the is singleton flag.
+*/
+bool QMLFile::isSingleton() const
+{
+    return m_bIsSingleton;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Finds the origin of the item. \br\br
     \a pContext is the context of this item. \br
 */
