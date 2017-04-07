@@ -116,7 +116,6 @@ public:
         QMLScope(QMLFile* pFile)
             : m_pFile(pFile)
             , m_eError(peSuccess)
-            , m_fInputFile(pFile->fileName())
             , m_iLine(0)
             , m_iColumn(0)
             , m_iPreviousLine(0)
@@ -124,16 +123,22 @@ public:
             , m_bParsingFloat(false)
             , m_bParsingHexa(false)
         {
-            m_fInputFile.open(QFile::ReadOnly);
-            m_sStream.setDevice(&m_fInputFile);
+            QFile fInputFile(pFile->fileName());
+
+            if (fInputFile.open(QFile::ReadOnly))
+            {
+                m_sInputString = fInputFile.readAll();
+                fInputFile.close();
+            }
+
+            m_pStream = new QTextStream(&m_sInputString);
             m_pCurrentTokenValue = new QString();
         }
 
         ~QMLScope()
         {
-            m_fInputFile.close();
-
             delete m_pCurrentTokenValue;
+            delete m_pStream;
         }
 
         QMLScope(const QMLScope& target)
@@ -150,8 +155,8 @@ public:
 
         QMLFile*            m_pFile;
         EParseError         m_eError;
-        QFile               m_fInputFile;
-        QTextStream         m_sStream;
+        QString             m_sInputString;
+        QTextStream*        m_pStream;
         QString*            m_pCurrentTokenValue;
         int                 m_iLine;
         int                 m_iColumn;

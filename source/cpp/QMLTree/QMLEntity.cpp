@@ -418,7 +418,9 @@ CXMLNode QMLEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent
 
     if (m_pOrigin != nullptr)
     {
-        xNode.attributes()["Origin"] = m_pOrigin->toString() + " (" + m_pOrigin->metaObject()->className() + ")";
+        xNode.attributes()["Origin"] = QString("(Class: %1, Address: %2)")
+                .arg(m_pOrigin->metaObject()->className())
+                .arg((qulonglong) m_pOrigin);
     }
 
     if (m_iUsageCount > 0)

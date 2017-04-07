@@ -1200,10 +1200,10 @@ int QMLTreeContext::parseEscape()
 
 int QMLTreeContext::getChar()
 {
-    if (SCOPE.m_sStream.atEnd())
+    if (SCOPE.m_pStream->atEnd())
         return EOF;
 
-    int iChar = SCOPE.m_sStream.read(1)[0].toLatin1();
+    int iChar = SCOPE.m_pStream->read(1)[0].toLatin1();
 
     switch (iChar)
     {
@@ -1228,7 +1228,7 @@ int QMLTreeContext::getChar()
 
 int QMLTreeContext::ungetChar(int iChar)
 {
-    SCOPE.m_sStream.seek(SCOPE.m_sStream.pos() - 1);
+    SCOPE.m_pStream->seek(SCOPE.m_pStream->pos() - 1);
 
     switch (iChar)
     {
