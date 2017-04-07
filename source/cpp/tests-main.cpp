@@ -182,7 +182,7 @@ void runQMLTreeTests()
             if (file.open(QFile::WriteOnly))
             {
                 QTextStream stream(&file);
-                pContext->files().first()->toQML(stream, pContext);
+                pContext->files().first()->toQML(stream);
                 file.close();
             }
         }
