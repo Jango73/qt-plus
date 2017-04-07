@@ -131,33 +131,6 @@ const QVector<QMLEntity*>& QMLComplexEntity::contents() const
 
 //-------------------------------------------------------------------------------------------------
 
-QString QMLComplexEntity::toString() const
-{
-    if (m_pName != nullptr)
-    {
-        return m_pName->toString();
-    }
-
-    QString sReturnValue;
-
-    foreach (QMLEntity* pEntity, m_vContents)
-    {
-        if (pEntity != nullptr)
-        {
-            if (sReturnValue.isEmpty() == false)
-            {
-                sReturnValue += ", ";
-            }
-
-            sReturnValue += pEntity->toString();
-        }
-    }
-
-    return sReturnValue;
-}
-
-//-------------------------------------------------------------------------------------------------
-
 QMap<QString, QMLEntity*> QMLComplexEntity::members()
 {
     QMap<QString, QMLEntity*> vReturnValue;
@@ -296,7 +269,7 @@ void QMLComplexEntity::removeUnreferencedSymbols(QMLTreeContext* pContext)
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLComplexEntity::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
+void QMLComplexEntity::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
 {
     if (m_bIsArray && m_vContents.count() == 0)
     {
@@ -306,7 +279,7 @@ void QMLComplexEntity::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLE
     {
         if (isNamed())
         {
-            m_pName->toQML(stream, pContext, this, iIdent);
+            m_pName->toQML(stream, this, iIdent);
         }
 
         if (m_bIsArray)
@@ -333,7 +306,7 @@ void QMLComplexEntity::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLE
                     }
                 }
 
-                pEntity->toQML(stream, pContext, this, pParent != nullptr ? iIdent + 1 : iIdent);
+                pEntity->toQML(stream, this, pParent != nullptr ? iIdent + 1 : iIdent);
 
                 if (m_bIsArray || m_bIsObject || m_bIsArgumentList)
                 {

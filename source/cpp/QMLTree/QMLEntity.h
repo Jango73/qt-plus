@@ -121,7 +121,7 @@ public:
     virtual void removeUnreferencedSymbols(QMLTreeContext* pContext);
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = nullptr, int iIdent = 0);
+    virtual void toQML(QTextStream& stream, const QMLEntity* pParent = nullptr, int iIdent = 0) const;
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods

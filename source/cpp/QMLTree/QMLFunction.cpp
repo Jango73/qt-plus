@@ -101,21 +101,6 @@ QMap<QString, QMLEntity*> QMLFunction::unusedVariables()
 
 //-------------------------------------------------------------------------------------------------
 
-/*!
-    Returns the item as a string.
-*/
-QString QMLFunction::toString() const
-{
-    if (m_pName != nullptr)
-    {
-        return m_pName->toString();
-    }
-
-    return "";
-}
-
-//-------------------------------------------------------------------------------------------------
-
 QMap<QString, QMLEntity*> QMLFunction::members()
 {
     QMap<QString, QMLEntity*> vReturnValue;
@@ -214,10 +199,9 @@ QMLEntity* QMLFunction::findSymbolDeclaration(const QString& sName)
 
 /*!
     Dumps the item to \a stream using \a iIdent for indentation. \br\br
-    \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
+void QMLFunction::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
 {
     Q_UNUSED(pParent);
 
@@ -232,14 +216,14 @@ void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity
 
     if (m_pName != nullptr)
     {
-        m_pName->toQML(stream, pContext, this, iIdent + 1);
+        m_pName->toQML(stream, this, iIdent + 1);
     }
 
     stream << " ( ";
 
     if (m_pParameters != nullptr)
     {
-        m_pParameters->toQML(stream, pContext, this, iIdent + 1);
+        m_pParameters->toQML(stream, this, iIdent + 1);
     }
 
     stream << " ) ";
@@ -249,7 +233,7 @@ void QMLFunction::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity
     {
         if (m_pContent != nullptr)
         {
-            m_pContent->toQML(stream, pContext, this, iIdent + 1);
+            m_pContent->toQML(stream, this, iIdent + 1);
         }
     }
 }

@@ -219,7 +219,7 @@ bool QMLAnalyzer::analyzeFile(const QString& sFileName)
                 m_sText.clear();
                 QTextStream stream(&m_sText);
 
-                pFile->toQML(stream, m_pContext);
+                pFile->toQML(stream);
 
                 QJSValue output = m_eEngine.evaluate(m_sBeautifyScript);
                 m_sText = output.toString();

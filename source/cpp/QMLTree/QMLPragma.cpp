@@ -44,16 +44,15 @@ QMap<QString, QMLEntity*> QMLPragma::members()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLPragma::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
+void QMLPragma::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
 {
-    Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
     stream << "pragma ";
 
     if (m_pStatement != nullptr)
     {
-        m_pStatement->toQML(stream, pContext, this, iIdent + 1);
+        m_pStatement->toQML(stream, this, iIdent + 1);
     }
 
     stream << " ";

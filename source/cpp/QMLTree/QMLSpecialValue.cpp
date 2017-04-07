@@ -39,27 +39,17 @@ QMLSpecialValue::ESpecialValue QMLSpecialValue::specialValue() const
 
 //-------------------------------------------------------------------------------------------------
 
-QString QMLSpecialValue::toString() const
+void QMLSpecialValue::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
 {
+    Q_UNUSED(pParent);
+
     switch (m_eValue)
     {
         case svNull:
-            return "null";
+            stream << "null";
         case svUndefined:
-            return "undefined";
+            stream << "undefined";
     }
-
-    return QMLEntity::toString();
-}
-
-//-------------------------------------------------------------------------------------------------
-
-void QMLSpecialValue::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
-{
-    Q_UNUSED(pContext);
-    Q_UNUSED(pParent);
-
-    stream << toString();
 }
 
 //-------------------------------------------------------------------------------------------------

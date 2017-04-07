@@ -167,7 +167,10 @@ bool QMLEntity::isParenthesized() const
 */
 QString QMLEntity::toString() const
 {
-    return m_vValue.toString();
+    QString sText;
+    QTextStream stream(&sText);
+    toQML(stream, nullptr);
+    return sText;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -350,12 +353,10 @@ void QMLEntity::removeUnreferencedSymbols(QMLTreeContext* pContext)
 
 /*!
     Dumps the entity as QML to \a stream using \a iIdent for indentation. \br\br
-    \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLEntity::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
+void QMLEntity::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
 {
-    Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
     QString sValue;

@@ -59,13 +59,12 @@ QMap<QString, QMLEntity*> QMLFunctionCall::members()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLFunctionCall::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
+void QMLFunctionCall::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
 {
-    Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
     if (m_pName != NULL)
-        m_pName->toQML(stream, pContext, this, iIdent);
+        m_pName->toQML(stream, this, iIdent);
 
     stream << " ( ";
 
@@ -82,7 +81,7 @@ void QMLFunctionCall::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEn
 
             if (pEntity != NULL)
             {
-                pEntity->toQML(stream, pContext, this, iIdent);
+                pEntity->toQML(stream, this, iIdent);
             }
 
             putDot = true;

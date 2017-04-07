@@ -89,9 +89,6 @@ public:
     // Overridden methods
     //-------------------------------------------------------------------------------------------------
 
-    //!
-    virtual QString toString() const Q_DECL_OVERRIDE;
-
     //! Returns all members
     virtual QMap<QString, QMLEntity*> members() Q_DECL_OVERRIDE;
 
@@ -114,7 +111,7 @@ public:
     virtual void removeUnreferencedSymbols(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
 
     //!
-    virtual void toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent = NULL, int iIdent = 0) Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, const QMLEntity* pParent = NULL, int iIdent = 0) const Q_DECL_OVERRIDE;
 
     //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;

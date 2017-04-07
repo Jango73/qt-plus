@@ -77,30 +77,29 @@ QMap<QString, QMLEntity*> QMLFor::members()
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLFor::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
+void QMLFor::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
 {
-    Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
     stream << "for (";
 
     if (m_pInitialization != nullptr)
     {
-        m_pInitialization->toQML(stream, pContext, this, iIdent + 1);
+        m_pInitialization->toQML(stream, this, iIdent + 1);
     }
 
     stream << "; ";
 
     if (m_pCondition != nullptr)
     {
-        m_pCondition->toQML(stream, pContext, this, iIdent + 1);
+        m_pCondition->toQML(stream, this, iIdent + 1);
     }
 
     stream << "; ";
 
     if (m_pIncrementation != nullptr)
     {
-        m_pIncrementation->toQML(stream, pContext, this, iIdent + 1);
+        m_pIncrementation->toQML(stream, this, iIdent + 1);
     }
 
     stream << ")";
@@ -108,7 +107,7 @@ void QMLFor::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pPa
 
     if (m_pContent != nullptr)
     {
-        m_pContent->toQML(stream, pContext, this, iIdent + 1);
+        m_pContent->toQML(stream, this, iIdent + 1);
     }
 }
 

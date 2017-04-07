@@ -40,22 +40,21 @@ QMap<QString, QMLEntity*> QMLArrayAccess::members()
 
 /*!
     Dumps the item to \a stream using \a iIdent for indentation. \br\br
-    \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLArrayAccess::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
+void QMLArrayAccess::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
 {
     Q_UNUSED(pParent);
 
     if (m_pLeft != nullptr)
     {
-        m_pLeft->toQML(stream, pContext, this, iIdent + 1);
+        m_pLeft->toQML(stream, this, iIdent + 1);
     }
 
     foreach (QMLEntity* pEntity, m_vContents)
     {
         stream << " [ ";
-        pEntity->toQML(stream, pContext, this, iIdent + 1);
+        pEntity->toQML(stream, this, iIdent + 1);
         stream << " ] ";
     }
 }

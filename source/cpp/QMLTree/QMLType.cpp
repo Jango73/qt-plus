@@ -40,16 +40,8 @@ QVariant::Type QMLType::type() const
 
 //-------------------------------------------------------------------------------------------------
 
-QString QMLType::toString() const
+void QMLType::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
 {
-    return typeToString(m_vType);
-}
-
-//-------------------------------------------------------------------------------------------------
-
-void QMLType::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
-{
-    Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
     stream << typeToString(m_vType);

@@ -113,9 +113,8 @@ QMap<QString, QMLEntity*> QMLPropertyDeclaration::getDeclaredSymbols()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLPropertyDeclaration::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
+void QMLPropertyDeclaration::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
 {
-    Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
     if (m_pType != nullptr && m_pName != nullptr)
@@ -130,14 +129,14 @@ void QMLPropertyDeclaration::toQML(QTextStream& stream, QMLTreeContext* pContext
         }
 
         stream << "property ";
-        m_pType->toQML(stream, pContext, this, iIdent + 1);
+        m_pType->toQML(stream, this, iIdent + 1);
         stream << " ";
-        m_pName->toQML(stream, pContext, this, iIdent + 1);
+        m_pName->toQML(stream, this, iIdent + 1);
 
         if (m_pContent != nullptr)
         {
             stream << ": ";
-            m_pContent->toQML(stream, pContext, this, iIdent + 1);
+            m_pContent->toQML(stream, this, iIdent + 1);
         }
     }
 }

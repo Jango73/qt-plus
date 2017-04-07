@@ -81,9 +81,8 @@ QMap<QString, QMLEntity*> QMLUnaryOperation::members()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLUnaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
+void QMLUnaryOperation::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
 {
-    Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
     if (m_bIsParenthesized)
@@ -102,7 +101,7 @@ void QMLUnaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QML
 
         if (m_pExpression != nullptr)
         {
-            m_pExpression->toQML(stream, pContext, this, iIdent);
+            m_pExpression->toQML(stream, this, iIdent);
 
             if (m_eOperator == uoCase)
             {
@@ -114,7 +113,7 @@ void QMLUnaryOperation::toQML(QTextStream& stream, QMLTreeContext* pContext, QML
     {
         if (m_pExpression != nullptr)
         {
-            m_pExpression->toQML(stream, pContext, this, iIdent);
+            m_pExpression->toQML(stream, this, iIdent);
 
             if (m_eOperator == uoCase)
             {

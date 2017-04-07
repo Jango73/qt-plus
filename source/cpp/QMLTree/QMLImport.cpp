@@ -55,9 +55,8 @@ QString QMLImport::version() const
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLImport::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
+void QMLImport::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
 {
-    Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
     QString sText = "";

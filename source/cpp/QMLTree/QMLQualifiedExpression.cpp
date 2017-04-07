@@ -18,30 +18,6 @@ QMLQualifiedExpression::~QMLQualifiedExpression()
 
 //-------------------------------------------------------------------------------------------------
 
-QString QMLQualifiedExpression::toString() const
-{
-    QString sReturnValue;
-
-    foreach (QMLEntity* pEntity, m_vContents)
-    {
-        QMLIdentifier* pIdentifier = dynamic_cast<QMLIdentifier*>(pEntity);
-
-        if (pIdentifier == nullptr)
-            break;
-
-        if (sReturnValue.isEmpty() == false)
-        {
-            sReturnValue += ".";
-        }
-
-        sReturnValue += pIdentifier->toString();
-    }
-
-    return sReturnValue;
-}
-
-//-------------------------------------------------------------------------------------------------
-
 /*!
     Finds the origin of the entity. \br\br
     \a pContext is the context of this entity. \br
@@ -82,9 +58,8 @@ void QMLQualifiedExpression::solveSymbolUsages(QMLTreeContext* pContext)
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLQualifiedExpression::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
+void QMLQualifiedExpression::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
 {
-    Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
     if (m_bIsParenthesized)
@@ -103,7 +78,7 @@ void QMLQualifiedExpression::toQML(QTextStream& stream, QMLTreeContext* pContext
 
         if (pItem != NULL)
         {
-            pItem->toQML(stream, pContext, this, iIdent);
+            pItem->toQML(stream, this, iIdent);
         }
 
         putDot = true;

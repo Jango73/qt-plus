@@ -37,14 +37,13 @@ QMap<QString, QMLEntity*> QMLOnExpression::members()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLOnExpression::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEntity* pParent, int iIdent)
+void QMLOnExpression::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
 {
-    Q_UNUSED(pContext);
     Q_UNUSED(pParent);
 
     if (m_pName != nullptr)
     {
-        // m_pName->toQML(stream, pContext, this, iIdent + 1);
+        // m_pName->toQML(stream, this, iIdent + 1);
         stream << m_pName->toString();
     }
 
@@ -52,7 +51,7 @@ void QMLOnExpression::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEn
 
     if (m_pTarget != nullptr)
     {
-        m_pTarget->toQML(stream, pContext, this, iIdent + 1);
+        m_pTarget->toQML(stream, this, iIdent + 1);
     }
 
     if (pParent != nullptr)
@@ -64,7 +63,7 @@ void QMLOnExpression::toQML(QTextStream& stream, QMLTreeContext* pContext, QMLEn
     {
         if (pEntity != nullptr)
         {
-            pEntity->toQML(stream, pContext, this, pParent != NULL ? iIdent + 1 : iIdent);
+            pEntity->toQML(stream, this, pParent != NULL ? iIdent + 1 : iIdent);
         }
     }
 
