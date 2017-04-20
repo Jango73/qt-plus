@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Root>
+    <Macro Name="CamelCasingRegExp" Value="([a-z])([a-zA-Z0-9]*)"/>
     <Check Class="QMLVariableDeclaration">
-        <Reject Member="name" RegExp="([a-z])([a-zA-Z0-9]*)" Text="Only camel casing allowed in names"/>
+        <Accept Member="name" RegExp="$CamelCasingRegExp$" Text="Only camel casing allowed in names"/>
     </Check>
     <Check Class="QMLPropertyDeclaration">
-        <Reject Member="name" RegExp="([a-z])([a-zA-Z0-9]*)" Text="Only camel casing allowed in names"/>
+        <Accept Member="name" RegExp="$CamelCasingRegExp$" Text="Only camel casing allowed in names"/>
         <!--
         <Reject Member="content" Type="int" Text="No magic value allowed in property"/>
         <Reject Member="content" Type="float" Text="No magic value allowed in property"/>
@@ -19,7 +20,7 @@
         -->
     </Check>
     <Check Class="QMLFunction">
-        <Reject Member="name" RegExp="([a-z])([a-zA-Z0-9]*)" Text="Only camel casing allowed in names"/>
+        <Accept Member="name" RegExp="$CamelCasingRegExp$" Text="Only camel casing allowed in names"/>
         <Reject Member="content" Count="20" Text="Too many statements, consider refactor"/>
     </Check>
     <Check Class="QMLConditional">
@@ -35,5 +36,10 @@
         <Reject NestedCount="5" Text="Too many nested ifs, consider using switch or a map"/>
         <Reject Member="then" Count="20" Text="Too many statements, consider refactor"/>
         <Reject Member="else" Count="20" Text="Too many statements, consider refactor"/>
+    </Check>
+    <Check Class="QMLImport">
+        <Accept Member="name" Path="Exists" Text="Import directory does not exist">
+            <Condition Member="version" Empty="true"/>
+        </Accept>
     </Check>
 </Root>

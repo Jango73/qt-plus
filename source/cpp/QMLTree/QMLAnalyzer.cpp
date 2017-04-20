@@ -5,6 +5,7 @@
 #include <QDir>
 #include <QRegExp>
 #include <QMutexLocker>
+#include <QDebug>
 
 // Application
 #include "QMLAnalyzer.h"
@@ -13,16 +14,25 @@
 
 //-------------------------------------------------------------------------------------------------
 
+#define ANALYZER_TOKEN_MACRO        "Macro"
+#define ANALYZER_TOKEN_NAME         "Name"
 #define ANALYZER_TOKEN_CHECK        "Check"
 #define ANALYZER_TOKEN_CLASS        "Class"
 #define ANALYZER_TOKEN_COUNT        "Count"
 #define ANALYZER_TOKEN_MEMBER       "Member"
 #define ANALYZER_TOKEN_NESTED_COUNT "NestedCount"
+#define ANALYZER_TOKEN_ACCEPT       "Accept"
 #define ANALYZER_TOKEN_REJECT       "Reject"
 #define ANALYZER_TOKEN_TEXT         "Text"
 #define ANALYZER_TOKEN_TYPE         "Type"
 #define ANALYZER_TOKEN_VALUE        "Value"
 #define ANALYZER_TOKEN_REGEXP       "RegExp"
+#define ANALYZER_TOKEN_PATH         "Path"
+#define ANALYZER_TOKEN_EXISTS       "Exists"
+#define ANALYZER_TOKEN_CONDITION    "Condition"
+#define ANALYZER_TOKEN_EMPTY        "Empty"
+#define ANALYZER_TOKEN_TRUE         "true"
+#define ANALYZER_TOKEN_FALSE        "false"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -136,9 +146,21 @@ QMLTreeContext* QMLAnalyzer::context()
     return m_pContext;
 }
 
+void QMLAnalyzer::clear()
+{
+    if (m_pContext != nullptr)
+    {
+        delete m_pContext;
+    }
+
+    m_pContext = new QMLTreeContext();
+}
+
 bool QMLAnalyzer::analyze(CXMLNode xGrammar)
 {
     m_xGrammar = xGrammar;
+
+    parseMacros();
 
     {
         QMutexLocker locker(&m_mContextMutex);
@@ -192,6 +214,42 @@ void QMLAnalyzer::stopThreadedAnalyze()
 void QMLAnalyzer::run()
 {
     analyze(m_xGrammar);
+}
+
+void QMLAnalyzer::parseMacros()
+{
+    QVector<CXMLNode> vMacros = m_xGrammar.getNodesByTagName(ANALYZER_TOKEN_MACRO);
+
+    m_mMacros.clear();
+
+    foreach (CXMLNode xMacro, vMacros)
+    {
+        QString sName = xMacro.attributes()[ANALYZER_TOKEN_NAME];
+        QString sValue = xMacro.attributes()[ANALYZER_TOKEN_VALUE];
+
+        m_mMacros[sName] = sValue;
+    }
+}
+
+QString QMLAnalyzer::processMacros(const QString& sText)
+{
+    QString sResult = sText;
+
+    foreach (QString sMacro, m_mMacros.keys())
+    {
+        QString sFullMacroName = QString("$%1$").arg(sMacro);
+
+        if (sResult.contains(sFullMacroName))
+        {
+            if (m_mMacros[sMacro].count() > 0)
+            {
+                QString sMacroValue = m_mMacros[sMacro];
+                sResult.replace(sFullMacroName, sMacroValue);
+            }
+        }
+    }
+
+    return sResult;
 }
 
 bool QMLAnalyzer::analyzeFile(const QString& sFileName)
@@ -341,77 +399,19 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pEntit
 
         if (pEntity->metaObject()->className() == sClassName)
         {
+            QVector<CXMLNode> vAccepts = xCheck.getNodesByTagName(ANALYZER_TOKEN_ACCEPT);
             QVector<CXMLNode> vRejects = xCheck.getNodesByTagName(ANALYZER_TOKEN_REJECT);
 
             foreach (CXMLNode xReject, vRejects)
             {
-                QString sMember = xReject.attributes()[ANALYZER_TOKEN_MEMBER].toLower();
-                QString sValue = xReject.attributes()[ANALYZER_TOKEN_VALUE];
-                QString sType = xReject.attributes()[ANALYZER_TOKEN_TYPE];
-                QString sText = xReject.attributes()[ANALYZER_TOKEN_TEXT];
-                QString sNestedCount = xReject.attributes()[ANALYZER_TOKEN_NESTED_COUNT];
-                QString sCount = xReject.attributes()[ANALYZER_TOKEN_COUNT];
-                QString sRegExp = xReject.attributes()[ANALYZER_TOKEN_REGEXP];
+                if (runGrammar_Reject(sFileName, sClassName, pEntity, xReject, false))
+                    bHasRejects = true;
+            }
 
-                if (sNestedCount.isEmpty() == false)
-                {
-                    int iNestedCountAllowed = sNestedCount.toInt();
-
-                    if (iNestedCountAllowed > 0)
-                    {
-                        int iNestedCount = runGrammar_CountNested(sClassName, pEntity);
-
-                        if (iNestedCount > iNestedCountAllowed)
-                        {
-                            bHasRejects = true;
-                            outputError(sFileName, pEntity->position(), sText);
-                        }
-                    }
-                }
-                else if (mMembers.contains(sMember) && mMembers[sMember] != nullptr)
-                {
-                    QString sMemberToString = mMembers[sMember]->toString();
-
-                    if (sRegExp.isEmpty() == false && sMemberToString.isEmpty() == false)
-                    {
-                        QRegExp tRegExp(sRegExp);
-
-                        if (tRegExp.exactMatch(sMemberToString) == false)
-                        {
-                            bHasRejects = true;
-                            outputError(sFileName, pEntity->position(), sText);
-                        }
-                    }
-                    else if (sCount.isEmpty() == false)
-                    {
-                        int iCountToCheck = sCount.toInt();
-                        QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(mMembers[sMember]);
-
-                        if (pComplex != nullptr && pComplex->contents().count() > iCountToCheck)
-                        {
-                            bHasRejects = true;
-                            outputError(sFileName, pEntity->position(), sText);
-                        }
-                    }
-                    else if (sType.isEmpty() == false)
-                    {
-                        QString sTypeToString = QMLType::typeToString(mMembers[sMember]->value().type());
-
-                        if (sTypeToString == sType)
-                        {
-                            bHasRejects = true;
-                            outputError(sFileName, pEntity->position(), sText);
-                        }
-                    }
-                    else
-                    {
-                        if (sMemberToString == sValue)
-                        {
-                            bHasRejects = true;
-                            outputError(sFileName, pEntity->position(), sText);
-                        }
-                    }
-                }
+            foreach (CXMLNode xAccept, vAccepts)
+            {
+                if (runGrammar_Reject(sFileName, sClassName, pEntity, xAccept, true))
+                    bHasRejects = true;
             }
         }
     }
@@ -433,6 +433,159 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pEntit
             }
         }
     }
+}
+
+bool QMLAnalyzer::runGrammar_Reject(const QString& sFileName, const QString& sClassName, QMLEntity* pEntity, CXMLNode xRule, bool bInverseLogic)
+{
+    QString sMember = processMacros(xRule.attributes()[ANALYZER_TOKEN_MEMBER].toLower());
+    QString sValue = processMacros(xRule.attributes()[ANALYZER_TOKEN_VALUE]);
+    QString sType = processMacros(xRule.attributes()[ANALYZER_TOKEN_TYPE]);
+    QString sText = processMacros(xRule.attributes()[ANALYZER_TOKEN_TEXT]);
+    QString sNestedCount = processMacros(xRule.attributes()[ANALYZER_TOKEN_NESTED_COUNT]);
+    QString sCount = processMacros(xRule.attributes()[ANALYZER_TOKEN_COUNT]);
+    QString sRegExp = processMacros(xRule.attributes()[ANALYZER_TOKEN_REGEXP]);
+    QString sPath = processMacros(xRule.attributes()[ANALYZER_TOKEN_PATH]);
+
+    if (runGrammar_SatisfiesConditions(sFileName, sClassName, pEntity, xRule))
+    {
+        QMap<QString, QMLEntity*> mMembers = pEntity->members();
+
+        // Check nested count
+        if (sNestedCount.isEmpty() == false)
+        {
+            int iNestedCountAllowed = sNestedCount.toInt();
+
+            if ((iNestedCountAllowed > 0) ^ bInverseLogic)
+            {
+                int iNestedCount = runGrammar_CountNested(sClassName, pEntity);
+
+                if (iNestedCount > iNestedCountAllowed)
+                {
+                    outputError(sFileName, pEntity->position(), sText);
+                    return true;
+                }
+            }
+        }
+        else if (mMembers.contains(sMember) && mMembers[sMember] != nullptr)
+        {
+            QString sMemberToString = mMembers[sMember]->toString();
+
+            sMemberToString = sMemberToString.replace("\"", "");
+
+            // Check the path if requested
+            if (sPath.isEmpty() == false)
+            {
+                if (sPath == ANALYZER_TOKEN_EXISTS)
+                {
+                    QFileInfo tFileInfo(sFileName);
+                    QString sDirectory = tFileInfo.absolutePath();
+                    QDir tDirectory(sDirectory);
+                    QString sFullImportPath = tDirectory.absoluteFilePath(sMemberToString);
+                    QFileInfo tFullFileInfo(sFullImportPath);
+                    QDir tImportDirectory(sFullImportPath);
+
+                    if (tFullFileInfo.exists())
+                    {
+                        return false;
+                    }
+
+                    qDebug() << "Check path: " << sDirectory << ", " << sFullImportPath;
+
+                    if (tImportDirectory.exists() ^ bInverseLogic)
+                    {
+                        outputError(sFileName, pEntity->position(), sText);
+                        return true;
+                    }
+                }
+            }
+            // Match a regular expression if requested
+            else if (sRegExp.isEmpty() == false && sMemberToString.isEmpty() == false)
+            {
+                QRegExp tRegExp(sRegExp);
+
+                if ((tRegExp.exactMatch(sMemberToString)) ^ bInverseLogic)
+                {
+                    outputError(sFileName, pEntity->position(), sText);
+                    return true;
+                }
+            }
+            // Check the count if requested
+            else if (sCount.isEmpty() == false)
+            {
+                int iCountToCheck = sCount.toInt();
+                QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(mMembers[sMember]);
+
+                if (pComplex != nullptr)
+                {
+                    if ((pComplex->contents().count() > iCountToCheck) ^ bInverseLogic)
+                    {
+                        outputError(sFileName, pEntity->position(), sText);
+                        return true;
+                    }
+                }
+            }
+            // Check the type if requested
+            else if (sType.isEmpty() == false)
+            {
+                QString sTypeToString = QMLType::typeToString(mMembers[sMember]->value().type());
+
+                if ((sTypeToString == sType) ^ bInverseLogic)
+                {
+                    outputError(sFileName, pEntity->position(), sText);
+                    return true;
+                }
+            }
+            else
+            {
+                if ((sMemberToString == sValue) ^ bInverseLogic)
+                {
+                    outputError(sFileName, pEntity->position(), sText);
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+bool QMLAnalyzer::runGrammar_SatisfiesConditions(const QString& sFileName, const QString& sClassName, QMLEntity* pEntity, CXMLNode xRule)
+{
+    QVector<CXMLNode> vConditions = xRule.getNodesByTagName(ANALYZER_TOKEN_CONDITION);
+
+    QMap<QString, QMLEntity*> mMembers = pEntity->members();
+
+    foreach (CXMLNode xCondition, vConditions)
+    {
+        QString sMember = xCondition.attributes()[ANALYZER_TOKEN_MEMBER].toLower();
+        QString sEmpty = xCondition.attributes()[ANALYZER_TOKEN_EMPTY].toLower();
+
+        if (mMembers.contains(sMember) && mMembers[sMember] != nullptr)
+        {
+            QString sMemberToString = mMembers[sMember]->toString();
+
+            // Check the empty condition
+            if (sEmpty.isEmpty() == false)
+            {
+                if ((sMemberToString.isEmpty() && (sEmpty == ANALYZER_TOKEN_TRUE)) == false)
+                {
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            if (sEmpty.isEmpty() == false)
+            {
+                if (sEmpty != ANALYZER_TOKEN_TRUE)
+                {
+                    return false;
+                }
+            }
+        }
+    }
+
+    return true;
 }
 
 int QMLAnalyzer::runGrammar_CountNested(const QString& sClassName, QMLEntity* pEntity)

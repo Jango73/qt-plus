@@ -83,6 +83,9 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
+    void clear();
+
+    //!
     bool analyze(CXMLNode xGrammar);
 
     //!
@@ -125,6 +128,12 @@ signals:
 protected:
 
     //!
+    void parseMacros();
+
+    //!
+    QString processMacros(const QString& sText);
+
+    //!
     bool analyze_Recurse(QString sDirectory);
 
     //!
@@ -132,6 +141,12 @@ protected:
 
     //!
     void runGrammar_Recurse(const QString& sFileName, QMLEntity* pEntity);
+
+    //!
+    bool runGrammar_Reject(const QString& sFileName, const QString& sClassName, QMLEntity* pEntity, CXMLNode xRule, bool bInverseLogic);
+
+    //!
+    bool runGrammar_SatisfiesConditions(const QString& sFileName, const QString& sClassName, QMLEntity* pEntity, CXMLNode xRule);
 
     //!
     int runGrammar_CountNested(const QString& sClassName, QMLEntity* pEntity);
@@ -150,6 +165,7 @@ protected:
     QMLTreeContext*                 m_pContext;
     QVector<QMLAnalyzerError>       m_vErrors;
     CXMLNode                        m_xGrammar;
+    QMap<QString, QString>          m_mMacros;
     bool                            m_bIncludeImports;
     bool                            m_bIncludeSubFolders;
     bool                            m_bRewriteFiles;
@@ -159,7 +175,7 @@ protected:
 
 //-------------------------------------------------------------------------------------------------
 
-class QTPLUSSHARED_EXPORT QMLAnalyzerWrapper : public QObject
+class UNISLIBSHARED_EXPORT QMLAnalyzerWrapper : public QObject
 {
     Q_OBJECT
 

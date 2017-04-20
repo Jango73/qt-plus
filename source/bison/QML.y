@@ -222,15 +222,12 @@ ImportStatement :
 
         if (pName != nullptr && pVersion != nullptr)
         {
-            $<Object>$ = new QMLImport(pContext->position(), pContext, pName->value().toString(), pVersion->value().toString());
+            $<Object>$ = new QMLImport(pName->position(), pContext, pName, pVersion);
         }
         else
         {
             $<Object>$ = nullptr;
         }
-
-        SAFE_DELETE(pName);
-        SAFE_DELETE(pVersion);
     }
     |
     TOKEN_IMPORT QualifiedIdentifier Version TOKEN_AS Identifier
@@ -241,15 +238,12 @@ ImportStatement :
 
         if (pName != nullptr && pVersion != nullptr)
         {
-            $<Object>$ = new QMLImport(pContext->position(), pContext, pName->value().toString(), pVersion->value().toString(), pAs->value().toString());
+            $<Object>$ = new QMLImport(pName->position(), pContext, pName, pVersion, pAs);
         }
         else
         {
             $<Object>$ = nullptr;
         }
-
-        SAFE_DELETE(pName);
-        SAFE_DELETE(pVersion);
     }
     |
     TOKEN_IMPORT Literal
@@ -258,14 +252,12 @@ ImportStatement :
 
         if (pName != nullptr)
         {
-            $<Object>$ = new QMLImport(pContext->position(), pContext, pName->value().toString(), "");
+            $<Object>$ = new QMLImport(pName->position(), pContext, pName);
         }
         else
         {
             $<Object>$ = nullptr;
         }
-
-        SAFE_DELETE(pName);
     }
     |
     TOKEN_IMPORT Literal TOKEN_AS Identifier
@@ -275,15 +267,12 @@ ImportStatement :
 
         if (pName != nullptr && pAs != nullptr)
         {
-            $<Object>$ = new QMLImport(pContext->position(), pContext, pName->value().toString(), "", pAs->value().toString());
+            $<Object>$ = new QMLImport(pName->position(), pContext, pName, nullptr, pAs);
         }
         else
         {
             $<Object>$ = nullptr;
         }
-
-        SAFE_DELETE(pName);
-        SAFE_DELETE(pAs);
     }
 ;
 
@@ -317,6 +306,30 @@ Item :
 
         $<Object>$ = pComplexItem;
     }
+    /*
+    |
+    Identifier '.' Identifier '{' ItemContents '}'
+    {
+        PARSER_TRACE("Item", "Identifier '{' ItemContents '}'");
+
+        QMLEntity* pName1 = $<Object>1;
+        QMLEntity* pName2 = $<Object>3;
+        QMLItem* pComplexItem = dynamic_cast<QMLItem*>($<Object>5);
+
+        if (pName2 != nullptr && pComplexItem != nullptr)
+        {
+            pComplexItem->setName(pName2);
+        }
+        else
+        {
+            SAFE_DELETE(pName2);
+        }
+
+        SAFE_DELETE(pName1);
+
+        $<Object>$ = pComplexItem;
+    }
+    */
     |
     Identifier '{' '}'
     {

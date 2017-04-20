@@ -30,7 +30,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor with name and content
-    QMLImport(const QPoint& pPosition, QMLTreeContext* pContext, const QString& sName, const QString& sVersion, const QString& sAs = "");
+    QMLImport(const QPoint& pPosition, QMLTreeContext* pContext, QMLEntity* pName, QMLEntity* pVersion = nullptr, QMLEntity* pAs = nullptr);
 
     //! Destructor
     virtual ~QMLImport();
@@ -44,10 +44,13 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    QString name() const;
+    QMLEntity* name() const;
 
     //!
-    QString version() const;
+    QMLEntity* version() const;
+
+    //! Returns all members
+    virtual QMap<QString, QMLEntity*> members() Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
@@ -65,7 +68,7 @@ public:
 
 protected:
 
-    QString    m_sName;
-    QString    m_sVersion;
-    QString    m_sAs;
+    QMLEntity*  m_pName;
+    QMLEntity*  m_pVersion;
+    QMLEntity*  m_pAs;
 };

@@ -8,15 +8,15 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QMLImport::QMLImport(const QPoint& pPosition, QMLTreeContext* pContext, const QString& sName, const QString& sVersion, const QString& sAs)
+QMLImport::QMLImport(const QPoint& pPosition, QMLTreeContext* pContext, QMLEntity* pName, QMLEntity* pVersion, QMLEntity* pAs)
     : QMLEntity(pPosition)
-    , m_sName(sName)
-    , m_sVersion(sVersion)
-    , m_sAs(sAs)
+    , m_pName(pName)
+    , m_pVersion(pVersion)
+    , m_pAs(pAs)
 {
-    if (sVersion == "")
+    if (m_pName != nullptr && (m_pVersion == nullptr || m_pVersion->toString().isEmpty()))
     {
-        QString sDirectory = pContext->folder() + "/" + sName;
+        QString sDirectory = pContext->folder() + "/" + m_pName->toString();
 
         QStringList slNameFilter;
         slNameFilter << QString("*.qml");
@@ -37,20 +37,39 @@ QMLImport::QMLImport(const QPoint& pPosition, QMLTreeContext* pContext, const QS
 
 QMLImport::~QMLImport()
 {
+    if (m_pName != nullptr)
+        delete m_pName;
+    if (m_pVersion != nullptr)
+        delete m_pVersion;
+    if (m_pAs != nullptr)
+        delete m_pAs;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QString QMLImport::name() const
+QMLEntity* QMLImport::name() const
 {
-    return m_sName;
+    return m_pName;
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QString QMLImport::version() const
+QMLEntity* QMLImport::version() const
 {
-    return m_sVersion;
+    return m_pVersion;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+QMap<QString, QMLEntity*> QMLImport::members()
+{
+    QMap<QString, QMLEntity*> vReturnValue;
+
+    vReturnValue["name"] = m_pName;
+    vReturnValue["version"] = m_pVersion;
+    vReturnValue["as"] = m_pAs;
+
+    return vReturnValue;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -61,21 +80,24 @@ void QMLImport::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent)
 
     QString sText = "";
 
-    if (m_sVersion.isEmpty())
+    if (m_pName != nullptr)
     {
-        sText = QString("import \"%1\"").arg(m_sName);
-    }
-    else
-    {
-        sText = QString("import %1 %2").arg(m_sName).arg(m_sVersion);
-    }
+        if (m_pVersion == nullptr || m_pVersion->toString().isEmpty())
+        {
+            sText = QString("import \"%1\"").arg(m_pName->toString());
+        }
+        else
+        {
+            sText = QString("import %1 %2").arg(m_pName->toString()).arg(m_pVersion->toString());
+        }
 
-    if (m_sAs.isEmpty() == false)
-    {
-        sText += (" as " + m_sAs);
-    }
+        if (m_pAs != nullptr && m_pAs->toString().isEmpty() == false)
+        {
+            sText += (" as " + m_pAs->toString());
+        }
 
-    stream << sText << " ";
+        stream << sText << " ";
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -83,9 +105,22 @@ void QMLImport::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent)
 CXMLNode QMLImport::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
     CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
+    CXMLNode xName("Name");
+    CXMLNode xVersion("Version");
+    CXMLNode xAs("As");
 
-    xNode.attributes()["Name"] = m_sName;
-    xNode.attributes()["Version"] = m_sVersion;
+    if (m_pName != nullptr)
+        xName.nodes() << m_pName->toXMLNode(pContext, this);
+
+    if (m_pVersion != nullptr)
+        xVersion.nodes() << m_pVersion->toXMLNode(pContext, this);
+
+    if (m_pAs != nullptr)
+        xAs.nodes() << m_pAs->toXMLNode(pContext, this);
+
+    xNode.nodes() << xName;
+    xNode.nodes() << xVersion;
+    xNode.nodes() << xAs;
 
     return xNode;
 }
