@@ -13,11 +13,13 @@
 #include "QMLFunction.h"
 
 //-------------------------------------------------------------------------------------------------
+// XML Grammar File Tokens
 
 #define ANALYZER_TOKEN_MACRO        "Macro"
 #define ANALYZER_TOKEN_NAME         "Name"
 #define ANALYZER_TOKEN_CHECK        "Check"
 #define ANALYZER_TOKEN_CLASS        "Class"
+#define ANALYZER_TOKEN_LIST         "List"
 #define ANALYZER_TOKEN_COUNT        "Count"
 #define ANALYZER_TOKEN_MEMBER       "Member"
 #define ANALYZER_TOKEN_NESTED_COUNT "NestedCount"
@@ -30,7 +32,9 @@
 #define ANALYZER_TOKEN_PATH         "Path"
 #define ANALYZER_TOKEN_EXISTS       "Exists"
 #define ANALYZER_TOKEN_CONDITION    "Condition"
+#define ANALYZER_TOKEN_NEGATE       "Negate"
 #define ANALYZER_TOKEN_EMPTY        "Empty"
+#define ANALYZER_TOKEN_FILE_NAME    "filename"
 #define ANALYZER_TOKEN_TRUE         "true"
 #define ANALYZER_TOKEN_FALSE        "false"
 
@@ -272,6 +276,7 @@ bool QMLAnalyzer::analyzeFile(const QString& sFileName)
             }
 
             QFile file(sFileName);
+
             if (file.open(QFile::WriteOnly))
             {
                 m_sText.clear();
@@ -445,6 +450,7 @@ bool QMLAnalyzer::runGrammar_Reject(const QString& sFileName, const QString& sCl
     QString sCount = processMacros(xRule.attributes()[ANALYZER_TOKEN_COUNT]);
     QString sRegExp = processMacros(xRule.attributes()[ANALYZER_TOKEN_REGEXP]);
     QString sPath = processMacros(xRule.attributes()[ANALYZER_TOKEN_PATH]);
+    QString sList = processMacros(xRule.attributes()[ANALYZER_TOKEN_LIST]);
 
     if (runGrammar_SatisfiesConditions(sFileName, sClassName, pEntity, xRule))
     {
@@ -472,8 +478,19 @@ bool QMLAnalyzer::runGrammar_Reject(const QString& sFileName, const QString& sCl
 
             sMemberToString = sMemberToString.replace("\"", "");
 
+            // Check inclusion (or exclusion) in a list
+            if (sList.isEmpty() == false)
+            {
+                QStringList lNames = sList.split(",");
+
+                if (lNames.contains(sMemberToString) ^ bInverseLogic)
+                {
+                    outputError(sFileName, pEntity->position(), sText);
+                    return true;
+                }
+            }
             // Check the path if requested
-            if (sPath.isEmpty() == false)
+            else if (sPath.isEmpty() == false)
             {
                 if (sPath == ANALYZER_TOKEN_EXISTS)
                 {
@@ -482,16 +499,23 @@ bool QMLAnalyzer::runGrammar_Reject(const QString& sFileName, const QString& sCl
                     QDir tDirectory(sDirectory);
                     QString sFullImportPath = tDirectory.absoluteFilePath(sMemberToString);
                     QFileInfo tFullFileInfo(sFullImportPath);
-                    QDir tImportDirectory(sFullImportPath);
+                    QDir tFullImportDirectory(sFullImportPath);
+                    bool bExists = false;
 
                     if (tFullFileInfo.exists())
                     {
-                        return false;
+                        bExists = true;
                     }
 
-                    qDebug() << "Check path: " << sDirectory << ", " << sFullImportPath;
+                    if (bExists == false)
+                    {
+                        if (tFullImportDirectory.exists())
+                        {
+                            bExists = true;
+                        }
+                    }
 
-                    if (tImportDirectory.exists() ^ bInverseLogic)
+                    if ((bExists == true) ^ bInverseLogic)
                     {
                         outputError(sFileName, pEntity->position(), sText);
                         return true;
@@ -557,8 +581,10 @@ bool QMLAnalyzer::runGrammar_SatisfiesConditions(const QString& sFileName, const
 
     foreach (CXMLNode xCondition, vConditions)
     {
+        QString sValue = xCondition.attributes()[ANALYZER_TOKEN_VALUE];
         QString sMember = xCondition.attributes()[ANALYZER_TOKEN_MEMBER].toLower();
         QString sEmpty = xCondition.attributes()[ANALYZER_TOKEN_EMPTY].toLower();
+        QString sNegate = xCondition.attributes()[ANALYZER_TOKEN_NEGATE].toLower();
 
         if (mMembers.contains(sMember) && mMembers[sMember] != nullptr)
         {
@@ -575,7 +601,18 @@ bool QMLAnalyzer::runGrammar_SatisfiesConditions(const QString& sFileName, const
         }
         else
         {
-            if (sEmpty.isEmpty() == false)
+            // Check the file name condition
+            if (sMember == ANALYZER_TOKEN_FILE_NAME)
+            {
+                if (sFileName.contains(sValue))
+                {
+                    if (sNegate == ANALYZER_TOKEN_TRUE)
+                    {
+                        return false;
+                    }
+                }
+            }
+            else if (sEmpty.isEmpty() == false)
             {
                 if (sEmpty != ANALYZER_TOKEN_TRUE)
                 {

@@ -297,6 +297,7 @@ Item :
 
         if (pName != nullptr && pComplexItem != nullptr)
         {
+            pComplexItem->setPosition(pName->position());
             pComplexItem->setName(pName);
         }
         else
@@ -340,6 +341,7 @@ Item :
 
         if (pName != nullptr)
         {
+            pComplexItem->setPosition(pName->position());
             pComplexItem->setName(pName);
         }
         else
