@@ -12,6 +12,160 @@
 #include "QMLItem.h"
 #include "QMLFunction.h"
 
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    \class QMLAnalyzer
+    \inmodule unis-lib
+    \brief A QML analyzer (limited to the scope of a file). \br
+    \section1 How it works
+    \section1 The grammar file
+    \code
+    <?xml version="1.0" encoding="UTF-8"?>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="Condition">
+        <xs:complexType>
+          <xs:attribute name="Member" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>
+                Defines the name of the member of the current class we want to work with.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Empty" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>
+                This can contain 'true' or 'false'.
+                Evaluates to true (or false) if the 'Member' of the class is an empty string.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Value" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>
+                If this is defined, it will be compared to the string value of 'Member'.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Negate" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>
+                If this is defined and equal to 'true', it will reverse the effect of the condition.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Root">
+        <xs:annotation>
+          <xs:documentation>
+            The root of the document.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="Macro">
+              <xs:complexType>
+                <xs:attribute name="Name" type="xs:string" />
+                <xs:attribute name="Value" type="xs:string" />
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="Check">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Reject" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element ref="Condition" minOccurs="0" maxOccurs="unbounded" />
+                      </xs:sequence>
+                      <xs:attribute name="Member" type="xs:string">
+                        <xs:annotation>
+                          <xs:documentation>
+                            Defines the name of the member of the class we want to work with.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:attribute>
+                      <xs:attribute name="RegExp" type="xs:string">
+                        <xs:annotation>
+                          <xs:documentation>
+                            If defined, must contain a regular expression.
+                            The analyzer will match it against the string value of 'Member'.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:attribute>
+                      <xs:attribute name="Count" type="xs:string">
+                        <xs:annotation>
+                          <xs:documentation>
+                            If defined, must contain an integer.
+                            The analyzer will count the contents of 'Member' (if any).
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:attribute>
+                      <xs:attribute name="NestedCount" type="xs:string">
+                        <xs:annotation>
+                          <xs:documentation>
+                            If defined, must contain an integer.
+                            The analyzer will count the occurence of the current class in a recursive manner.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:attribute>
+                      <xs:attribute name="Path" type="xs:string">
+                        <xs:annotation>
+                          <xs:documentation>
+                            If defined, must contain 'Exists'.
+                            The analyzer will check that the path contained in 'Member' exists.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:attribute>
+                      <xs:attribute name="List" type="xs:string">
+                        <xs:annotation>
+                          <xs:documentation>
+                            If defined, must contain a list of comma-separated strings.
+                            The analyzer will check that the string value of 'Member' is contained in this list.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:attribute>
+                      <xs:attribute name="Text" type="xs:string">
+                        <xs:annotation>
+                          <xs:documentation>
+                            The text to show to the user when this reject is yielded.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:attribute>
+                    </xs:complexType>
+                  </xs:element>
+                  <xs:element name="Accept" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element ref="Condition" minOccurs="0" maxOccurs="unbounded" />
+                      </xs:sequence>
+                      <xs:attribute name="Member" type="xs:string" />
+                      <xs:attribute name="RegExp" type="xs:string" />
+                      <xs:attribute name="Count" type="xs:string" />
+                      <xs:attribute name="NestedCount" type="xs:string" />
+                      <xs:attribute name="Text" type="xs:string" />
+                      <xs:attribute name="Path" type="xs:string" />
+                      <xs:attribute name="List" type="xs:string" />
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+                <xs:attribute name="Class" type="xs:string">
+                  <xs:annotation>
+                    <xs:documentation>
+                      The name of the class we want to run checks on.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:attribute>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+    \endcode
+*/
+
 //-------------------------------------------------------------------------------------------------
 // XML Grammar File Tokens
 
