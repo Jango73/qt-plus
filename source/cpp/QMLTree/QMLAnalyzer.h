@@ -175,7 +175,7 @@ protected:
 
 //-------------------------------------------------------------------------------------------------
 
-class UNISLIBSHARED_EXPORT QMLAnalyzerWrapper : public QObject
+class QTPLUSSHARED_EXPORT QMLAnalyzerWrapper : public QObject
 {
     Q_OBJECT
 
