@@ -102,8 +102,8 @@ QMap<QString, QMLEntity*> QMLBinaryOperation::members()
 {
     QMap<QString, QMLEntity*> vReturnValue;
 
-    vReturnValue["Left"] = m_pLeft;
-    vReturnValue["Right"] = m_pRight;
+    vReturnValue["left"] = m_pLeft;
+    vReturnValue["right"] = m_pRight;
 
     return vReturnValue;
 }

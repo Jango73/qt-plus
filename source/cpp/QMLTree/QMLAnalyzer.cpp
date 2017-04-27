@@ -54,9 +54,9 @@
     Second, we use a \c <Reject> tag because we want to yield a failure when the rule evaluates to \c true.
     In the \c <Reject> tag we use the following attributes:
     \list
-        \li \c Member is set to \c "content" because we are interested by the contents of the assignment.
-        \li \c Class is set to \c "QMLEntity" because we want something more complex than a simple value in the assignment.
-        \li \c Text is set to \c "No \c hardcoded \c colors \c allowed" because that's what we want to tell the user.
+        \li \c Member is set to \c content : we are interested by the contents of the assignment.
+        \li \c Class is set to \c QMLEntity : we want something more complex than a simple value in the assignment, like a \c QMLIdentifier or a \c QMLBinaryOperation.
+        \li \c Text is set to \c No \c hardcoded \c colors \c allowed : that's what we want to tell the user when the check yields a failure.
     \endlist
     Now this is not enough because this rule would run through ALL property assignments in the file, but we want only \c color properties to be processed.
     That's when the \c <Condition> tag comes in. It allows us to place conditions, thus refining the rule.
@@ -76,7 +76,7 @@
 
     \section4 Attributes of the \c <Accept> and \c <Reject> tags
     \list
-    \li Member - Defines the member that we want to check. Please refer to the section below for a list of these members.
+    \li Member - Defines the member that we want to check. Please refer to the "List of classes and their members" section.
     \li Class - Defines the class name.
     \li Value - Makes the analyzer compare this value with the value of \c Member.
     \li RegExp - Makes the analyzer compare this regular expression with the value of \c Member.
@@ -85,8 +85,17 @@
     \li Text - Defines the text to output when the rule yields failure.
     \endlist
 
-    \section4 \c <Condition> tag
-    TODO
+    \section4 \c Attributes of the \c <Condition> tag, inner tag of \c <Accept> and \c <Reject>
+    \list
+    \li Member - Defines the member that we want to check. Please refer to the "List of classes and their members" section.
+    \li Value - Makes the analyzer compare this value with the value of \c Member.
+    \li Negate - When equal to \c true, reverses the logic of the condition test.
+    \li Operation (Optional) - Specifies the type of operation to do on \c Member and \c Value.
+        \list
+            \li <empty> - Yields \c true if \c Member is equal to \c Value
+            \li Contains - Yields \c true if \c Member contains \c Value
+        \endlist
+    \endlist
 
     \section1 List of classes and their members
 
@@ -98,6 +107,8 @@
     \list
     \li name - The name of the entity
     \endlist
+
+    \li QMLIdentifier (extends QMLEntity) - A string that is an identifier.
 
     \li QMLImport - An import statement like [ import QtQuick 2.5 ]
     \list
@@ -159,6 +170,18 @@
     \li variable - The variable
     \li expression - The expression filling the variable
     \li content - The contents of the loop
+    \endlist
+
+    \li QMLSwitch - A switch/case statement
+    \list
+    \li expression - The expression
+    \li cases - A QMLComplexEntity containing the cases
+    \endlist
+
+    \li QMLBinaryOperation
+    \list
+    \li left - The expression that is left of the operator
+    \li right - The expression that is right of the operator
     \endlist
 
     \endlist
