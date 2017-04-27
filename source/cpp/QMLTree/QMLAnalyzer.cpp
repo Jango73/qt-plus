@@ -12,15 +12,158 @@
 #include "QMLItem.h"
 #include "QMLFunction.h"
 
-
 //-------------------------------------------------------------------------------------------------
 
 /*!
     \class QMLAnalyzer
     \inmodule unis-lib
     \brief A QML analyzer (limited to the scope of a file). \br
+
     \section1 How it works
-    \section1 The grammar file
+    This class runs checks over all contents of a QML file using a grammar file in XML format.
+
+    \section1 Format of the XML grammar file.
+
+    \section2 \c <Macro> tag
+    It is possible to define a macro. A macro is a name and a value, and will be referenced in any text using a $ symbol before and after its name.
+    Example of a macro declaration:
+    \code
+    <Macro Name="CamelCasingRegExp" Value="([a-z])([a-zA-Z0-9]*)"/>
+    \endcode
+    Here the macro is named CamelCasingRegExp and its value is "([a-z])([a-zA-Z0-9]*)". It can be used in any attribute like so:
+    \code
+    <Check Class="QMLVariableDeclaration">
+        <Accept Member="name" RegExp="$CamelCasingRegExp$" Text="Only camel casing allowed in names"/>
+    </Check>
+    \endcode
+
+    \section2 \c <Check> tag
+    Defines a set of rules to apply to a particular QML Tree class. Please refer to the "List of classes and their members" section.
+
+    \section3 \c <Accept> and \c <Reject> tags, inner tags of \c <Check>
+    These tags define rules that should be checked. An <Accept> tag will yield failure if its contents evaluate to false. A <Reject> tag will yield failure if its contents evaluate to true.
+
+    For instance, suppose we want to check (and reject) any hardcoded color strings. The rule will be defined as:
+    \code
+    <Check Class="QMLPropertyAssignment">
+        <Reject Member="content" Class="QMLEntity" Text="No hardcoded colors allowed">
+        </Reject>
+    </Check>
+    \endcode
+    First, we begin a \c <Check> tag for the class \c QMLPropertyAssignment, because this is what is stored in the QML tree for an expression like \c color: "#FF0000".
+    Second, we use a \c <Reject> tag because we want to yield a failure when the rule evaluates to \c true.
+    In the \c <Reject> tag we use the following attributes:
+    \list
+        \li \c Member is set to \c "content" because we are interested by the contents of the assignment.
+        \li \c Class is set to \c "QMLEntity" because we want something more complex than a simple value in the assignment.
+        \li \c Text is set to \c "No \c hardcoded \c colors \c allowed" because that's what we want to tell the user.
+    \endlist
+    Now this is not enough because this rule would run through ALL property assignments in the file, but we want only \c color properties to be processed.
+    That's when the \c <Condition> tag comes in. It allows us to place conditions, thus refining the rule.
+    \code
+    <Check Class="QMLPropertyAssignment">
+        <Reject Member="content" Class="QMLEntity" Text="No hardcoded colors allowed">
+            <Condition Member="name" Value="color"/>
+            <Condition Member="content" Value="transparent" Negate="true"/>
+        </Reject>
+    </Check>
+    \endcode
+    The conditions tell the analyzer that the rule should be run only when:
+    \list
+        \li The class member \c name is equal to \c color
+        \li The class member \c content is not equal to \c "transparent" (the Negate attributes inverses the logic)
+    \endlist
+
+    \section4 Attributes of the \c <Accept> and \c <Reject> tags
+    \list
+    \li Member - Defines the member that we want to check. Please refer to the section below for a list of these members.
+    \li Class - Defines the class name.
+    \li Value - Makes the analyzer compare this value with the value of \c Member.
+    \li RegExp - Makes the analyzer compare this regular expression with the value of \c Member.
+    \li Count - Makes the analyzer count the contents of \c Member.
+    \li NestedCount - Makes the analyzer recursively count the occurence of this class.
+    \li Text - Defines the text to output when the rule yields failure.
+    \endlist
+
+    \section4 \c <Condition> tag
+    TODO
+
+    \section1 List of classes and their members
+
+    \list
+
+    \li QMLEntity - The base of all QML Tree classes
+
+    \li QMLComplexEntity - The base class of QML Tree classes that have more than one content
+    \list
+    \li name - The name of the entity
+    \endlist
+
+    \li QMLImport - An import statement like [ import QtQuick 2.5 ]
+    \list
+    \li name - The name following the "import" token, either an identifier or a path in a string
+    \li version - The version following the name (if any)
+    \li as - The name following the "as" statement if any
+    \endlist
+
+    \li QMLItem (extends QMLComplexEntity) - A QML item like [ Rectangle ]
+    \list
+    \li name - The name of the item
+    \endlist
+
+    \li QMLPropertyDeclaration - A property declaration like [ property color myColor ]
+    \list
+    \li type - The type of the property
+    \li name - The name of the property
+    \li content - The contents of the property (can be any class extending QMLEntity)
+    \endlist
+
+    \li QMLPropertyAssignment (extends QMLPropertyDeclaration) - A property assignement like [ id: root ]
+    \list
+    \li type - The type of the property
+    \li name - The name of the property
+    \li content - The contents of the property (can be any class extending QMLEntity)
+    \endlist
+
+    \li QMLFunction - A function declaration
+    \list
+    \li name - The name of the function
+    \li parameters - The parameters of the function
+    \li content - The contents of the function
+    \endlist
+
+    \li QMLIf - An if statement
+    \list
+    \li condition - The expression specified between the '(' and ')' tokens
+    \li then - The statement executed when the condition evaluates to \c TRUE
+    \li else - The statement executed when the condition evaluates to \c FALSE
+    \endlist
+
+    \li QMLConditional (extends QMLIf) - A conditional expression (a ? 0 : 1)
+    \list
+    \li condition - The expression specified before the '?' token
+    \li then - The statement executed when the condition evaluates to \c TRUE
+    \li else - The statement executed when the condition evaluates to \c FALSE
+    \endlist
+
+    \li QMLFor - A for loop
+    \list
+    \li initialization - The statement before the first ';' token
+    \li condition - The expression before the second ';' token
+    \li incrementation - The statement after the second ';' token
+    \li content - The contents of the loop
+    \endlist
+
+    \li QMLForIn - A for-in loop
+    \list
+    \li variable - The variable
+    \li expression - The expression filling the variable
+    \li content - The contents of the loop
+    \endlist
+
+    \endlist
+
+    \section1 The grammar file XSD
     \code
     <?xml version="1.0" encoding="UTF-8"?>
     <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -184,7 +327,9 @@
 #define ANALYZER_TOKEN_VALUE        "Value"
 #define ANALYZER_TOKEN_REGEXP       "RegExp"
 #define ANALYZER_TOKEN_PATH         "Path"
+#define ANALYZER_TOKEN_OPERATION    "Operation"
 #define ANALYZER_TOKEN_EXISTS       "Exists"
+#define ANALYZER_TOKEN_CONTAINS     "Contains"
 #define ANALYZER_TOKEN_CONDITION    "Condition"
 #define ANALYZER_TOKEN_NEGATE       "Negate"
 #define ANALYZER_TOKEN_EMPTY        "Empty"
@@ -247,7 +392,7 @@ void QMLAnalyzer::setFile(const QString& sFileName)
 }
 
 /*!
-    Sets the include imports flag to \a bValue.
+    Sets the include imports flag to \a bValue. If the include imports flag is \c true, the analyzer will parse all imported files in the parsed files.
 */
 void QMLAnalyzer::setIncludeImports(bool bValue)
 {
@@ -255,7 +400,7 @@ void QMLAnalyzer::setIncludeImports(bool bValue)
 }
 
 /*!
-    Sets the include subfolders flag to \a bValue.
+    Sets the include subfolders flag to \a bValue. If the include subfolders flag is \c true, the analyzer will process all subfolders of the given folder.
 */
 void QMLAnalyzer::setIncludeSubFolders(bool bValue)
 {
@@ -263,7 +408,7 @@ void QMLAnalyzer::setIncludeSubFolders(bool bValue)
 }
 
 /*!
-    Sets the include rewrite files flag to \a bValue.
+    Sets the include rewrite files flag to \a bValue. If the rewrite files flag is \c true, the analyzer will overwrite the contents of the input file using auto-formatting.
 */
 void QMLAnalyzer::setRewriteFiles(bool bValue)
 {
@@ -271,7 +416,7 @@ void QMLAnalyzer::setRewriteFiles(bool bValue)
 }
 
 /*!
-    Sets the remove referenced symbols flag to \a bValue.
+    Sets the remove unreferenced symbols flag to \a bValue. If the rewrite files flag is \c true, the analyzer will remove any unreferenced symbol.
 */
 void QMLAnalyzer::setRemoveUnreferencedSymbols(bool bValue)
 {
@@ -304,6 +449,9 @@ QMLTreeContext* QMLAnalyzer::context()
     return m_pContext;
 }
 
+/*!
+    Deletes the parsing context and allocates a new one.
+*/
 void QMLAnalyzer::clear()
 {
     if (m_pContext != nullptr)
@@ -314,6 +462,9 @@ void QMLAnalyzer::clear()
     m_pContext = new QMLTreeContext();
 }
 
+/*!
+    Runs an analysis on the specified folder or file using \a xGrammar. Returns \c true on success.
+*/
 bool QMLAnalyzer::analyze(CXMLNode xGrammar)
 {
     m_xGrammar = xGrammar;
@@ -349,6 +500,9 @@ bool QMLAnalyzer::analyze(CXMLNode xGrammar)
     return true;
 }
 
+/*!
+    Runs a threaded analyze on the specified folder or file using \a xGrammar. Returns \c true on success.
+*/
 void QMLAnalyzer::threadedAnalyze(CXMLNode xGrammar)
 {
     if (isRunning() == false)
@@ -359,6 +513,9 @@ void QMLAnalyzer::threadedAnalyze(CXMLNode xGrammar)
     }
 }
 
+/*!
+    Stops a threaded analyze if it is running.
+*/
 void QMLAnalyzer::stopThreadedAnalyze()
 {
     if (isRunning())
@@ -369,6 +526,9 @@ void QMLAnalyzer::stopThreadedAnalyze()
     }
 }
 
+/*!
+    Override the thread run method.
+*/
 void QMLAnalyzer::run()
 {
     analyze(m_xGrammar);
@@ -389,6 +549,9 @@ void QMLAnalyzer::parseMacros()
     }
 }
 
+/*!
+    Returns \a sText with macro names replaced .with their respective value.
+*/
 QString QMLAnalyzer::processMacros(const QString& sText)
 {
     QString sResult = sText;
@@ -410,6 +573,9 @@ QString QMLAnalyzer::processMacros(const QString& sText)
     return sResult;
 }
 
+/*!
+    Runs an analysis on \a sFileName. Returns \c true on success.
+*/
 bool QMLAnalyzer::analyzeFile(const QString& sFileName)
 {
     m_pContext->addFile(sFileName);
@@ -456,6 +622,9 @@ bool QMLAnalyzer::analyzeFile(const QString& sFileName)
     return true;
 }
 
+/*!
+    Runs an analysis on the files in \a sDirectory. Returns \c true on success.
+*/
 bool QMLAnalyzer::analyze_Recurse(QString sDirectory)
 {
     if (m_bStopAnalyzeRequested)
@@ -498,6 +667,9 @@ bool QMLAnalyzer::analyze_Recurse(QString sDirectory)
     return true;
 }
 
+/*!
+    Runs a check on the contents of \a pFile. \a sFileName is the full file name.
+*/
 void QMLAnalyzer::runGrammar(const QString& sFileName, QMLFile* pFile)
 {
     foreach (QMLEntity* pEntity, pFile->contents())
@@ -506,6 +678,9 @@ void QMLAnalyzer::runGrammar(const QString& sFileName, QMLFile* pFile)
     }
 }
 
+/*!
+    Runs a check on the contents of \a pEntity. \a sFileName is the full file name.
+*/
 void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pEntity)
 {
     if (pEntity == nullptr)
@@ -605,6 +780,7 @@ bool QMLAnalyzer::runGrammar_Reject(const QString& sFileName, const QString& sCl
     QString sRegExp = processMacros(xRule.attributes()[ANALYZER_TOKEN_REGEXP]);
     QString sPath = processMacros(xRule.attributes()[ANALYZER_TOKEN_PATH]);
     QString sList = processMacros(xRule.attributes()[ANALYZER_TOKEN_LIST]);
+    QString sClass = processMacros(xRule.attributes()[ANALYZER_TOKEN_CLASS]);
 
     if (runGrammar_SatisfiesConditions(sFileName, sClassName, pEntity, xRule))
     {
@@ -629,6 +805,7 @@ bool QMLAnalyzer::runGrammar_Reject(const QString& sFileName, const QString& sCl
         else if (mMembers.contains(sMember) && mMembers[sMember] != nullptr)
         {
             QString sMemberToString = mMembers[sMember]->toString();
+            QString sMemberClass = mMembers[sMember]->metaObject()->className();
 
             sMemberToString = sMemberToString.replace("\"", "");
 
@@ -638,6 +815,15 @@ bool QMLAnalyzer::runGrammar_Reject(const QString& sFileName, const QString& sCl
                 QStringList lNames = sList.split(",");
 
                 if (lNames.contains(sMemberToString) ^ bInverseLogic)
+                {
+                    outputError(sFileName, pEntity->position(), sText);
+                    return true;
+                }
+            }
+            // Check the class of the member
+            else if (sClass.isEmpty() == false)
+            {
+                if ((sMemberClass == sClass) ^ bInverseLogic)
                 {
                     outputError(sFileName, pEntity->position(), sText);
                     return true;
@@ -735,6 +921,7 @@ bool QMLAnalyzer::runGrammar_SatisfiesConditions(const QString& sFileName, const
 
     foreach (CXMLNode xCondition, vConditions)
     {
+        QString sOperation = xCondition.attributes()[ANALYZER_TOKEN_OPERATION];
         QString sValue = xCondition.attributes()[ANALYZER_TOKEN_VALUE];
         QString sMember = xCondition.attributes()[ANALYZER_TOKEN_MEMBER].toLower();
         QString sEmpty = xCondition.attributes()[ANALYZER_TOKEN_EMPTY].toLower();
@@ -744,8 +931,27 @@ bool QMLAnalyzer::runGrammar_SatisfiesConditions(const QString& sFileName, const
         {
             QString sMemberToString = mMembers[sMember]->toString();
 
+            sMemberToString = sMemberToString.replace("\"", "");
+
             // Check the empty condition
-            if (sEmpty.isEmpty() == false)
+            if (sValue.isEmpty() == false)
+            {
+                if (sMemberToString == sValue)
+                {
+                    if (sNegate == ANALYZER_TOKEN_TRUE)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (sNegate != ANALYZER_TOKEN_TRUE)
+                    {
+                        return false;
+                    }
+                }
+            }
+            else if (sEmpty.isEmpty() == false)
             {
                 if ((sMemberToString.isEmpty() && (sEmpty == ANALYZER_TOKEN_TRUE)) == false)
                 {
@@ -758,11 +964,38 @@ bool QMLAnalyzer::runGrammar_SatisfiesConditions(const QString& sFileName, const
             // Check the file name condition
             if (sMember == ANALYZER_TOKEN_FILE_NAME)
             {
-                if (sFileName.contains(sValue))
+                if (sOperation == ANALYZER_TOKEN_CONTAINS)
                 {
-                    if (sNegate == ANALYZER_TOKEN_TRUE)
+                    if (sFileName.contains(sValue))
                     {
-                        return false;
+                        if (sNegate == ANALYZER_TOKEN_TRUE)
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (sNegate != ANALYZER_TOKEN_TRUE)
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    if (sFileName == sValue)
+                    {
+                        if (sNegate == ANALYZER_TOKEN_TRUE)
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (sNegate != ANALYZER_TOKEN_TRUE)
+                        {
+                            return false;
+                        }
                     }
                 }
             }
