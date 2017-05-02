@@ -110,6 +110,11 @@
 
     \li QMLIdentifier (extends QMLEntity) - A string that is an identifier.
 
+    \li QMLPragma - A pragma statement
+    \list
+    \li statement - The statement of the pragma
+    \endlist
+
     \li QMLImport - An import statement like [ import QtQuick 2.5 ]
     \list
     \li name - The name following the "import" token, either an identifier or a path in a string
@@ -136,11 +141,24 @@
     \li content - The contents of the property (can be any class extending QMLEntity)
     \endlist
 
+    \li QMLPropertyAlias (extends QMLPropertyAssignment) - A property alias like [ property alias source: myImage.source ]
+    \list
+    \li type - The type of the property
+    \li name - The name of the property
+    \li content - The contents of the property (can be any class extending QMLEntity)
+    \endlist
+
     \li QMLFunction - A function declaration
     \list
     \li name - The name of the function
     \li parameters - The parameters of the function
     \li content - The contents of the function
+    \endlist
+
+    \li QMLFunctionCall - A function call
+    \list
+    \li name - The name of the function which is called
+    \li arguments - The parameters passed to the function
     \endlist
 
     \li QMLIf - An if statement
