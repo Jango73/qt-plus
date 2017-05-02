@@ -23,7 +23,7 @@ int QMLEntity::s_iDeletedEntities = 0;
 
 /*!
     Constructs a QMLEntity. \br\br
-    \a pPosition is the position of the token in the file
+    \a pPosition is the position of the token in the file.
 */
 QMLEntity::QMLEntity(const QPoint& pPosition)
     : m_pPosition(pPosition)
@@ -333,7 +333,7 @@ QMLEntity* QMLEntity::findSymbolDeclarationDescending(QStringList& lQualifiedNam
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Remove all unreferenced declarations in this entity. \br\br
+    Removes all unreferenced declarations in this entity. \br\br
     \a pContext is the context of this entity. \br
 */
 void QMLEntity::removeUnreferencedSymbols(QMLTreeContext* pContext)

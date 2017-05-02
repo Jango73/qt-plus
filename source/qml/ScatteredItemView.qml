@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.5
 
 /*!
      \ingroup ivi-2020-y0
@@ -29,6 +29,11 @@ Item {
     property bool showHelp: false
 
     /*!
+        When this is \c true, labels are shown.
+    */
+    property bool showLabels: true
+
+    /*!
         When this is \c true, the items are flat as if drawn by QtQuick.
     */
     property bool flatView: false
@@ -51,7 +56,7 @@ Item {
     /*!
         Color for unknown margin.
     */
-    property var unknownMarginColor: "#FFFFFF"
+    property string unknownMarginColor: "#FFFFFF"
 
     /*!
         The currently selected item.
@@ -77,11 +82,6 @@ Item {
         If this is \c true, the component is active and visible.
     */
     property bool exploded: false
-
-    /*!
-        The zoom factor for the graph.
-    */
-    property real zoomFactor: 1.0
 
     /*!
         This is a factor for the space seperating every layer.
@@ -111,7 +111,7 @@ Item {
     /*!
         When this is \c true, the graph will show only the mouse areas.
     */
-    property bool showOnlyMouseAreas: false
+    property bool showMouseAreas: true
 
     /*!
         When this is \c true, the graph will show margins.
@@ -121,12 +121,12 @@ Item {
     /*!
         This is the Y rotation of the camera which visualizes the graph.
     */
-    property real cameraRotationY: -Math.PI * 0.25
+    property variant cameraRotation
 
     /*!
-        This is the X rotation of the camera which visualizes the graph.
+        This is the Y rotation of the camera which visualizes the graph.
     */
-    property real cameraRotationX: -Math.PI * 0.25
+    property real additionalCameraDistance: 0.0
 
     property real scaleX: targetItem !== null ? width / targetItem.width : 1.0
     property real scaleY: targetItem !== null ? height / targetItem.height : 1.0
@@ -134,49 +134,77 @@ Item {
     /*!
         Used internally.
     */
-    property real xOffset: width * 0.4
+    property variant cameraPosition
 
     /*!
         Used internally.
     */
-    property real yOffset: height * 0.5
+    property real cameraDistance
 
     /*!
         Used internally.
     */
-    property int stopAtLevel: 999999
+    property int maxVisibleLevel
 
     /*!
         Used internally.
     */
-    property int maxLevel: 0
+    property int maxLevel
 
     /*!
         Used internally.
     */
-    property real maxRotation: Math.PI * 0.5
+    property variant extentsMinimum
+
+    /*!
+        Used internally.
+    */
+    property variant extentsMaximum
+
+    /*!
+        Used internally.
+    */
+    property variant selectedExtentsMinimum
+
+    /*!
+        Used internally.
+    */
+    property variant selectedExtentsMaximum
 
     //-------------------------------------------------------------------------------------------------
     // Property related events
 
+    onWidthChanged: {
+        if (root.exploded) {
+            root.needRefresh = true;
+            graph.requestPaint();
+        }
+    }
+
+    onHeightChanged: {
+        if (root.exploded) {
+            root.needRefresh = true;
+            graph.requestPaint();
+        }
+    }
+
     onExplodedChanged: {
         if (root.exploded) {
-            root.needRefresh = true
+            root.needRefresh = true;
             graph.requestPaint();
         }
     }
 
     onTargetItemChanged: {
         if (root.exploded) {
-            root.needRefresh = true
+            root.needRefresh = true;
             graph.requestPaint();
         }
     }
 
     onFlatViewChanged: {
         if (root.flatView) {
-            root.stopAtLevel = 999999
-            root.needRefresh = true
+            root.needRefresh = true;
             graph.requestPaint();
         }
     }
@@ -194,9 +222,15 @@ Item {
     }
 
     onSeeThroughChanged: {
-        if (root.seeThrough) {
+        if (root.exploded) {
             graph.requestPaint();
         }
+    }
+
+    Component.onCompleted: {
+        root.maxVisibleLevel = 999999;
+        root.cameraRotation = { x: 0.0, y: 0.0, z: 0.0 };
+        root.cameraPosition = { x: 0.0, y: 0.0, z: 0.0 };
     }
 
     //-------------------------------------------------------------------------------------------------
@@ -225,11 +259,6 @@ Item {
                 {
                     var context = getContext("2d");
 
-                    if (root.cameraRotationX < -maxRotation) root.cameraRotationX = -maxRotation;
-                    if (root.cameraRotationX >  maxRotation) root.cameraRotationX =  maxRotation;
-                    if (root.cameraRotationY < -maxRotation) root.cameraRotationY = -maxRotation;
-                    if (root.cameraRotationY >  maxRotation) root.cameraRotationY =  maxRotation;
-
                     // Save context current tranfsorm
                     context.save();
 
@@ -244,6 +273,15 @@ Item {
                         root.complexItems = getVisibleItemList(root.targetItem);
                         gc();
                     }
+
+                    if (root.maxVisibleLevel > root.maxLevel + 1)
+                    {
+                        root.maxVisibleLevel = root.maxLevel + 1;
+                    }
+
+                    getExplodedItemsExtents(context, root.complexItems);
+
+                    centerOnTarget();
 
                     prepareExplodedItems(context, root.complexItems);
 
@@ -393,11 +431,6 @@ Item {
 
         Keys.onPressed:
         {
-            if (root.stopAtLevel > root.maxLevel + 1)
-            {
-                root.stopAtLevel = root.maxLevel + 1;
-            }
-
             if (event.key === Qt.Key_Space)
             {
                 if (event.modifiers & Qt.ControlModifier)
@@ -416,72 +449,69 @@ Item {
                     root.flatView = true;
                     root.showItems = false;
                     root.showMargins = true;
+                    root.showMouseAreas = false;
                     root.seeThrough = true;
-                    root.stopAtLevel = 999999;
+                    root.maxVisibleLevel = 999999;
                     root.exploded = !root.exploded;
                 }
-            }
-            else if (event.key === Qt.Key_Plus)
-            {
-                root.zoomFactor += 0.1;
-                graph.requestPaint();
-            }
-            else if (event.key === Qt.Key_Minus)
-            {
-                root.zoomFactor -= 0.1;
-                graph.requestPaint();
             }
             else if (event.key === Qt.Key_Right)
             {
                 if (event.modifiers & Qt.ControlModifier)
                 {
-                    root.cameraRotationY += Math.PI * 0.125;
-                    graph.requestPaint();
+                    orbitCamera({ x: 0.0, y: Math.PI * 0.05, z: 0.0});
                 }
                 else
                 {
-                    root.xOffset -= root.width * 0.1;
-                    graph.requestPaint();
+                    moveCamera({ x: 1.0, y: 0.0, z: 0.0}, root.width * 0.1);
                 }
+                graph.requestPaint();
             }
             else if (event.key === Qt.Key_Left)
             {
                 if (event.modifiers & Qt.ControlModifier)
                 {
-                    root.cameraRotationY -= Math.PI * 0.125;
-                    graph.requestPaint();
+                    orbitCamera({ x: 0.0, y: Math.PI * -0.05, z: 0.0});
                 }
                 else
                 {
-                    root.xOffset += root.width * 0.1;
-                    graph.requestPaint();
+                    moveCamera({ x: -1.0, y: 0.0, z: 0.0}, root.width * 0.1);
                 }
+                graph.requestPaint();
             }
             else if (event.key === Qt.Key_Up)
             {
                 if (event.modifiers & Qt.ControlModifier)
                 {
-                    root.cameraRotationX -= Math.PI * 0.125;
-                    graph.requestPaint();
+                    orbitCamera({ x: Math.PI * -0.05, y: 0.0, z: 0.0});
                 }
                 else
                 {
-                    root.yOffset += root.height * 0.1;
-                    graph.requestPaint();
+                    moveCamera({ x: 0.0, y: 0.0, z: 1.0}, root.width * 0.1);
                 }
+                graph.requestPaint();
             }
             else if (event.key === Qt.Key_Down)
             {
                 if (event.modifiers & Qt.ControlModifier)
                 {
-                    root.cameraRotationX += Math.PI * 0.125;
-                    graph.requestPaint();
+                    orbitCamera({ x: Math.PI * 0.05, y: 0.0, z: 0.0});
                 }
                 else
                 {
-                    root.yOffset -= root.height * 0.1;
-                    graph.requestPaint();
+                    moveCamera({ x: 0.0, y: 0.0, z: -1.0}, root.width * 0.1);
                 }
+                graph.requestPaint();
+            }
+            else if (event.key === Qt.Key_Plus)
+            {
+                root.additionalCameraDistance -= root.width * 0.1;
+                graph.requestPaint();
+            }
+            else if (event.key === Qt.Key_Minus)
+            {
+                root.additionalCameraDistance += root.width * 0.1;
+                graph.requestPaint();
             }
             else if (event.key === Qt.Key_Asterisk)
             {
@@ -505,22 +535,22 @@ Item {
             {
                 if (event.modifiers & Qt.ControlModifier)
                 {
-                    root.stopAtLevel = 0;
+                    root.maxVisibleLevel = 0;
                 } else {
-                    root.stopAtLevel -= 1;
+                    root.maxVisibleLevel -= 1;
                 }
-                if (root.stopAtLevel < 1) root.stopAtLevel = 1;
+                if (root.maxVisibleLevel < 1) root.maxVisibleLevel = 1;
                 graph.requestPaint();
             }
             else if (event.key === Qt.Key_PageUp)
             {
                 if (event.modifiers & Qt.ControlModifier)
                 {
-                    root.stopAtLevel = root.maxLevel + 1;
+                    root.maxVisibleLevel = root.maxLevel + 1;
                 } else {
-                    root.stopAtLevel += 1;
+                    root.maxVisibleLevel += 1;
                 }
-                if (root.stopAtLevel > root.maxLevel + 1) root.stopAtLevel = root.maxLevel + 1;
+                if (root.maxVisibleLevel > root.maxLevel + 1) root.maxVisibleLevel = root.maxLevel + 1;
                 graph.requestPaint();
             }
             else if (event.key === Qt.Key_T)
@@ -561,7 +591,16 @@ Item {
             {
                 if (event.modifiers & Qt.ControlModifier)
                 {
-                    root.showOnlyMouseAreas = !root.showOnlyMouseAreas;
+                    root.showMouseAreas = !root.showMouseAreas;
+                    root.needRefresh = true;
+                    graph.requestPaint();
+                }
+            }
+            else if (event.key === Qt.Key_L)
+            {
+                if (event.modifiers & Qt.ControlModifier)
+                {
+                    root.showLabels = !root.showLabels;
                     graph.requestPaint();
                 }
             }
@@ -570,6 +609,7 @@ Item {
                 if (event.modifiers & Qt.ControlModifier)
                 {
                     root.showMargins = !root.showMargins;
+                    root.needRefresh = true;
                     graph.requestPaint();
                 }
             }
@@ -578,6 +618,12 @@ Item {
                 if (event.modifiers & Qt.ControlModifier)
                 {
                     root.flatView = !root.flatView;
+
+                    if (root.flatView)
+                    {
+                        root.maxVisibleLevel = root.maxLevel + 1;
+                    }
+
                     root.needRefresh = true;
                     graph.requestPaint();
                 }
@@ -610,7 +656,7 @@ Item {
         {
             var complexItem = root.complexItems[i];
 
-            if (complexItem.level < root.stopAtLevel)
+            if (complexItem.level < root.maxVisibleLevel)
             {
                 var isSelectedItem = (complexItem.item === root.selectedItem);
                 var isParentOfSelectedItem = arrayContains(root.selectedItemParents, complexItem.item);
@@ -622,7 +668,7 @@ Item {
                     var isItem = stringContains(text, "QQuickItem");
                     var isMouseArea = (stringContains(text, "MouseArea") || stringContains(text, "TouchArea"));
 
-                    if (root.showOnlyMouseAreas === false || isMouseArea)
+                    if (isMouseArea === false || root.showMouseAreas)
                     {
                         if (pointInPolygon(complexItem.path, globalMouse))
                         {
@@ -705,34 +751,211 @@ Item {
 
     //-------------------------------------------------------------------------------------------------
 
+    function centerOnTarget()
+    {
+        if (typeof root.targetItem !== "undefined" && root.targetItem !== null)
+        {
+            var depth;
+
+            if (root.selectedItem === null)
+            {
+                depth = root.targetItem.width > root.targetItem.height ? root.targetItem.width : root.targetItem.height;
+            }
+            else
+            {
+                depth = root.selectedItem.width > root.selectedItem.height ? root.selectedItem.width : root.selectedItem.height;
+            }
+
+            root.cameraDistance = depth + root.additionalCameraDistance;
+            root.cameraPosition = applyRotation({ x: 0.0, y: 0.0, z: -root.cameraDistance }, root.cameraRotation);
+
+            if (root.selectedItem === null)
+            {
+                // root.cameraPosition.x += ((root.extentsMinimum.x + root.extentsMaximum.x) * 0.5);
+                // root.cameraPosition.y += ((root.extentsMinimum.y + root.extentsMaximum.y) * 0.5);
+                // root.cameraPosition.z += ((root.extentsMinimum.z + root.extentsMaximum.z) * 0.5);
+
+                root.cameraPosition.x += root.targetItem.width * 0.5;
+                root.cameraPosition.y += root.targetItem.height * 0.5;
+                root.cameraPosition.z += ((root.extentsMinimum.z + root.extentsMaximum.z) * 0.5);
+            }
+            else
+            {
+                root.cameraPosition.x += ((root.selectedExtentsMinimum.x + root.selectedExtentsMaximum.x) * 0.5);
+                root.cameraPosition.y += ((root.selectedExtentsMinimum.y + root.selectedExtentsMaximum.y) * 0.5);
+                root.cameraPosition.z += ((root.selectedExtentsMinimum.z + root.selectedExtentsMaximum.z) * 0.5);
+            }
+        }
+        else
+        {
+            root.cameraRotation = { x: 0.0, y: 0.0, z: 0.0 };
+            root.cameraPosition = { x: 0.0, y: 0.0, z: 0.0 };
+            root.cameraDistance = 500.0;
+        }
+    }
+
+    function moveCamera(cameraVector, amount)
+    {
+        cameraVector = applyRotation(cameraVector, root.cameraRotation);
+        root.cameraPosition.x += cameraVector.x * amount;
+        root.cameraPosition.y += cameraVector.y * amount;
+        root.cameraPosition.z += cameraVector.z * amount;
+    }
+
+    function orbitCamera(rotation)
+    {
+        root.cameraRotation.x += rotation.x;
+        root.cameraRotation.y += rotation.y;
+        root.cameraRotation.z += rotation.z;
+    }
+
+    //-------------------------------------------------------------------------------------------------
+
+    function applyTranslation(vector, translation)
+    {
+        var newVector = { x: vector.x, y: vector.y, z: vector.z };
+        newVector.x += translation.x;
+        newVector.y += translation.y;
+        newVector.z += translation.z;
+        return newVector;
+    }
+
+    function applyTranslationInverse(vector, translation)
+    {
+        var newVector = { x: vector.x, y: vector.y, z: vector.z };
+        newVector.x -= translation.x;
+        newVector.y -= translation.y;
+        newVector.z -= translation.z;
+        return newVector;
+    }
+
+    function applyRotation(vector, rotation)
+    {
+        vector = rotateY(vector, rotation.y)
+        vector = rotateX(vector, rotation.x)
+        return vector;
+    }
+
+    function applyRotationInverse(vector, rotation)
+    {
+        vector = rotateX(vector, -rotation.x)
+        vector = rotateY(vector, -rotation.y)
+        return vector;
+    }
+
     function rotateY(point, angle)
     {
-        var newPoint = { x: 0.0, y: 0.0, z: 0.0 };
+        var newVector = { x: 0.0, y: 0.0, z: 0.0 };
 
-        var mat0 = { x: Math.cos(angle), y: 0.0, z: Math.sin(angle) };
+        var mat0 = { x: Math.cos(angle), y: 0.0, z: -Math.sin(angle) };
         var mat1 = { x: 0.0, y: 1.0, z: 0.0 };
         var mat2 = { x: Math.sin(angle), y: 0.0, z: Math.cos(angle) };
 
-        newPoint.x = mat0.x * point.x + mat1.x * point.y + mat2.x * point.z;
-        newPoint.y = mat0.y * point.x + mat1.y * point.y + mat2.y * point.z;
-        newPoint.z = mat0.z * point.x + mat1.z * point.y + mat2.z * point.z;
+        newVector.x = mat0.x * point.x + mat1.x * point.y + mat2.x * point.z;
+        newVector.y = mat0.y * point.x + mat1.y * point.y + mat2.y * point.z;
+        newVector.z = mat0.z * point.x + mat1.z * point.y + mat2.z * point.z;
 
-        return newPoint;
+        return newVector;
     }
 
     function rotateX(point, angle)
     {
-        var newPoint = { x: 0.0, y: 0.0, z: 0.0 };
+        var newVector = { x: 0.0, y: 0.0, z: 0.0 };
 
         var mat0 = { x: 1.0, y: 0.0, z: 0.0 };
         var mat1 = { x: 0.0, y: Math.cos(angle), z: -Math.sin(angle) };
         var mat2 = { x: 0.0, y: Math.sin(angle), z: Math.cos(angle) };
 
-        newPoint.x = mat0.x * point.x + mat1.x * point.y + mat2.x * point.z;
-        newPoint.y = mat0.y * point.x + mat1.y * point.y + mat2.y * point.z;
-        newPoint.z = mat0.z * point.x + mat1.z * point.y + mat2.z * point.z;
+        newVector.x = mat0.x * point.x + mat1.x * point.y + mat2.x * point.z;
+        newVector.y = mat0.y * point.x + mat1.y * point.y + mat2.y * point.z;
+        newVector.z = mat0.z * point.x + mat1.z * point.y + mat2.z * point.z;
 
-        return newPoint;
+        return newVector;
+    }
+
+    function projectCoordinates(coords)
+    {
+        if (root.flatView === false)
+        {
+            // Subtract camera position
+            coords = applyTranslationInverse(coords, root.cameraPosition);
+
+            // Subtract camera rotation
+            coords = applyRotationInverse(coords, root.cameraRotation);
+
+            // Divide by Z (perspective)
+            if (coords.z > 0.0)
+            {
+                coords.x /= coords.z;
+                coords.y /= coords.z;
+            }
+
+            // Multiply by a factor
+            coords.x *= root.height;
+            coords.y *= root.height;
+
+            // Recenter coords
+            coords.x += root.width * 0.5;
+            coords.y += root.height * 0.5;
+        }
+
+        return coords;
+    }
+
+    function getExplodedItemsExtents(context, complexItems)
+    {
+        root.extentsMinimum = { x:  999999.0, y:  999999.0, z:  999999.0 };
+        root.extentsMaximum = { x: -999999.0, y: -999999.0, z: -999999.0 };
+
+        root.selectedExtentsMinimum = { x:  999999.0, y:  999999.0, z:  999999.0 };
+        root.selectedExtentsMaximum = { x: -999999.0, y: -999999.0, z: -999999.0 };
+
+        for (var i = 0; i < complexItems.length; i++)
+        {
+            getExplodedItemExtents(context, complexItems[i]);
+        }
+    }
+
+    function getExplodedItemExtents(context, complexItem)
+    {
+        var margin, i;
+        var newMarginItem;
+        var global1, global2;
+        var levelOffset;
+
+        global1 = complexItem.item.mapToItem(root.targetItem, 0, 0);
+        global2 = complexItem.item.mapToItem(root.targetItem, complexItem.item.width, complexItem.item.height);
+        levelOffset = (complexItem.level * (root.width * root.levelFactor)) * -1.0;
+
+        complexItem.path = [];
+        complexItem.margins = [];
+
+        complexItem.path.push( { x: global1.x, y: global1.y, z: levelOffset } );
+        complexItem.path.push( { x: global2.x, y: global1.y, z: levelOffset } );
+        complexItem.path.push( { x: global2.x, y: global2.y, z: levelOffset } );
+        complexItem.path.push( { x: global1.x, y: global2.y, z: levelOffset } );
+
+        for (i = 0; i < complexItem.path.length; i++)
+        {
+            if (complexItem.item === root.selectedItem)
+            {
+                if (complexItem.path[i].x < root.selectedExtentsMinimum.x) root.selectedExtentsMinimum.x = complexItem.path[i].x;
+                if (complexItem.path[i].y < root.selectedExtentsMinimum.y) root.selectedExtentsMinimum.y = complexItem.path[i].y;
+                if (complexItem.path[i].z < root.selectedExtentsMinimum.z) root.selectedExtentsMinimum.z = complexItem.path[i].z;
+
+                if (complexItem.path[i].x > root.selectedExtentsMaximum.x) root.selectedExtentsMaximum.x = complexItem.path[i].x;
+                if (complexItem.path[i].y > root.selectedExtentsMaximum.y) root.selectedExtentsMaximum.y = complexItem.path[i].y;
+                if (complexItem.path[i].z > root.selectedExtentsMaximum.z) root.selectedExtentsMaximum.z = complexItem.path[i].z;
+            }
+
+            if (complexItem.path[i].x < root.extentsMinimum.x) root.extentsMinimum.x = complexItem.path[i].x;
+            if (complexItem.path[i].y < root.extentsMinimum.y) root.extentsMinimum.y = complexItem.path[i].y;
+            if (complexItem.path[i].z < root.extentsMinimum.z) root.extentsMinimum.z = complexItem.path[i].z;
+
+            if (complexItem.path[i].x > root.extentsMaximum.x) root.extentsMaximum.x = complexItem.path[i].x;
+            if (complexItem.path[i].y > root.extentsMaximum.y) root.extentsMaximum.y = complexItem.path[i].y;
+            if (complexItem.path[i].z > root.extentsMaximum.z) root.extentsMaximum.z = complexItem.path[i].z;
+        }
     }
 
     function prepareExplodedItems(context, complexItems)
@@ -745,22 +968,14 @@ Item {
 
     function prepareExplodedItem(context, complexItem)
     {
-        var margin;
+        var margin, i;
         var newMarginItem;
-        var global1 = complexItem.item.mapToItem(root.targetItem, 0, 0);
-        var global2 = complexItem.item.mapToItem(root.targetItem, complexItem.item.width, complexItem.item.height);
+        var global1, global2;
+        var levelOffset;
 
-        var levelOffset = complexItem.level * (root.width * root.levelFactor) * root.zoomFactor;
+        levelOffset = (complexItem.level * (root.width * root.levelFactor)) * -1.0;
 
-        complexItem.path = [];
-        complexItem.margins = [];
-
-        complexItem.path.push( { x: global1.x, y: global1.y, z: levelOffset } );
-        complexItem.path.push( { x: global2.x, y: global1.y, z: levelOffset  } );
-        complexItem.path.push( { x: global2.x, y: global2.y, z: levelOffset  } );
-        complexItem.path.push( { x: global1.x, y: global2.y, z: levelOffset  } );
-
-        for (var i = 0; i < complexItem.path.length; i++)
+        for (i = 0; i < complexItem.path.length; i++)
         {
             complexItem.path[i] = projectCoordinates(complexItem.path[i]);
         }
@@ -768,16 +983,16 @@ Item {
         // Margins
         if (complexItem.item.anchors.topMargin !== 0)
         {
-            margin = complexItem.item.anchors.topMargin;
+            margin = Math.round(complexItem.item.anchors.topMargin);
             global1 = complexItem.item.mapToItem(root.targetItem, 0, -margin);
             global2 = complexItem.item.mapToItem(root.targetItem, complexItem.item.width, 0);
 
             newMarginItem = { size: margin, path: [] }
 
             newMarginItem.path.push( { x: global1.x, y: global1.y, z: levelOffset } );
-            newMarginItem.path.push( { x: global2.x, y: global1.y, z: levelOffset  } );
-            newMarginItem.path.push( { x: global2.x, y: global2.y, z: levelOffset  } );
-            newMarginItem.path.push( { x: global1.x, y: global2.y, z: levelOffset  } );
+            newMarginItem.path.push( { x: global2.x, y: global1.y, z: levelOffset } );
+            newMarginItem.path.push( { x: global2.x, y: global2.y, z: levelOffset } );
+            newMarginItem.path.push( { x: global1.x, y: global2.y, z: levelOffset } );
 
             for (i = 0; i < newMarginItem.path.length; i++)
             {
@@ -791,16 +1006,16 @@ Item {
 
         if (complexItem.item.anchors.bottomMargin !== 0)
         {
-            margin = complexItem.item.anchors.bottomMargin;
+            margin = Math.round(complexItem.item.anchors.bottomMargin);
             global1 = complexItem.item.mapToItem(root.targetItem, 0, complexItem.item.height);
             global2 = complexItem.item.mapToItem(root.targetItem, complexItem.item.width, complexItem.item.height + margin);
 
             newMarginItem = { size: margin, path: [] }
 
             newMarginItem.path.push( { x: global1.x, y: global1.y, z: levelOffset } );
-            newMarginItem.path.push( { x: global2.x, y: global1.y, z: levelOffset  } );
-            newMarginItem.path.push( { x: global2.x, y: global2.y, z: levelOffset  } );
-            newMarginItem.path.push( { x: global1.x, y: global2.y, z: levelOffset  } );
+            newMarginItem.path.push( { x: global2.x, y: global1.y, z: levelOffset } );
+            newMarginItem.path.push( { x: global2.x, y: global2.y, z: levelOffset } );
+            newMarginItem.path.push( { x: global1.x, y: global2.y, z: levelOffset } );
 
             for (i = 0; i < newMarginItem.path.length; i++)
             {
@@ -814,16 +1029,16 @@ Item {
 
         if (complexItem.item.anchors.leftMargin !== 0)
         {
-            margin = complexItem.item.anchors.leftMargin;
+            margin = Math.round(complexItem.item.anchors.leftMargin);
             global1 = complexItem.item.mapToItem(root.targetItem, -margin, 0);
             global2 = complexItem.item.mapToItem(root.targetItem, 0, complexItem.item.height);
 
             newMarginItem = { size: margin, path: [] }
 
             newMarginItem.path.push( { x: global1.x, y: global1.y, z: levelOffset } );
-            newMarginItem.path.push( { x: global2.x, y: global1.y, z: levelOffset  } );
-            newMarginItem.path.push( { x: global2.x, y: global2.y, z: levelOffset  } );
-            newMarginItem.path.push( { x: global1.x, y: global2.y, z: levelOffset  } );
+            newMarginItem.path.push( { x: global2.x, y: global1.y, z: levelOffset } );
+            newMarginItem.path.push( { x: global2.x, y: global2.y, z: levelOffset } );
+            newMarginItem.path.push( { x: global1.x, y: global2.y, z: levelOffset } );
 
             for (i = 0; i < newMarginItem.path.length; i++)
             {
@@ -837,16 +1052,16 @@ Item {
 
         if (complexItem.item.anchors.rightMargin !== 0)
         {
-            margin = complexItem.item.anchors.rightMargin;
+            margin = Math.round(complexItem.item.anchors.rightMargin);
             global1 = complexItem.item.mapToItem(root.targetItem, complexItem.item.width, 0);
             global2 = complexItem.item.mapToItem(root.targetItem, complexItem.item.width + margin, complexItem.item.height);
 
             newMarginItem = { size: margin, path: [] }
 
             newMarginItem.path.push( { x: global1.x, y: global1.y, z: levelOffset } );
-            newMarginItem.path.push( { x: global2.x, y: global1.y, z: levelOffset  } );
-            newMarginItem.path.push( { x: global2.x, y: global2.y, z: levelOffset  } );
-            newMarginItem.path.push( { x: global1.x, y: global2.y, z: levelOffset  } );
+            newMarginItem.path.push( { x: global2.x, y: global1.y, z: levelOffset } );
+            newMarginItem.path.push( { x: global2.x, y: global2.y, z: levelOffset } );
+            newMarginItem.path.push( { x: global1.x, y: global2.y, z: levelOffset } );
 
             for (i = 0; i < newMarginItem.path.length; i++)
             {
@@ -857,29 +1072,6 @@ Item {
 
             complexItem.margins.push(newMarginItem);
         }
-    }
-
-    function projectCoordinates(coords)
-    {
-        if (root.flatView === false)
-        {
-            coords = rotateX(coords, root.cameraRotationX);
-            coords = rotateY(coords, root.cameraRotationY);
-
-            coords.x *= root.zoomFactor;
-            coords.y *= root.zoomFactor;
-
-            coords.x += root.xOffset;
-            coords.y += root.yOffset;
-
-            // complexItem.path[i].x /= complexItem.path[i].z;
-            // complexItem.path[i].y /= complexItem.path[i].z;
-
-            // complexItem.path[i].x *= root.height * 0.5;
-            // complexItem.path[i].y *= root.height * 0.5;
-        }
-
-        return coords;
     }
 
     //-------------------------------------------------------------------------------------------------
@@ -894,13 +1086,15 @@ Item {
 
     function drawExplodedItem(context, complexItem)
     {
-        if (complexItem.level < root.stopAtLevel)
+        if (complexItem.level < root.maxVisibleLevel)
         {
+            var text = className(complexItem.item);
+
+            var isLastLevel = (complexItem.level === root.maxVisibleLevel - 1);
             var isSelectedItem = (complexItem.item === root.selectedItem);
             var isParentOfSelectedItem = arrayContains(root.selectedItemParents, complexItem.item);
             var isChildOfSelectedItem = arrayContains(root.selectedItemChildren, complexItem.item);
 
-            var text = className(complexItem.item);
             var isItem = stringContains(text, "QQuickItem");
             var isMouseArea = (stringContains(text, "MouseArea") || stringContains(text, "TouchArea"));
             var shade = ((complexItem.level / root.maxLevel) * 0.6) + 0.2;
@@ -909,14 +1103,18 @@ Item {
             var showMe = true;
             var showMyMargins = true;
 
-            // Decide if item is to be shown based on the showItems flag
-            if (root.showItems === false)
-                showMe = false;
-
             // Decide if item is to be shown based on the showOnlyMouseAreas flag
-            if (root.showOnlyMouseAreas)
-                if (!isMouseArea)
+            if (isMouseArea)
+            {
+                if (root.showMouseAreas === false)
                     showMe = false;
+            }
+            else
+            {
+                // Decide if item is to be shown based on the showItems flag
+                if (root.showItems === false)
+                    showMe = false;
+            }
 
             // Decide if item is to be shown based on the flatView flag
             if (root.flatView)
@@ -1002,22 +1200,31 @@ Item {
                 context.fill();
                 context.stroke();
 
-                if (shade < 0.4)
+                if (root.showLabels && (isLastLevel || isSelectedItem))
                 {
+                    var point1 = { x: 0, y: 0 }
+                    var point2 = { x: 0, y: 0 }
+                    var center = { x: complexItem.path[0].x, y: complexItem.path[0].y }
+
+                    point1.x = center.x - 180;
+                    point2.x = center.x + 180;
+
+                    point1.y = center.y - 15;
+                    point2.y = center.y + 15;
+
+                    context.fillStyle = "#000000";
+                    context.fillRect(point1.x, point1.y, point2.x - point1.x, point2.y - point1.y);
+
+                    context.font = "10px " + root.fontFamily;
+
                     context.strokeStyle = "#FFFFFF";
+                    context.fillStyle = context.strokeStyle;
+                    context.textAlign = "center";
+                    context.textBaseline = "middle";
+
+                    text += " (objectName: " + complexItem.item.objectName + " )";
+                    context.fillText(text, center.x, center.y);
                 }
-                else
-                {
-                    context.strokeStyle = "#000000";
-                }
-
-                context.font = "10px " + root.fontFamily;
-
-                context.fillStyle = context.strokeStyle;
-                context.fillText(text, complexItem.path[0].x + 10, complexItem.path[0].y + 10);
-
-                text = "(objectName: " + complexItem.item.objectName + " )";
-                context.fillText(text, complexItem.path[0].x + 10, complexItem.path[0].y + 20);
             }
 
             // Margins
@@ -1057,9 +1264,9 @@ Item {
                                 );
                                 */
 
-                    var point1 = { x: complexItem.margins[i].path[0].x, y: complexItem.margins[i].path[0].y }
-                    var point2 = { x: complexItem.margins[i].path[2].x, y: complexItem.margins[i].path[2].y }
-                    var center = { x: (point1.x + point2.x) * 0.5, y: (point1.y + point2.y) * 0.5 }
+                    point1 = { x: complexItem.margins[i].path[0].x, y: complexItem.margins[i].path[0].y }
+                    point2 = { x: complexItem.margins[i].path[2].x, y: complexItem.margins[i].path[2].y }
+                    center = { x: (point1.x + point2.x) * 0.5, y: (point1.y + point2.y) * 0.5 }
 
                     point1.x = center.x - 30;
                     point2.x = center.x + 30;
@@ -1070,7 +1277,7 @@ Item {
                     context.fillStyle = "#000000";
                     context.fillRect(point1.x, point1.y, point2.x - point1.x, point2.y - point1.y);
 
-                    context.font = "25px " + root.fontFamily;
+                    context.font = "20px " + root.fontFamily;
 
                     context.textAlign = "center";
                     context.textBaseline = "middle";
@@ -1085,14 +1292,15 @@ Item {
 
     function showKeys(context)
     {
-        var text1 = "-- KEYS --";
-        var text2 = "Move: [arrows]  Rotate: [ CTRL + arrows ]  Zoom: [ + | - ]";
-        var text3 = "Change level: [ page up | page down ]";
-        var text4 = "Minimum level: [ CTRL + page down ]  Maximum level: [ CTRL + page up ]";
-        var text5 = "Toggle show items: [ CTRL + T ]  Toggle show margins: [ CTRL + M ]  Toggle flat view: [ CTRL + F ]";
-        var text6 = "Toggle show invisible items: [ CTRL + V ]  Toggle see through [ CTRL + S ]";
-        var text7 = "Changer layer altitude: [ * | / ]";
-        var text8 = "Toggle isolate selected item (and its tree): [ CTRL + I ]";
+        var text0 = "-- KEYS --";
+        var text1 = "Move forward/backward/right/left: [arrows]  Move up/down: [ + | - ]  Rotate: [ CTRL + arrows ]";
+        var text2 = "Change maximum visible level: [ page up | page down ]";
+        var text3 = "Minimum visible level: [ CTRL + page down ]  Maximum visible level: [ CTRL + page up ]";
+        var text4 = "Toggle show items: [ CTRL + T ]  Toggle show margins: [ CTRL + M ]  Toggle flat view: [ CTRL + F ]";
+        var text5 = "Toggle show invisible items: [ CTRL + V ]  Toggle see through [ CTRL + S ]";
+        var text6 = "Changer layer altitude: [ * | / ]";
+        var text7 = "Toggle isolate selected item (and its tree): [ CTRL + I ]";
+        var text8 = "";
         var text9 = "";
 
         if (root.selectedItem !== null)
@@ -1100,7 +1308,7 @@ Item {
             var point = root.selectedItem.mapToItem(root.targetItem, 0, 0);
             var size = root.selectedItem.mapToItem(root.targetItem, root.targetItem.width, root.targetItem.height);
 
-            text9 = "Selected item (" + className(root.selectedItem) + ")"
+            text8 = "Selected item (" + className(root.selectedItem) + ")"
                     + " objectName: " + root.selectedItem.objectName
                     + " X: " + point.x
                     + " Y: " + point.y
@@ -1111,7 +1319,15 @@ Item {
                     + " Enabled: " + root.selectedItem.enabled;
         }
 
-        info.text = text1 + "\n" + text2 + "\n" + text3 + "\n" + text4 + "\n" + text5 + "\n" + text6 + "\n" + text7 + "\n" + text8 + "\n\n" + text9 + "\n";
+        if (root.flatView === false)
+        {
+            text9 = "Camera position/rotation : "
+                    + root.cameraPosition.x + ", " + root.cameraPosition.y + ", " + root.cameraPosition.z + " / "
+                    + rad2Deg(root.cameraRotation.x) + ", " + rad2Deg(root.cameraRotation.y) + ", " + rad2Deg(root.cameraRotation.z)
+                    + "  Max visible level : " + root.maxVisibleLevel + " / " + (root.maxLevel + 1);
+        }
+
+        info.text = text0 + "\n" + text1 + "\n" + text2 + "\n" + text3 + "\n" + text4 + "\n" + text5 + "\n" + text6 + "\n" + text7 + "\n\n" + text8 + "\n" + text9 + "\n";
     }
 
     //-------------------------------------------------------------------------------------------------
@@ -1187,5 +1403,10 @@ Item {
                             g: parseInt(result[2], 16),
                             b: parseInt(result[3], 16)
                         } : null;
+    }
+
+    function rad2Deg(angle)
+    {
+        return (angle / Math.PI) * 180.0;
     }
 }

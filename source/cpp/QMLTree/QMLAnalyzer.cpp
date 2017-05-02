@@ -39,9 +39,10 @@
 
     \section2 \c <Check> tag
     Defines a set of rules to apply to a particular QML Tree class. Please refer to the "List of classes and their members" section.
+    This tag has only one attribute: \c Class. It defines the name of the class we want to run a check on.
 
     \section3 \c <Accept> and \c <Reject> tags, inner tags of \c <Check>
-    These tags define rules that should be checked. An <Accept> tag will yield failure if its contents evaluate to false. A <Reject> tag will yield failure if its contents evaluate to true.
+    These tags define rules that should be checked. An <Accept> tag will yield an error if its contents evaluate to false. A <Reject> tag will yield an error if its contents evaluate to true.
 
     For instance, suppose we want to check (and reject) any hardcoded color strings. The rule will be defined as:
     \code
@@ -50,13 +51,13 @@
         </Reject>
     </Check>
     \endcode
-    First, we begin a \c <Check> tag for the class \c QMLPropertyAssignment, because this is what is stored in the QML tree for an expression like \c color: "#FF0000".
-    Second, we use a \c <Reject> tag because we want to yield a failure when the rule evaluates to \c true.
+    First, we begin a \c <Check> tag for the class \c QMLPropertyAssignment, because this is what is stored in the QML tree for an expression like \c color: \c "#FF0000".
+    Second, we use a \c <Reject> tag because we want to yield an error when the rule evaluates to \c true.
     In the \c <Reject> tag we use the following attributes:
     \list
-        \li \c Member is set to \c content : we are interested by the contents of the assignment.
-        \li \c Class is set to \c QMLEntity : we want something more complex than a simple value in the assignment, like a \c QMLIdentifier or a \c QMLBinaryOperation.
-        \li \c Text is set to \c No \c hardcoded \c colors \c allowed : that's what we want to tell the user when the check yields a failure.
+        \li \c Member is set to \c content : we are interested by the contents of the assignment (right part of the '=' token).
+        \li \c Class is set to \c QMLEntity : we want something more complex than a simple value in the right part of the assignment, like a \c QMLIdentifier or a \c QMLBinaryOperation.
+        \li \c Text is set to \c No \c hardcoded \c colors \c allowed : that's what we want to tell the user when the check yields an error.
     \endlist
     Now this is not enough because this rule would run through ALL property assignments in the file, but we want only \c color properties to be processed.
     That's when the \c <Condition> tag comes in. It allows us to place conditions, thus refining the rule.
@@ -70,30 +71,31 @@
     \endcode
     The conditions tell the analyzer that the rule should be run only when:
     \list
-        \li The class member \c name is equal to \c color
-        \li The class member \c content is not equal to \c "transparent" (the Negate attributes inverses the logic)
+        \li The \c QMLPropertyAssignment member \c name is equal to \c color
+        \li The \c QMLPropertyAssignment member \c content is not equal to \c "transparent" (the Negate attributes inverses the logic)
     \endlist
 
     \section4 Attributes of the \c <Accept> and \c <Reject> tags
+    Attributes are all optional and some are exclusive. Without any attribute, the rule will do nothing.
     \list
-    \li Member - Defines the member that we want to check. Please refer to the "List of classes and their members" section.
-    \li Class - Defines the class name.
-    \li Value - Makes the analyzer compare this value with the value of \c Member.
-    \li RegExp - Makes the analyzer compare this regular expression with the value of \c Member.
-    \li Count - Makes the analyzer count the contents of \c Member.
-    \li NestedCount - Makes the analyzer recursively count the occurence of this class.
-    \li Text - Defines the text to output when the rule yields failure.
+    \li \c Member - Defines the member that we want to check. Please refer to the "List of classes and their members" section.
+    \li \c Class - Makes the analyzer compare this value against the class name of \c Member.
+    \li \c Value - Makes the analyzer compare this value against the value of \c Member.
+    \li \c RegExp - Makes the analyzer compare this regular expression against the value of \c Member. An exact match evaluates to \c true.
+    \li \c Count - Makes the analyzer count the contents of \c Member. Does not require the \c Member attribute.
+    \li \c NestedCount - Makes the analyzer recursively count the occurence of this class. Does not require the \c Member attribute.
+    \li \c Text - Defines the text to output when the rule yields an error.
     \endlist
 
     \section4 \c Attributes of the \c <Condition> tag, inner tag of \c <Accept> and \c <Reject>
     \list
-    \li Member - Defines the member that we want to check. Please refer to the "List of classes and their members" section.
-    \li Value - Makes the analyzer compare this value with the value of \c Member.
-    \li Negate - When equal to \c true, reverses the logic of the condition test.
-    \li Operation (Optional) - Specifies the type of operation to do on \c Member and \c Value.
+    \li \c Member - Defines the member that we want to check. Please refer to the "List of classes and their members" section.
+    \li \c Value - Makes the analyzer compare this value with the value of \c Member.
+    \li \c Negate - When equal to \c true, reverses the logic of the condition test.
+    \li \c Operation (Optional) - Specifies the type of operation to do on \c Member and \c Value.
         \list
-            \li <empty> - Yields \c true if \c Member is equal to \c Value
-            \li Contains - Yields \c true if \c Member contains \c Value
+            \li \c <empty> - Yields \c true if \c Member is equal to \c Value
+            \li \c Contains - Yields \c true if \c Member contains \c Value
         \endlist
     \endlist
 
@@ -103,7 +105,8 @@
 
     \li QMLEntity - The base of all QML Tree classes
 
-    \li QMLComplexEntity - The base class of QML Tree classes that have more than one content
+    \li QMLComplexEntity - The base class of QML Tree classes that have more than one content \br
+    The contents of the entity are for now inaccessible.
     \list
     \li name - The name of the entity
     \endlist
@@ -152,7 +155,7 @@
     \list
     \li name - The name of the function
     \li parameters - The parameters of the function
-    \li content - The contents of the function
+    \li content - The contents of the function (can be any class extending QMLEntity)
     \endlist
 
     \li QMLFunctionCall - A function call
@@ -163,43 +166,49 @@
 
     \li QMLIf - An if statement
     \list
-    \li condition - The expression specified between the '(' and ')' tokens
-    \li then - The statement executed when the condition evaluates to \c TRUE
-    \li else - The statement executed when the condition evaluates to \c FALSE
+    \li condition - The expression specified between the '(' and ')' tokens (can be any class extending QMLEntity)
+    \li then - The statement executed when the condition evaluates to \c TRUE (can be any class extending QMLEntity)
+    \li else - The statement executed when the condition evaluates to \c FALSE (can be any class extending QMLEntity)
     \endlist
 
     \li QMLConditional (extends QMLIf) - A conditional expression (a ? 0 : 1)
     \list
-    \li condition - The expression specified before the '?' token
-    \li then - The statement executed when the condition evaluates to \c TRUE
-    \li else - The statement executed when the condition evaluates to \c FALSE
+    \li condition - The expression specified before the '?' token (can be any class extending QMLEntity)
+    \li then - The statement executed when the condition evaluates to \c TRUE (can be any class extending QMLEntity)
+    \li else - The statement executed when the condition evaluates to \c FALSE (can be any class extending QMLEntity)
     \endlist
 
     \li QMLFor - A for loop
     \list
-    \li initialization - The statement before the first ';' token
-    \li condition - The expression before the second ';' token
-    \li incrementation - The statement after the second ';' token
-    \li content - The contents of the loop
+    \li initialization - The statement before the first ';' token (can be any class extending QMLEntity)
+    \li condition - The expression before the second ';' token (can be any class extending QMLEntity)
+    \li incrementation - The statement after the second ';' token (can be any class extending QMLEntity)
+    \li content - The contents of the loop (can be any class extending QMLEntity)
     \endlist
 
     \li QMLForIn - A for-in loop
     \list
-    \li variable - The variable
-    \li expression - The expression filling the variable
-    \li content - The contents of the loop
+    \li variable - The variable (can be any class extending QMLEntity)
+    \li expression - The expression filling the variable (can be any class extending QMLEntity)
+    \li content - The contents of the loop (can be any class extending QMLEntity)
     \endlist
 
     \li QMLSwitch - A switch/case statement
     \list
-    \li expression - The expression
+    \li expression - The expression (can be any class extending QMLEntity)
     \li cases - A QMLComplexEntity containing the cases
     \endlist
 
-    \li QMLBinaryOperation
+    \li QMLBinaryOperation - A binary operation (a + 2)
     \list
-    \li left - The expression that is left of the operator
-    \li right - The expression that is right of the operator
+    \li left - The expression that is left of the operator (can be any class extending QMLEntity)
+    \li right - The expression that is right of the operator (can be any class extending QMLEntity)
+    \endlist
+
+    \li QMLArrayAccess (extends QMLComplexEntity) - An array access (foo[bar])
+    The expression(s) inside the '[]' tokens are for now inaccessible.
+    \list
+    \li left - The expression that is left of the operator (can be any class extending QMLEntity)
     \endlist
 
     \endlist
@@ -348,6 +357,30 @@
       </xs:element>
     </xs:schema>
     \endcode
+*/
+
+/*!
+    \fn QMLAnalyzer::parsingStarted(QString sFileName)
+
+    This signal is emitted when the parsing has started on \a sFileName.
+*/
+
+/*!
+    \fn QMLAnalyzer::parsingFinished(QString sFileName)
+
+    This signal is emitted when the parsing has finished on \a sFileName.
+*/
+
+/*!
+    \fn QMLAnalyzer::importParsingStarted(QString sFileName)
+
+    This signal is emitted when the parsing, as an import file, has started on \a sFileName.
+*/
+
+/*!
+    \fn QMLAnalyzer::analyzeError(QMLAnalyzerError tError)
+
+    This signal is emitted when the analyzer yields the error in \a tError.
 */
 
 //-------------------------------------------------------------------------------------------------
@@ -575,6 +608,9 @@ void QMLAnalyzer::run()
     analyze(m_xGrammar);
 }
 
+/*!
+    Parses all macros defined in the current grammar file.
+*/
 void QMLAnalyzer::parseMacros()
 {
     QVector<CXMLNode> vMacros = m_xGrammar.getNodesByTagName(ANALYZER_TOKEN_MACRO);
@@ -720,7 +756,8 @@ void QMLAnalyzer::runGrammar(const QString& sFileName, QMLFile* pFile)
 }
 
 /*!
-    Runs a check on the contents of \a pEntity. \a sFileName is the full file name.
+    Runs a check on the contents of \a pEntity. \br\br
+    \a sFileName is the full name of the file being analyzed.
 */
 void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pEntity)
 {
@@ -810,6 +847,14 @@ void QMLAnalyzer::runGrammar_Recurse(const QString& sFileName, QMLEntity* pEntit
     }
 }
 
+/*!
+    Runs a rule on the contents of \a pEntity. \br
+    Returns \c true if an error was yielded. \br\br
+    \a sFileName is the full name of the file being analyzed.
+    \a sClassName is the class name of the entity being analyzed.
+    \a xRule is the grammar rule to check.
+    \a bInverseLogic inverses the result of the rule if \c true.
+*/
 bool QMLAnalyzer::runGrammar_Reject(const QString& sFileName, const QString& sClassName, QMLEntity* pEntity, CXMLNode xRule, bool bInverseLogic)
 {
     QString sMember = processMacros(xRule.attributes()[ANALYZER_TOKEN_MEMBER].toLower());
@@ -954,6 +999,13 @@ bool QMLAnalyzer::runGrammar_Reject(const QString& sFileName, const QString& sCl
     return false;
 }
 
+/*!
+    Tests the conditions of a rule regarding \a pEntity. \br\br
+    Returns \c true if all conditions passed. \br\br
+    \a sFileName is the full name of the file being analyzed.
+    \a sClassName is the class name of the entity being analyzed.
+    \a xRule is the grammar rule to check.
+*/
 bool QMLAnalyzer::runGrammar_SatisfiesConditions(const QString& sFileName, const QString& sClassName, QMLEntity* pEntity, CXMLNode xRule)
 {
     QVector<CXMLNode> vConditions = xRule.getNodesByTagName(ANALYZER_TOKEN_CONDITION);
@@ -962,10 +1014,10 @@ bool QMLAnalyzer::runGrammar_SatisfiesConditions(const QString& sFileName, const
 
     foreach (CXMLNode xCondition, vConditions)
     {
-        QString sOperation = xCondition.attributes()[ANALYZER_TOKEN_OPERATION];
-        QString sValue = xCondition.attributes()[ANALYZER_TOKEN_VALUE];
         QString sMember = xCondition.attributes()[ANALYZER_TOKEN_MEMBER].toLower();
+        QString sOperation = xCondition.attributes()[ANALYZER_TOKEN_OPERATION];
         QString sEmpty = xCondition.attributes()[ANALYZER_TOKEN_EMPTY].toLower();
+        QString sValue = xCondition.attributes()[ANALYZER_TOKEN_VALUE];
         QString sNegate = xCondition.attributes()[ANALYZER_TOKEN_NEGATE].toLower();
 
         if (mMembers.contains(sMember) && mMembers[sMember] != nullptr)
@@ -1053,6 +1105,9 @@ bool QMLAnalyzer::runGrammar_SatisfiesConditions(const QString& sFileName, const
     return true;
 }
 
+/*!
+    Returns the count of all nested instances of \a sClassName in \a pEntity.
+*/
 int QMLAnalyzer::runGrammar_CountNested(const QString& sClassName, QMLEntity* pEntity)
 {
     int iCount = 0;
@@ -1091,6 +1146,11 @@ int QMLAnalyzer::runGrammar_CountNested(const QString& sClassName, QMLEntity* pE
     return iCount;
 }
 
+/*!
+    Outputs the error in \a sText. \br\br
+    \a sFileName is the full name of the file being analyzed. \br
+    \a pPosition is the position in the file of the concerned token (x = column, y = line)
+*/
 void QMLAnalyzer::outputError(const QString& sFileName, const QPoint& pPosition, const QString& sText)
 {
     m_vErrors << QMLAnalyzerError(sFileName, pPosition, sText);

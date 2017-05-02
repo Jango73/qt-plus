@@ -9,6 +9,13 @@
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="Operation" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            (Optional) Specifies the type of operation to do on Member and Value. <empty> : Yields true if Member is equal to Value. Contains : Yields true if Member contains Value
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
       <xs:attribute name="Empty" type="xs:string">
         <xs:annotation>
           <xs:documentation>
@@ -27,7 +34,7 @@
       <xs:attribute name="Negate" type="xs:string">
         <xs:annotation>
           <xs:documentation>
-            If this is defined and equal to 'true', it will reverse the effect of the condition.
+            (Optional) If this is defined and equal to 'true', it will reverse the effect of the condition.
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>

@@ -61,6 +61,13 @@ QMLEntity* QMLImport::version() const
 
 //-------------------------------------------------------------------------------------------------
 
+QMLEntity* QMLImport::as() const
+{
+    return m_pAs;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 QMap<QString, QMLEntity*> QMLImport::members()
 {
     QMap<QString, QMLEntity*> vReturnValue;

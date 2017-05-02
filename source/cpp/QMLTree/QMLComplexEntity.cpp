@@ -7,6 +7,19 @@
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    \class QMLComplexEntity
+    \inmodule qt-plus
+    \brief The base entity for a QML tree.
+*/
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Constructs a QMLComplexEntity. \br\br
+    \a pPosition is the position of the token in the file.
+    \a pName is the name of the entity.
+*/
 QMLComplexEntity::QMLComplexEntity(const QPoint& pPosition, QMLEntity* pName)
     : QMLEntity(pPosition)
     , m_pName(pName)
@@ -19,6 +32,9 @@ QMLComplexEntity::QMLComplexEntity(const QPoint& pPosition, QMLEntity* pName)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Destroys a QMLComplexEntity.
+*/
 QMLComplexEntity::~QMLComplexEntity()
 {
     if (m_pName != nullptr)
@@ -37,6 +53,9 @@ QMLComplexEntity::~QMLComplexEntity()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Sets the entity's name to \a pName.
+*/
 void QMLComplexEntity::setName(QMLEntity* pName)
 {
     if (m_pName != nullptr)
@@ -47,6 +66,9 @@ void QMLComplexEntity::setName(QMLEntity* pName)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Sets the entity's 'is array' flag \a bValue.
+*/
 void QMLComplexEntity::setIsArray(bool bValue)
 {
     m_bIsArray = bValue;
@@ -54,6 +76,9 @@ void QMLComplexEntity::setIsArray(bool bValue)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Sets the entity's 'is object' flag \a bValue.
+*/
 void QMLComplexEntity::setIsObject(bool bValue)
 {
     m_bIsObject = bValue;
@@ -61,6 +86,9 @@ void QMLComplexEntity::setIsObject(bool bValue)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Sets the entity's 'is block' flag \a bValue.
+*/
 void QMLComplexEntity::setIsBlock(bool bValue)
 {
     m_bIsBlock = bValue;
@@ -68,6 +96,9 @@ void QMLComplexEntity::setIsBlock(bool bValue)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Sets the entity's 'is argument list' flag \a bValue.
+*/
 void QMLComplexEntity::setIsArgumentList(bool bValue)
 {
     m_bIsArgumentList = bValue;
@@ -75,6 +106,9 @@ void QMLComplexEntity::setIsArgumentList(bool bValue)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns the entity's name.
+*/
 QMLEntity* QMLComplexEntity::name() const
 {
     return m_pName;
@@ -82,6 +116,9 @@ QMLEntity* QMLComplexEntity::name() const
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns the entity's contents.
+*/
 QVector<QMLEntity*>& QMLComplexEntity::contents()
 {
     return m_vContents;
@@ -89,41 +126,9 @@ QVector<QMLEntity*>& QMLComplexEntity::contents()
 
 //-------------------------------------------------------------------------------------------------
 
-bool QMLComplexEntity::isNamed() const
-{
-    return (m_pName != nullptr && m_pName->value().toString().isEmpty() == false);
-}
-
-//-------------------------------------------------------------------------------------------------
-
-bool QMLComplexEntity::isArray() const
-{
-    return m_bIsArray;
-}
-
-//-------------------------------------------------------------------------------------------------
-
-bool QMLComplexEntity::isObject() const
-{
-    return m_bIsObject;
-}
-
-//-------------------------------------------------------------------------------------------------
-
-bool QMLComplexEntity::isBlock() const
-{
-    return m_bIsBlock;
-}
-
-//-------------------------------------------------------------------------------------------------
-
-bool QMLComplexEntity::isArgumentList() const
-{
-    return m_bIsArgumentList;
-}
-
-//-------------------------------------------------------------------------------------------------
-
+/*!
+    Returns the entity's contents.
+*/
 const QVector<QMLEntity*>& QMLComplexEntity::contents() const
 {
     return m_vContents;
@@ -131,6 +136,59 @@ const QVector<QMLEntity*>& QMLComplexEntity::contents() const
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns \c true if the entity is named.
+*/
+bool QMLComplexEntity::isNamed() const
+{
+    return (m_pName != nullptr && m_pName->value().toString().isEmpty() == false);
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns the value of the entity's 'is array' flag.
+*/
+bool QMLComplexEntity::isArray() const
+{
+    return m_bIsArray;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns the value of the entity's 'is object' flag.
+*/
+bool QMLComplexEntity::isObject() const
+{
+    return m_bIsObject;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns the value of the entity's 'is block' flag.
+*/
+bool QMLComplexEntity::isBlock() const
+{
+    return m_bIsBlock;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns the value of the entity's 'is argument list' flag.
+*/
+bool QMLComplexEntity::isArgumentList() const
+{
+    return m_bIsArgumentList;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns a map of class members.
+*/
 QMap<QString, QMLEntity*> QMLComplexEntity::members()
 {
     QMap<QString, QMLEntity*> vReturnValue;
@@ -142,6 +200,9 @@ QMap<QString, QMLEntity*> QMLComplexEntity::members()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns a vector of the entity's contents. They are unlinked from this entity.
+*/
 QVector<QMLEntity*> QMLComplexEntity::grabContents()
 {
     QVector<QMLEntity*> vReturnValue;
@@ -254,6 +315,10 @@ QMLEntity* QMLComplexEntity::findSymbolDeclarationDescending(QStringList& lQuali
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Removes all unreferenced declarations in this entity. \br\br
+    \a pContext is the context of this entity. \br
+*/
 void QMLComplexEntity::removeUnreferencedSymbols(QMLTreeContext* pContext)
 {
     QMLEntity::removeUnreferencedSymbols(pContext);
@@ -269,6 +334,10 @@ void QMLComplexEntity::removeUnreferencedSymbols(QMLTreeContext* pContext)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Dumps the entity as QML to \a stream using \a iIdent for indentation. \br\br
+    \a pParent is the caller of this method.
+*/
 void QMLComplexEntity::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
 {
     if (m_bIsArray && m_vContents.count() == 0)
@@ -334,6 +403,11 @@ void QMLComplexEntity::toQML(QTextStream& stream, const QMLEntity* pParent, int 
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns a CXMLNode representation of this item. \br\br
+    \a pContext is a user defined context. \br
+    \a pParent is the caller of this method.
+*/
 CXMLNode QMLComplexEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
     CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
@@ -369,6 +443,9 @@ CXMLNode QMLComplexEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* 
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns a QMLComplexEntity built using \a pEntity.
+*/
 QMLComplexEntity* QMLComplexEntity::fromEntity(QMLEntity* pEntity)
 {
     QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(pEntity);
@@ -384,6 +461,9 @@ QMLComplexEntity* QMLComplexEntity::fromEntity(QMLEntity* pEntity)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns a QMLComplexEntity built using \a pEntity, and marked as 'block'.
+*/
 QMLComplexEntity* QMLComplexEntity::makeBlock(QMLEntity* pEntity)
 {
     QMLComplexEntity* pComplex = fromEntity(pEntity);

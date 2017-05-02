@@ -91,6 +91,10 @@ QString QMLBinaryOperation::operatorToString(EOperator eOperator) const
             return ">";
         case boGreaterOrEquals:
             return ">=";
+        case boShiftLeft:
+            return "<<";
+        case boShiftRight:
+            return ">>";
     }
 
     return "??";

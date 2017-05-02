@@ -110,6 +110,11 @@
     |-- parsed() : true
     |-- isSingleton() : false
     |-- contents() [0]
+        |-- QMLImport
+            |-- name() : "QtQuick"
+            |-- version() : "2.0"
+            |-- as() : nullptr
+    |-- contents() [1]
         |-- QMLItem
             |-- name() : "Item"
             |-- id() : "root"

@@ -49,6 +49,9 @@ public:
     //!
     QMLEntity* version() const;
 
+    //!
+    QMLEntity* as() const;
+
     //! Returns all members
     virtual QMap<QString, QMLEntity*> members() Q_DECL_OVERRIDE;
 
