@@ -288,9 +288,9 @@ PragmaStatement :
 ;
 
 Item :
-    Identifier '{' ItemContents '}'
+    QualifiedIdentifier '{' ItemContents '}'
     {
-        PARSER_TRACE("Item", "Identifier '{' ItemContents '}'");
+        PARSER_TRACE("Item", "QualifiedIdentifier '{' ItemContents '}'");
 
         QMLEntity* pName = $<Object>1;
         QMLItem* pComplexItem = dynamic_cast<QMLItem*>($<Object>3);
@@ -307,34 +307,10 @@ Item :
 
         $<Object>$ = pComplexItem;
     }
-    /*
     |
-    Identifier '.' Identifier '{' ItemContents '}'
+    QualifiedIdentifier '{' '}'
     {
-        PARSER_TRACE("Item", "Identifier '{' ItemContents '}'");
-
-        QMLEntity* pName1 = $<Object>1;
-        QMLEntity* pName2 = $<Object>3;
-        QMLItem* pComplexItem = dynamic_cast<QMLItem*>($<Object>5);
-
-        if (pName2 != nullptr && pComplexItem != nullptr)
-        {
-            pComplexItem->setName(pName2);
-        }
-        else
-        {
-            SAFE_DELETE(pName2);
-        }
-
-        SAFE_DELETE(pName1);
-
-        $<Object>$ = pComplexItem;
-    }
-    */
-    |
-    Identifier '{' '}'
-    {
-        PARSER_TRACE("Item", "Identifier '{' '}'");
+        PARSER_TRACE("Item", "QualifiedIdentifier '{' '}'");
 
         QMLEntity* pName = $<Object>1;
         QMLItem* pComplexItem = new QMLItem(pContext->position());
@@ -2205,9 +2181,9 @@ JSFunctionCall :
 ;
 
 JSPrimaryExpression :
-    Identifier
+    QualifiedIdentifier
     {
-        PARSER_TRACE("JSPrimaryExpression", "Identifier");
+        PARSER_TRACE("JSPrimaryExpression", "QualifiedIdentifier");
 
         $<Object>$ = $<Object>1;
     }

@@ -15,6 +15,7 @@ SOURCES += \
     source/cpp/ParsingMonitor.cpp
 
 HEADERS += \
+    source/cpp/tests-main.h \
     source/cpp/ParsingMonitor.h
 
 DEPENDPATH += qt-plus

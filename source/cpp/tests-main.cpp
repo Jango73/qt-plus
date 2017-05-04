@@ -1,11 +1,8 @@
 
-#include <QCoreApplication>
+#include <QApplication>
+#include <QThread>
 
-#include "CGeoUtilities.h"
-#include "QTree.h"
-#include "QMLTree/QMLTreeContext.h"
-#include "QMLTree/QMLAnalyzer.h"
-#include "ParsingMonitor.h"
+#include "tests-main.h"
 
 QString sInputFile = "../source/misc/Test.qml";
 QString sGrammarFile = "../source/misc/CodingRules.xml";
@@ -20,7 +17,16 @@ QString GeoCoordinateString(const QGeoCoordinate& vec)
     return "<" + QString::number(vec.latitude(), 'f', 6) + ", " + QString::number(vec.longitude(), 'f', 6) + ", " + QString::number(vec.altitude(), 'f', 6) + ">";
 }
 
-void runGeoCoordTests()
+void TestRunner::run()
+{
+    runGeoCoordTests();
+    runQTreeTests();
+    runQMLTreeTests();
+    runQMLAnalyzerTests();
+    // runThreadedQMLAnalyzerTests();
+}
+
+void TestRunner::runGeoCoordTests()
 {
     QGeoCoordinate Pos;
     QGeoCoordinate Ref;
@@ -104,7 +110,7 @@ void runGeoCoordTests()
     qDebug() << "ref 20.0, 0.0 and pos 0.0, -98819.0, 1101919.88 = " << GeoCoordinateString(Pos);
 }
 
-void runQTreeTests()
+void TestRunner::runQTreeTests()
 {
     qDebug() << "";
     qDebug() << "--------------------------------------------------------------------";
@@ -158,7 +164,7 @@ void runQTreeTests()
     // tTree.assignParents();
 }
 
-void runQMLTreeTests()
+void TestRunner::runQMLTreeTests()
 {
     qDebug() << "";
     qDebug() << "--------------------------------------------------------------------";
@@ -195,7 +201,7 @@ void runQMLTreeTests()
     delete pContext;
 }
 
-void runQMLAnalyzerTests()
+void TestRunner::runQMLAnalyzerTests()
 {
     qDebug() << "";
     qDebug() << "--------------------------------------------------------------------";
@@ -203,6 +209,7 @@ void runQMLAnalyzerTests()
     QMLAnalyzer* pAnalyzer = new QMLAnalyzer();
 
     pAnalyzer->setFile(sInputFile);
+    // pAnalyzer->setRewriteFiles(true);
     pAnalyzer->analyze(CXMLNode::load(sGrammarFile));
 
     qDebug() << "";
@@ -216,7 +223,7 @@ void runQMLAnalyzerTests()
     delete pAnalyzer;
 }
 
-void runThreadedQMLAnalyzerTests()
+void TestRunner::runThreadedQMLAnalyzerTests()
 {
     qDebug() << "";
     qDebug() << "--------------------------------------------------------------------";
@@ -243,15 +250,21 @@ void runThreadedQMLAnalyzerTests()
     }
 }
 
-int main()
+TestApplication::TestApplication(int argc, char** argv)
+    : QApplication(argc, argv)
 {
-    QCoreApplication::instance()->processEvents();
+    connect(&runner, SIGNAL(finished()), this, SLOT(onFinished()));
+    runner.start();
+}
 
-    runGeoCoordTests();
-    runQTreeTests();
-    runQMLTreeTests();
-    // runQMLAnalyzerTests();
-    // runThreadedQMLAnalyzerTests();
+void TestApplication::onFinished()
+{
+    quit();
+}
 
-    return 0;
+int main(int argc, char** argv)
+{
+    TestApplication app(argc, argv);
+
+    return app.exec();
 }
