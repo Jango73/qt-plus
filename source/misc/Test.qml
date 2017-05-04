@@ -1,5 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.4
+import QtQuick.Dialogs 1.0 as MyLib
 
 Item {
     id: root
@@ -19,6 +20,10 @@ Item {
 
     signal sig1(string someParameter1)
     signal sig2
+
+    MyLib.ColorDialog {
+        id: someID
+    }
 
     states: [
         State {
