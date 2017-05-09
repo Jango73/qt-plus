@@ -428,6 +428,10 @@ CXMLNode QMLEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent
         xNode.attributes()["UsageCount"] = QString::number(m_iUsageCount);
     }
 
+    xNode.attributes()["Details"] = QString("(Class: %1, Address: %2)")
+            .arg(metaObject()->className())
+            .arg((qulonglong) this);
+
     return xNode;
 }
 

@@ -215,7 +215,7 @@ Declaration :
 ;
 
 ImportStatement :
-    TOKEN_IMPORT QualifiedIdentifier Version
+    TOKEN_IMPORT JSMemberExpression Version
     {
         QMLEntity* pName = $<Object>2;
         QMLEntity* pVersion = $<Object>3;
@@ -230,7 +230,7 @@ ImportStatement :
         }
     }
     |
-    TOKEN_IMPORT QualifiedIdentifier Version TOKEN_AS Identifier
+    TOKEN_IMPORT JSMemberExpression Version TOKEN_AS Identifier
     {
         QMLEntity* pName = $<Object>2;
         QMLEntity* pVersion = $<Object>3;
@@ -246,7 +246,7 @@ ImportStatement :
         }
     }
     |
-    TOKEN_IMPORT Literal
+    TOKEN_IMPORT JSMemberExpression
     {
         QMLEntity* pName = $<Object>2;
 
@@ -260,7 +260,7 @@ ImportStatement :
         }
     }
     |
-    TOKEN_IMPORT Literal TOKEN_AS Identifier
+    TOKEN_IMPORT JSMemberExpression TOKEN_AS Identifier
     {
         QMLEntity* pName = $<Object>2;
         QMLEntity* pAs = $<Object>4;
@@ -277,9 +277,9 @@ ImportStatement :
 ;
 
 PragmaStatement :
-    TOKEN_PRAGMA QualifiedIdentifier
+    TOKEN_PRAGMA JSMemberExpression
     {
-        PARSER_TRACE("PragmaStatement", "TOKEN_PRAGMA QualifiedIdentifier");
+        PARSER_TRACE("PragmaStatement", "TOKEN_PRAGMA JSMemberExpression");
 
         QMLEntity* pStatement = $<Object>2;
 
@@ -288,9 +288,9 @@ PragmaStatement :
 ;
 
 Item :
-    QualifiedIdentifier '{' ItemContents '}'
+    JSMemberExpression '{' ItemContents '}'
     {
-        PARSER_TRACE("Item", "QualifiedIdentifier '{' ItemContents '}'");
+        PARSER_TRACE("Item", "JSMemberExpression '{' ItemContents '}'");
 
         QMLEntity* pName = $<Object>1;
         QMLItem* pComplexItem = dynamic_cast<QMLItem*>($<Object>3);
@@ -308,9 +308,9 @@ Item :
         $<Object>$ = pComplexItem;
     }
     |
-    QualifiedIdentifier '{' '}'
+    JSMemberExpression '{' '}'
     {
-        PARSER_TRACE("Item", "QualifiedIdentifier '{' '}'");
+        PARSER_TRACE("Item", "JSMemberExpression '{' '}'");
 
         QMLEntity* pName = $<Object>1;
         QMLItem* pComplexItem = new QMLItem(pContext->position());
@@ -691,9 +691,9 @@ PropertyAssignment :
         }
     }
     |
-    QualifiedIdentifier ':' PropertyContent
+    JSMemberExpression ':' PropertyContent
     {
-        PARSER_TRACE("PropertyAssignment", "QualifiedIdentifier ':' PropertyContent");
+        PARSER_TRACE("PropertyAssignment", "JSMemberExpression ':' PropertyContent");
 
         QMLEntity* pName = $<Object>1;
         QMLEntity* pContent = $<Object>3;
@@ -2181,9 +2181,9 @@ JSFunctionCall :
 ;
 
 JSPrimaryExpression :
-    QualifiedIdentifier
+    Identifier
     {
-        PARSER_TRACE("JSPrimaryExpression", "QualifiedIdentifier");
+        PARSER_TRACE("JSPrimaryExpression", "Identifier");
 
         $<Object>$ = $<Object>1;
     }
@@ -2463,31 +2463,6 @@ JSAttributeName :
     Identifier
     {
         $<Object>$ = $<Object>1;
-    }
-;
-
-QualifiedIdentifier :
-    Identifier
-    {
-        PARSER_TRACE("QualifiedIdentifier", "Identifier");
-
-        QMLEntity* pIdentifier = $<Object>1;
-
-        $<Object>$ = pIdentifier;
-    }
-    |
-    QualifiedIdentifier '.' Identifier
-    {
-        PARSER_TRACE("QualifiedIdentifier", "QualifiedIdentifier '.' Identifier");
-
-        QMLEntity* pLeft = $<Object>1;
-        QMLEntity* pRite = $<Object>3;
-
-        pLeft->setValue(pLeft->value().toString() + QString(".") + pRite->value().toString());
-
-        SAFE_DELETE(pRite);
-
-        $<Object>$ = pLeft;
     }
 ;
 

@@ -113,12 +113,12 @@
 
     \li QMLIdentifier (extends QMLEntity) - A string that is an identifier.
 
-    \li QMLPragma - A pragma statement
+    \li QMLPragma - A pragma statement like [ pragma Singleton ]
     \list
     \li statement - The statement of the pragma
     \endlist
 
-    \li QMLImport - An import statement like [ import QtQuick 2.5 ]
+    \li QMLImport (extends QMLEntity) - An import statement like [ import QtQuick 2.5 ] or [ import "." ]
     \list
     \li name - The name following the "import" token, either an identifier or a path in a string
     \li version - The version following the name (if any)
@@ -130,7 +130,7 @@
     \li name - The name of the item
     \endlist
 
-    \li QMLPropertyDeclaration - A property declaration like [ property color myColor ]
+    \li QMLPropertyDeclaration (extends QMLEntity) - A property declaration like [ property color myColor ]
     \list
     \li type - The type of the property
     \li name - The name of the property
@@ -151,34 +151,34 @@
     \li content - The contents of the property (can be any class extending QMLEntity)
     \endlist
 
-    \li QMLFunction - A function declaration
+    \li QMLFunction (extends QMLEntity) - A function declaration
     \list
     \li name - The name of the function
     \li parameters - The parameters of the function
     \li content - The contents of the function (can be any class extending QMLEntity)
     \endlist
 
-    \li QMLFunctionCall - A function call
+    \li QMLFunctionCall (extends QMLEntity) - A function call
     \list
     \li name - The name of the function which is called
     \li arguments - The parameters passed to the function
     \endlist
 
-    \li QMLIf - An if statement
+    \li QMLIf (extends QMLEntity) - An if statement
     \list
     \li condition - The expression specified between the '(' and ')' tokens (can be any class extending QMLEntity)
     \li then - The statement executed when the condition evaluates to \c TRUE (can be any class extending QMLEntity)
     \li else - The statement executed when the condition evaluates to \c FALSE (can be any class extending QMLEntity)
     \endlist
 
-    \li QMLConditional (extends QMLIf) - A conditional expression (a ? 0 : 1)
+    \li QMLConditional (extends QMLIf) - A conditional expression like [ foo ? 0 : bar ]
     \list
     \li condition - The expression specified before the '?' token (can be any class extending QMLEntity)
     \li then - The statement executed when the condition evaluates to \c TRUE (can be any class extending QMLEntity)
     \li else - The statement executed when the condition evaluates to \c FALSE (can be any class extending QMLEntity)
     \endlist
 
-    \li QMLFor - A for loop
+    \li QMLFor (extends QMLEntity) - A for loop like [ for (foo = 0; foo < bar; foo++) { } ]
     \list
     \li initialization - The statement before the first ';' token (can be any class extending QMLEntity)
     \li condition - The expression before the second ';' token (can be any class extending QMLEntity)
@@ -186,26 +186,26 @@
     \li content - The contents of the loop (can be any class extending QMLEntity)
     \endlist
 
-    \li QMLForIn - A for-in loop
+    \li QMLForIn (extends QMLEntity) - A for-in loop like [ for (var foo in bar) { } ]
     \list
     \li variable - The variable (can be any class extending QMLEntity)
     \li expression - The expression filling the variable (can be any class extending QMLEntity)
     \li content - The contents of the loop (can be any class extending QMLEntity)
     \endlist
 
-    \li QMLSwitch - A switch/case statement
+    \li QMLSwitch (extends QMLEntity) - A switch/case statement
     \list
     \li expression - The expression (can be any class extending QMLEntity)
     \li cases - A QMLComplexEntity containing the cases
     \endlist
 
-    \li QMLBinaryOperation - A binary operation (a + 2)
+    \li QMLBinaryOperation (extends QMLEntity) - A binary operation like [ foo + bar ]
     \list
     \li left - The expression that is left of the operator (can be any class extending QMLEntity)
     \li right - The expression that is right of the operator (can be any class extending QMLEntity)
     \endlist
 
-    \li QMLArrayAccess (extends QMLComplexEntity) - An array access (foo[bar])
+    \li QMLArrayAccess (extends QMLComplexEntity) - An array access like [ foo[bar] ]
     The expression(s) inside the '[]' tokens are for now inaccessible.
     \list
     \li left - The expression that is left of the operator (can be any class extending QMLEntity)

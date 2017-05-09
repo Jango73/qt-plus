@@ -5,6 +5,20 @@
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    \class QMLPropertyDeclaration
+    \inmodule unis-lib
+    \brief A property declaration in a QML file, as in [ property string myColor: "red" ].
+*/
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Constructs a QMLPropertyDeclaration. \br\br
+    \a pPosition is the position of the token in the file.
+    \a pType is the type of the property.
+    \a pName is the name of the entity.
+*/
 QMLPropertyDeclaration::QMLPropertyDeclaration(const QPoint& pPosition, QMLType* pType, QMLEntity* pName)
     : QMLEntity(pPosition)
     , m_pType(pType)
@@ -16,6 +30,12 @@ QMLPropertyDeclaration::QMLPropertyDeclaration(const QPoint& pPosition, QMLType*
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Constructs a QMLPropertyDeclaration, with a value equal to \a pContent. \br\br
+    \a pPosition is the position of the token in the file.
+    \a pType is the type of the property.
+    \a pName is the name of the entity.
+*/
 QMLPropertyDeclaration::QMLPropertyDeclaration(const QPoint& pPosition, QMLType* pType, QMLEntity* pName, QMLEntity* pContent)
     : QMLEntity(pPosition)
     , m_pType(pType)
@@ -27,6 +47,9 @@ QMLPropertyDeclaration::QMLPropertyDeclaration(const QPoint& pPosition, QMLType*
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Destroys a QMLPropertyDeclaration.
+*/
 QMLPropertyDeclaration::~QMLPropertyDeclaration()
 {
     if (m_pType != nullptr)
@@ -39,6 +62,9 @@ QMLPropertyDeclaration::~QMLPropertyDeclaration()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Sets the entity's modifiers \a eModifiers.
+*/
 void QMLPropertyDeclaration::setModifiers(EModifier eModifiers)
 {
     m_eModifiers = eModifiers;
@@ -46,6 +72,9 @@ void QMLPropertyDeclaration::setModifiers(EModifier eModifiers)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns the entity's type.
+*/
 QMLType* QMLPropertyDeclaration::type() const
 {
     return m_pType;
@@ -53,6 +82,9 @@ QMLType* QMLPropertyDeclaration::type() const
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns the entity's name.
+*/
 QMLEntity* QMLPropertyDeclaration::name() const
 {
     return m_pName;
@@ -60,6 +92,9 @@ QMLEntity* QMLPropertyDeclaration::name() const
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns the entity's content.
+*/
 QMLEntity* QMLPropertyDeclaration::content()
 {
     return m_pContent;
@@ -67,6 +102,9 @@ QMLEntity* QMLPropertyDeclaration::content()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns the entity's content.
+*/
 const QMLEntity* QMLPropertyDeclaration::content() const
 {
     return m_pContent;
@@ -74,6 +112,9 @@ const QMLEntity* QMLPropertyDeclaration::content() const
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns the entity's modifiers.
+*/
 QMLPropertyDeclaration::EModifier QMLPropertyDeclaration::modifiers() const
 {
     return m_eModifiers;
@@ -81,6 +122,9 @@ QMLPropertyDeclaration::EModifier QMLPropertyDeclaration::modifiers() const
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns a map of class members.
+*/
 QMap<QString, QMLEntity*> QMLPropertyDeclaration::members()
 {
     QMap<QString, QMLEntity*> vReturnValue;
@@ -113,6 +157,10 @@ QMap<QString, QMLEntity*> QMLPropertyDeclaration::getDeclaredSymbols()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Dumps the entity as QML to \a stream using \a iIdent for indentation. \br\br
+    \a pParent is the caller of this method.
+*/
 void QMLPropertyDeclaration::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
 {
     Q_UNUSED(pParent);
@@ -143,6 +191,11 @@ void QMLPropertyDeclaration::toQML(QTextStream& stream, const QMLEntity* pParent
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns a CXMLNode representation of this item. \br\br
+    \a pContext is a user defined context. \br
+    \a pParent is the caller of this method.
+*/
 CXMLNode QMLPropertyDeclaration::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
     CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
