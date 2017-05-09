@@ -206,9 +206,9 @@ Declaration :
         $<Object>$ = $<Object>1;
     }
     |
-    JSFunction
+    JSExpression
     {
-        PARSER_TRACE("Declaration", "Function");
+        PARSER_TRACE("Declaration", "JSExpression");
 
         $<Object>$ = $<Object>1;
     }
