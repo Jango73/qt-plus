@@ -13,34 +13,37 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Définit un contexte de serveur HTTP
+//! Defines a HTTP server context
 class QTPLUSSHARED_EXPORT CWebContext
 {
 public:
 
-	//-------------------------------------------------------------------------------------------------
-	// Constructeurs et destructeur
-	//-------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------
+    // Constructors and destructor
+    //-------------------------------------------------------------------------------------------------
 
     //! Constructeur par défaut
     CWebContext();
 
-	//! Constructeur
+    //! Constructor
     CWebContext(QTcpSocket* pSocket, QString sPeer, QString sHost, QStringList lPath, QMap<QString, QString> mArguments);
 
-	//! Destructeur
-	virtual ~CWebContext();
+    //! Copy constructor
+    CWebContext(const CWebContext& target);
 
-	//-------------------------------------------------------------------------------------------------
-	// Propriétés
-	//-------------------------------------------------------------------------------------------------
+    //! Destructor
+    virtual ~CWebContext();
+
+    //-------------------------------------------------------------------------------------------------
+    // Properties
+    //-------------------------------------------------------------------------------------------------
 
 public:
 
-    QTcpSocket*				m_pSocket;
-    QString					m_sPeer;
-	QString					m_sHost;
-	QStringList				m_lPath;
-	QMap<QString, QString>	m_mArguments;
-	QByteArray				m_baPostContent;
+    QTcpSocket*             m_pSocket;
+    QString                 m_sPeer;
+    QString                 m_sHost;
+    QStringList             m_lPath;
+    QMap<QString, QString>  m_mArguments;
+    QByteArray              m_baPostContent;
 };
