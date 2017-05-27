@@ -28,6 +28,7 @@
 */
 CHTTPServer::CHTTPServer(quint16 port, QObject* parent)
     : QTcpServer(parent)
+    , m_mMutex(QMutex::Recursive)
     , m_iRequestCount(0)
     , m_bDisabled(false)
 {
@@ -531,7 +532,11 @@ void CHTTPServer::processRequest(QTcpSocket* pSocket)
         }
     }
 
-    m_iRequestCount++;
+    if (lock())
+    {
+        m_iRequestCount++;
+        unlock();
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -788,6 +793,25 @@ void CHTTPServer::pause()
 void CHTTPServer::resume()
 {
     m_bDisabled = false;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+bool CHTTPServer::lock()
+{
+    if (m_mMutex.tryLock(2000))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CHTTPServer::unlock()
+{
+    m_mMutex.unlock();
 }
 
 //-------------------------------------------------------------------------------------------------

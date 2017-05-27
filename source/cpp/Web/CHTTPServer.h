@@ -10,6 +10,7 @@
 #include <QTcpSocket>
 #include <QThreadPool>
 #include <QRunnable>
+#include <QMutex>
 
 // Application
 #include "CWebContext.h"
@@ -19,14 +20,14 @@
 // New line as output in web page
 #define HTML_NL                         "\r\n"
 
-// 1er token d'un header HTTP
+// First token in a HTTP header
 
 #define HTTP_HEADER						"HTTP/1.1 "
 
 #define HTTP_GET                        "GET"
 #define HTTP_POST                       "POST"
 
-// Liste des retours possibles d'un serveur HTTP
+// Possible error codes of a HTTP server
 
 #define HTTP_200_OK						"200 Ok"
 
@@ -56,7 +57,7 @@
 #define HTTP_504_GATEWAY_TIMEOUT		"504 Gateway Timeout"
 #define HTTP_505_HTTP_VERSION_NS		"505 HTTP Version Not Supported"
 
-// Tokens importants du header HTTP
+// Important tokens in a HTTP header
 
 #define Token_Host						"Host:"
 #define Token_Connection				"Connection:"
@@ -66,7 +67,7 @@
 #define Token_boundary                  "boundary"
 #define Token_name                      "name"
 
-// Tokens correspondant à un type MIME
+// MIME type tokens
 
 #define MIME_Content_PlainText			"text/plain"
 #define MIME_Content_HTML				"text/html"
@@ -88,7 +89,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Définit un serveur HTTP
+//! Defines a HTTP server
 class QTPLUSSHARED_EXPORT CHTTPServer : public QTcpServer
 {
     Q_OBJECT
@@ -96,7 +97,7 @@ class QTPLUSSHARED_EXPORT CHTTPServer : public QTcpServer
 public:
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
+    // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
     //! Constructeur
@@ -106,45 +107,48 @@ public:
     virtual ~CHTTPServer();
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes de contrôle
+    // Public control methods
     //-------------------------------------------------------------------------------------------------
 
-    //! Ajoute un élément à la liste des répertoires autorisés en accès par un client
+    //!  Adds a folder to the list of authorized folders
     void addAuthorizedFolder(QString sFolderName);
 
-    //! Met le serveur en pause (toute demande de client sera ignorée)
+    //! Pauses the server. When paused, the server will not serve any request
     void pause();
 
-    //! Reprend l'exécution du serveur
+    //! Resumes the server. When not paused, the server will serve requests
     void resume();
 
-    //! A implémenter par toute classe dérivée pour générer du contenu web
-    //! Retourne le contenu de la page web dynamique, à implémenter par toute classe dérivée
-    //! Si sCustomResponse est non vide, il sera retourné tel quel au client, sHead et sBody seront ignorés
-    //! Sinon, si xmlResponse est non vide, il sera retourné tel quel au client, sHead et sBody seront ignorés
-    //! Sinon sHead et sBody seront retournés au client sous forme d'un document HTML
+    //! Locks access to data
+    bool lock();
+
+    //! Unlocks access to data
+    void unlock();
+
+    //! To be overridden by subclasses in order to feed content to the client
     virtual void getContent(const CWebContext& tContext, QString& sHead, QString& sBody, QString& sCustomResponse, QString& sCustomResponseMIME);
 
-    //! A implémenter par toute classe dérivée pour réagir après l'envoi de données au client
+    //! To be overridden by subclasses in order to react after sending data to the client
     virtual void handleSocketBytesWritten(QTcpSocket* pSocket, qint64 iBytes);
 
+    //! To be overridden by subclasses in order to react after reading data from the client
     virtual void handleSocketBytesRead(QTcpSocket* pSocket);
 
-    //! A implémenter par toute classe dérivée pour réagir après déconnexion d'un client
+    //! To be overridden by subclasses in order to react after a client disconnection
     virtual void handleSocketDisconnection(QTcpSocket* pSocket);
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes statiques
+    // Static methods
     //-------------------------------------------------------------------------------------------------
 
-    //! Encode une chaîne au format URL (remplace les caractères ASCII par leur %XX correspondant)
+    //! Encodes a string to URL format (replaces some ASCII characters with their %XX couterparts)
     static QString encodeURLParameters(QString sText);
 
-    //! Décode une chaîne encodée au format URL (remplace les %XX par leur caractère ASCII correspondant)
+    //! Decodes a string from URL format (replaces the %XX with their ASCII couterparts)
     static QString decodeURLParameters(QString sText);
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes protégées
+    // Protected control methods
     //-------------------------------------------------------------------------------------------------
 
 protected:
@@ -152,13 +156,13 @@ protected:
     //!
     QStringList getHeaderTokens(QByteArray baData);
 
-    //! Retourne le nombre d'octets attendus dans la requête
+    //! Returns the request's excpected byte count
     int getExpectedBytes(QStringList lTokens);
 
-    //! Prend en charge la requête du client
+    //! Handles a client request
     void processRequest(QTcpSocket* pSocket);
 
-    //! Récupère et envoi au client le fichier demandé s'il existe
+    //! Sends to the client a requested file if found
     bool getResponseFile(const CWebContext& tContext, QTcpSocket* pSocket);
 
     //! Récupère et envoi au client le contenu dynamique
@@ -183,11 +187,11 @@ protected:
     //! Retourne le type MIME correspondant à une extension de fichier
     QString getContentTypeByExtension(const QString& sExtension) const;
 
-    //! Log une requête HTTP entrante
+    //! Logs an incoming HTTP request
     void LogRequest(QString sIP, QString sText);
 
     //-------------------------------------------------------------------------------------------------
-    // Slots protégés
+    // Protected slots
     //-------------------------------------------------------------------------------------------------
 
 protected slots:
@@ -198,13 +202,13 @@ protected slots:
     void onSocketBytesWritten(qint64 iBytes);
 
     //-------------------------------------------------------------------------------------------------
-    // Classes imbriquées
+    // Inner classes
     //-------------------------------------------------------------------------------------------------
 
 public:
 
-    //! Cette classe utilitaire sert à associer des données utilisateur à une socket
-    //! Le pointeur vers cette classe est stocké dans les propriétés de QTcpSocket
+    //! This utility class associated custom data with a socket
+    //! The pointer to this class is stored in QTcpSocket's properties
     class CClientData
     {
     public:
@@ -243,6 +247,7 @@ public:
         QMap<QString, QVariant>	m_vUserData;
     };
 
+    //! This class executes requests in threaded mode
     class CRequestProcessor : public QRunnable
     {
     public:
@@ -265,11 +270,12 @@ public:
     };
 
     //-------------------------------------------------------------------------------------------------
-    // Propriétés
+    // Properties
     //-------------------------------------------------------------------------------------------------
 
 protected:
 
+    QMutex                  m_mMutex;
     int                     m_iRequestCount;
     bool					m_bDisabled;				// Indique si le serveur doit ignorer les requêtes entrantes
     QVector<QString>		m_vAuthorizedFolders;		// Indique quels sont les répertoires autorisés pour les GET non-dynamiques
