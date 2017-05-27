@@ -10,6 +10,7 @@
 //-------------------------------------------------------------------------------------------------
 
 // #define DEBUG_RECORD_REQUESTS
+#define THREADED_SERVER
 
 //-------------------------------------------------------------------------------------------------
 
@@ -184,7 +185,13 @@ void CHTTPServer::onSocketReadyRead()
                         pData->m_bHeaderRead = false;
 
                         // On exécute la requête du client
+#ifdef THREADED_SERVER
+                        CRequestProcessor* pProcessor = new CRequestProcessor(this, pSocket);
+                        pProcessor->setAutoDelete(true);
+                        m_pProcessors.start(pProcessor);
+#else
                         processRequest(pSocket);
+#endif
                     }
                 }
                 else
@@ -194,7 +201,13 @@ void CHTTPServer::onSocketReadyRead()
                     pData->m_bHeaderRead = false;
 
                     // On exécute la requête du client
-                    processRequest(pSocket);
+#ifdef THREADED_SERVER
+                    CRequestProcessor* pProcessor = new CRequestProcessor(this, pSocket);
+                    pProcessor->setAutoDelete(true);
+                    m_pProcessors.start(pProcessor);
+#else
+                    // processRequest(pSocket);
+#endif
                 }
             }
             else

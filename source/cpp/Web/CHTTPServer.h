@@ -8,6 +8,8 @@
 #include <QString>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QThreadPool>
+#include <QRunnable>
 
 // Application
 #include "CWebContext.h"
@@ -241,6 +243,27 @@ public:
         QMap<QString, QVariant>	m_vUserData;
     };
 
+    class CRequestProcessor : public QRunnable
+    {
+    public:
+
+        CRequestProcessor(CHTTPServer* pServer, QTcpSocket* pSocket)
+            : m_pServer(pServer)
+            , m_pSocket(pSocket)
+        {
+        }
+
+        virtual void run() Q_DECL_OVERRIDE
+        {
+            m_pServer->processRequest(m_pSocket);
+        }
+
+    protected:
+
+        CHTTPServer*    m_pServer;
+        QTcpSocket*     m_pSocket;
+    };
+
     //-------------------------------------------------------------------------------------------------
     // Propriétés
     //-------------------------------------------------------------------------------------------------
@@ -251,4 +274,5 @@ protected:
     bool					m_bDisabled;				// Indique si le serveur doit ignorer les requêtes entrantes
     QVector<QString>		m_vAuthorizedFolders;		// Indique quels sont les répertoires autorisés pour les GET non-dynamiques
     QMap<QString, QString>	m_vExtensionToContentType;	// Tableau pour conversion de token vers type MIME
+    QThreadPool             m_pProcessors;
 };
