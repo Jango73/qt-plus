@@ -82,6 +82,7 @@
 #define MIME_Content_PNG				"image/png"
 #define MIME_Content_MultiPart          "multipart"
 #define MIME_Content_MultiPart_FormData "multipart/form-data"
+#define MIME_Content_Custom             "custom"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -120,7 +121,7 @@ public:
     //! Si sCustomResponse est non vide, il sera retourné tel quel au client, sHead et sBody seront ignorés
     //! Sinon, si xmlResponse est non vide, il sera retourné tel quel au client, sHead et sBody seront ignorés
     //! Sinon sHead et sBody seront retournés au client sous forme d'un document HTML
-    virtual void getContent(const CWebContext& tContext, QString& sHead, QString& sBody, QString& xmlResponse, QString& sCustomResponse);
+    virtual void getContent(const CWebContext& tContext, QString& sHead, QString& sBody, QString& sCustomResponse, QString& sCustomResponseMIME);
 
     //! A implémenter par toute classe dérivée pour réagir après l'envoi de données au client
     virtual void handleSocketBytesWritten(QTcpSocket* pSocket, qint64 iBytes);

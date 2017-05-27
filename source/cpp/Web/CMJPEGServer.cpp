@@ -226,14 +226,13 @@ void CMJPEGServer::flush()
     \a tContext. \br
     \a sHead. \br
     \a sBody. \br
-    \a xmlResponse. \br
-    \a sCustomResponse.
+    \a sCustomResponse. \br
+    \a sCustomResponseMIME.
 */
-void CMJPEGServer::getContent(const CWebContext& tContext, QString& sHead, QString& sBody, QString& xmlResponse, QString& sCustomResponse)
+void CMJPEGServer::getContent(const CWebContext& tContext, QString& sHead, QString& sBody, QString& sCustomResponse, QString& sCustomResponseMIME)
 {
     Q_UNUSED(sHead);
     Q_UNUSED(sBody);
-    Q_UNUSED(xmlResponse);
 
     // Ajout de la socket au vecteur
     QMutexLocker locker(&m_tMutex);
@@ -253,6 +252,7 @@ void CMJPEGServer::getContent(const CWebContext& tContext, QString& sHead, QStri
     }
 
     sCustomResponse = getHeader();
+    sCustomResponseMIME = MIME_Content_Custom;
 }
 
 //-------------------------------------------------------------------------------------------------

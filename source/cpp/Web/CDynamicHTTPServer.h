@@ -61,7 +61,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Retourne le contenu de la page web
-    virtual void getContent(const CWebContext& tContext, QString& sHead, QString& sBody, QString& xmlResponse, QString& sCustomResponse);
+    virtual void getContent(const CWebContext& tContext, QString& sHead, QString& sBody, QString& sCustomResponse, QString& sCustomResponseMIME) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Méthodes de contrôle

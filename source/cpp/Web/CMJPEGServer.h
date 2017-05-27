@@ -83,7 +83,7 @@ public:
     void flush();
 
     //!
-    virtual void getContent(const CWebContext& tContext, QString& sHead, QString& sBody, QString& xmlResponse, QString& sCustomResponse);
+    virtual void getContent(const CWebContext& tContext, QString& sHead, QString& sBody, QString& sCustomResponse, QString& sCustomResponseMIME) Q_DECL_OVERRIDE;
 
     //!
     virtual void handleSocketBytesWritten(QTcpSocket* pSocket, qint64 iBytes);

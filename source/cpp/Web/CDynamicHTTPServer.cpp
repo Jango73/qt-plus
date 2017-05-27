@@ -110,13 +110,10 @@ CWebFactory* CDynamicHTTPServer::factory() const
     \a tContext contains contextual information for the content generator (the associated socket, resource path, arguments, ...) \br
     \a sHead can be filled with the HTML page header. \br
     \a sBody can be filled with the HTML page body. \br
-    If \a xmlResponse is filled, it will override \a sHead and \a sBody and will be sent as is. \br
-    If \a sCustomResponse is filled, it will override \a sHead, \a sBody and \a xmlResponse and will be sent as is.
+    If \a sCustomResponse is filled, it will override \a sHead and \a sBody and will be sent as is.
 */
-void CDynamicHTTPServer::getContent(const CWebContext& tContext, QString& sHead, QString& sBody, QString& xmlResponse, QString& sCustomResponse)
+void CDynamicHTTPServer::getContent(const CWebContext& tContext, QString& sHead, QString& sBody, QString& sCustomResponse, QString& sCustomResponseMIME)
 {
-    Q_UNUSED(sCustomResponse);
-
     if (tContext.m_mArguments.contains(TOKEN_ACTION))
     {
         if (tContext.m_mArguments.contains(TOKEN_VIEWSTATE))
@@ -149,12 +146,14 @@ void CDynamicHTTPServer::getContent(const CWebContext& tContext, QString& sHead,
                 if (pPage != NULL)
                 {
                     pPage->setViewstate(pPage->getViewState(this));
-                    xmlResponse = pPage->getPropertyChanges();
+                    sCustomResponse = pPage->getPropertyChanges();
+                    sCustomResponseMIME = MIME_Content_XML;
                 }
 
-                if (xmlResponse.isEmpty())
+                if (sCustomResponse.isEmpty())
                 {
-                    xmlResponse = "VOID";
+                    sCustomResponse = "VOID";
+                    sCustomResponseMIME = MIME_Content_XML;
                 }
 
                 delete pControl;
@@ -174,7 +173,7 @@ void CDynamicHTTPServer::getContent(const CWebContext& tContext, QString& sHead,
 
         if (pPage != NULL)
         {
-            pPage->getContent(this, tContext, sHead, sBody, xmlResponse);
+            pPage->getContent(this, tContext, sHead, sBody, sCustomResponse);
 
             delete pPage;
         }

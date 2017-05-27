@@ -893,17 +893,17 @@ bool CHTTPServer::getResponseDynamicContent(const CWebContext& tContext, QTcpSoc
 {
     QString sHead;
     QString sBody;
-    QString sXMLResponse;
     QString sCustomResponse;
+    QString sCustomResponseMIME;
 
     // Appel de la méthode virtuelle pour remplir la page
-    getContent(tContext, sHead, sBody, sXMLResponse, sCustomResponse);
+    getContent(tContext, sHead, sBody, sCustomResponse, sCustomResponseMIME);
 
     // On ne traite que si la socket est en état connecté
     if (pSocket->state() == QAbstractSocket::ConnectedState)
     {
         // Au cas où la réponse customisée est non-vide, on l'envoie tel quel au client
-        if (sCustomResponse.isEmpty() == false)
+        if (sCustomResponse.isEmpty() == false && sCustomResponseMIME == MIME_Content_Custom)
         {
             QByteArray baData;
 
@@ -916,19 +916,20 @@ bool CHTTPServer::getResponseDynamicContent(const CWebContext& tContext, QTcpSoc
             return true;
         }
         // Sinon, si la réponse au format XML est non-vide, c'est elle qu'on envoie au client
-        else if (sXMLResponse.isEmpty() == false)
+        else if (sCustomResponse.isEmpty() == false)
         {
             QByteArray baData;
+            QByteArray utf8Response = sCustomResponse.toUtf8();
 
             baData.append(HTTP_HEADER);
             baData.append(HTTP_200_OK);
             baData.append(HTML_NL);
-            baData.append(QString("%1 %2; charset=\"utf-8\"").arg(Token_ContentType).arg(MIME_Content_XML));
+            baData.append(QString("%1 %2; charset=\"utf-8\"").arg(Token_ContentType).arg(sCustomResponseMIME));
             baData.append(HTML_NL);
-            baData.append(QString("%1 %2").arg(Token_ContentLength).arg(sXMLResponse.size()));
+            baData.append(QString("%1 %2").arg(Token_ContentLength).arg(utf8Response.count()));
             baData.append(HTML_NL);
             baData.append(HTML_NL);
-            baData.append(sXMLResponse);
+            baData.append(utf8Response);
 
             pSocket->write(baData);
         }
@@ -974,15 +975,13 @@ bool CHTTPServer::getResponseDynamicContent(const CWebContext& tContext, QTcpSoc
     \a tContext contains contextual information for the content generator (the associated socket, resource path, arguments, ...) \br
     \a sHead can be filled with the HTML page header. \br
     \a sBody can be filled with the HTML page body. \br
-    If \a xmlResponse is filled, it will override \a sHead and \a sBody and will be sent as is. \br
-    If \a sCustomResponse is filled, it will override \a sHead, \a sBody and \a xmlResponse and will be sent as is.
+    If \a sCustomResponse is filled, it will override \a sHead and \a sBody and will be sent as is.
 */
-void CHTTPServer::getContent(const CWebContext& tContext, QString& sHead, QString& sBody, QString& xmlResponse, QString& sCustomResponse)
+void CHTTPServer::getContent(const CWebContext& tContext, QString& sHead, QString& sBody, QString& sCustomResponse, QString& sCustomResponseMIME)
 {
     Q_UNUSED(tContext);
     Q_UNUSED(sHead);
     Q_UNUSED(sBody);
-    Q_UNUSED(xmlResponse);
     Q_UNUSED(sCustomResponse);
 
     // Cette méthode est à implémenter par une sous-classe pour générer du contenu dynamique
