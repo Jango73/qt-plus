@@ -8,6 +8,7 @@ HEADERS += \
     source/cpp/CXMLNode.h \
     source/cpp/QTree.h \
     source/cpp/CPIDController.h \
+    source/cpp/CAverager.h \
     source/cpp/Image/CLargeMatrix.h \
     source/cpp/Image/CImageHistogram.h \
     source/cpp/Image/CImageUtilities.h \
