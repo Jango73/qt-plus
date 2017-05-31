@@ -567,7 +567,7 @@ CXMLNode& CXMLNode::operator << (CXMLNode value)
 /*!
     Returns the child node whose tag is \a sTagName.
 */
-CXMLNode CXMLNode::getNodeByTagName(QString sTagName)
+CXMLNode CXMLNode::getNodeByTagName(const QString& sTagName)
 {
     foreach (CXMLNode tNode, m_vNodes)
     {
@@ -582,7 +582,7 @@ CXMLNode CXMLNode::getNodeByTagName(QString sTagName)
 /*!
     Returns the child node whose tag is \a sTagName.
 */
-CXMLNode CXMLNode::getNodeByTagName(QString sTagName) const
+CXMLNode CXMLNode::getNodeByTagName(const QString& sTagName) const
 {
     foreach(CXMLNode tNode, m_vNodes)
     {
@@ -597,7 +597,7 @@ CXMLNode CXMLNode::getNodeByTagName(QString sTagName) const
 /*!
     Returns a list of child nodes whose tag is \a sTagName.
 */
-QVector<CXMLNode> CXMLNode::getNodesByTagName(QString sTagName) const
+QVector<CXMLNode> CXMLNode::getNodesByTagName(const QString& sTagName) const
 {
     QVector<CXMLNode> vNodes;
 
@@ -610,6 +610,16 @@ QVector<CXMLNode> CXMLNode::getNodesByTagName(QString sTagName) const
     }
 
     return vNodes;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns \c true if the has the attribute \a sAttribute.
+*/
+bool CXMLNode::hasAttribute(const QString& sAttribute) const
+{
+    return m_vAttributes.keys().contains(sAttribute);
 }
 
 //-------------------------------------------------------------------------------------------------

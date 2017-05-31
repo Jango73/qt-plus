@@ -78,13 +78,16 @@ public:
     QVector<CXMLNode>& nodes();
 
     //! Retourne un noeud selon son tag
-    CXMLNode getNodeByTagName(QString sTagName);
+    CXMLNode getNodeByTagName(const QString& sTagName);
 
     //! Retourne un noeud selon son tag
-    CXMLNode getNodeByTagName(QString sTagName) const;
+    CXMLNode getNodeByTagName(const QString& sTagName) const;
 
     //! Retourne une liste de noeuds selon leur tag
-    QVector<CXMLNode> getNodesByTagName(QString sTagName) const;
+    QVector<CXMLNode> getNodesByTagName(const QString& sTagName) const;
+
+    //! Returns true if the node has the given attribute
+    bool hasAttribute(const QString& sAttribute) const;
 
     //-------------------------------------------------------------------------------------------------
     // Méthodes de contrôle haut niveau
