@@ -2,10 +2,7 @@
 #pragma once
 
 // Qt
-#include <QObject>
-#include <QDateTime>
-#include <QDir>
-#include <QFile>
+#include <QVector>
 
 //-------------------------------------------------------------------------------------------------
 
