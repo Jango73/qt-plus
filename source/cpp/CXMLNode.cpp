@@ -625,6 +625,23 @@ bool CXMLNode::hasAttribute(const QString& sAttribute) const
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Removes child nodes whose tag is \a sTagName.
+*/
+void CXMLNode::removeNodesByTagName(QString sTagName)
+{
+    for (int index = 0; index < m_vNodes.count(); index++)
+    {
+        if (m_vNodes[index].tag() == sTagName)
+        {
+            m_vNodes.removeAt(index);
+            index--;
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Merges the child nodes of \a target in this node's children.
 */
 void CXMLNode::merge(const CXMLNode& target)

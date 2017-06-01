@@ -89,6 +89,9 @@ public:
     //! Returns true if the node has the given attribute
     bool hasAttribute(const QString& sAttribute) const;
 
+    //! Supprime tous les tags spécifiés
+    void removeNodesByTagName(QString sTagName);
+
     //-------------------------------------------------------------------------------------------------
     // Méthodes de contrôle haut niveau
     // High level control methods
