@@ -6,6 +6,7 @@
 // Qt
 #include <QDebug>
 #include <QString>
+#include <QDateTime>
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QThreadPool>
@@ -269,16 +270,84 @@ public:
         QTcpSocket*     m_pSocket;
     };
 
+    class CRequestMonitor
+    {
+    public:
+
+        CRequestMonitor()
+            : m_dSampleStartTime(QDateTime::currentDateTime())
+            , m_iSampleRequestCount(0)
+            , m_iSimultaneousRequestCount(0)
+            , m_bFlooding(false)
+        {
+        }
+
+        void reset()
+        {
+            m_dSampleStartTime = QDateTime::currentDateTime();
+            m_iSampleRequestCount = 0;
+            m_iSimultaneousRequestCount = 0;
+            m_bFlooding = false;
+        }
+
+        void processIn()
+        {
+            const int iSampleMillis = 4000;
+
+            m_iSampleRequestCount++;
+            m_iSimultaneousRequestCount++;
+
+            QDateTime dNow = QDateTime::currentDateTime();
+
+            if (m_dSampleStartTime.secsTo(dNow) > iSampleMillis)
+            {
+                if (m_iSampleRequestCount > (15 * (iSampleMillis / 1000)))
+                {
+                    m_bFlooding = true;
+                }
+                else
+                {
+                    m_dSampleStartTime = dNow;
+                    m_iSampleRequestCount = 0;
+                }
+            }
+
+            if (m_iSimultaneousRequestCount > 15)
+            {
+                m_bFlooding = true;
+            }
+        }
+
+        void processOut()
+        {
+            m_iSimultaneousRequestCount--;
+        }
+
+        bool shouldBeBlocked() const
+        {
+            return m_bFlooding;
+        }
+
+    protected:
+
+        QDateTime   m_dSampleStartTime;
+        int         m_iSampleRequestCount;
+        int         m_iSimultaneousRequestCount;
+        bool        m_bFlooding;
+    };
+
     //-------------------------------------------------------------------------------------------------
     // Properties
     //-------------------------------------------------------------------------------------------------
 
 protected:
 
-    QMutex                  m_mMutex;
-    int                     m_iRequestCount;
-    bool					m_bDisabled;				// Indique si le serveur doit ignorer les requêtes entrantes
-    QVector<QString>		m_vAuthorizedFolders;		// Indique quels sont les répertoires autorisés pour les GET non-dynamiques
-    QMap<QString, QString>	m_vExtensionToContentType;	// Tableau pour conversion de token vers type MIME
-    QThreadPool             m_pProcessors;
+    QMutex                          m_mMutex;                   // Data protection
+    int                             m_iRequestCount;            // Total request count
+    int                             m_iMaxRequestPerSeconds;    //
+    bool                            m_bDisabled;				// Tells if the server should ignore requests
+    QVector<QString>                m_vAuthorizedFolders;		// Tells which folders users can access
+    QMap<QString, QString>          m_vExtensionToContentType;	// Used to converta file extension to a MIME type
+    QThreadPool                     m_pProcessors;              // Threaded request processors
+    QMap<QString, CRequestMonitor>  m_mMonitors;                // Anti-flooding monitor
 };

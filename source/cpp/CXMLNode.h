@@ -173,7 +173,7 @@ public:
 
     //! Fusionne le noeud 'target' avec ce noeud
     //! Merges the 'target' node into this node
-    void merge(const CXMLNode& target);
+    void merge(const CXMLNode& xTarget);
 
     //! Renvoie une chaine de carateres decrivant la liste des enfants directs
     //! Returns a string describing the list of direct childs for that node

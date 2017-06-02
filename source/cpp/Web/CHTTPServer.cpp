@@ -1,6 +1,5 @@
 
 // Qt
-#include <QDateTime>
 #include <QCoreApplication>
 #include <QFile>
 
@@ -30,6 +29,7 @@ CHTTPServer::CHTTPServer(quint16 port, QObject* parent)
     : QTcpServer(parent)
     , m_mMutex(QMutex::Recursive)
     , m_iRequestCount(0)
+    , m_iMaxRequestPerSeconds(15)
     , m_bDisabled(false)
 {
     // Remplissage du tableau des types MIME
@@ -143,8 +143,9 @@ void CHTTPServer::onSocketReadyRead()
 
         // Récupération des données utilisateurs associées à la socket
         CClientData* pData = CClientData::getFromSocket(pSocket);
+        QString sIPAddress = pSocket->peerAddress().toString();
 
-        if (pData != NULL)
+        if (pData != nullptr)
         {
             // Si la socket est en état connecté
             if (pSocket->state() == QTcpSocket::ConnectedState)
@@ -182,17 +183,20 @@ void CHTTPServer::onSocketReadyRead()
 
                     if (sText.contains(sClosingBoundary))
                     {
-                        // L'entête n'a pas été lue
+                        // Mark header as not read
                         pData->m_bHeaderRead = false;
 
-                        // On exécute la requête du client
+                        // Execute the client request
+                        if (m_mMonitors[sIPAddress].shouldBeBlocked() == false)
+                        {
 #ifdef THREADED_SERVER
-                        CRequestProcessor* pProcessor = new CRequestProcessor(this, pSocket);
-                        pProcessor->setAutoDelete(true);
-                        m_pProcessors.start(pProcessor);
+                            CRequestProcessor* pProcessor = new CRequestProcessor(this, pSocket);
+                            pProcessor->setAutoDelete(true);
+                            m_pProcessors.start(pProcessor);
 #else
-                        processRequest(pSocket);
+                            processRequest(pSocket);
 #endif
+                        }
                     }
                 }
                 else
@@ -201,14 +205,17 @@ void CHTTPServer::onSocketReadyRead()
                     // L'entête n'a pas été lue
                     pData->m_bHeaderRead = false;
 
-                    // On exécute la requête du client
+                    // Execute the client request
+                    if (m_mMonitors[sIPAddress].shouldBeBlocked() == false)
+                    {
 #ifdef THREADED_SERVER
-                    CRequestProcessor* pProcessor = new CRequestProcessor(this, pSocket);
-                    pProcessor->setAutoDelete(true);
-                    m_pProcessors.start(pProcessor);
+                        CRequestProcessor* pProcessor = new CRequestProcessor(this, pSocket);
+                        pProcessor->setAutoDelete(true);
+                        m_pProcessors.start(pProcessor);
 #else
-                    // processRequest(pSocket);
+                        processRequest(pSocket);
 #endif
+                    }
                 }
             }
             else
@@ -294,9 +301,21 @@ int CHTTPServer::getExpectedBytes(QStringList lTokens)
 void CHTTPServer::processRequest(QTcpSocket* pSocket)
 {
     CClientData* pData = CClientData::getFromSocket(pSocket);
+    QString sIPAddress = pSocket->peerAddress().toString();
 
-    // Log de la requête
-    LogRequest(pSocket->peerAddress().toString(), QString(pData->m_baBuffer));
+    // Log the request
+    LogRequest(sIPAddress, QString(pData->m_baBuffer));
+
+    if (lock())
+    {
+        // Increment total request count
+        m_iRequestCount++;
+
+        // Process request monitors
+        m_mMonitors[sIPAddress].processIn();
+
+        unlock();
+    }
 
 #ifdef DEBUG_RECORD_REQUESTS
     QFile outFile(QString("Request_%1.txt").arg(QString::number(m_iRequestCount)));
@@ -324,66 +343,9 @@ void CHTTPServer::processRequest(QTcpSocket* pSocket)
         // Process if we get at least one token
         if (lTokens.count() > 0)
         {
-            // Pour l'instant, seul GET et POST son traités
+            // For now, only GET and POST are processed
             if (lTokens[0].startsWith(HTTP_GET) || lTokens[0].startsWith(HTTP_POST))
             {
-                // GET Example :
-                //-----------------------------------------------------------
-                // GET /drivers HTTP/1.1
-                // Host: 127.0.0.1:9991
-                // Connection: keep-alive
-                // Cache-Control: max-age=0
-                // Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
-                // User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36
-                // Referer: http://127.0.0.1:9991/drivers
-                // Accept-Encoding: gzip,deflate,sdch
-                // Accept-Language: fr-FR,fr;q=0.8,en-US;q=0.6,en;q=0.4
-                //-----------------------------------------------------------
-
-                // POST Example :
-                //-----------------------------
-                // POST /drivers HTTP/1.1
-                // Host: 127.0.0.1:9991
-                // Connection: keep-alive
-                // Cache-Control: max-age=0
-                // Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
-                // User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36
-                // Referer: http://127.0.0.1:9991/drivers
-                // Accept-Encoding: gzip,deflate,sdch
-                // Accept-Language: fr-FR,fr;q=0.8,en-US;q=0.6,en;q=0.4
-                // Content-Type: application/x-www-form-urlencoded
-                // Content-Length: 30
-                // username=zurfyx&pass=password
-                //-----------------------------------------------------------
-
-                // form-data Example:
-                //-----------------------------
-                // POST /?action=upload HTTP/1.1
-                // Host: 127.0.0.1:5050
-                // User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101 Firefox/38.0
-                // Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-                // Accept-Language: fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3
-                // Accept-Encoding: gzip, deflate
-                // Referer: http://127.0.0.1:5050/
-                // Content-Length: 2178
-                // Content-Type: multipart/form-data; boundary=---------------------------107122896830180
-                // Connection: keep-alive
-                // Pragma: no-cache
-                // Cache-Control: no-cache
-                //
-                // -----------------------------107122896830180
-                // Content-Disposition: form-data; name="upload_file"; filename="DrawRectangle.xml"
-                // Content-Type: text/xml
-                //
-                // <?xml version="1.0" encoding="UTF-8"?>
-                // <Node Name="Unnamed" UseReferences="0" UseThread="0" Class="QNodeGroup">
-                //  <Position X="0" Y="0"/>
-                //  <Size X="3164" Y="1488"/>
-                // </Node>
-                //
-                // -----------------------------107122896830180--
-                //
-
                 // Do we have more than one token?
                 if (lTokens.count() > 1)
                 {
@@ -411,7 +373,7 @@ void CHTTPServer::processRequest(QTcpSocket* pSocket)
                 }
 
                 // Create a web context in order for subclasses to generate content
-                CWebContext tContext(pSocket, pSocket->peerAddress().toString(), sHost, lPath, mArguments);
+                CWebContext tContext(pSocket, sIPAddress, sHost, lPath, mArguments);
 
                 if (sContentType.startsWith(MIME_Content_URLForm))
                 {
@@ -534,7 +496,9 @@ void CHTTPServer::processRequest(QTcpSocket* pSocket)
 
     if (lock())
     {
-        m_iRequestCount++;
+        // Process request monitors
+        m_mMonitors[sIPAddress].processOut();
+
         unlock();
     }
 }
@@ -797,6 +761,9 @@ void CHTTPServer::resume()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns \c true if safe access to data is OK (data is locked).
+*/
 bool CHTTPServer::lock()
 {
     if (m_mMutex.tryLock(2000))
@@ -809,6 +776,9 @@ bool CHTTPServer::lock()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Unlocks access to data.
+*/
 void CHTTPServer::unlock()
 {
     m_mMutex.unlock();
@@ -1012,7 +982,7 @@ bool CHTTPServer::getResponseDynamicContent(const CWebContext& tContext, QTcpSoc
     \a tContext contains contextual information for the content generator (the associated socket, resource path, arguments, ...) \br
     \a sHead can be filled with the HTML page header. \br
     \a sBody can be filled with the HTML page body. \br
-    If \a sCustomResponse is filled, it will override \a sHead and \a sBody and will be sent as is.
+    If \a sCustomResponse and \a sCustomResponseMIME are filled, it will override \a sHead and \a sBody and will be sent as is.
 */
 void CHTTPServer::getContent(const CWebContext& tContext, QString& sHead, QString& sBody, QString& sCustomResponse, QString& sCustomResponseMIME)
 {

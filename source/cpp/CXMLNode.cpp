@@ -642,11 +642,11 @@ void CXMLNode::removeNodesByTagName(QString sTagName)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Merges the child nodes of \a target in this node's children.
+    Merges the child nodes of \a xTarget in this node's children.
 */
-void CXMLNode::merge(const CXMLNode& target)
+void CXMLNode::merge(const CXMLNode& xTarget)
 {
-    foreach(CXMLNode node, target.m_vNodes)
+    foreach (CXMLNode node, xTarget.m_vNodes)
     {
         m_vNodes.append(node);
     }
@@ -659,8 +659,12 @@ void CXMLNode::merge(const CXMLNode& target)
 */
 QString CXMLNode::stringifyOneLevel()
 {
-    QStringList lChilds;
-    foreach(CXMLNode node, m_vNodes)
-        lChilds << node.toJsonString();
-    return lChilds.join(",");
+    QStringList lChildren;
+
+    foreach (CXMLNode xNode, m_vNodes)
+    {
+        lChildren << xNode.toJsonString();
+    }
+
+    return lChildren.join(",");
 }
