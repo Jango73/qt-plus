@@ -148,6 +148,8 @@ public:
     //! Decodes a string from URL format (replaces the %XX with their ASCII couterparts)
     static QString decodeURLParameters(QString sText);
 
+    static QString cleanIP(QString sText);
+
     //-------------------------------------------------------------------------------------------------
     // Protected control methods
     //-------------------------------------------------------------------------------------------------
@@ -350,4 +352,6 @@ protected:
     QMap<QString, QString>          m_vExtensionToContentType;	// Used to converta file extension to a MIME type
     QThreadPool                     m_pProcessors;              // Threaded request processors
     QMap<QString, CRequestMonitor>  m_mMonitors;                // Anti-flooding monitor
+    QStringList                     m_lStaticIPBlackList;
+    QStringList                     m_lDynamicIPBlackList;
 };

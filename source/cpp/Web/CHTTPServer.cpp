@@ -32,7 +32,7 @@ CHTTPServer::CHTTPServer(quint16 port, QObject* parent)
     , m_iMaxRequestPerSeconds(15)
     , m_bDisabled(false)
 {
-    // Remplissage du tableau des types MIME
+    // Fill MIME array
 
     m_vExtensionToContentType["txt"]	= MIME_Content_PlainText;
     m_vExtensionToContentType["log"]	= MIME_Content_PlainText;
@@ -49,7 +49,19 @@ CHTTPServer::CHTTPServer(quint16 port, QObject* parent)
     m_vExtensionToContentType["jpeg"]	= MIME_Content_JPG;
     m_vExtensionToContentType["png"]	= MIME_Content_PNG;
 
-    // Ecoute du port
+    // Fill static IP black list
+
+    m_lStaticIPBlackList << "0.0.0.0";
+    m_lStaticIPBlackList << "10.0.0.0";
+    m_lStaticIPBlackList << "127.0.0.0";
+    m_lStaticIPBlackList << "224.0.0.0";
+    m_lStaticIPBlackList << "240.0.0.0";
+    m_lStaticIPBlackList << "169.254.0.0";
+    m_lStaticIPBlackList << "172.16.0.0";
+    m_lStaticIPBlackList << "192.0.2.0";
+    m_lStaticIPBlackList << "192.168.0.0";
+
+    // Listen
 
     if (port > 0)
     {
@@ -84,17 +96,46 @@ void CHTTPServer::onNewConnection()
 {
     // Récupération socket entrante
     QTcpSocket* pSocket = nextPendingConnection();
+    QString sIPAddress = cleanIP(pSocket->peerAddress().toString());
+    bool bRejected = false;
 
-    pSocket->setReadBufferSize(20000);
+    // Check static black list
+    if (m_lStaticIPBlackList.contains(sIPAddress))
+    {
+        bRejected = true;
+    }
+    // Check dynamic black list
+    else if (m_lDynamicIPBlackList.contains(sIPAddress))
+    {
+        bRejected = true;
+    }
+    // Check monitors
+    else if (m_mMonitors[sIPAddress].shouldBeBlocked())
+    {
+        // Blacklist and reject this connection
+        m_lDynamicIPBlackList << sIPAddress;
 
-    // Création des données utilisateurs
-    // Pas besoin de stocker la valeur de retour, elle est placée dans les propriétés de la socket
-    new CClientData(pSocket);
+        bRejected = true;
+    }
 
-    // Connexion des signaux
-    connect(pSocket, SIGNAL(readyRead()), this, SLOT(onSocketReadyRead()));
-    connect(pSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(onSocketBytesWritten(qint64)));
-    connect(pSocket, SIGNAL(disconnected()), this, SLOT(onSocketDisconnected()));
+    if (bRejected)
+    {
+        // Reject this connection
+        pSocket->deleteLater();
+    }
+    else
+    {
+        pSocket->setReadBufferSize(20000);
+
+        // Création des données utilisateurs
+        // Pas besoin de stocker la valeur de retour, elle est placée dans les propriétés de la socket
+        new CClientData(pSocket);
+
+        // Connexion des signaux
+        connect(pSocket, SIGNAL(readyRead()), this, SLOT(onSocketReadyRead()));
+        connect(pSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(onSocketBytesWritten(qint64)));
+        connect(pSocket, SIGNAL(disconnected()), this, SLOT(onSocketDisconnected()));
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -143,7 +184,7 @@ void CHTTPServer::onSocketReadyRead()
 
         // Récupération des données utilisateurs associées à la socket
         CClientData* pData = CClientData::getFromSocket(pSocket);
-        QString sIPAddress = pSocket->peerAddress().toString();
+        QString sIPAddress = cleanIP(pSocket->peerAddress().toString());
 
         if (pData != nullptr)
         {
@@ -301,7 +342,7 @@ int CHTTPServer::getExpectedBytes(QStringList lTokens)
 void CHTTPServer::processRequest(QTcpSocket* pSocket)
 {
     CClientData* pData = CClientData::getFromSocket(pSocket);
-    QString sIPAddress = pSocket->peerAddress().toString();
+    QString sIPAddress = cleanIP(pSocket->peerAddress().toString());
 
     // Log the request
     LogRequest(sIPAddress, QString(pData->m_baBuffer));
@@ -1078,6 +1119,20 @@ QString CHTTPServer::decodeURLParameters(QString sText)
             .replace("%3F", "?")
             .replace("%2A", "*")
             .replace("%22", "\"");
+}
+
+//-------------------------------------------------------------------------------------------------
+
+QString CHTTPServer::cleanIP(QString sText)
+{
+    QRegExp tRegExp("[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}");
+
+    if (tRegExp.indexIn(sText) != -1)
+    {
+        return tRegExp.cap(1);
+    }
+
+    return sText;
 }
 
 //-------------------------------------------------------------------------------------------------
