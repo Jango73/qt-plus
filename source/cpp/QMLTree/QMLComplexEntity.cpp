@@ -452,8 +452,15 @@ QMLComplexEntity* QMLComplexEntity::fromEntity(QMLEntity* pEntity)
 
     if (pComplex == nullptr)
     {
-        pComplex = new QMLComplexEntity(pEntity->position());
-        pComplex->contents() << pEntity;
+        if (pEntity != nullptr)
+        {
+            pComplex = new QMLComplexEntity(pEntity->position());
+            pComplex->contents() << pEntity;
+        }
+        else
+        {
+            pComplex = new QMLComplexEntity(QPoint());
+        }
     }
 
     return pComplex;

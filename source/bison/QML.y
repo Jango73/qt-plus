@@ -328,9 +328,9 @@ Item :
         $<Object>$ = pComplexItem;
     }
     |
-    Identifier TOKEN_ON Identifier '{' ItemContents '}'
+    Identifier TOKEN_ON JSMemberExpression '{' ItemContents '}'
     {
-        PARSER_TRACE("Item", "Identifier TOKEN_ON Identifier '{' ItemContents '}'");
+        PARSER_TRACE("Item", "Identifier TOKEN_ON JSMemberExpression '{' ItemContents '}'");
 
         QMLEntity* pName = $<Object>1;
         QMLEntity* pTarget = $<Object>3;
@@ -2057,6 +2057,8 @@ JSUnaryExpression :
     |
     TOKEN_DEC JSMemberExpression
     {
+        PARSER_TRACE("JSUnaryExpression", "TOKEN_DEC JSMemberExpression");
+
         QMLEntity* pEntity = $<Object>2;
 
         $<Object>$ = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoDecrement);
@@ -2064,6 +2066,8 @@ JSUnaryExpression :
     |
     TOKEN_NOT JSMemberExpression
     {
+        PARSER_TRACE("JSUnaryExpression", "TOKEN_NOT JSMemberExpression");
+
         QMLEntity* pEntity = $<Object>2;
 
         $<Object>$ = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoNot);
@@ -2071,6 +2075,8 @@ JSUnaryExpression :
     |
     TOKEN_NOT_NOT JSMemberExpression
     {
+        PARSER_TRACE("JSUnaryExpression", "TOKEN_NOT_NOT JSMemberExpression");
+
         QMLEntity* pEntity = $<Object>2;
 
         $<Object>$ = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoNotNot);
@@ -2078,6 +2084,8 @@ JSUnaryExpression :
     |
     TOKEN_TYPEOF JSMemberExpression
     {
+        PARSER_TRACE("JSUnaryExpression", "TOKEN_TYPEOF JSMemberExpression");
+
         QMLEntity* pEntity = $<Object>2;
 
         $<Object>$ = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoTypeof);
@@ -2085,6 +2093,8 @@ JSUnaryExpression :
     |
     TOKEN_SUB JSMemberExpression
     {
+        PARSER_TRACE("JSUnaryExpression", "TOKEN_SUB JSMemberExpression");
+
         QMLEntity* pEntity = $<Object>2;
 
         $<Object>$ = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoMinus);
@@ -2092,6 +2102,8 @@ JSUnaryExpression :
     |
     TOKEN_NEW JSMemberExpression
     {
+        PARSER_TRACE("JSUnaryExpression", "TOKEN_NEW JSMemberExpression");
+
         QMLEntity* pEntity = $<Object>2;
 
         $<Object>$ = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoNew);
@@ -2254,16 +2266,22 @@ JSArgumentList :
 JSArgument:
     TOKEN_PROPERTY
     {
+        PARSER_TRACE("JSArgument", "TOKEN_PROPERTY");
+
         $<Object>$ = new QMLIdentifier(pContext->position(), "property");
     }
     |
     JSObject
     {
+        PARSER_TRACE("JSArgument", "JSObject");
+
         $<Object>$ = $<Object>1;
     }
     |
     JSAssignmentExpression
     {
+        PARSER_TRACE("JSArgument", "JSAssignmentExpression");
+
         $<Object>$ = $<Object>1;
     }
 ;
@@ -2457,11 +2475,15 @@ JSAttributeNoComma :
 JSAttributeName :
     Literal
     {
+        PARSER_TRACE("JSAttributeName", "Literal");
+
         $<Object>$ = $<Object>1;
     }
     |
     Identifier
     {
+        PARSER_TRACE("JSAttributeName", "Identifier");
+
         $<Object>$ = $<Object>1;
     }
 ;
@@ -2469,6 +2491,8 @@ JSAttributeName :
 Identifier :
     TOKEN_IDENTIFIER
     {
+        PARSER_TRACE("Identifier", "TOKEN_IDENTIFIER");
+
         QString* pString = $<String>1;
 
         if (pString != nullptr)
@@ -2485,6 +2509,8 @@ Identifier :
 Version :
     TOKEN_REALCONSTANT
     {
+        PARSER_TRACE("Version", "TOKEN_REALCONSTANT");
+
         $<Object>$ =  new QMLEntity(pContext->position(), pContext->tokenValue());
     }
 ;
@@ -2492,26 +2518,36 @@ Version :
 Value :
     Boolean
     {
+        PARSER_TRACE("Value", "Boolean");
+
         $<Object>$ = $<Object>1;
     }
     |
     Integer
     {
+        PARSER_TRACE("Value", "Integer");
+
         $<Object>$ = $<Object>1;
     }
     |
     Double
     {
+        PARSER_TRACE("Value", "Double");
+
         $<Object>$ = $<Object>1;
     }
     |
     Literal
     {
+        PARSER_TRACE("Value", "Literal");
+
         $<Object>$ = $<Object>1;
     }
     |
     SpecialValue
     {
+        PARSER_TRACE("Value", "SpecialValue");
+
         $<Object>$ = $<Object>1;
     }
 ;
