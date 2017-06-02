@@ -1123,16 +1123,17 @@ QString CHTTPServer::decodeURLParameters(QString sText)
 
 //-------------------------------------------------------------------------------------------------
 
-QString CHTTPServer::cleanIP(QString sText)
+QString CHTTPServer::cleanIP(const QString& sText)
 {
-    QRegExp tRegExp("[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}");
+    QString sReturnValue = sText;
+    QRegExp tRegExp(".*([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}).*");
 
     if (tRegExp.indexIn(sText) != -1)
     {
-        return tRegExp.cap(1);
+        sReturnValue = tRegExp.cap(1);
     }
 
-    return sText;
+    return sReturnValue;
 }
 
 //-------------------------------------------------------------------------------------------------

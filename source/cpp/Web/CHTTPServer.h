@@ -148,7 +148,7 @@ public:
     //! Decodes a string from URL format (replaces the %XX with their ASCII couterparts)
     static QString decodeURLParameters(QString sText);
 
-    static QString cleanIP(QString sText);
+    static QString cleanIP(const QString& sText);
 
     //-------------------------------------------------------------------------------------------------
     // Protected control methods
