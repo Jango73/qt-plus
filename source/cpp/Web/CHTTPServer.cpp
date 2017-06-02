@@ -112,6 +112,8 @@ void CHTTPServer::onNewConnection()
     // Check monitors
     else if (m_mMonitors[sIPAddress].shouldBeBlocked())
     {
+        qDebug() << QString("Blacklisting %1").arg(sIPAddress);
+
         // Blacklist and reject this connection
         m_lDynamicIPBlackList << sIPAddress;
 
@@ -121,14 +123,15 @@ void CHTTPServer::onNewConnection()
     if (bRejected)
     {
         // Reject this connection
+        pSocket->disconnect();
         pSocket->deleteLater();
     }
     else
     {
-        pSocket->setReadBufferSize(20000);
+        pSocket->setReadBufferSize(1024 * 20);
 
-        // Création des données utilisateurs
-        // Pas besoin de stocker la valeur de retour, elle est placée dans les propriétés de la socket
+        // Create custom client data
+        // No need to store the pointer, it is sotred in the socket's properties
         new CClientData(pSocket);
 
         // Connexion des signaux
@@ -167,13 +170,23 @@ void CHTTPServer::onSocketDisconnected()
 */
 void CHTTPServer::onSocketReadyRead()
 {
-    // Récupération de l'objet émetteur du signal
+    // Get the emitting socket
     QTcpSocket* pSocket = dynamic_cast<QTcpSocket*>(QObject::sender());
+    QString sIPAddress = cleanIP(pSocket->peerAddress().toString());
 
-    // Est-ce que la socket est valide?
-    if (pSocket != NULL)
+    // If the connection is rejected, free socket and its client data
+    if (m_mMonitors[sIPAddress].shouldBeBlocked())
     {
-        // Si le serveur est désactivé, on libére la socket et les données utilisateur associées
+        CClientData::deleteFromSocket(pSocket);
+        pSocket->disconnect();
+        pSocket->deleteLater();
+        return;
+    }
+
+    // Is the socket valid?
+    if (pSocket != nullptr)
+    {
+        // If the server is disabled, free socket and its client data
         if (m_bDisabled)
         {
             CClientData::deleteFromSocket(pSocket);
@@ -182,7 +195,7 @@ void CHTTPServer::onSocketReadyRead()
             return;
         }
 
-        // Récupération des données utilisateurs associées à la socket
+        // Get the client data from the socket
         CClientData* pData = CClientData::getFromSocket(pSocket);
         QString sIPAddress = cleanIP(pSocket->peerAddress().toString());
 

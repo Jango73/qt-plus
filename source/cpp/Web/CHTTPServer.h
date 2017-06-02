@@ -301,17 +301,15 @@ public:
 
             QDateTime dNow = QDateTime::currentDateTime();
 
-            if (m_dSampleStartTime.secsTo(dNow) > iSampleMillis)
+            if (m_dSampleStartTime.msecsTo(dNow) > iSampleMillis)
             {
                 if (m_iSampleRequestCount > (15 * (iSampleMillis / 1000)))
                 {
                     m_bFlooding = true;
                 }
-                else
-                {
-                    m_dSampleStartTime = dNow;
-                    m_iSampleRequestCount = 0;
-                }
+
+                m_dSampleStartTime = dNow;
+                m_iSampleRequestCount = 0;
             }
 
             if (m_iSimultaneousRequestCount > 15)
