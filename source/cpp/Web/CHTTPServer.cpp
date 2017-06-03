@@ -1139,11 +1139,17 @@ QString CHTTPServer::decodeURLParameters(QString sText)
 QString CHTTPServer::cleanIP(const QString& sText)
 {
     QString sReturnValue = sText;
-    QRegExp tRegExp(".*([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}).*");
+    QRegExp tRegExp_ipv4(".*([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}).*");
+    QRegExp tRegExp_ipv6("([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}");
 
-    if (tRegExp.indexIn(sText) != -1)
+    if (tRegExp_ipv4.indexIn(sText) != -1)
     {
-        sReturnValue = tRegExp.cap(1);
+        sReturnValue = tRegExp_ipv4.cap(1);
+    }
+
+    if (tRegExp_ipv6.indexIn(sText) != -1)
+    {
+        sReturnValue = tRegExp_ipv6.cap(0);
     }
 
     return sReturnValue;
