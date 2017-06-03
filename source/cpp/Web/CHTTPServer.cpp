@@ -845,14 +845,14 @@ void CHTTPServer::unlock()
 */
 bool CHTTPServer::getResponseFile(const CWebContext& tContext, QTcpSocket* pSocket)
 {
-    // On ne traite que si la socket est en état connecté
+    // Process only if the socket is in connected state
     if (pSocket->state() == QAbstractSocket::ConnectedState)
     {
         if (tContext.m_lPath.count() > 0)
         {
             bool bAuthorized = false;
 
-            // Vérification du droit d'accès au répertoire
+            // Check access right to the directory
             foreach (QString sAuthorizedFolder, m_vAuthorizedFolders)
             {
                 if (sAuthorizedFolder == tContext.m_lPath[0])
@@ -862,7 +862,7 @@ bool CHTTPServer::getResponseFile(const CWebContext& tContext, QTcpSocket* pSock
                 }
             }
 
-            // Composition du nom de fichier sur disque
+            // Create the file name on disk
             QString sFileName = QCoreApplication::applicationDirPath();
 
             foreach (QString sPathName, tContext.m_lPath)
@@ -870,15 +870,15 @@ bool CHTTPServer::getResponseFile(const CWebContext& tContext, QTcpSocket* pSock
                 sFileName += "/" + sPathName;
             }
 
-            // Est-ce que le fichier existe sur disque?
+            // Does the file exist on disk?
             if (QFile::exists(sFileName))
             {
-                // Est-ce que son accès est autorisé
+                // Is the access authorized?
                 if (bAuthorized)
                 {
                     QFile tFile(sFileName);
 
-                    // On ouvre le fichier est on l'envoie après un header de réponse HTTP
+                    // Open the file for reading and send it
                     if (tFile.open(QIODevice::ReadOnly))
                     {
                         QString sType = getContentTypeByExtension(sFileName.split(".").last());
@@ -908,7 +908,7 @@ bool CHTTPServer::getResponseFile(const CWebContext& tContext, QTcpSocket* pSock
                 }
                 else
                 {
-                    // On envoie au client une réponse d'erreur : accès interdit
+                    // Send a FORBIDDEN response to the client
                     QByteArray baHTML;
                     QByteArray baData;
 
