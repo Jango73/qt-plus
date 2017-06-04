@@ -13,7 +13,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Définit un serveur HTTP de domotique
+//! Defines a dynamic HTTP server
 class QTPLUSSHARED_EXPORT CDynamicHTTPServer
         : public CHTTPServer
         , public ILocalizationProvider
@@ -24,13 +24,13 @@ class QTPLUSSHARED_EXPORT CDynamicHTTPServer
 public:
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
+    // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //! Constructeur
+    //! Constructor
     CDynamicHTTPServer(quint16 port, QObject* parent = 0);
 
-    //! Destructeur
+    //! Destructor
     virtual ~CDynamicHTTPServer();
 
     //-------------------------------------------------------------------------------------------------
@@ -47,40 +47,40 @@ public:
     // Getters
     //-------------------------------------------------------------------------------------------------
 
-    //! Retourne une chaîne de caractère de localisation
+    //! Retuns a localized string
     virtual QString getString(const QString& sToken) const;
 
-    //!
+    //! Returns the composer of this server
     CWebComposer* composer() const;
 
-    //!
+    //! Returns the factory of this server
     CWebFactory* factory() const;
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes héritées
+    // Inherited methods
     //-------------------------------------------------------------------------------------------------
 
-    //! Retourne le contenu de la page web
+    //! Returns the contents of the web page
     virtual void getContent(const CWebContext& tContext, QString& sHead, QString& sBody, QString& sCustomResponse, QString& sCustomResponseMIME) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes de contrôle
+    // Control methods
     //-------------------------------------------------------------------------------------------------
 
-    //! A implémenter pour retourner une page
+    //! To be overridden by subclasses in order to return a CWebPage object
     virtual CWebPage* getPage(CDynamicHTTPServer* pServer, const CWebContext& tContext);
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes protégées
+    // Protected methods
     //-------------------------------------------------------------------------------------------------
 
 protected:
 
-    //! Lit les fichiers de localisation
+    //! Reads the localisation files
     void readLocalization();
 
     //-------------------------------------------------------------------------------------------------
-    // Propriétés
+    // Properties
     //-------------------------------------------------------------------------------------------------
 
 protected:

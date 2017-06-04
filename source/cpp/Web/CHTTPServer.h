@@ -168,26 +168,26 @@ protected:
     //! Sends to the client a requested file if found
     bool getResponseFile(const CWebContext& tContext, QTcpSocket* pSocket);
 
-    //! Récupère et envoi au client le contenu dynamique
-    //! Renvoie vrai si la connexion doit être keep-alive
+    //! Gets some dynamic content (i.e generated)
+    //! Returns true if the connection must remain keep-alive
     bool getResponseDynamicContent(const CWebContext& tContext, QTcpSocket* pSocket);
 
-    //!
+    //! Returns the header of a HTTP request parsed from sText
     QString getRequestHeader(const QString& sText);
 
-    //! Retourne le chemin décomposé et les arguments d'une requête
+    //! Splits up the URL path and arguments
     void getRequestPathAndArgs(const QStringList& lTokens, QStringList& lPath, QMap<QString, QString>& mArguments);
 
-    //! Place dans baContent le contenu d'une requête POST
+    //! Gets the post content from a request header
     void getRequestPostContent(const QString& sText, QByteArray& baContent);
 
-    //! Retourne la valeur correspondant à un token MIME dans un header HTTP
+    //! Returns the value associated with a token
     QString getTokenValue(const QStringList& lTokens, QString sTokenName);
 
     //!
     QString getSubTokenValue(const QStringList& lTokens, QString sTokenName, QString sSubTokenName);
 
-    //! Retourne le type MIME correspondant à une extension de fichier
+    //! Returns the content type associated with a file extension
     QString getContentTypeByExtension(const QString& sExtension) const;
 
     //! Logs an incoming HTTP request
@@ -272,6 +272,7 @@ public:
         QTcpSocket*     m_pSocket;
     };
 
+    //! This class monitors request to detect flood attacks
     class CRequestMonitor
     {
     public:

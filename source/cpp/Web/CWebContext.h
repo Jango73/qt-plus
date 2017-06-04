@@ -22,10 +22,10 @@ public:
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //! Constructeur par défaut
+    //! Default constructor
     CWebContext();
 
-    //! Constructor
+    //! Constructor with parameters
     CWebContext(QTcpSocket* pSocket, QString sPeer, QString sHost, QStringList lPath, QMap<QString, QString> mArguments);
 
     //! Copy constructor
