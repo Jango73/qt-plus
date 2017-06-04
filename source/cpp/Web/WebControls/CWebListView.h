@@ -61,6 +61,6 @@ public:
 
 protected:
 
-    qint32      m_iUsersPerPage;
+    qint32      m_iItemsPerPage;
     qint32      m_iCurrentPage;
 };

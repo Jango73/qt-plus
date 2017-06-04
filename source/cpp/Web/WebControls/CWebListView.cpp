@@ -3,13 +3,17 @@
 #include "CWebListView.h"
 #include "CWebDiv.h"
 #include "CWebButton.h"
+#include "CWebLabel.h"
+#include "CWebTextBox.h"
 
 //-------------------------------------------------------------------------------------------------
 
-#define CONTROLNAME_FIRST_PAGE      "FirstPage"
-#define CONTROLNAME_PREVIOUS_PAGE   "PreviousPage"
-#define CONTROLNAME_NEXT_PAGE       "NextPage"
-#define CONTROLNAME_LAST_PAGE       "LastPage"
+#define CONTROLNAME_FIRST_PAGE          "FirstPage"
+#define CONTROLNAME_PREVIOUS_PAGE       "PreviousPage"
+#define CONTROLNAME_NEXT_PAGE           "NextPage"
+#define CONTROLNAME_LAST_PAGE           "LastPage"
+#define CONTROLNAME_CURRENT_PAGE_INDEX  "CurrentPageIndex"
+#define CONTROLNAME_TOTAL_PAGE_COUNT    "TotalPageCount"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -36,7 +40,7 @@ CWebControl* CWebListView::instantiator()
     Constructs a CWebListView with default parameters.
 */
 CWebListView::CWebListView()
-    : m_iUsersPerPage(10)
+    : m_iItemsPerPage(10)
     , m_iCurrentPage(0)
 {
 }
@@ -51,7 +55,7 @@ CWebListView::CWebListView()
 */
 CWebListView::CWebListView(const QString& sName, const QString& sCaption, IJSONModelProvider* pModelProvider)
     : CWebModelControl(sName, sCaption, pModelProvider)
-    , m_iUsersPerPage(10)
+    , m_iItemsPerPage(10)
     , m_iCurrentPage(0)
 {
     CWebControl* pControlDiv = addControl(new CWebDiv("Controls", ""));
@@ -71,6 +75,12 @@ CWebListView::CWebListView(const QString& sName, const QString& sCaption, IJSONM
     pControlDiv->addControl(new CWebButton(CONTROLNAME_LAST_PAGE, ">|"))
             ->addObserver(this)
             ->setStyleClass("button1");
+
+    pControlDiv->addControl(new CWebTextBox(CONTROLNAME_CURRENT_PAGE_INDEX, ""))->setReadOnly(true);
+
+    pControlDiv->addControl(new CWebLabel("", "/"));
+
+    pControlDiv->addControl(new CWebTextBox(CONTROLNAME_TOTAL_PAGE_COUNT, ""))->setReadOnly(true);
 
     CWebControl* pContentDiv = addControl(new CWebDiv("Content", ""));
 }
@@ -94,17 +104,41 @@ CWebListView::~CWebListView()
 */
 void CWebListView::controlEvent(CWebControl* pControl, QString sEvent, QString sParam)
 {
-    if (pControl->getName() == CONTROLNAME_FIRST_PAGE)
+    if (m_pModelProvider.get() != nullptr)
     {
-    }
-    else if (pControl->getName() == CONTROLNAME_PREVIOUS_PAGE)
-    {
-    }
-    else if (pControl->getName() == CONTROLNAME_NEXT_PAGE)
-    {
-    }
-    else if (pControl->getName() == CONTROLNAME_LAST_PAGE)
-    {
+        int iTotalCount = m_pModelProvider.get()->modelItemCount();
+
+        if (pControl->getName() == CONTROLNAME_FIRST_PAGE)
+        {
+            m_iCurrentPage = 0;
+        }
+        else if (pControl->getName() == CONTROLNAME_PREVIOUS_PAGE)
+        {
+            if (m_iCurrentPage > 0)
+            {
+                m_iCurrentPage--;
+            }
+        }
+        else if (pControl->getName() == CONTROLNAME_NEXT_PAGE)
+        {
+            if (m_iCurrentPage * m_iItemsPerPage + m_iItemsPerPage < iTotalCount)
+            {
+                m_iCurrentPage++;
+            }
+        }
+        else if (pControl->getName() == CONTROLNAME_LAST_PAGE)
+        {
+            m_iCurrentPage = iTotalCount / m_iItemsPerPage;
+        }
+
+        CWebTextBox* pCurrentPageLabel = dynamic_cast<CWebTextBox*>(findControlByName(CONTROLNAME_CURRENT_PAGE_INDEX));
+        CWebTextBox* pTotalPageLabel = dynamic_cast<CWebTextBox*>(findControlByName(CONTROLNAME_TOTAL_PAGE_COUNT));
+
+        if (pCurrentPageLabel != nullptr)
+            pCurrentPageLabel->setCaption(QString::number(m_iCurrentPage));
+
+        if (pTotalPageLabel != nullptr)
+            pTotalPageLabel->setCaption(QString::number(iTotalCount / m_iItemsPerPage));
     }
 }
 
@@ -114,7 +148,7 @@ void CWebListView::serialize(QDataStream& stream, CObjectTracker* pTracker) cons
 {
     CWebModelControl::serialize(stream, pTracker);
 
-    stream << m_iUsersPerPage;
+    stream << m_iItemsPerPage;
     stream << m_iCurrentPage;
 }
 
@@ -124,6 +158,6 @@ void CWebListView::deserialize(QDataStream& stream, CObjectTracker* pTracker, QO
 {
     CWebModelControl::deserialize(stream, pTracker, pRootControl);
 
-    stream >> m_iUsersPerPage;
+    stream >> m_iItemsPerPage;
     stream >> m_iCurrentPage;
 }

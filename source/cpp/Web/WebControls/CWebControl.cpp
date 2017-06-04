@@ -41,7 +41,7 @@ CWebControl::CWebControl()
     : m_iID(generateID())
     , m_bVisible(true)
     , m_bReadOnly(false)
-    , m_pParentControl(NULL)
+    , m_pParentControl(nullptr)
 {
 }
 
@@ -719,12 +719,12 @@ void CWebControl::deserialize(QDataStream& stream, CObjectTracker *pTracker, QOb
 {
     CWebControl* pRootControl = dynamic_cast<CWebControl*>(pRootObject);
 
-    if (pRootControl)
+    if (pRootControl != nullptr)
     {
         qint32 iControlsCount = 0;
         qint32 iObserverCount = 0;
 
-        // Lecture des propriétés
+        // Read properties
 
         stream >> m_iID;
         stream >> m_sName;
@@ -734,7 +734,7 @@ void CWebControl::deserialize(QDataStream& stream, CObjectTracker *pTracker, QOb
         stream >> m_bVisible;
         stream >> m_bReadOnly;
 
-        // Lecture des ID d'observateurs de cet objet
+        // Read this object's observers IDs
 
         stream >> iObserverCount;
         for (qint32 iIndex = 0; iIndex < iObserverCount; iIndex++)
@@ -745,7 +745,7 @@ void CWebControl::deserialize(QDataStream& stream, CObjectTracker *pTracker, QOb
             pRootControl->m_mObservers[m_iID].append(iID);
         }
 
-        // Lecture des contrôles enfants
+        // Read child controls
 
         stream >> iControlsCount;
         for (qint32 iIndex = 0; iIndex < iControlsCount; iIndex++)
@@ -763,7 +763,7 @@ void CWebControl::deserialize(QDataStream& stream, CObjectTracker *pTracker, QOb
             }
         }
 
-        // Résolution des observateurs
+        // Resolve observers
 
         foreach (qint32 iObservedID, m_mObservers.keys())
         {

@@ -53,7 +53,7 @@ public:
 
     //! Constructeur par défaut
     CSerialReferencable()
-        : m_pObject(NULL)
+        : m_pObject(nullptr)
     {
     }
 

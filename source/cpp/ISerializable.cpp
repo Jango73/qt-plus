@@ -17,9 +17,9 @@
 */
 void CObjectTracker::append(QObject* pObject)
 {
-	if (pObject != NULL)
+    if (pObject != nullptr)
 	{
-		m_vInstances.append(pObject);
+        m_vInstances.append(pObject);
 	}
 }
 
