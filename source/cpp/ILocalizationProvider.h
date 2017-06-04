@@ -1,19 +1,16 @@
 
-#ifndef ILOCALIZATIONPROVIDER_H
-#define ILOCALIZATIONPROVIDER_H
+#pragma once
 
 // Qt
 #include <QString>
 
 //-------------------------------------------------------------------------------------------------
 
-//! Définit un fournisseur de localisation
+//! Defines a localization provider
 class ILocalizationProvider
 {
 public:
 
-	//! Retourne la liste d'actions
+    //! Returns a string given a token
 	virtual QString getString(const QString& sToken) const = 0;
 };
-
-#endif // ILOCALIZATIONPROVIDER_H

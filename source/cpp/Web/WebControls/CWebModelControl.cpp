@@ -39,8 +39,9 @@ CWebModelControl::CWebModelControl()
     \a sName specifies the name of the control. \br
     \a sCaption specifies the caption of the control, which is the displayed text. \br
 */
-CWebModelControl::CWebModelControl(const QString& sName, const QString& sCaption)
+CWebModelControl::CWebModelControl(const QString& sName, const QString& sCaption, IJSONModelProvider* pModelProvider)
     : CWebControl(sName, sCaption)
+    , m_pModelProvider(pModelProvider)
 {
 }
 
@@ -56,15 +57,6 @@ CWebModelControl::~CWebModelControl()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Appends the HTML text that represents this text box to \a sHead and \a sBody.
-*/
-void CWebModelControl::addHTML(QString& sHead, QString& sBody) const
-{
-}
-
-//-------------------------------------------------------------------------------------------------
-
-/*!
     Handles any event for this text box. \br\br
     \a sControl is unused. \br
     If \a sEvent is \c EVENT_CHANGED, the caption is set to \a sParam.
@@ -74,4 +66,22 @@ void CWebModelControl::handleEvent(QString sControl, QString sEvent, QString sPa
     Q_UNUSED(sControl);
     Q_UNUSED(sEvent);
     Q_UNUSED(sParam);
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CWebModelControl::serialize(QDataStream& stream, CObjectTracker* pTracker) const
+{
+    CWebControl::serialize(stream, pTracker);
+
+    m_pModelProvider.serialize(stream, pTracker);
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CWebModelControl::deserialize(QDataStream& stream, CObjectTracker *pTracker, QObject* pRootControl)
+{
+    CWebControl::deserialize(stream, pTracker, pRootControl);
+
+    m_pModelProvider.deserialize(stream, pTracker, pRootControl);
 }

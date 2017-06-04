@@ -2,6 +2,7 @@
 #pragma once
 
 // Application
+#include "../../IJSONModelProvider.h"
 #include "CWebControl.h"
 
 class QTPLUSSHARED_EXPORT CWebModelControl : public CWebControl
@@ -11,19 +12,19 @@ class QTPLUSSHARED_EXPORT CWebModelControl : public CWebControl
 public:
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
+    // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //!
+    //! Factory instanciator
     static CWebControl* instantiator();
 
-    //! Constructeur par défaut
+    //! Default constructor
     CWebModelControl();
 
-    //! Constructeur avec paramètres
-    CWebModelControl(const QString& sName, const QString& sCaption);
+    //! Constructor with parameters
+    CWebModelControl(const QString& sName, const QString& sCaption, IJSONModelProvider* pModelProvider = nullptr);
 
-    //! Destructeur
+    //! Destructor
     virtual ~CWebModelControl();
 
     //-------------------------------------------------------------------------------------------------
@@ -35,22 +36,27 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes de contrôle
+    // Control methods
     //-------------------------------------------------------------------------------------------------
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes héritées
+    // Inherited methods
     //-------------------------------------------------------------------------------------------------
-
-    //!
-    virtual void addHTML(QString& sHead, QString& sBody) const Q_DECL_OVERRIDE;
 
     //!
     virtual void handleEvent(QString sControl, QString sEvent, QString sParam) Q_DECL_OVERRIDE;
 
+    //!
+    virtual void serialize(QDataStream& stream, CObjectTracker* pTracker) const Q_DECL_OVERRIDE;
+
+    //!
+    virtual void deserialize(QDataStream& stream, CObjectTracker* pTracker, QObject* pRootControl) Q_DECL_OVERRIDE;
+
     //-------------------------------------------------------------------------------------------------
-    // Propriétés
+    // Properties
     //-------------------------------------------------------------------------------------------------
 
 protected:
+
+    CSerialReferencable<IJSONModelProvider>     m_pModelProvider;
 };

@@ -11,7 +11,6 @@
 // Application
 #include "CSingleton.h"
 
-
 //-------------------------------------------------------------------------------------------------
 
 class QTPLUSSHARED_EXPORT CObjectTracker
@@ -34,7 +33,7 @@ protected:
 
 //-------------------------------------------------------------------------------------------------
 
-//! Définit un objet serialisable
+//! Defines a serializable object
 class ISerializable
 {
     //! Sérialise l'objet
@@ -46,7 +45,7 @@ class ISerializable
 
 //-------------------------------------------------------------------------------------------------
 
-//! Définit une classe référencable en sérialisation
+//! Defines a class that can be referenced in serialization
 template <class T>
 class CSerialReferencable : public ISerializable
 {
@@ -95,7 +94,7 @@ public:
         {
             T* pObject = (T*)lPointer;
 
-            if (pTracker != NULL && pTracker->exists(reinterpret_cast<QObject*>(pObject)))
+            if (pTracker != nullptr && pTracker->exists(reinterpret_cast<QObject*>(pObject)))
             {
                 m_pObject = pObject;
             }

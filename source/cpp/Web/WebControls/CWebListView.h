@@ -25,7 +25,7 @@ public:
     CWebListView();
 
     //! Constructeur avec paramètres
-    CWebListView(const QString& sName, const QString& sCaption);
+    CWebListView(const QString& sName, const QString& sCaption, IJSONModelProvider* pModelProvider = nullptr);
 
     //! Destructeur
     virtual ~CWebListView();
@@ -47,14 +47,20 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void addHTML(QString& sHead, QString& sBody) const Q_DECL_OVERRIDE;
+    virtual void controlEvent(CWebControl* pControl, QString sEvent, QString sParam) Q_DECL_OVERRIDE;
 
     //!
-    virtual void handleEvent(QString sControl, QString sEvent, QString sParam) Q_DECL_OVERRIDE;
+    virtual void serialize(QDataStream& stream, CObjectTracker* pTracker) const Q_DECL_OVERRIDE;
+
+    //!
+    virtual void deserialize(QDataStream& stream, CObjectTracker* pTracker, QObject* pRootControl) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Propriétés
     //-------------------------------------------------------------------------------------------------
 
 protected:
+
+    qint32      m_iUsersPerPage;
+    qint32      m_iCurrentPage;
 };

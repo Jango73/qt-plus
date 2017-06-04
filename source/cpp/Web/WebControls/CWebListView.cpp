@@ -1,6 +1,15 @@
 
 // Application
 #include "CWebListView.h"
+#include "CWebDiv.h"
+#include "CWebButton.h"
+
+//-------------------------------------------------------------------------------------------------
+
+#define CONTROLNAME_FIRST_PAGE      "FirstPage"
+#define CONTROLNAME_PREVIOUS_PAGE   "PreviousPage"
+#define CONTROLNAME_NEXT_PAGE       "NextPage"
+#define CONTROLNAME_LAST_PAGE       "LastPage"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -27,8 +36,9 @@ CWebControl* CWebListView::instantiator()
     Constructs a CWebListView with default parameters.
 */
 CWebListView::CWebListView()
+    : m_iUsersPerPage(10)
+    , m_iCurrentPage(0)
 {
-    setStyleClass("listview1");
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -37,11 +47,32 @@ CWebListView::CWebListView()
     Constructs a CWebListView with basic parameters. \br\br
     \a sName specifies the name of the control. \br
     \a sCaption specifies the caption of the control, which is the displayed text. \br
+    \a pModelProvider is the model provider.
 */
-CWebListView::CWebListView(const QString& sName, const QString& sCaption)
-    : CWebModelControl(sName, sCaption)
+CWebListView::CWebListView(const QString& sName, const QString& sCaption, IJSONModelProvider* pModelProvider)
+    : CWebModelControl(sName, sCaption, pModelProvider)
+    , m_iUsersPerPage(10)
+    , m_iCurrentPage(0)
 {
-    setStyleClass("listview1");
+    CWebControl* pControlDiv = addControl(new CWebDiv("Controls", ""));
+
+    pControlDiv->addControl(new CWebButton(CONTROLNAME_FIRST_PAGE, "|<"))
+            ->addObserver(this)
+            ->setStyleClass("button1");
+
+    pControlDiv->addControl(new CWebButton(CONTROLNAME_PREVIOUS_PAGE, "<<"))
+            ->addObserver(this)
+            ->setStyleClass("button1");
+
+    pControlDiv->addControl(new CWebButton(CONTROLNAME_NEXT_PAGE, ">>"))
+            ->addObserver(this)
+            ->setStyleClass("button1");
+
+    pControlDiv->addControl(new CWebButton(CONTROLNAME_LAST_PAGE, ">|"))
+            ->addObserver(this)
+            ->setStyleClass("button1");
+
+    CWebControl* pContentDiv = addControl(new CWebDiv("Content", ""));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -56,24 +87,43 @@ CWebListView::~CWebListView()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Appends the HTML text that represents this list view to \a sHead and \a sBody.
+    Handles events from child controls. \br\br
+    \a pControl is the control which triggered the event. \br
+    \a sEvent is the event name. \br
+    \a sParam is the event parameter.
 */
-void CWebListView::addHTML(QString& sHead, QString& sBody) const
+void CWebListView::controlEvent(CWebControl* pControl, QString sEvent, QString sParam)
 {
-    sBody.append(QString("<table id='%1' class='%2'><tr><td>Col1</td><td>Col2</td></tr></table>"HTML_NL)
-                 .arg(getCodeName())
-                 .arg(m_sStyleClass)
-                 );
+    if (pControl->getName() == CONTROLNAME_FIRST_PAGE)
+    {
+    }
+    else if (pControl->getName() == CONTROLNAME_PREVIOUS_PAGE)
+    {
+    }
+    else if (pControl->getName() == CONTROLNAME_NEXT_PAGE)
+    {
+    }
+    else if (pControl->getName() == CONTROLNAME_LAST_PAGE)
+    {
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
 
-/*!
-    Handles any event for this list view. \br\br
-    \a sControl is unused. \br
-    If \a sEvent is \c EVENT_CHANGED, the caption is set to \a sParam.
-*/
-void CWebListView::handleEvent(QString sControl, QString sEvent, QString sParam)
+void CWebListView::serialize(QDataStream& stream, CObjectTracker* pTracker) const
 {
-    Q_UNUSED(sControl);
+    CWebModelControl::serialize(stream, pTracker);
+
+    stream << m_iUsersPerPage;
+    stream << m_iCurrentPage;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CWebListView::deserialize(QDataStream& stream, CObjectTracker* pTracker, QObject* pRootControl)
+{
+    CWebModelControl::deserialize(stream, pTracker, pRootControl);
+
+    stream >> m_iUsersPerPage;
+    stream >> m_iCurrentPage;
 }
