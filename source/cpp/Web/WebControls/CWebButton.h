@@ -1,9 +1,12 @@
 
-#ifndef CWEBBUTTON_H
-#define CWEBBUTTON_H
+#pragma once
+
+//-------------------------------------------------------------------------------------------------
 
 // Application
 #include "CWebControl.h"
+
+//-------------------------------------------------------------------------------------------------
 
 class QTPLUSSHARED_EXPORT CWebButton : public CWebControl
 {
@@ -44,16 +47,16 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void addHTML(QString& sHead, QString& sBody) const;
+    virtual void addHTML(QString& sHead, QString& sBody) const Q_DECL_OVERRIDE;
 
     //!
-    virtual void handleEvent(QString sControl, QString sEvent, QString sParam);
+    virtual void handleEvent(QString sControl, QString sEvent, QString sParam) Q_DECL_OVERRIDE;
 
     //!
-    virtual void serialize(QDataStream& stream, CObjectTracker* pTracker) const;
+    virtual void serialize(QDataStream& stream, CObjectTracker* pTracker) const Q_DECL_OVERRIDE;
 
     //!
-    virtual void deserialize(QDataStream& stream, CObjectTracker* pTracker, QObject* pRootObject);
+    virtual void deserialize(QDataStream& stream, CObjectTracker* pTracker, QObject* pRootObject) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Propriétés
@@ -61,5 +64,3 @@ public:
 
 protected:
 };
-
-#endif // CWEBBUTTON_H

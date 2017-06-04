@@ -1,10 +1,14 @@
 
 #pragma once
 
-// Application
-#include "CWebControl.h"
+//-------------------------------------------------------------------------------------------------
 
-class QTPLUSSHARED_EXPORT CWebTextBox : public CWebControl
+// Application
+#include "CWebModelControl.h"
+
+//-------------------------------------------------------------------------------------------------
+
+class QTPLUSSHARED_EXPORT CWebListView : public CWebModelControl
 {
     Q_OBJECT
 
@@ -18,13 +22,13 @@ public:
     static CWebControl* instantiator();
 
     //! Constructeur par défaut
-    CWebTextBox();
+    CWebListView();
 
     //! Constructeur avec paramètres
-    CWebTextBox(const QString& sName, const QString& sCaption);
+    CWebListView(const QString& sName, const QString& sCaption);
 
     //! Destructeur
-    virtual ~CWebTextBox();
+    virtual ~CWebListView();
 
     //-------------------------------------------------------------------------------------------------
     // Setters

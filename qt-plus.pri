@@ -34,6 +34,8 @@ HEADERS += \
     source/cpp/Web/WebControls/CWebTextBox.h \
     source/cpp/Web/WebControls/CWebTextEdit.h \
     source/cpp/Web/WebControls/CWebFileInput.h \
+    source/cpp/Web/WebControls/CWebModelControl.h \
+    source/cpp/Web/WebControls/CWebListView.h \
     source/cpp/ISerializable.h \
     source/cpp/CInterpolator.h \
     source/cpp/GeoTools/coordcnv.h \
@@ -105,6 +107,8 @@ SOURCES += \
     source/cpp/Web/WebControls/CWebTextBox.cpp \
     source/cpp/Web/WebControls/CWebTextEdit.cpp \
     source/cpp/Web/WebControls/CWebFileInput.cpp \
+    source/cpp/Web/WebControls/CWebModelControl.cpp \
+    source/cpp/Web/WebControls/CWebListView.cpp \
     source/cpp/ISerializable.cpp \
     source/cpp/GeoTools/coordcnv.cpp \
     source/cpp/GeoTools/geocent.cpp \

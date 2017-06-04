@@ -7,6 +7,7 @@
 #include "CWebTextBox.h"
 #include "CWebTextEdit.h"
 #include "CWebFileInput.h"
+#include "CWebListView.h"
 #include "CWebPage.h"
 
 //-------------------------------------------------------------------------------------------------
@@ -24,6 +25,7 @@
     \sa CWebTextBox
     \sa CWebTextEdit
     \sa CWebFileInput
+    \sa CWebListView
     \sa CWebPage
 */
 
@@ -42,6 +44,7 @@ CWebFactory::CWebFactory()
     registerProduct(CWebTextBox::staticMetaObject.className(), CWebTextBox::instantiator);
     registerProduct(CWebTextEdit::staticMetaObject.className(), CWebTextEdit::instantiator);
     registerProduct(CWebFileInput::staticMetaObject.className(), CWebFileInput::instantiator);
+    registerProduct(CWebListView::staticMetaObject.className(), CWebListView::instantiator);
     registerProduct(CWebPage::staticMetaObject.className(), CWebPage::instantiator);
 }
 

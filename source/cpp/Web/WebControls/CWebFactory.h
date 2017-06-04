@@ -1,6 +1,5 @@
 
-#ifndef CWEBFACTORY_H
-#define CWEBFACTORY_H
+#pragma once
 
 //-------------------------------------------------------------------------------------------------
 
@@ -38,5 +37,3 @@ protected:
     //! Destructeur
     virtual ~CWebFactory();
 };
-
-#endif // CWEBFACTORY_H

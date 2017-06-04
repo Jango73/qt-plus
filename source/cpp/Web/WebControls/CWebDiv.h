@@ -1,9 +1,12 @@
 
-#ifndef CWEBDIV_H
-#define CWEBDIV_H
+#pragma once
+
+//-------------------------------------------------------------------------------------------------
 
 // Application
 #include "CWebControl.h"
+
+//-------------------------------------------------------------------------------------------------
 
 class QTPLUSSHARED_EXPORT CWebDiv : public CWebControl
 {
@@ -27,5 +30,3 @@ public:
     //! Destructeur
     virtual ~CWebDiv();
 };
-
-#endif // CWEBDIV_H

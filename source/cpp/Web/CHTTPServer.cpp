@@ -1136,6 +1136,9 @@ QString CHTTPServer::decodeURLParameters(QString sText)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns the IP address in \a sText stripped out of any garbage
+*/
 QString CHTTPServer::cleanIP(const QString& sText)
 {
     QString sReturnValue = sText;

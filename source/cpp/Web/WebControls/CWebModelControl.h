@@ -4,7 +4,7 @@
 // Application
 #include "CWebControl.h"
 
-class QTPLUSSHARED_EXPORT CWebTextBox : public CWebControl
+class QTPLUSSHARED_EXPORT CWebModelControl : public CWebControl
 {
     Q_OBJECT
 
@@ -18,13 +18,13 @@ public:
     static CWebControl* instantiator();
 
     //! Constructeur par défaut
-    CWebTextBox();
+    CWebModelControl();
 
     //! Constructeur avec paramètres
-    CWebTextBox(const QString& sName, const QString& sCaption);
+    CWebModelControl(const QString& sName, const QString& sCaption);
 
     //! Destructeur
-    virtual ~CWebTextBox();
+    virtual ~CWebModelControl();
 
     //-------------------------------------------------------------------------------------------------
     // Setters

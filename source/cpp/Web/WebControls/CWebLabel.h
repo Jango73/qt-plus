@@ -1,9 +1,12 @@
 
-#ifndef CWEBLABEL_H
-#define CWEBLABEL_H
+#pragma once
+
+//-------------------------------------------------------------------------------------------------
 
 // Application
 #include "CWebControl.h"
+
+//-------------------------------------------------------------------------------------------------
 
 class QTPLUSSHARED_EXPORT CWebLabel : public CWebControl
 {
@@ -49,5 +52,3 @@ public:
 
 protected:
 };
-
-#endif // CWEBLABEL_H

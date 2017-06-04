@@ -1,6 +1,7 @@
 
-#ifndef CWEBCONTROL_H
-#define CWEBCONTROL_H
+#pragma once
+
+//-------------------------------------------------------------------------------------------------
 
 #include "../../qtplus_global.h"
 
@@ -151,16 +152,16 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void controlEvent(CWebControl* pControl, QString sEvent, QString sParam);
+    virtual void controlEvent(CWebControl* pControl, QString sEvent, QString sParam) Q_DECL_OVERRIDE;
 
     //!
     virtual qint32 getObserverID() const;
 
     //!
-    virtual void serialize(QDataStream& stream, CObjectTracker* pTracker) const;
+    virtual void serialize(QDataStream& stream, CObjectTracker* pTracker) const Q_DECL_OVERRIDE;
 
     //!
-    virtual void deserialize(QDataStream& stream, CObjectTracker* pTracker, QObject* pRootObject);
+    virtual void deserialize(QDataStream& stream, CObjectTracker* pTracker, QObject* pRootObject) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Méthodes de construction de page
@@ -241,5 +242,3 @@ protected:
 
     static qint32					m_iNextID;
 };
-
-#endif // CWEBCONTROL_H

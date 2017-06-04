@@ -1,6 +1,5 @@
 
-#ifndef CWEBTEXTEDIT_H
-#define CWEBTEXTEDIT_H
+#pragma once
 
 // Application
 #include "CWebControl.h"
@@ -44,10 +43,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void addHTML(QString& sHead, QString& sBody) const;
+    virtual void addHTML(QString& sHead, QString& sBody) const Q_DECL_OVERRIDE;
 
     //!
-    virtual void handleEvent(QString sControl, QString sEvent, QString sParam);
+    virtual void handleEvent(QString sControl, QString sEvent, QString sParam) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Propriétés
@@ -55,5 +54,3 @@ public:
 
 protected:
 };
-
-#endif // CWEBTEXTEDIT_H

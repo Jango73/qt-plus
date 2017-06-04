@@ -1,6 +1,7 @@
 
-#ifndef CWEBPAGE_H
-#define CWEBPAGE_H
+#pragma once
+
+//-------------------------------------------------------------------------------------------------
 
 // Qt
 #include <QString>
@@ -12,7 +13,6 @@
 #include "CWebControl.h"
 
 //-------------------------------------------------------------------------------------------------
-// Déclarations avancées
 // Forward declarations
 
 class CDynamicHTTPServer;
@@ -26,19 +26,19 @@ class QTPLUSSHARED_EXPORT CWebPage : public CWebControl
 public:
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
+    // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
     //!
     static CWebControl* instantiator();
 
-    //! Constructeur
+    //! Constructor
     CWebPage();
 
-    //! Constructeur
+    //! Constructor
     CWebPage(const QString& sName);
 
-    //! Destructeur
+    //! Destructor
     virtual ~CWebPage();
 
     //-------------------------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ public:
     QString getPropertyChanges();
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes de contrôle
+    // Control methods
     //-------------------------------------------------------------------------------------------------
 
     //! Retourne le contenu de la page web
@@ -68,7 +68,7 @@ public:
     void setViewstate(const QString& sViewState);
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes héritées
+    // Inherited methods
     //-------------------------------------------------------------------------------------------------
 
     //!
@@ -84,7 +84,7 @@ public:
     QString getViewState(CObjectTracker* pTracker) const;
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes statiques
+    // Static control methods
     //-------------------------------------------------------------------------------------------------
 
     static CWebControl* fromViewState(QString sViewState, CObjectTracker *pTracker);
@@ -96,12 +96,10 @@ public:
 protected:
 
     //-------------------------------------------------------------------------------------------------
-    // Propriétés
+    // Properties
     //-------------------------------------------------------------------------------------------------
 
 protected:
 
     QString     m_sPropertyChanges;
 };
-
-#endif // CWEBPAGE_H
