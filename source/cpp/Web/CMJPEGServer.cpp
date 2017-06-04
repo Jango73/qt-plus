@@ -309,20 +309,20 @@ void CMJPEGServer::onTimeout()
         {
             if (m_pOutputFile->isOpen())
             {
-                // Verrouillage du mutex de buffer
+                // Lock the buffer mutex
                 QMutexLocker locker(&m_tMutex);
 
-                // Parcours de tous les buffers en attente de sortie
+                // Iterate through each output buffer
 
                 foreach (const QByteArray& baOutput, m_vOutput)
                 {
-                    // Composition du message de sortie :
-                    // - Marqueur de limite
-                    // - Descriptif HTML de contenu
-                    // - Image jpeg
+                    // Compose the outgoing message :
+                    // - Boundary marker
+                    // - HTML header
+                    // - Image
                     QString sMessage = getImageDescriptor(baOutput.count());
 
-                    // Ecriture des données
+                    // Write data
                     m_pOutputFile->write(sMessage.toLatin1());
                     m_pOutputFile->write(baOutput);
                     m_pOutputFile->flush();
@@ -331,7 +331,7 @@ void CMJPEGServer::onTimeout()
                 m_vOutput.clear();
             }
             else
-            {	// Verrouillage du mutex de buffer
+            {	// Lock the buffer mutex
                 QMutexLocker locker(&m_tMutex);
 
                 m_vOutput.clear();
@@ -339,17 +339,17 @@ void CMJPEGServer::onTimeout()
         }
         else
         {
-            // Verrouillage du mutex de buffer
+            // Lock the buffer mutex
             QMutexLocker locker(&m_tMutex);
 
-            // Parcours de tous les clients connectés
+            // Iterate through each connected client
             foreach (QTcpSocket* pSocket, m_vSockets)
             {
                 CClientData* pData = CClientData::getFromSocket(pSocket);
 
                 if (pData != NULL)
                 {
-                    // Si la socket est prête
+                    // Is the socket ready?
                     if (pSocket->state() == QTcpSocket::ConnectedState)
                     {
                         foreach (const QByteArray& baOutput, m_vOutput)
@@ -359,13 +359,13 @@ void CMJPEGServer::onTimeout()
                             // Si la socket a un buffer de sortie suffisament petit
                             if (iBytesToWrite < baOutput.count() * 4)
                             {
-                                // Composition du message de sortie :
-                                // - Marqueur de limite
-                                // - Descriptif HTML de contenu
-                                // - Image jpeg
+                                // Compose the outgoing message :
+                                // - Boundary marker
+                                // - HTML header
+                                // - Image
                                 QByteArray sMessage = getImageDescriptor(baOutput.count()).toLatin1();
 
-                                // Ecriture des données sur la socket
+                                // Write data
                                 pSocket->write(sMessage);
                                 pSocket->write(baOutput);
 
@@ -374,7 +374,7 @@ void CMJPEGServer::onTimeout()
 
                             if (pSocket->state() == QTcpSocket::ConnectedState)
                             {
-                                // Rinçage du flux
+                                // Flush output
                                 pSocket->flush();
                             }
                         }
@@ -388,14 +388,14 @@ void CMJPEGServer::onTimeout()
 }
 
 //-------------------------------------------------------------------------------------------------
-// Attention : cette méthode est appelée depuis une thread annexe
+// Careful : this method must be thread-safe
 
 /*!
     Called by a thread to convert output images.
 */
 void CMJPEGServer::processOutputImages()
 {
-    // Verrouillage du mutex de buffer
+    // Lock the buffer mutex
     QMutexLocker locker(&m_tMutex);
 
     foreach (const QImage& image, m_vOutputImages)
@@ -416,8 +416,6 @@ void CMJPEGServer::processOutputImages()
 */
 QString CMJPEGServer::getHeader()
 {
-    // Composition d'un message HTTP de réponse
-
     return QString(
                 "Content-Type: multipart/x-mixed-replace;boundary=%1\r\n"
                 "Cache-Control: no-store\r\n"
@@ -434,9 +432,9 @@ QString CMJPEGServer::getHeader()
 */
 QString CMJPEGServer::getImageDescriptor(int iSize)
 {
-    // Composition d'un message de description d'image
-    // - Marqueur de limite
-    // - Descriptif HTML de contenu
+    // Compose an outgoing message
+    // - Boundary marker
+    // - HTML header
 
     return QString(
                 "--%1\r\n"
