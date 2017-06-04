@@ -18,6 +18,7 @@ HEADERS += \
     source/cpp/CConnectedStream.h \
     source/cpp/CSocketStream.h \
     source/cpp/CSerialStream.h \
+    source/cpp/File/CRollingFiles.h \
     source/cpp/Web/CMJPEGClient.h \
     source/cpp/Web/CMJPEGServer.h \
     source/cpp/Web/CWebComposer.h \
@@ -88,6 +89,7 @@ SOURCES += \
     source/cpp/CConnectedStream.cpp \
     source/cpp/CSocketStream.cpp \
     source/cpp/CSerialStream.cpp \
+    source/cpp/File/CRollingFiles.cpp \
     source/cpp/Web/CMJPEGClient.cpp \
     source/cpp/Web/CMJPEGServer.cpp \
     source/cpp/Web/CWebComposer.cpp \
