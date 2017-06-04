@@ -1146,8 +1146,7 @@ QString CHTTPServer::cleanIP(const QString& sText)
     {
         sReturnValue = tRegExp_ipv4.cap(1);
     }
-
-    if (tRegExp_ipv6.indexIn(sText) != -1)
+    else if (tRegExp_ipv6.indexIn(sText) != -1)
     {
         sReturnValue = tRegExp_ipv6.cap(0);
     }
