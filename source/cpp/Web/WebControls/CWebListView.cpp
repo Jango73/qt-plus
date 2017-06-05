@@ -116,19 +116,22 @@ void CWebListView::setModel()
     CXMLNode xHeader = xModel.getNodeByTagName("header");
     QVector<CXMLNode> xProperties = xHeader.getNodesByTagName("property");
 
-    QStringList lProperties;
+    QStringList lPropertyNames;
+    QStringList lPropertyTypes;
 
     foreach (CXMLNode xProperty, xProperties)
     {
+        QString sType = xProperty.attributes()["type"];
         QString sText = xProperty.attributes()["name"];
 
-        lProperties << sText;
+        lPropertyTypes << sType;
+        lPropertyNames << sText;
     }
 
     {
-        CWebControl* pLineDiv = pContentDiv->addControl(new CWebDiv("", ""))->setStyleClass("listview-line");
+        CWebControl* pLineDiv = pContentDiv->addControl(new CWebDiv("", ""))->setStyleClass("listview-header-line");
 
-        foreach (QString sProperty, lProperties)
+        foreach (QString sProperty, lPropertyNames)
         {
             pLineDiv->addControl(new CWebLabel("", sProperty));
         }
@@ -139,13 +142,21 @@ void CWebListView::setModel()
 
     foreach (CXMLNode xItem, xItems)
     {
-        CWebControl* pLineDiv = pContentDiv->addControl(new CWebDiv("", ""))->setStyleClass("listview-line");
+        CWebControl* pLineDiv = pContentDiv->addControl(new CWebDiv("", ""))->setStyleClass("listview-data-line");
 
-        foreach (QString sProperty, lProperties)
+        for (int index = 0; index < lPropertyNames.count(); index++)
         {
-            QString sText = xItem.attributes()[sProperty];
+            QString sType = index < lPropertyTypes.count() ? lPropertyTypes[index] : "string";
+            QString sText = xItem.attributes()[lPropertyNames[index]];
 
-            pLineDiv->addControl(new CWebLabel("", sText));
+            if (sType == "string")
+            {
+                pLineDiv->addControl(new CWebLabel("", sText));
+            }
+            else if (sType == "button")
+            {
+                pLineDiv->addControl(new CWebButton("", sText));
+            }
         }
     }
 }
