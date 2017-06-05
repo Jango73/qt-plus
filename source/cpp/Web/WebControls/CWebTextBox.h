@@ -43,7 +43,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void addHTML(QString& sHead, QString& sBody) const Q_DECL_OVERRIDE;
+    virtual void addHTML(QString& sHead, QString& sBody) Q_DECL_OVERRIDE;
 
     //!
     virtual void handleEvent(QString sControl, QString sEvent, QString sParam) Q_DECL_OVERRIDE;

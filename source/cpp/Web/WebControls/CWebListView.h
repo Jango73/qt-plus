@@ -21,13 +21,13 @@ public:
     //!
     static CWebControl* instantiator();
 
-    //! Constructeur par défaut
+    //! Default constructor
     CWebListView();
 
-    //! Constructeur avec paramètres
+    //! Constructor with parameters
     CWebListView(const QString& sName, const QString& sCaption, IJSONModelProvider* pModelProvider = nullptr);
 
-    //! Destructeur
+    //! Destructor
     virtual ~CWebListView();
 
     //-------------------------------------------------------------------------------------------------
@@ -39,11 +39,13 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes de contrôle
+    // Control methods
     //-------------------------------------------------------------------------------------------------
 
+    void setModel();
+
     //-------------------------------------------------------------------------------------------------
-    // Méthodes héritées
+    // Inherited methods
     //-------------------------------------------------------------------------------------------------
 
     //!
@@ -61,6 +63,7 @@ public:
 
 protected:
 
+    QString     m_sUpdateFunction;
     qint32      m_iItemsPerPage;
     qint32      m_iCurrentPage;
 };

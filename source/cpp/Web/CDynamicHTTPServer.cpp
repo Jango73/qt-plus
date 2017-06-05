@@ -171,7 +171,7 @@ void CDynamicHTTPServer::getContent(const CWebContext& tContext, QString& sHead,
 
         CWebPage* pPage = getPage(this, tContext);
 
-        if (pPage != NULL)
+        if (pPage != nullptr)
         {
             pPage->getContent(this, tContext, sHead, sBody, sCustomResponse);
 

@@ -171,10 +171,13 @@ public:
     CWebControl* addControl(CWebControl* pControl);
 
     //!
+    void deleteControl(CWebControl* pControl);
+
+    //!
     CWebControl* addObserver(IWebControlObserver* pObserver);
 
     //!
-    virtual void addHTML(QString& sHead, QString& sBody) const;
+    virtual void addHTML(QString& sHead, QString& sBody);
 
     //!
     QString addHTMLEvent(QString& sHead, QString sEvent, QString sEventParam = "") const;
@@ -191,6 +194,12 @@ public:
 
     //!
     void propertyModified(const QString& sPropertyName, const QString& sPropertyValue);
+
+    //!
+    void controlAdded(CWebControl* pControl);
+
+    //!
+    void controlDeleted(const QString& sChildCodeName);
 
     //!
     void locationModified(const QString& sPropertyValue);

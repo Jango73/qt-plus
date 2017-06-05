@@ -63,7 +63,7 @@ CWebButton::~CWebButton()
 /*!
     Appends the HTML text that represents this button to \a sHead and \a sBody.
 */
-void CWebButton::addHTML(QString& sHead, QString& sBody) const
+void CWebButton::addHTML(QString& sHead, QString& sBody)
 {
     QString sFunction = addHTMLEvent(sHead, EVENT_CLICKED, m_sEventParameter);
 

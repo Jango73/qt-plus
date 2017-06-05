@@ -95,7 +95,9 @@ CWebControl* CWebPage::instantiator()
     Constructs a CWebPage with default parameters.
 */
 CWebPage::CWebPage()
+    : m_bDeserialized(false)
 {
+    m_sPropertyChanges.append(QString("var newElement;"HTML_NL));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -105,7 +107,9 @@ CWebPage::CWebPage()
 */
 CWebPage::CWebPage(const QString& sName)
     : CWebControl(sName, "")
+    , m_bDeserialized(false)
 {
+    m_sPropertyChanges.append(QString("var newElement;"HTML_NL));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -154,22 +158,22 @@ void CWebPage::getContent(CDynamicHTTPServer* pServer, const CWebContext& tConte
         pServer->composer()->addJSFileStatement(sHead, sFileName);
     }
 
+    addHTML(sHead, sBody);
+
     sHead += QString(
                 "<script type='text/javascript' language='javascript'>"HTML_NL
                 "window.onload = function()"HTML_NL
                 "{"HTML_NL
                 );
 
-    sHead += "document.viewstate='" + getViewState(pServer) + "';"HTML_NL;
-
     sHead += m_sPropertyChanges;
+
+    sHead += "document.viewstate='" + getViewState(pServer) + "';"HTML_NL;
 
     sHead += QString(
                 "};"HTML_NL
                 "</script>"HTML_NL
                 );
-
-    addHTML(sHead, sBody);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -180,7 +184,9 @@ void CWebPage::getContent(CDynamicHTTPServer* pServer, const CWebContext& tConte
 void CWebPage::locationModified(const QString& sPropertyValue)
 {
     m_sPropertyChanges.append(
-                QString("document.location = '%1';"HTML_NL)
+                QString(
+                    "document.location = '%1';"HTML_NL
+                    )
                 .arg(sPropertyValue)
                 );
 }
@@ -193,11 +199,58 @@ void CWebPage::locationModified(const QString& sPropertyValue)
 void CWebPage::propertyModified(const QString& sID, const QString& sPropertyName, const QString& sPropertyValue)
 {
     m_sPropertyChanges.append(
-                QString("document.getElementById('%1').%2='%3';"HTML_NL)
+                QString(
+                    "document.getElementById('%1').%2='%3';"HTML_NL
+                    )
                 .arg(sID)
                 .arg(sPropertyName)
                 .arg(sPropertyValue)
                 );
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    This adds a javascript line that will set \a sPropertyName of control \a sID to value \a sPropertyValue.
+*/
+void CWebPage::controlAdded(const QString& sID, CWebControl* pChildControl)
+{
+    if (m_bDeserialized)
+    {
+        QString sHead;
+        QString sBody;
+
+        pChildControl->addHTML(sHead, sBody);
+
+        sBody.replace(HTML_NL, "");
+
+        m_sPropertyChanges.append(
+                    QString(
+                        "document.getElementById('%2').appendChild(htmlToElement(\"%1\"));"HTML_NL
+                        )
+                    .arg(sBody)
+                    .arg(sID)
+                    );
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    This adds a javascript line that will set \a sPropertyName of control \a sID to value \a sPropertyValue.
+*/
+void CWebPage::controlDeleted(const QString& sID, const QString& sChildID)
+{
+    if (m_bDeserialized)
+    {
+        m_sPropertyChanges.append(
+                    QString(
+                        "document.getElementById('%1').removeChild(%2);"HTML_NL
+                        )
+                    .arg(sID)
+                    .arg(sChildID)
+                    );
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -229,80 +282,86 @@ void CWebPage::setViewstate(const QString& sViewState)
 /*!
     Appends the HTML text that represents this control to \a sHead and \a sBody.
 */
-void CWebPage::addHTML(QString& sHead, QString& sBody) const
+void CWebPage::addHTML(QString& sHead, QString& sBody)
 {
     sHead += QString(
-            "<script type='text/javascript' language='javascript'>%1"
-            "function httpWebEvent(theUrl)%1"
-            "{%1"
-            "  var xmlHttp = null;%1"
-            "  xmlHttp = new XMLHttpRequest();%1"
-            "  xmlHttp.onload = function()%1"
-            "  {%1"
-            "    if (this.status == 200)%1"
-            "    {%1"
-            "      processRequestReturnValue(this.responseText);%1"
-            "    }%1"
-            "  }%1"
-            "  xmlHttp.open('%8', theUrl);%1"
-            "  xmlHttp.send(null);%1"
-            "}%1"
-            "function httpWebEventPOST(theUrl, theText)%1"
-            "{%1"
-            "  var xmlHttp = null;%1"
-            "  xmlHttp = new XMLHttpRequest();%1"
-            "  xmlHttp.onload = function()%1"
-            "  {%1"
-            "    if (this.status == 200)%1"
-            "    {%1"
-            "      processRequestReturnValue(this.responseText);%1"
-            "    }%1"
-            "  }%1"
-            "  xmlHttp.open('%9', theUrl);%1"
-            "  xmlHttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');%1"
-            "  xmlHttp.send(theText);%1"
-            "}%1"
-            "function httpUpload(control)%1"
-            "{%1"
-            "  var xmlHttp = new XMLHttpRequest();%1"
-            "  var formData = new FormData();%1"
-            "  var actualControl = document.getElementById(control);%1"
-            "  xmlHttp.onload = function()%1"
-            "  {%1"
-            "    if (this.status == 200)%1"
-            "    {%1"
-            "      processRequestReturnValue(this.responseText);%1"
-            "    }%1"
-            "  }%1"
-            "  xmlHttp.open('%9', getUploadURL(control));%1"
-            "  formData.append('%6', document.%6);%1"
-            "  formData.append(control, actualControl.files[0]);%1"
-            "  xmlHttp.send(formData);%1"
-            "  actualControl.value = '';%1"
-            "}%1"
-            "function getWebEventURL(control, event, param)%1"
-            "{%1"
-            "  return '?%2=%3' + '&%4=' + control + '&%3=' + event + '&%5=' + param;%1"
-            "}%1"
-            "function getUploadURL(control)%1"
-            "{%1"
-            "  return '?%2=%7' + '&%4=' + control;%1"
-            "}%1"
-            "function emitWebEvent(control, event, param)%1"
-            "{%1"
-            "  httpWebEventPOST(getWebEventURL(control, event, param), '%6=' + document.%6);%1"
-            "}%1"
-            "function processRequestReturnValue(value)%1"
-            "{%1"
-            "  debugOut(value);%1"
-            "  if (value != 'VOID') eval(value);%1"
-            "}%1"
-            "function debugOut(text)%1"
-            "{%1"
-            // "  document.getElementById('DebugOut').value = text;"HTML_NL
-            "}%1"
-            "</script>%1"
-            )
+                "<script type='text/javascript' language='javascript'>%1"
+                "function htmlToElement(html)%1"
+                "{%1"
+                "   var template = document.createElement('template');%1"
+                "   template.innerHTML = html;%1"
+                "   return template.content.firstChild;%1"
+                "}%1"
+                "function httpWebEvent(theUrl)%1"
+                "{%1"
+                "  var xmlHttp = null;%1"
+                "  xmlHttp = new XMLHttpRequest();%1"
+                "  xmlHttp.onload = function()%1"
+                "  {%1"
+                "    if (this.status == 200)%1"
+                "    {%1"
+                "      processRequestReturnValue(this.responseText);%1"
+                "    }%1"
+                "  }%1"
+                "  xmlHttp.open('%8', theUrl);%1"
+                "  xmlHttp.send(null);%1"
+                "}%1"
+                "function httpWebEventPOST(theUrl, theText)%1"
+                "{%1"
+                "  var xmlHttp = null;%1"
+                "  xmlHttp = new XMLHttpRequest();%1"
+                "  xmlHttp.onload = function()%1"
+                "  {%1"
+                "    if (this.status == 200)%1"
+                "    {%1"
+                "      processRequestReturnValue(this.responseText);%1"
+                "    }%1"
+                "  }%1"
+                "  xmlHttp.open('%9', theUrl);%1"
+                "  xmlHttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');%1"
+                "  xmlHttp.send(theText);%1"
+                "}%1"
+                "function httpUpload(control)%1"
+                "{%1"
+                "  var xmlHttp = new XMLHttpRequest();%1"
+                "  var formData = new FormData();%1"
+                "  var actualControl = document.getElementById(control);%1"
+                "  xmlHttp.onload = function()%1"
+                "  {%1"
+                "    if (this.status == 200)%1"
+                "    {%1"
+                "      processRequestReturnValue(this.responseText);%1"
+                "    }%1"
+                "  }%1"
+                "  xmlHttp.open('%9', getUploadURL(control));%1"
+                "  formData.append('%6', document.%6);%1"
+                "  formData.append(control, actualControl.files[0]);%1"
+                "  xmlHttp.send(formData);%1"
+                "  actualControl.value = '';%1"
+                "}%1"
+                "function getWebEventURL(control, event, param)%1"
+                "{%1"
+                "  return '?%2=%3' + '&%4=' + control + '&%3=' + event + '&%5=' + param;%1"
+                "}%1"
+                "function getUploadURL(control)%1"
+                "{%1"
+                "  return '?%2=%7' + '&%4=' + control;%1"
+                "}%1"
+                "function emitWebEvent(control, event, param)%1"
+                "{%1"
+                "  httpWebEventPOST(getWebEventURL(control, event, param), '%6=' + document.%6);%1"
+                "}%1"
+                "function processRequestReturnValue(value)%1"
+                "{%1"
+                "  debugOut(value);%1"
+                "  if (value != 'VOID') eval(value);%1"
+                "}%1"
+                "function debugOut(text)%1"
+                "{%1"
+                // "  document.getElementById('DebugOut').value = text;%1"
+                "}%1"
+                "</script>%1"
+                )
             .arg(HTML_NL)
             .arg(TOKEN_ACTION)
             .arg(TOKEN_EVENT)
@@ -389,12 +448,19 @@ CWebControl* CWebPage::fromViewState(QString sViewState, CObjectTracker *pTracke
 
         CWebControl* pControl = CWebFactory::getInstance()->instanciateProduct(sClassName);
 
-        if (pControl != NULL)
+        if (pControl != nullptr)
         {
             pControl->deserialize(stream, pTracker, pControl);
+
+            CWebPage* pWebPage = dynamic_cast<CWebPage*>(pControl);
+
+            if (pWebPage != nullptr)
+                pWebPage->m_bDeserialized = true;
+
             return pControl;
         }
+
     }
 
-    return NULL;
+    return nullptr;
 }

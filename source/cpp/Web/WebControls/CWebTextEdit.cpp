@@ -60,7 +60,7 @@ CWebTextEdit::~CWebTextEdit()
 /*!
     Appends the HTML text that represents this text area to \a sHead and \a sBody.
 */
-void CWebTextEdit::addHTML(QString& sHead, QString& sBody) const
+void CWebTextEdit::addHTML(QString& sHead, QString& sBody)
 {
     QString sFunction = addHTMLEventWithControlValue(sHead, EVENT_CHANGED);
 

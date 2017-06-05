@@ -60,7 +60,7 @@ CWebFileInput::~CWebFileInput()
 /*!
     Appends the HTML text that represents this file input to \a sHead and \a sBody.
 */
-void CWebFileInput::addHTML(QString& sHead, QString& sBody) const
+void CWebFileInput::addHTML(QString& sHead, QString& sBody)
 {
     QString sFunction = addCustomHTMLEvent(
                 sHead,

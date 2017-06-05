@@ -2,8 +2,6 @@
 // Application
 #include "CWebModelControl.h"
 
-#define EVENT_CHANGED	"changed"
-
 //-------------------------------------------------------------------------------------------------
 
 /*!

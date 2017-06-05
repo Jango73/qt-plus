@@ -14,6 +14,12 @@
 #define CONTROLNAME_LAST_PAGE           "LastPage"
 #define CONTROLNAME_CURRENT_PAGE_INDEX  "CurrentPageIndex"
 #define CONTROLNAME_TOTAL_PAGE_COUNT    "TotalPageCount"
+#define CONTROLNAME_CONTENT             "Content"
+
+#define MODEL_SUFFIX                    "_model"
+#define TABLE_SUFFIX                    "_table"
+
+#define EVENT_UPDATE                    "update"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -82,7 +88,7 @@ CWebListView::CWebListView(const QString& sName, const QString& sCaption, IJSONM
 
     pControlDiv->addControl(new CWebTextBox(CONTROLNAME_TOTAL_PAGE_COUNT, ""))->setReadOnly(true);
 
-    CWebControl* pContentDiv = addControl(new CWebDiv("Content", ""));
+    setModel();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -92,6 +98,53 @@ CWebListView::CWebListView(const QString& sName, const QString& sCaption, IJSONM
 */
 CWebListView::~CWebListView()
 {
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CWebListView::setModel()
+{
+    /*
+    QString sTableID = getCodeName() + TABLE_SUFFIX;
+
+    QString sCall = QString("document.getElementById(%1).innerHTML = '';").arg(sTableID);
+
+    scriptCall(sCall);
+    */
+
+    CXMLNode xModel = m_pModelProvider.get()->modelItems(m_iCurrentPage * m_iItemsPerPage, m_iItemsPerPage);
+
+    CWebControl* pContent = findControlByName(CONTROLNAME_CONTENT);
+
+    if (pContent != nullptr)
+        deleteControl(pContent);
+
+    CWebControl* pContentDiv = addControl(new CWebDiv(CONTROLNAME_CONTENT, ""));
+
+    CXMLNode xHeader = xModel.getNodeByTagName("header");
+    QVector<CXMLNode> xProperties = xHeader.getNodesByTagName("property");
+
+    QStringList lProperties;
+
+    foreach (CXMLNode xProperty, xProperties)
+    {
+        lProperties << xProperty.attributes()["name"];
+    }
+
+    CXMLNode xData = xModel.getNodeByTagName("data");
+    QVector<CXMLNode> xItems = xData.getNodesByTagName("item");
+
+    foreach (CXMLNode xItem, xItems)
+    {
+        CWebControl* pLineDiv = pContentDiv->addControl(new CWebDiv("", ""));
+
+        foreach (QString sProperty, lProperties)
+        {
+            QString sText = xItem.attributes()[sProperty];
+
+            pLineDiv->addControl(new CWebLabel("", sText));
+        }
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -139,6 +192,8 @@ void CWebListView::controlEvent(CWebControl* pControl, QString sEvent, QString s
 
         if (pTotalPageLabel != nullptr)
             pTotalPageLabel->setCaption(QString::number(iTotalCount / m_iItemsPerPage));
+
+        setModel();
     }
 }
 
@@ -148,6 +203,7 @@ void CWebListView::serialize(QDataStream& stream, CObjectTracker* pTracker) cons
 {
     CWebModelControl::serialize(stream, pTracker);
 
+    stream << m_sUpdateFunction;
     stream << m_iItemsPerPage;
     stream << m_iCurrentPage;
 }
@@ -158,6 +214,7 @@ void CWebListView::deserialize(QDataStream& stream, CObjectTracker* pTracker, QO
 {
     CWebModelControl::deserialize(stream, pTracker, pRootControl);
 
+    stream >> m_sUpdateFunction;
     stream >> m_iItemsPerPage;
     stream >> m_iCurrentPage;
 }

@@ -60,7 +60,7 @@ CWebTextBox::~CWebTextBox()
 /*!
     Appends the HTML text that represents this text box to \a sHead and \a sBody.
 */
-void CWebTextBox::addHTML(QString& sHead, QString& sBody) const
+void CWebTextBox::addHTML(QString& sHead, QString& sBody)
 {
     QString sFunction = addHTMLEventWithControlValue(sHead, EVENT_CHANGED);
 

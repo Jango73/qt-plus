@@ -62,6 +62,12 @@ public:
     void propertyModified(const QString& sID, const QString& sPropertyName, const QString& sPropertyValue);
 
     //!
+    void controlAdded(const QString& sID, CWebControl* pChildControl);
+
+    //!
+    void controlDeleted(const QString& sID, const QString& sChildID);
+
+    //!
     void scriptCall(const QString& sScript);
 
     //!
@@ -72,7 +78,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void addHTML(QString& sHead, QString& sBody) const;
+    virtual void addHTML(QString& sHead, QString& sBody);
 
     //!
     virtual void serialize(QDataStream& stream, CObjectTracker* pTracker) const;
@@ -102,4 +108,5 @@ protected:
 protected:
 
     QString     m_sPropertyChanges;
+    bool        m_bDeserialized;
 };

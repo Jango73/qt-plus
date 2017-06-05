@@ -435,13 +435,30 @@ qint32 CWebControl::getObserverID() const
 */
 CWebControl* CWebControl::addControl(CWebControl* pControl)
 {
-    if (pControl != NULL && m_vControls.contains(pControl) == false)
+    if (pControl != nullptr && m_vControls.contains(pControl) == false)
     {
         pControl->setParentControl(this);
         m_vControls.append(pControl);
+
+        controlAdded(pControl);
     }
 
     return pControl;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CWebControl::deleteControl(CWebControl* pControl)
+{
+    if (m_vControls.contains(pControl))
+    {
+        QString sCodeName = pControl->getCodeName();
+
+        m_vControls.removeAll(pControl);
+        delete pControl;
+
+        controlDeleted(sCodeName);
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -463,7 +480,7 @@ CWebControl* CWebControl::addObserver(IWebControlObserver* pObserver)
     This method is meant to be overridden by subclasses. \br
     The default implementation simply adds a <div>.
 */
-void CWebControl::addHTML(QString& sHead, QString& sBody) const
+void CWebControl::addHTML(QString& sHead, QString& sBody)
 {
     sBody.append(
                 QString("<div id='%1' class='%2' style='%3' style.visibility='%4'>"HTML_NL)
@@ -578,13 +595,55 @@ void CWebControl::propertyModified(const QString& sPropertyName, const QString& 
 {
     CWebControl* pRoot = getRoot();
 
-    if (pRoot != NULL)
+    if (pRoot != nullptr)
     {
         CWebPage* pPage = dynamic_cast<CWebPage*>(pRoot);
 
-        if (pPage != NULL)
+        if (pPage != nullptr)
         {
             pPage->propertyModified(getCodeName(), sPropertyName, sPropertyValue);
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Generates javascript that will add a child control client-side. \br\br
+    \a sChildCodeName specifies the name of the child control. \br
+*/
+void CWebControl::controlAdded(CWebControl* pControl)
+{
+    CWebControl* pRoot = getRoot();
+
+    if (pRoot != nullptr)
+    {
+        CWebPage* pPage = dynamic_cast<CWebPage*>(pRoot);
+
+        if (pPage != nullptr)
+        {
+            pPage->controlAdded(getCodeName(), pControl);
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Generates javascript that will delete a child control client-side. \br\br
+    \a sChildCodeName specifies the name of the child control. \br
+*/
+void CWebControl::controlDeleted(const QString& sChildCodeName)
+{
+    CWebControl* pRoot = getRoot();
+
+    if (pRoot != nullptr)
+    {
+        CWebPage* pPage = dynamic_cast<CWebPage*>(pRoot);
+
+        if (pPage != nullptr)
+        {
+            pPage->controlDeleted(getCodeName(), sChildCodeName);
         }
     }
 }
@@ -598,11 +657,11 @@ void CWebControl::locationModified(const QString& sPropertyValue)
 {
     CWebControl* pRoot = getRoot();
 
-    if (pRoot != NULL)
+    if (pRoot != nullptr)
     {
         CWebPage* pPage = dynamic_cast<CWebPage*>(pRoot);
 
-        if (pPage != NULL)
+        if (pPage != nullptr)
         {
             pPage->locationModified(sPropertyValue);
         }
