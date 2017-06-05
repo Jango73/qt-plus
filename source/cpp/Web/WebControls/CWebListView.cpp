@@ -104,14 +104,6 @@ CWebListView::~CWebListView()
 
 void CWebListView::setModel()
 {
-    /*
-    QString sTableID = getCodeName() + TABLE_SUFFIX;
-
-    QString sCall = QString("document.getElementById(%1).innerHTML = '';").arg(sTableID);
-
-    scriptCall(sCall);
-    */
-
     CXMLNode xModel = m_pModelProvider.get()->modelItems(m_iCurrentPage * m_iItemsPerPage, m_iItemsPerPage);
 
     CWebControl* pContent = findControlByName(CONTROLNAME_CONTENT);
@@ -128,7 +120,18 @@ void CWebListView::setModel()
 
     foreach (CXMLNode xProperty, xProperties)
     {
-        lProperties << xProperty.attributes()["name"];
+        QString sText = xProperty.attributes()["name"];
+
+        lProperties << sText;
+    }
+
+    {
+        CWebControl* pLineDiv = pContentDiv->addControl(new CWebDiv("", ""))->setStyleClass("listview-line");
+
+        foreach (QString sProperty, lProperties)
+        {
+            pLineDiv->addControl(new CWebLabel("", sProperty));
+        }
     }
 
     CXMLNode xData = xModel.getNodeByTagName("data");
@@ -136,7 +139,7 @@ void CWebListView::setModel()
 
     foreach (CXMLNode xItem, xItems)
     {
-        CWebControl* pLineDiv = pContentDiv->addControl(new CWebDiv("", ""));
+        CWebControl* pLineDiv = pContentDiv->addControl(new CWebDiv("", ""))->setStyleClass("listview-line");
 
         foreach (QString sProperty, lProperties)
         {
@@ -181,7 +184,7 @@ void CWebListView::controlEvent(CWebControl* pControl, QString sEvent, QString s
         }
         else if (pControl->getName() == CONTROLNAME_LAST_PAGE)
         {
-            m_iCurrentPage = iTotalCount / m_iItemsPerPage;
+            m_iCurrentPage = (iTotalCount / m_iItemsPerPage) - 1;
         }
 
         CWebTextBox* pCurrentPageLabel = dynamic_cast<CWebTextBox*>(findControlByName(CONTROLNAME_CURRENT_PAGE_INDEX));
