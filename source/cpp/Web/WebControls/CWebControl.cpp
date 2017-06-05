@@ -122,7 +122,7 @@ CWebControl* CWebControl::setCaption(const QString& value)
 CWebControl* CWebControl::setStyleClass(const QString& value)
 {
     m_sStyleClass = value;
-    propertyModified("class", value);
+    propertyModified("className", value);
     return this;
 }
 
