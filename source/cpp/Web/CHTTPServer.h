@@ -111,6 +111,9 @@ public:
     // Public control methods
     //-------------------------------------------------------------------------------------------------
 
+    //! Activates or deactivates flood protection (activated by default)
+    void useFloodProtection(bool bUse);
+
     //!  Adds a folder to the list of authorized folders
     void addAuthorizedFolder(QString sFolderName);
 
@@ -347,6 +350,7 @@ protected:
     int                             m_iRequestCount;            // Total request count
     int                             m_iMaxRequestPerSeconds;    //
     bool                            m_bDisabled;                // Tells if the server should ignore requests
+    bool                            m_bUseFloodProtection;
     QVector<QString>                m_vAuthorizedFolders;       // Tells which folders users can access
     QMap<QString, QString>          m_vExtensionToContentType;  // Used to converta file extension to a MIME type
     QThreadPool                     m_pProcessors;              // Threaded request processors

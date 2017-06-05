@@ -31,6 +31,7 @@ CHTTPServer::CHTTPServer(quint16 port, QObject* parent)
     , m_iRequestCount(0)
     , m_iMaxRequestPerSeconds(15)
     , m_bDisabled(false)
+    , m_bUseFloodProtection(true)
 {
     // Fill MIME array
 
@@ -365,8 +366,11 @@ void CHTTPServer::processRequest(QTcpSocket* pSocket)
         // Increment total request count
         m_iRequestCount++;
 
-        // Process request monitors
-        m_mMonitors[sIPAddress].processIn();
+        if (m_bUseFloodProtection)
+        {
+            // Process request monitors
+            m_mMonitors[sIPAddress].processIn();
+        }
 
         unlock();
     }
@@ -550,8 +554,11 @@ void CHTTPServer::processRequest(QTcpSocket* pSocket)
 
     if (lock())
     {
-        // Process request monitors
-        m_mMonitors[sIPAddress].processOut();
+        if (m_bUseFloodProtection)
+        {
+            // Process request monitors
+            m_mMonitors[sIPAddress].processOut();
+        }
 
         unlock();
     }
@@ -775,6 +782,16 @@ QString CHTTPServer::getContentTypeByExtension(const QString& sExtention) const
     }
 
     return MIME_Content_Stream;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Activates or deactivates flood protection according to \a bUse.
+*/
+void CHTTPServer::useFloodProtection(bool bUse)
+{
+    m_bUseFloodProtection = bUse;
 }
 
 //-------------------------------------------------------------------------------------------------
