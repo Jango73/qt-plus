@@ -82,11 +82,24 @@ CWebListView::CWebListView(const QString& sName, const QString& sCaption, IJSONM
             ->addObserver(this)
             ->setStyleClass("button1");
 
-    pControlDiv->addControl(new CWebTextBox(CONTROLNAME_CURRENT_PAGE_INDEX, ""))->setReadOnly(true);
+    pControlDiv->addControl(new CWebLabel("", "Page"))
+            ->setStyleClass("label1");
 
-    pControlDiv->addControl(new CWebLabel("", "/"));
+    CWebControl* pCurrentPageLabel = pControlDiv->addControl(new CWebTextBox(CONTROLNAME_CURRENT_PAGE_INDEX, ""))
+            ->setReadOnly(true)
+            ->setStyleClass("label1");
 
-    pControlDiv->addControl(new CWebTextBox(CONTROLNAME_TOTAL_PAGE_COUNT, ""))->setReadOnly(true);
+    pControlDiv->addControl(new CWebLabel("", "/"))
+            ->setStyle("width:20px;");
+
+    CWebControl* pTotalPageLabel = pControlDiv->addControl(new CWebTextBox(CONTROLNAME_TOTAL_PAGE_COUNT, ""))
+            ->setReadOnly(true)
+            ->setStyleClass("label1");
+
+    // Set paging data
+    int iTotalCount = m_pModelProvider.get()->modelItemCount();
+    pCurrentPageLabel->setCaption(QString::number(m_iCurrentPage + 1));
+    pTotalPageLabel->setCaption(QString::number(iTotalCount / m_iItemsPerPage));
 
     setModel();
 }
@@ -202,7 +215,7 @@ void CWebListView::controlEvent(CWebControl* pControl, QString sEvent, QString s
         CWebTextBox* pTotalPageLabel = dynamic_cast<CWebTextBox*>(findControlByName(CONTROLNAME_TOTAL_PAGE_COUNT));
 
         if (pCurrentPageLabel != nullptr)
-            pCurrentPageLabel->setCaption(QString::number(m_iCurrentPage));
+            pCurrentPageLabel->setCaption(QString::number(m_iCurrentPage + 1));
 
         if (pTotalPageLabel != nullptr)
             pTotalPageLabel->setCaption(QString::number(iTotalCount / m_iItemsPerPage));
