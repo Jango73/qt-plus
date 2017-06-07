@@ -37,6 +37,7 @@ HEADERS += \
     source/cpp/Web/WebControls/CWebModelControl.h \
     source/cpp/Web/WebControls/CWebListView.h \
     source/cpp/ISerializable.h \
+    source/cpp/IJSONModelProvider.h \
     source/cpp/CInterpolator.h \
     source/cpp/GeoTools/coordcnv.h \
     source/cpp/GeoTools/geocent.h \

@@ -115,6 +115,9 @@ CWebListView::~CWebListView()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Creates the control according to the model provided by the given IJSONModelProvider.
+*/
 void CWebListView::setModel()
 {
     CXMLNode xModel = m_pModelProvider.get()->modelItems(m_iCurrentPage * m_iItemsPerPage, m_iItemsPerPage);

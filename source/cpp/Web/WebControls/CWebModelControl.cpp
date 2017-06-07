@@ -36,6 +36,7 @@ CWebModelControl::CWebModelControl()
     Constructs a CWebModelControl with basic parameters. \br\br
     \a sName specifies the name of the control. \br
     \a sCaption specifies the caption of the control, which is the displayed text. \br
+    \a pModelProvider provides model data. \br
 */
 CWebModelControl::CWebModelControl(const QString& sName, const QString& sCaption, IJSONModelProvider* pModelProvider)
     : CWebControl(sName, sCaption)
