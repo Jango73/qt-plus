@@ -512,24 +512,10 @@ void CWebControl::addHTML(QString& sHead, QString& sBody)
 */
 QString CWebControl::addHTMLEvent(QString& sHead, QString sEvent, QString sEventParam) const
 {
-    QString sFunction = QString("%1_%2")
-            .arg(getCodeName())
-            .arg(sEvent);
-
-    sHead += QString(
-                "<script type='text/javascript' language='javascript'>"HTML_NL
-                "function %1()"HTML_NL
-                "{"HTML_NL
-                "  emitWebEvent('%2', '%3', '%4');"HTML_NL
-                "}"HTML_NL
-                "</script>"HTML_NL
-                )
-            .arg(sFunction)
+    return QString("emitWebEvent(&quot;%1&quot;, &quot;%2&quot;, &quot;%3&quot;)")
             .arg(getCodeName())
             .arg(sEvent)
             .arg(sEventParam);
-
-    return sFunction;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -541,23 +527,9 @@ QString CWebControl::addHTMLEvent(QString& sHead, QString sEvent, QString sEvent
 */
 QString CWebControl::addHTMLEventWithControlValue(QString& sHead, QString sEvent) const
 {
-    QString sFunction = QString("%1_%2")
+    return QString("emitWebEvent(&quot;%1&quot;, &quot;%2&quot;, %1.value)")
             .arg(getCodeName())
             .arg(sEvent);
-
-    sHead += QString(
-                "<script type='text/javascript' language='javascript'>"HTML_NL
-                "function %1()"HTML_NL
-                "{"HTML_NL
-                "  emitWebEvent('%2', '%3', %2.value);"HTML_NL
-                "}"HTML_NL
-                "</script>"HTML_NL
-                )
-            .arg(sFunction)
-            .arg(getCodeName())
-            .arg(sEvent);
-
-    return sFunction;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -604,7 +576,10 @@ void CWebControl::propertyModified(const QString& sPropertyName, const QString& 
 
         if (pPage != nullptr)
         {
-            pPage->propertyModified(getCodeName(), sPropertyName, sPropertyValue);
+            if (pPage->isDeserialized())
+            {
+                pPage->propertyModified(getCodeName(), sPropertyName, sPropertyValue);
+            }
         }
     }
 }

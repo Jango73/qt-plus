@@ -135,6 +135,16 @@ QString CWebPage::getPropertyChanges()
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Returns \C true if the page was constructed by deserialization
+*/
+bool CWebPage::isDeserialized() const
+{
+    return m_bDeserialized;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     This method returns a HTML rendering of the page and its child controls. \br\br
     \a pServer is the server requesting the contents. \br
     \a sHead is filled with the HTML page head statements. \br
@@ -374,7 +384,7 @@ void CWebPage::addHTML(QString& sHead, QString& sBody)
             .arg(HTTP_POST);
 
     // Debug out
-    // sBody.append(QString("<div style='div1'><textarea id='DebugOut'></textarea></div>"HTML_NL));
+    // sBody.append(QString("<div width='100%' style='div1'><textarea id='DebugOut'></textarea></div>"HTML_NL));
 
     foreach (CWebControl* pControl, m_vControls)
     {
