@@ -448,6 +448,9 @@ CWebControl* CWebControl::addControl(CWebControl* pControl)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Deletes the child control \a pControl.
+*/
 void CWebControl::deleteControl(CWebControl* pControl)
 {
     if (m_vControls.contains(pControl))
@@ -610,7 +613,7 @@ void CWebControl::propertyModified(const QString& sPropertyName, const QString& 
 
 /*!
     Generates javascript that will add a child control client-side. \br\br
-    \a sChildCodeName specifies the name of the child control. \br
+    \a pControl is the new child control. \br
 */
 void CWebControl::controlAdded(CWebControl* pControl)
 {

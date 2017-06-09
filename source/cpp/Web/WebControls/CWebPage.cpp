@@ -211,7 +211,8 @@ void CWebPage::propertyModified(const QString& sID, const QString& sPropertyName
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    This adds a javascript line that will set \a sPropertyName of control \a sID to value \a sPropertyValue.
+    This adds javascript code that will add the \a pChildControl control to the control \a sID client-side. \br\br
+    It uses the htmlToElement() function which in turn uses the <template> HTML type to generate a HTML control.
 */
 void CWebPage::controlAdded(const QString& sID, CWebControl* pChildControl)
 {
@@ -237,7 +238,7 @@ void CWebPage::controlAdded(const QString& sID, CWebControl* pChildControl)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    This adds a javascript line that will set \a sPropertyName of control \a sID to value \a sPropertyValue.
+    This adds javascript code that will delete the \a sChildID child control of \a sID client-side.
 */
 void CWebPage::controlDeleted(const QString& sID, const QString& sChildID)
 {
