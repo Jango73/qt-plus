@@ -1,7 +1,6 @@
 import QtQuick 2.5
 
 /*!
-     \ingroup ivi-2020-y0
      \brief An item that shows layers of a qml content.
 */
 
