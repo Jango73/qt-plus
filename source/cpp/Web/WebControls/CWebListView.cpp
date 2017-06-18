@@ -16,9 +16,6 @@
 #define CONTROLNAME_TOTAL_PAGE_COUNT    "TotalPageCount"
 #define CONTROLNAME_CONTENT             "Content"
 
-#define MODEL_SUFFIX                    "_model"
-#define TABLE_SUFFIX                    "_table"
-
 #define EVENT_UPDATE                    "update"
 
 //-------------------------------------------------------------------------------------------------
@@ -190,6 +187,7 @@ void CWebListView::controlEvent(CWebControl* pControl, QString sEvent, QString s
     if (m_pModelProvider.get() != nullptr)
     {
         int iTotalCount = m_pModelProvider.get()->modelItemCount();
+        int iTotalPages = iTotalCount % m_iItemsPerPage == 0 ? iTotalCount / m_iItemsPerPage : (iTotalCount / m_iItemsPerPage) + 1;
 
         if (pControl->getName() == CONTROLNAME_FIRST_PAGE)
         {
@@ -204,14 +202,14 @@ void CWebListView::controlEvent(CWebControl* pControl, QString sEvent, QString s
         }
         else if (pControl->getName() == CONTROLNAME_NEXT_PAGE)
         {
-            if (m_iCurrentPage * m_iItemsPerPage + m_iItemsPerPage < iTotalCount)
+            if (m_iCurrentPage < iTotalPages - 1)
             {
                 m_iCurrentPage++;
             }
         }
         else if (pControl->getName() == CONTROLNAME_LAST_PAGE)
         {
-            m_iCurrentPage = (iTotalCount / m_iItemsPerPage) - 1;
+            m_iCurrentPage = iTotalPages - 1;
         }
 
         CWebTextBox* pCurrentPageLabel = dynamic_cast<CWebTextBox*>(findControlByName(CONTROLNAME_CURRENT_PAGE_INDEX));
@@ -221,7 +219,7 @@ void CWebListView::controlEvent(CWebControl* pControl, QString sEvent, QString s
             pCurrentPageLabel->setCaption(QString::number(m_iCurrentPage + 1));
 
         if (pTotalPageLabel != nullptr)
-            pTotalPageLabel->setCaption(QString::number(iTotalCount / m_iItemsPerPage));
+            pTotalPageLabel->setCaption(QString::number(iTotalPages));
 
         setModel();
     }
