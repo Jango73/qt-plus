@@ -8,7 +8,7 @@
 /*!
     \class CWebComposer
     \inmodule qt-plus
-    \brief A class used to quickly generate HTML controls.
+    \brief A class that renders HTML components.
 */
 
 //-------------------------------------------------------------------------------------------------

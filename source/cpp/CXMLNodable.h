@@ -23,12 +23,12 @@ class QTPLUSSHARED_EXPORT CXMLNodable
 {
 public:
 
-    //! Constructeur
+    //! Constructor
     CXMLNodable();
 
-    //! Destructeur
+    //! Destructor
     virtual ~CXMLNodable();
 
-    //! Dump du contenu dans un flux
+    //! Serializes this object to a xml node
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent);
 };

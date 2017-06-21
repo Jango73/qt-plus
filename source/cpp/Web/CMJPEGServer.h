@@ -42,6 +42,7 @@ protected:
     bool			m_bRun;
 };
 
+//! Defines a MJPEG server
 class QTPLUSSHARED_EXPORT CMJPEGServer : public CHTTPServer
 {
     Q_OBJECT
@@ -73,10 +74,10 @@ public:
     //!
     void sendRaw(const QByteArray& baData, int iWidth, int iHeight);
 
-    //!
+    //! Sends an image to connected clients
     void sendImage(const QImage& image);
 
-    //!
+    //! Returns true if there are connected clients
     bool hasConnections() const;
 
     //! Flushes the output
@@ -95,7 +96,7 @@ public:
     // Static control methods
     //-------------------------------------------------------------------------------------------------
 
-    //!
+    //! Saves a sequence of images as an MJPEG stream
     static void saveMJPEG(const QVector<QImage>& vImages, QString sFileName);
 
     //-------------------------------------------------------------------------------------------------

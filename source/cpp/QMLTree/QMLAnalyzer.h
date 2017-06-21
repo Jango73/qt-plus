@@ -25,6 +25,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
+//! Defines a static QML analyzer
 class QTPLUSSHARED_EXPORT QMLAnalyzer : public QThread
 {
     Q_OBJECT

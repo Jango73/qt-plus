@@ -9,7 +9,6 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Cette classe définit un arbre générique
 //! This class defines a generic tree structure
 template <class T>
 class QTree
@@ -17,18 +16,15 @@ class QTree
 public:
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //! Constructeur par défaut
     //! Default constructor
     QTree()
         : m_Parent(NULL)
     {
     }
 
-    //! Constructeur avec valeur et parent
     //! Constructor using value and parent
     QTree(T value, QTree<T>* parent = NULL)
         : m_tValue(value)
@@ -36,7 +32,6 @@ public:
     {
     }
 
-    //! Constructeur de copie
     //! Copy constructor
     QTree(const QTree<T>& target)
         : m_tValue(target.m_tValue)
@@ -45,7 +40,6 @@ public:
     {
     }
 
-    //! Destructeur
     //! Destructor
     virtual ~QTree()
     {
@@ -55,7 +49,6 @@ public:
     // Setters
     //-------------------------------------------------------------------------------------------------
 
-    //! Définit la valeur de ce noeud
     //! Sets this node's value
     void setValue(T value)
     {
@@ -66,69 +59,61 @@ public:
     // Getters
     //-------------------------------------------------------------------------------------------------
 
-    //! Retourne le nombre de noeuds enfants de ce noeud
     //! Returns this node's child count
     int count() const
     {
         return m_vChildren.count();
     }
 
-    //! Remet l'arbre à zéro
     //! Resets the tree
     void clear()
     {
         m_vChildren.clear();
     }
 
-    //! Retourne le nombre de noeuds enfants de ce noeud, en descendant dans l'arbre
     //! Returns this node's child count, descending through the whole tree
     int recursiveCount() const
     {
         return recursiveCount_internal(this);
     }
 
-    //! Retourne la valeur de ce noeud
     //! Returns this node's value
     T& value()
     {
         return m_tValue;
     }
 
-    //! Retourne la valeur de ce noeud
     //! Returns this node's value
     const T& value() const
     {
         return m_tValue;
     }
 
-    //! Retourne le noeud parent de ce noeud
     //! Returns this node's parent
     QTree<T>* parent() const
     {
         return m_Parent;
     }
 
-    //! Retourne les noeuds enfant
     //! Returns child nodes
     QList<QTree<T> >& getChildren()
     {
         return m_vChildren;
     }
 
-    //! Retourne les noeuds enfant
     //! Returns child nodes
     const QList<QTree<T> >& getChildren() const
     {
         return m_vChildren;
     }
 
-    //! Retourne le noeud qui contient la valeur spécifiée
     //! Returns the node that contains the given value
     QTree<T>* nodeForValue(const T& value)
     {
         return nodeForValue_internal(this, value);
     }
 
+    //! Returns the root node
     QTree<T>* root() const
     {
         const QTree<T>* pReturnValue = this;
@@ -141,21 +126,20 @@ public:
         return const_cast<QTree<T>*>(pReturnValue);
     }
 
+    //! Returns all values as a flat vector
     QVector<T> flatValues() const
     {
         QVector<T> lReturnValue;
 
-        flatflatValues_Recurse(lReturnValue, root());
+        flatValues_Recurse(lReturnValue, root());
 
         return lReturnValue;
     }
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes de contrôle
     // Control methods
     //-------------------------------------------------------------------------------------------------
 
-    //! Ajoute une valeur enfant à ce noeud
     //! Appends a child value to this node
     void append(T value)
     {
@@ -164,7 +148,6 @@ public:
         assignParents(root(), NULL);
     }
 
-    //! Ajoute un noeud enfant à ce noeud
     //! Appends a child node to this node
     void append(QTree<T> node)
     {
@@ -173,7 +156,6 @@ public:
         assignParents(root(), NULL);
     }
 
-    //! Ajoute un noeud enfant à ce noeud
     //! Appends a child node to this node
     void append(QTree<T>* node)
     {
@@ -182,14 +164,12 @@ public:
         assignParents(root(), NULL);
     }
 
-    //! Supprime un noeud enfant par son indice
     //! Deletes a child node by index
     void removeAt(int n)
     {
         m_vChildren.removeAt(n);
     }
 
-    //! Retire la valeur spécifiée des enfants
     //! Removes all value in children
     void removeAll(const T& value)
     {
@@ -203,7 +183,6 @@ public:
         }
     }
 
-    //! Retire la valeur spécifiée des enfants
     //! Removes all value in children
     void removeAll(const QTree<T>* node)
     {
@@ -222,7 +201,6 @@ public:
         }
     }
 
-    //! Déplace nodeToMove dans newParentNode
     //! Moves nodeToMove in newParentNode
     void moveNode(QTree<T>* nodeToMove, QTree<T>* newParentNode)
     {
@@ -254,7 +232,6 @@ public:
         assignParents(pRoot, NULL);
     }
 
-    //! Retourne vrai si les noeuds enfants contiennent la valeur spécifiée
     //! Returns true if this node's chlidren contain the specified value
     bool contains(T value) const
     {
@@ -271,44 +248,38 @@ public:
         return false;
     }
 
-    //! Retourne vrai si la valeur de ce noeud est égale à la valeur du noeud spécifié
     //! Returns true if both nodes values are equal
     bool operator == (const QTree<T>& target) const
     {
         return (m_tValue == target.m_tValue);
     }
 
-    //! Retourne vrai si la valeur de ce noeud n'est pas égale à la valeur du noeud spécifié
     //! Returns true if both nodes values are not equal
     bool operator != (const QTree<T>& target) const
     {
         return !(*this == target);
     }
 
-    //! Opérateur d'ajout d'élément
-    //! Element adding operator
+    //! Element appending operator
     QTree<T>& operator << (T value)
     {
         append(value);
         return *this;
     }
 
-    //! Opérateur d'ajout de noeud
-    //! Node adding operator
+    //! Node appending operator
     QTree<T>& operator << (QTree<T> value)
     {
         append(value);
         return *this;
     }
 
-    //! Indexeur
     //! Indexer
     T& operator [] (int index)
     {
         return m_vChildren[index].value();
     }
 
-    //! Index of
     //! Index of
     int position() const
     {
@@ -364,26 +335,25 @@ private:
         }
     }
 
-    static void flatflatValues_Recurse(QVector<T>& list, const QTree<T>* pNode)
+    static void flatValues_Recurse(QVector<T>& list, const QTree<T>* pNode)
     {
         list.append(pNode->value());
 
         for (int iIndex = 0; iIndex < pNode->m_vChildren.count(); iIndex++)
         {
-            flatflatValues_Recurse(list, &(pNode->m_vChildren[iIndex]));
+            flatValues_Recurse(list, &(pNode->m_vChildren[iIndex]));
         }
     }
 
     //-------------------------------------------------------------------------------------------------
-    // Propriétés
     // Properties
     //-------------------------------------------------------------------------------------------------
 
 protected:
 
-    T                   m_tValue;           // La valeur de ce noeud
-    QTree<T>*           m_Parent;           // Le noeud parent de ce noeud
-    QList<QTree<T> >    m_vChildren;        // Les noeuds enfants de ce noeud
+    T                   m_tValue;           // The node's value
+    QTree<T>*           m_Parent;           // The parent of this node
+    QList<QTree<T> >    m_vChildren;        // The children of this node
 };
 
 //-------------------------------------------------------------------------------------------------

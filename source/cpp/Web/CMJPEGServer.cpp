@@ -19,7 +19,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-// Marqueur de limite HTTP compatible Firefox
+// HTTP boundary marker compatible with Firefox
 static QString MJPEGBoundaryMarker = "7b3cc56e5f51db803f790dad720ed50a";
 
 //-------------------------------------------------------------------------------------------------

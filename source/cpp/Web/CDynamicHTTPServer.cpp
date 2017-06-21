@@ -13,7 +13,7 @@
 /*!
     \class CDynamicHTTPServer
     \inmodule qt-plus
-    \brief A server based on CHTTPServer that can serve pages generated in C++ (MS ASP style).
+    \brief A server based on CHTTPServer that can serve pages generated in C++ (like MS ASP).
 */
 
 //-------------------------------------------------------------------------------------------------

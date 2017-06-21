@@ -16,7 +16,7 @@
 /*!
     \class CHTTPServer
     \inmodule qt-plus
-    \brief A simple HTTP server that can serve files and dynamic content.
+    \brief A basic HTTP server that can serve files and dynamic content.
 */
 
 //-------------------------------------------------------------------------------------------------
@@ -1183,7 +1183,7 @@ QString CHTTPServer::cleanIP(const QString& sText)
 */
 void CHTTPServer::LogRequest(QString sIP, QString sText)
 {
-    // Récupération des tokens
+    // Read tokens
     QStringList lTokens = sText.split(QRegExp("[ \n][ \n]*"));
 
     if (lTokens.count() > 1)

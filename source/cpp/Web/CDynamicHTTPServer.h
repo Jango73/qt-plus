@@ -4,10 +4,10 @@
 //-------------------------------------------------------------------------------------------------
 
 // Application
+#include "../ILocalizationProvider.h"
 #include "../CXMLNode.h"
 #include "CHTTPServer.h"
 #include "CWebComposer.h"
-#include "../ILocalizationProvider.h"
 #include "WebControls/CWebFactory.h"
 #include "WebControls/CWebPage.h"
 

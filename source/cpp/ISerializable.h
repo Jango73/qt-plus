@@ -36,10 +36,10 @@ protected:
 //! Defines a serializable object
 class ISerializable
 {
-    //! Sérialise l'objet
+    //! Serializes the object
     virtual void serialize(QDataStream& stream, CObjectTracker* pTracker) const = 0;
 
-    //! Desérialise l'objet
+    //! Deserializes the object
     virtual void deserialize(QDataStream& stream, CObjectTracker* pTracker, QObject* pRootObject) = 0;
 };
 
@@ -51,30 +51,30 @@ class CSerialReferencable : public ISerializable
 {
 public:
 
-    //! Constructeur par défaut
+    //! Default constructor
     CSerialReferencable()
         : m_pObject(nullptr)
     {
     }
 
-    //! Constructeur avec objet
+    //! Parametered constructor
     CSerialReferencable(T* pObject)
         : m_pObject(pObject)
     {
     }
 
-    //! Destructeur
+    //! Destructor
     ~CSerialReferencable()
     {
     }
 
-    //! Retourne le pointeur
+    //! Returns the pointer
     T* get() { return m_pObject; }
 
-    //! Retourne le pointeur constant
+    //! Returns the constant pointer
     const T* get() const { return m_pObject; }
 
-    //! Sérialise l'objet
+    //! Serializes the object
     virtual void serialize(QDataStream& stream, CObjectTracker* pTracker) const
     {
         Q_UNUSED(pTracker);
@@ -82,7 +82,7 @@ public:
         stream << (qlonglong)m_pObject;
     }
 
-    //! Desérialise l'objet
+    //! Deserializes the object
     virtual void deserialize(QDataStream& stream, CObjectTracker* pTracker, QObject* pRootObject)
     {
         Q_UNUSED(pRootObject);
@@ -103,5 +103,5 @@ public:
 
 protected:
 
-    T*	m_pObject;		// L'objet pointé par cette instance
+    T*	m_pObject;		// The object pointed to by this instance
 };

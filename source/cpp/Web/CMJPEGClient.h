@@ -10,6 +10,7 @@
 #include <QHostAddress>
 #include <QImage>
 
+//! Defines a MJPEG client
 class QTPLUSSHARED_EXPORT CMJPEGClient : public QObject
 {
     Q_OBJECT

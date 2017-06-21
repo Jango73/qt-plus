@@ -13,13 +13,29 @@ class ParsingMonitor : public QObject
 
 public:
 
+    //-------------------------------------------------------------------------------------------------
+    // Constructors and destructor
+    //-------------------------------------------------------------------------------------------------
+
+    //! Parametered constructor
     ParsingMonitor(QMLTreeContext* pContext);
 
+    //! Parametered constructor
     ParsingMonitor(QMLAnalyzer* pAnalyzer);
 
+    //! Destructor
     virtual ~ParsingMonitor();
 
+    //-------------------------------------------------------------------------------------------------
+    // Setters
+    //-------------------------------------------------------------------------------------------------
+
+    //! Set the output file name
     void setOutputFileName(const QString& sFileName);
+
+    //-------------------------------------------------------------------------------------------------
+    // Slots
+    //-------------------------------------------------------------------------------------------------
 
 protected slots:
 
@@ -30,6 +46,10 @@ protected slots:
     void onImportParsingStarted(QString sFileName);
 
     void onAnalyzeError(QMLAnalyzerError sError);
+
+    //-------------------------------------------------------------------------------------------------
+    // Properties
+    //-------------------------------------------------------------------------------------------------
 
 private:
 

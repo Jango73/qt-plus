@@ -15,7 +15,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Définit un créateur d'éléments HTML
+//! Defines a class that renders HTML components
 class QTPLUSSHARED_EXPORT CWebComposer : public CSingleton<CWebComposer>
 {
     friend class CSingleton<CWebComposer>;
@@ -26,20 +26,20 @@ public:
     // Getters
     //-------------------------------------------------------------------------------------------------
 
-    //! Retourne la liste des fichiers JS requis
+    //! Returns the list of required JS files
     const QVector<QString>& getJSFiles() const;
 
-    //! Retourne la liste des fichiers CSS requis
+    //! Returns the list of required CSS files
     const QVector<QString>& getCSSFiles() const;
 
-    //! Retourne les lignes de script pour document.ready
+    //! Returns scripts lines that get executed in document.ready()
     const QVector<QString>& getReadyScriptLines() const;
 
     //-------------------------------------------------------------------------------------------------
     // Méthodes de contrôle
     //-------------------------------------------------------------------------------------------------
 
-    //! Réinitialise la classe
+    //! Clears all lists
     void reset();
 
     //!
@@ -103,19 +103,19 @@ public:
     void addTextInput(QString& sPage, QString sID, QString sText, QSize sSize = QSize(0, 0), QString sPlaceHolder = "", QString sOnChanged = "");
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
+    // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
 private:
 
-    //! Constructeur
+    //! Constructor
     CWebComposer();
 
-    //! Destructeur
+    //! Destructor
     virtual ~CWebComposer();
 
     //-------------------------------------------------------------------------------------------------
-    // Propriétés
+    // Properties
     //-------------------------------------------------------------------------------------------------
 
 protected:

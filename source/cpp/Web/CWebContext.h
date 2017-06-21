@@ -25,7 +25,7 @@ public:
     //! Default constructor
     CWebContext();
 
-    //! Constructor with parameters
+    //! Parametered constructor
     CWebContext(QTcpSocket* pSocket, QString sPeer, QString sHost, QStringList lPath, QMap<QString, QString> mArguments);
 
     //! Copy constructor
