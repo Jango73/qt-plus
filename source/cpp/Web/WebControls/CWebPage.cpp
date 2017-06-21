@@ -135,7 +135,7 @@ QString CWebPage::getPropertyChanges()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns \C true if the page was constructed by deserialization
+    Returns \c true if the page was constructed by deserialization
 */
 bool CWebPage::isDeserialized() const
 {
