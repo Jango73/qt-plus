@@ -22,6 +22,73 @@ PTDMASlot CTDMADevice::s_ucLastSlot		= 250;
     \class CTDMADevice
     \inmodule qt-plus
     \brief A Time Division Multiple Access class. Can input/output from any QIODevice.
+
+    \section1 Introduction
+    This class is a form of Time Division for Multiple Access implementation. \br
+    It assumes that many devices will share the same communication channel to exchange data. \br
+    It standard TDMA, each device knows when it can send data. The master device synchronizes all
+    clocks. \br
+    This class does not function with a clock synchronization but with sync messages coming from the
+    master device. There is of course more overhead and thus lag than in a clock synchronized system,
+    but it avoids this synchronizing phase and is sufficient for systems that are not time critical.
+
+    \section1 How it works
+    In a network, one instance of this class acts as master. All other instances are slaves. \br
+    At regular intervals, the master sends a message which enables a slave to register itself on
+    the network. Of course, many slaves can do this at the same time, causing jam. In this case,
+    the master sends a signal to the slaves so that they reset a random timer. Hopefully, only one
+    slave will speak the next time the master sends the register message (named aAnyone here). \br
+    When the master receives a register demand, it allocates a slot to the slave. The slave is given
+    its slot and acknowledges. \br
+    The rest of the time, the master sends a speak message for a slot number. The slave whose slot
+    corresponds sends its data. \br\br
+
+    Below is an example of what can happen along a time line.
+
+    \code
+    Master     Msg Anyone                 Msg reset   Msg Anyone            Msg SetSlot
+
+    ---------------|-------------|----JAM-----|-----------|----------|-----------|-----------|-------->
+    Slave 1                 Resp Anyone                          Resp Anyone             Resp SetSlot
+    Slave 2                 Resp Anyone
+
+    Master     Msg Speak                  Msg Anyone             Msg SetSlot             Msg Speak
+                Slot 1                                                                     Slot 1
+    >--------------|-------------|------------|-----------|----------|-----------|-----------|-------->
+    Slave 1                  Resp speak
+    Slave 2                                           Resp Anyone            Resp SetSlot
+
+    Master                  Msg Speak                Msg Anyone             Msg Speak
+                              Slot 2                                          Slot 1
+    >--------------|-------------|------------|-----------|----------------------|-----------|-------->
+    Slave 1    Resp speak                                                                Resp speak
+    Slave 2                               Resp speak
+    \endcode
+
+    \section1 What it does not
+    The class does not provide any messaging protocol. The format of the payload is the reponsibility of the user
+    of this class. It acts like a socket in a TCP network.
+
+    \section1 How to use it as a master
+    Usually, the master is used only to synchronize devices and does not send/receive messages.
+    \list
+        \li Instantiate the class using a \c QIODevice as your data input and output provider (your physical device).
+        Set the \c bIsMaster flag to \c true. The serial number is not important for masters, it may be 0.
+        \li If you need data from a particular device, call the \c readFromSerial() method.
+        \li Let the class do its work.
+    \endlist
+
+    \section1 How to use it as a slave
+    The slaves send messages to each other. It is up to the user of this class to define a protocol so to identify who
+    is the recipient of the message. \br
+    Note that without a master in the network, nothing will happen.
+    \list
+        \li Instantiate the class using a \c QIODevice as your data input and output provider (your physical device).
+        Set the \c bIsMaster flag to \c false. Provide a unique serial number.
+        \li Read and write data using the classic \c QIODevice methods.
+        \li If you need to power on an antenna, do this in the \c powerOn() method and return the estimated time for
+        power on in milliseconds. And if you need to power off an antenna, do this in the \c powerOff() method.
+    \endlist
 */
 
 //-------------------------------------------------------------------------------------------------
@@ -90,9 +157,19 @@ CTDMADevice::~CTDMADevice()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns the serial number of this TDMA entity.
+    Sets the serial number of this entity to \a tSerialNumber.
 */
-PTDMASerial CTDMADevice::getSerialNumber() const
+void CTDMADevice::setSerialNumber(PTDMASerial tSerialNumber)
+{
+    m_tSeriaNumber = tSerialNumber;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns the serial number of this entity.
+*/
+PTDMASerial CTDMADevice::serialNumber() const
 {
     return m_tSeriaNumber;
 }
@@ -100,7 +177,7 @@ PTDMASerial CTDMADevice::getSerialNumber() const
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns all serial numbers that are registered in this TDMA entity.
+    Returns all serial numbers that are registered in this entity.
 */
 QVector<PTDMASerial> CTDMADevice::getAllUserSerialNumbers() const
 {

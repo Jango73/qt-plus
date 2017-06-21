@@ -17,7 +17,7 @@
 /*!
     \class QMLAnalyzer
     \inmodule unis-lib
-    \brief A QML analyzer (limited to the scope of a file). \br
+    \brief A QML analyzer (limited to the scope of a file for now).
 
     \section1 How it works
     This class runs checks over all contents of a QML file using a grammar file in XML format.

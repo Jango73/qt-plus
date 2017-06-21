@@ -20,29 +20,6 @@ typedef quint8  PTDMASlot;
 typedef quint8  PTDMAAction;
 typedef quint16 PTDMASerial;
 
-/*-------------------------------------------------------------------------------------------------
-Timeline sample:
-
-Master     Msg Anyone                 Msg reset   Msg Anyone            Msg SetSlot
-
----------------|-------------|----JAM-----|-----------|----------|-----------|-----------|-------->
-Slave 1                 Resp Anyone                          Resp Anyone             Resp SetSlot
-Slave 2                 Resp Anyone
-
-Master     Msg Speak                  Msg Anyone             Msg SetSlot             Msg Speak
-            Slot 1                                                                     Slot 1
->--------------|-------------|------------|-----------|----------|-----------|-----------|-------->
-Slave 1                  Resp speak
-Slave 2                                           Resp Anyone            Resp SetSlot
-
-Master                  Msg Speak                Msg Anyone             Msg Speak
-                          Slot 2                                          Slot 1
->--------------|-------------|------------|-----------|----------------------|-----------|-------->
-Slave 1    Resp speak                                                                Resp speak
-Slave 2                               Resp speak
-
--------------------------------------------------------------------------------------------------*/
-
 //! Defines a TDMA (Time Division for Multiple Access) class
 class QTPLUSSHARED_EXPORT CTDMADevice : public QIODevice
 {
@@ -61,11 +38,18 @@ public:
     virtual ~CTDMADevice();
 
     //-------------------------------------------------------------------------------------------------
+    // Setters
+    //-------------------------------------------------------------------------------------------------
+
+    //! Sets the serial number
+    void setSerialNumber(PTDMASerial tSerialNumber);
+
+    //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
 
     //! Returns this entity's serial number
-    PTDMASerial getSerialNumber() const;
+    PTDMASerial serialNumber() const;
 
     //! Returns all registered devices' serial numbers
     QVector<PTDMASerial> getAllUserSerialNumbers() const;
@@ -87,7 +71,7 @@ public:
     QByteArray readFromSerial(quint16 uiSerialNumber);
 
     //! Meant to be implemented by subclasses when it is time to turn on any comm device, like an antenna
-    //! Returns a power on time in milliseconds
+    //! Returns an estimated power on time in milliseconds
     virtual int powerOn();
 
     //! Meant to be implemented by subclasses when it is time to turn off any comm device, like an antenna
