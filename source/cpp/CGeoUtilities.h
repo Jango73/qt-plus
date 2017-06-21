@@ -23,13 +23,15 @@
 
 //-------------------------------------------------------------------------------------------------
 
+// Defines methods to convert between geo and cartesian coordinates
+// Uses the WGS 84 model
 class QTPLUSSHARED_EXPORT CGeoUtilities : public CSingleton<CGeoUtilities>
 {
     friend class CSingleton<CGeoUtilities>;
 
 public:
 
-    // Constantes
+    // Constants
 
     static const double POS_INFINITY;
     static const double NEG_INFINITY;
@@ -39,7 +41,6 @@ public:
     static const double fRad2Deg;
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes de contrôle
     // Control methods
     //-------------------------------------------------------------------------------------------------
 

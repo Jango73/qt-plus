@@ -21,7 +21,7 @@ typedef quint8  PTDMAAction;
 typedef quint16 PTDMASerial;
 
 /*-------------------------------------------------------------------------------------------------
-Exemple de timeline du fonctionnement de la classe:
+Timeline sample:
 
 Master     Msg Anyone                 Msg reset   Msg Anyone            Msg SetSlot
 
@@ -43,7 +43,7 @@ Slave 2                               Resp speak
 
 -------------------------------------------------------------------------------------------------*/
 
-//! Définit une classe de communication TDMA
+//! Defines a TDMA (Time Division for Multiple Access) class
 class QTPLUSSHARED_EXPORT CTDMADevice : public QIODevice
 {
     Q_OBJECT
@@ -51,46 +51,46 @@ class QTPLUSSHARED_EXPORT CTDMADevice : public QIODevice
 public:
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
+    // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //! Constructeur avec paramètres
+    //! Parametered constructor
     CTDMADevice(QIODevice* pDevice, PTDMASerial tSeriaNumber, int iMaxBytesPerSecond, bool bIsMaster = false);
 
-    //! Destructeur
+    //! Destructor
     virtual ~CTDMADevice();
 
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
 
-    //! Retourne le numéro de série de cette entité
+    //! Returns this entity's serial number
     PTDMASerial getSerialNumber() const;
 
-    //! Retourne les numéros de série des abonnés
+    //! Returns all registered devices' serial numbers
     QVector<PTDMASerial> getAllUserSerialNumbers() const;
 
     //!
-    virtual bool isSequential() const;
+    virtual bool isSequential() const Q_DECL_OVERRIDE;
 
     //!
-    virtual qint64 bytesAvailable() const;
+    virtual qint64 bytesAvailable() const Q_DECL_OVERRIDE;
 
     //!
-    virtual qint64 bytesToWrite() const;
+    virtual qint64 bytesToWrite() const Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes de contrôle
+    // Control methods
     //-------------------------------------------------------------------------------------------------
 
-    //! Lecture
+    //! Read
     QByteArray readFromSerial(quint16 uiSerialNumber);
 
-    //! A réimplémenter pour mettre sous tension le module d'émission
-    //! Retourne le temps en millisecondes de mise sous tension
+    //! Meant to be implemented by subclasses when it is time to turn on any comm device, like an antenna
+    //! Returns a power on time in milliseconds
     virtual int powerOn();
 
-    //! A réimplémenter pour mettre hors tension le module d'émission
+    //! Meant to be implemented by subclasses when it is time to turn off any comm device, like an antenna
     virtual void powerOff();
 
     //-------------------------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ public:
 
 private slots:
 
-    //! Appelé sur timer, l'intervalle de temps d"pend du mode maître/esclave
+    //! Called by a timer, the interval depends on the master/slave mode
     void onTimeout();
 
     //!
@@ -113,21 +113,21 @@ private:
 
 #pragma pack (push, 1)
 
-    // Définit les octets envoyés par le maître pour donner l'ordre à un esclave de parler
+    //! Defines the data sent by the master to order a slave to speak
     typedef struct tag_TMasterData_SlaveSpeak
     {
         PTDMAAction     ucAction;
         PTDMASlot       ucSlot;
     } TMasterData_SlaveSpeak;
 
-    // Définit l'entête envoyée par l'esclave en réponse à l'ordre de parler
+    //! Defines the header sent by a slave in response to a speak order
     typedef struct tag_TSlaveData_SlaveSpeak
     {
         PTDMAAction     ucAction;
         unsigned char   ucNumBytes;
     } TSlaveData_SlaveSpeak;
 
-    // Définit les octets envoyés par le maître pour donner son slot à un esclave
+    //! Defines the data sent by the master to assign a slave's slot
     typedef struct tag_TMasterData_SetSlot
     {
         PTDMAAction     ucAction;
@@ -137,7 +137,7 @@ private:
         PTDMAAction     ucActionEcho;
     } TMasterData_SetSlot;
 
-    // Définit les octets envoyés par l'esclave en accusé réception du slot
+    //! Defines the date sent by a slave to acknowledge a slot assignment
     typedef struct tag_TSlaveData_SetSlot
     {
         PTDMAAction     ucAction;
@@ -146,7 +146,7 @@ private:
         PTDMAAction     ucActionEcho;
     } TSlaveData_SetSlot;
 
-    // Définit les octets envoyés par l'esclave pour une demande d'abonnement au réseau
+    //! Defines the data sent by a slave when asking for registration on the network
     typedef struct tag_TSlaveData_Anyone
     {
         PTDMAAction     ucAction;
@@ -156,7 +156,7 @@ private:
 
 #pragma pack (pop)
 
-    //! Actions possibles maître/esclave
+    //! Possible actions for master and slaves
     enum EAction
     {
         aMasterSpeak        = 0x01,
@@ -172,7 +172,7 @@ private:
     class CClient;
     friend class CClient;
 
-    //! Données d'un client abonné ou en demande d'abonnement
+    //! Data for a registered client
     class CClient
     {
     public:
@@ -198,60 +198,61 @@ private:
     };
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes protégées
+    // Protected methods
     //-------------------------------------------------------------------------------------------------
 
 private:
 
-    //! Lecture de données
-    virtual qint64 readData(char * data, qint64 maxSize);
+    //! Read data
+    virtual qint64 readData(char * data, qint64 maxSize) Q_DECL_OVERRIDE;
 
-    //! Ecriture de données
-    virtual qint64 writeData(const char * data, qint64 maxSize);
+    //! Write data
+    virtual qint64 writeData(const char * data, qint64 maxSize) Q_DECL_OVERRIDE;
 
-    //! Gère les données lues sur le périphérique d'entrée
+    //! Handles incoming data
     int processInput(const QByteArray& baData);
 
-    //! Gère les données lues sur le périphérique d'entrée pour le maître
+    //! Handles incoming data for a master
     int processInput_Master(const QByteArray& baData);
 
-    //! Gère les données lues sur le périphérique d'entrée pour l'esclave
+    //! Handles incoming data for a slave
     int processInput_Slave(const QByteArray& baData);
 
-    //! Gère le message d'émission de l'esclave par le maître
+    //! Handles a slave speak message
     void handleSlaveSpeak_Master(const TSlaveData_SlaveSpeak* pSpeak, const QByteArray& baData);
 
-    //! Gère une nouvelle demande d'abonnement par le maître
+    //! Handles a register request
     void handleNewUser_Master(const TSlaveData_Anyone* pAnyone);
 
-    //! Gère le retour d'assignation de slot par le maître
+    //! Handles slot assignment acknowledge
     void handleSetSlot_Master(const TSlaveData_SetSlot* pSetSlot);
 
-    //! Gère l'émission de données par l'esclave
+    //! Handles slave speak order
     void handleSpeak_Slave(const TMasterData_SlaveSpeak* pSpeak);
 
-    //! Gère la réception d'assignation de slot par l'esclave
+    //! Handles slot assignement given by master
     void handleSetSlot_Slave(const TMasterData_SetSlot* pSetSlot);
 
-    //! Gère la demande d'identification par l'esclave
+    //! Handles identification request by a slave
     void handleAnyone_Slave();
 
     //! Gère la demande de remise à zéro des compteurs par l'esclave
     void handleReset_Slave();
 
-    //! Le maître envoi un ordre d'émission de donénes aux esclaves
+    //! Master sends a speak order to slaves
     void sendSpeak();
 
-    //! Le maître assigne un slot à un nouvel abonné
+    //! Master assigns a slot to a slave
     void sendSetSlot();
 
-    //! Le maître envoi un signal de demande d'identification
+    //! Master send a signal for any unidentified slave to identify itself
+    //! Slaves may jam each other, in which case master signals a jam and slaves compute random delay for next speak
     void sendAnyone();
 
-    //! Le maître demande une remise à zéro des compteurs des esclaves
+    //! Master orders slaves to reset their timers
     void sendReset();
 
-    //! Retourne un numéro de slot libre
+    //! Returns a free slot
     PTDMASlot getFreeSlot() const;
 
     //-------------------------------------------------------------------------------------------------
@@ -260,26 +261,26 @@ private:
 
 private:
 
-    bool                       m_bIsMaster;                 // Cette entité est-elle maître?
-    bool                       m_bAntennaPowered;           // Le module de comm est activé?
-    PTDMASerial                m_tSeriaNumber;              // Numéro de série de cette entité
-    PTDMASlot                  m_tSlot;                     // Slot alloué par le maître
-    int                        m_iMaxBytesPerSecond;        // Inutilisé pour l'instant
-    int                        m_iMaxBytesPerSlot;          // Donné par le maître
-    int                        m_iNumFramesBeforeIdent;     // Pour l'esclave
-    int                        m_iNumBytesToIgnore;         // Pour l'esclave
-    QIODevice*                 m_pDevice;                   // Device d'entrée/sortie des données
+    bool                       m_bIsMaster;                 // Is this entity a master?
+    bool                       m_bAntennaPowered;           // Is the comm module activated?
+    PTDMASerial                m_tSeriaNumber;              // Serial number for this entity
+    PTDMASlot                  m_tSlot;                     // Allocated slot
+    int                        m_iMaxBytesPerSecond;        // Unused
+    int                        m_iMaxBytesPerSlot;          // Given by master
+    int                        m_iNumFramesBeforeIdent;     // For slave
+    int                        m_iNumBytesToIgnore;         // For slave
+    QIODevice*                 m_pDevice;                   // IO device for data
     QTimer                     m_tTimer;
-    QDateTime                  m_tLastInputTime;            // Pour le maître
-    QDateTime                  m_tLastSpeakTime;            // Pour l'esclave, sert à MST/MHT antenne
-    QDateTime                  m_tPowerOnTime;              // Heure à laquelle le module de comm a été mis sous tension
-    QByteArray                 m_baOutput;                  // Buffer de données de sortie
-    QByteArray                 m_baInput;                   // Buffer de données d'entrée
-    QByteArray                 m_baRawInput;                // Buffer de données d'entrée brutes
-    QVector<CClient>           m_vNewUsers;                 // Clients en attente d'un slot
-    QMap<PTDMASlot, CClient>   m_mRegisteredUsers;          // Clients abonnés
+    QDateTime                  m_tLastInputTime;            // For master
+    QDateTime                  m_tLastSpeakTime;            // For slave, used to power on and off
+    QDateTime                  m_tPowerOnTime;              // Time at which comm module was powered on
+    QByteArray                 m_baOutput;                  // Output data buffer
+    QByteArray                 m_baInput;                   // Input data buffer
+    QByteArray                 m_baRawInput;                // Raw input data buffer
+    QVector<CClient>           m_vNewUsers;                 // Slaves waiting for a slot
+    QMap<PTDMASlot, CClient>   m_mRegisteredUsers;          // Registered slaves
 
-    static PTDMASlot           s_ucBadSlot;                 // Constante indiquant un mauvais numéro de slot
-    static PTDMASlot           s_ucFirstSlot;               // Constante indiquant le 1er numéro de slot possible
-    static PTDMASlot           s_ucLastSlot;                // Constante indiquant le dernier numéro de slot possible
+    static PTDMASlot           s_ucBadSlot;                 // Constant for a bad slot number
+    static PTDMASlot           s_ucFirstSlot;               // Constant for the first possible slot
+    static PTDMASlot           s_ucLastSlot;                // Constant for the last possible slot
 };

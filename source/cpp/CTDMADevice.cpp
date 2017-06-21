@@ -53,11 +53,11 @@ CTDMADevice::CTDMADevice(QIODevice* pDevice, PTDMASerial tSeriaNumber, int iMaxB
     {
         bSrandInit = true;
 
-        // Initialiser le générateur de chiffres aléatoires
+        // Initialize random numbers
         qsrand(QDateTime::currentDateTime().toTime_t());
     }
 
-    // Connexion au périphérique de flux
+    // Connect to IO device
     connect(m_pDevice, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
 
     connect(&m_tTimer, SIGNAL(timeout()), this, SLOT(onTimeout()));
@@ -178,8 +178,8 @@ QByteArray CTDMADevice::readFromSerial(quint16 uiSerialNumber)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns a power time in milliseconds. \br
-    Meant to be implemented by subclasses when it is time to turn on any comm device, like an antenna.
+    Meant to be implemented by subclasses when it is time to turn on any comm device, like an antenna. \br\br
+    Returns a power on time in milliseconds.
 */
 int CTDMADevice::powerOn()
 {
@@ -284,7 +284,7 @@ int CTDMADevice::processInput_Master(const QByteArray& baData)
         {
             const TSlaveData_SetSlot* pSetSlot = (const TSlaveData_SetSlot*) baData.constData();
 
-            // Vérification de la validité du message et traitement le cas échéant
+            // Message sanity check and processing
             if (pSetSlot->ucAction == pSetSlot->ucActionEcho)
             {
                 handleSetSlot_Master(pSetSlot);
@@ -293,7 +293,7 @@ int CTDMADevice::processInput_Master(const QByteArray& baData)
             }
             else
             {
-                // Jam, on demande aux non-abonnés de se décaler au hasard
+                // Jam, order a reset for non registered slaves
                 sendReset();
 
                 return -1;
@@ -305,7 +305,7 @@ int CTDMADevice::processInput_Master(const QByteArray& baData)
         {
             const TSlaveData_Anyone* pAnyone = (const TSlaveData_Anyone*) baData.constData();
 
-            // Vérification de la validité du message et traitement le cas échéant
+            // Message sanity check and processing
             if (pAnyone->ucAction == pAnyone->ucActionEcho)
             {
                 handleNewUser_Master(pAnyone);
@@ -314,7 +314,7 @@ int CTDMADevice::processInput_Master(const QByteArray& baData)
             }
             else
             {
-                // Jam, on demande aux non-abonnés de se décaler au hasard
+                // Jam, order a reset for non registered slaves
                 sendReset();
 
                 return -1;
@@ -334,20 +334,20 @@ int CTDMADevice::processInput_Slave(const QByteArray& baData)
 
     switch (ucAction)
     {
-        // Données brutes en réception
+        // Raw incoming data
         case aMasterSpeak:
         {
-            // Insertion des données en entrée
+            // Append input data
             m_baInput.append(baData);
 
-            // On envoie le signal de données arrivées
+            // Tell the world that data is available for reading
             emit readyRead();
 
             return baData.count();
         }
             break;
 
-            // Données brutes à envoyer
+        // Raw outgoing data
         case aSlaveSpeak:
         {
             const TMasterData_SlaveSpeak* pSpeak = (const TMasterData_SlaveSpeak*) baData.constData();
@@ -358,7 +358,7 @@ int CTDMADevice::processInput_Slave(const QByteArray& baData)
         }
             break;
 
-            // Données brutes tiers
+        // Raw data form a slave
         case aSlaveSpeakResponse:
         {
             const TSlaveData_SlaveSpeak* pSpeak = (const TSlaveData_SlaveSpeak*) baData.constData();
@@ -367,7 +367,7 @@ int CTDMADevice::processInput_Slave(const QByteArray& baData)
         }
             break;
 
-            // Définition du slot
+        // Slot assignment
         case aSetSlot:
         {
             const TMasterData_SetSlot* pSetSlot = (const TMasterData_SetSlot*) baData.constData();
@@ -385,7 +385,7 @@ int CTDMADevice::processInput_Slave(const QByteArray& baData)
         }
             break;
 
-            // Réponse slot d'un tiers
+        // A slave acknowledging a slot
         case aSetSlotResponse:
         {
             const TSlaveData_SetSlot* pSetSlot = (const TSlaveData_SetSlot*) baData.constData();
@@ -394,7 +394,7 @@ int CTDMADevice::processInput_Slave(const QByteArray& baData)
         }
             break;
 
-            // Y'a t-il quelqu'un dans la salle?
+        // Anyone here?
         case aAnyone:
         {
             handleAnyone_Slave();
@@ -403,7 +403,7 @@ int CTDMADevice::processInput_Slave(const QByteArray& baData)
         }
             break;
 
-            //
+        // Response to "anyone here?"
         case aAnyoneResponse:
         {
             const TSlaveData_Anyone* pAnyone = (const TSlaveData_Anyone*) baData.constData();
@@ -412,7 +412,7 @@ int CTDMADevice::processInput_Slave(const QByteArray& baData)
         }
             break;
 
-            // Ne parlez pas tous en même temps...
+        // Everyone will talk in turn...
         case aReset:
         {
             handleReset_Slave();
@@ -432,7 +432,7 @@ void CTDMADevice::handleSlaveSpeak_Master(const TSlaveData_SlaveSpeak* pSpeak, c
     CONSOLE_DEBUG(QString("Master receiving data from slot %1").arg(m_tSlot));
     CONSOLE_DEBUG("... " << baData);
 
-    // Lecture de données de l'esclave en cours (m_ucSlot)
+    // Read data from the current slave (m_ucSlot)
     if (m_mRegisteredUsers.contains(m_tSlot))
     {
         m_mRegisteredUsers[m_tSlot].m_baData.append(baData);
@@ -449,8 +449,6 @@ void CTDMADevice::handleSlaveSpeak_Master(const TSlaveData_SlaveSpeak* pSpeak, c
 
 void CTDMADevice::handleNewUser_Master(const TSlaveData_Anyone* pAnyone)
 {
-    // Si on recoit un echo d'un esclave déjà demandeur d'abonnement,
-    // on le retire de la liste des demandeurs
     for (int iIndex = 0; iIndex < m_vNewUsers.count(); iIndex++)
     {
         if (m_vNewUsers[iIndex].m_tSerialNumber == pAnyone->uiSerialNumber)
@@ -471,7 +469,6 @@ void CTDMADevice::handleSetSlot_Master(const TSlaveData_SetSlot* pSetSlot)
 {
     CONSOLE_DEBUG("Master receiving aSetSlotResponse for " << QString::number((int) pSetSlot->uiSerialNumber) << " : " << QString::number((int) pSetSlot->ucSlot));
 
-    // Si le slot renvoyé est déjà utilisé, on le retire
     if (m_mRegisteredUsers.contains(pSetSlot->ucSlot))
     {
         m_mRegisteredUsers.remove(pSetSlot->ucSlot);
@@ -519,7 +516,6 @@ void CTDMADevice::handleSpeak_Slave(const TMasterData_SlaveSpeak* pSpeak)
 
 void CTDMADevice::handleSetSlot_Slave(const TMasterData_SetSlot* pSetSlot)
 {
-    // Est-ce que le message nous est destiné?
     if (pSetSlot->uiSerialNumber == m_tSeriaNumber)
     {
         CONSOLE_DEBUG("Slave receiving aSetSlot for " << QString::number(pSetSlot->uiSerialNumber) << " : " << QString::number(pSetSlot->ucSlot));
@@ -585,10 +581,10 @@ void CTDMADevice::sendSpeak()
 {
     if (m_mRegisteredUsers.count() > 0)
     {
-        // On passe au prochain esclave
+        // Move on to next slave
         m_tSlot++;
 
-        // Si le slot en cours n'existe pas, on passe en bad slot
+        // If the slot is unused, go to bad slot
         if (m_tSlot > m_mRegisteredUsers.count())
         {
             m_tSlot = s_ucBadSlot;

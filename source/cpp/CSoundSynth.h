@@ -18,9 +18,6 @@
 
 //-------------------------------------------------------------------------------------------------
 
-namespace CarEmulator
-{
-
 class QTPLUSSHARED_EXPORT CSoundSynth : public QIODevice
 {
     Q_OBJECT
@@ -121,5 +118,3 @@ protected:
     QAudioFormat            m_tFormat;          // The audio format
     QList<QByteArray>       m_lBuffers;         // The buffers comming from CSoundSynthGenerator
 };
-
-}

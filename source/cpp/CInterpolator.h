@@ -15,7 +15,7 @@ class CInterpolator
 public:
 
     //-------------------------------------------------------------------------------------------------
-    // Classes imbriquées
+    // Inner classes
     //-------------------------------------------------------------------------------------------------
 
     class InterpolatorValue
@@ -38,10 +38,10 @@ public:
     };
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
+    // Constructors et destructor
     //-------------------------------------------------------------------------------------------------
 
-    //! Constructeur par défaut
+    //! Default constructor
     CInterpolator()
     {
     }
@@ -50,24 +50,24 @@ public:
     // Getters
     //-------------------------------------------------------------------------------------------------
 
-    //! Retourne le nombre de valeurs
+    //! Returns the number of values
     int count() { return m_vValues.count(); }
 
-    //! Retourne le vecteur de valeurs
+    //! Returns the vector of value
     QVector<InterpolatorValue>& getValues() { return m_vValues; }
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes de contrôle
+    // Control methods
     //-------------------------------------------------------------------------------------------------
 
-    //! Ajoute un pas d'interpolation
-    //! Une valeur double donnée est associée une valeur T
+    //! Adds an interpolation step
+    //! An input value of type double yields an output value of type T
     void addValue(double input, T output)
     {
         m_vValues.append(InterpolatorValue(input, output));
     }
 
-    //! Retourne la valeur T correspondant à la valeur double d'entrée
+    //! Returns the T type value for the input value
     T getValue(double input)
     {
         T output = T();
@@ -110,7 +110,7 @@ public:
     }
 
     //-------------------------------------------------------------------------------------------------
-    // Propriétés
+    // Properties
     //-------------------------------------------------------------------------------------------------
 
 protected:

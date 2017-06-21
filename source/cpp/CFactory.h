@@ -9,14 +9,12 @@
 #include <QMap>
 
 //-------------------------------------------------------------------------------------------------
-// Déclarations avancées
 // Forward declarations
 
 template <class T> class CFactoryProductEnumerator;
 
 //-------------------------------------------------------------------------------------------------
 
-//! Définit une usine
 //! Defines a factory
 template <class T>
 class CFactory
@@ -25,7 +23,6 @@ class CFactory
 
 public:
 
-    //! Type de méthode qui instancie un produit
     //! A method prototype for product instanciation
     typedef T* (*MProductInstanciator)();
 
@@ -34,19 +31,16 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes de contrôle
     // Control methods
     //-------------------------------------------------------------------------------------------------
 
-    //! Enregistre un instanciateur de produit
     //! Registers a product instanciator
     void registerProduct(QString sClassName, MProductInstanciator pInstanciator)
     {
         s_vInstanciators[sClassName] = pInstanciator;
     }
 
-    //! Instancie un produit d'après son nom de classe
-    //! Instanciates a product given its class name
+    //! Instantiates a product given its class name
     T* instanciateProduct(QString sClassName) const
     {
         if (s_vInstanciators.contains(sClassName))
@@ -58,26 +52,22 @@ public:
     }
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
 protected:
 
-    //! Constructeur par défaut
     //! Default constructor
     CFactory()
     {
     }
 
-    //! Destructeur
     //! Destructor
     virtual ~CFactory()
     {
     }
 
     //-------------------------------------------------------------------------------------------------
-    // Propriétés
     // Properties
     //-------------------------------------------------------------------------------------------------
 
@@ -88,7 +78,6 @@ protected:
 
 //-------------------------------------------------------------------------------------------------
 
-//! Définit un énumérateur de produit d'usine
 //! Defines a factory product enumerator
 template <class T>
 class CFactoryProductEnumerator
@@ -96,11 +85,9 @@ class CFactoryProductEnumerator
 public:
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //! Constructeur d'après une CFactory
     //! Constructor from a CFactory
     CFactoryProductEnumerator(CFactory<T>* pFactory)
         : m_pFactory(pFactory)
@@ -112,8 +99,7 @@ public:
     // Getters
     //-------------------------------------------------------------------------------------------------
 
-    //! Retourne le prochain produit (NULL si pas de produit à retourner) : le produit devra être détruit par l'appelant
-    //! Returns the next product (NULL if none to return) : the product must be destroyed by caller
+    //! Returns the next product (nullptr if none to return) : the product must be destroyed by caller
     T* next()
     {
         if (m_iCurrentIndex < m_pFactory->s_vInstanciators.keys().count())
@@ -124,11 +110,10 @@ public:
             return pProduct;
         }
 
-        return NULL;
+        return nullptr;
     }
 
     //-------------------------------------------------------------------------------------------------
-    // Propriétés
     // Properties
     //-------------------------------------------------------------------------------------------------
 

@@ -19,6 +19,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
+// Defines an endpoint for a stream using a socket
 class QTPLUSSHARED_EXPORT CSocketStream : public CConnectedStream
 {
 	Q_OBJECT

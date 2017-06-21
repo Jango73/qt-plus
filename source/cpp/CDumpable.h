@@ -9,41 +9,46 @@
 
 //-------------------------------------------------------------------------------------------------
 
+// Defines a dumpable object
 class QTPLUSSHARED_EXPORT CDumpable
 {
 public:
 
-    //! Constructeur
+    //-------------------------------------------------------------------------------------------------
+    // Constructors and destructor
+    //-------------------------------------------------------------------------------------------------
+
+    //! Constructor
     CDumpable();
 
-    //! Destructeur
+    //! Destructor
     virtual ~CDumpable();
 
-    //! Dump du contenu dans un flux
+    //! Dumps content to a stream, using an identation level
     virtual void dump(QTextStream& stream, int iIdent);
 
-    //! Ouvre un block dans le fichier de sortie
+    //! Opens a block ( the '{' character ) in the stream, using an identation level
     void dumpOpenBlock(QTextStream& stream, int iIdent);
 
-    //! Ferme un block dans le fichier de sortie
+    //! Closes a block ( the '}' character ) in the stream, using an identation level
     void dumpCloseBlock(QTextStream& stream, int iIdent);
 
-    //! Ouvre un tableau dans le fichier de sortie
+    //! Opens an array ( the '[' character ) in the stream, using an identation level
     void dumpOpenArray(QTextStream& stream, int iIdent);
 
-    //! Ferme un tableau dans le fichier de sortie
+    //! Closes an array ( the ']' character ) in the stream, using an identation level
     void dumpCloseArray(QTextStream& stream, int iIdent);
 
-    //! Ecrit un texte indenté dans le fichier de sortie
+    //! Dumps text in a stream, without indentation and new line
     void dumpNoIndentNoNewLine(QTextStream& stream, QString sText);
 
-    //! Passage à la ligne suivante
+    //! Dumps a new line character in a stream
     void dumpNewLine(QTextStream& stream);
 
-    //! Ecrit un texte indenté dans le fichier de sortie sans retour à la ligne
+    //! Dumps text in a stream, with indentation but no new line
     void dumpIndentedNoNewLine(QTextStream& stream, int iIdent, QString sText);
 
-    //! Ecrit un texte indenté dans le fichier de sortie
+    //! Dumps text in a stream, with indentation and new line
     void dumpIndented(QTextStream& stream, int iIdent, QString sText);
 
     //-------------------------------------------------------------------------------------------------

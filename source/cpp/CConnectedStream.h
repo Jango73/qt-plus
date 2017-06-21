@@ -29,6 +29,8 @@
 
 //-------------------------------------------------------------------------------------------------
 
+// Defines a connected stream
+// Base class for CSerialStream and CSocketStream, which are created by CStreamFactory
 class QTPLUSSHARED_EXPORT CConnectedStream : public QIODevice
 {
     Q_OBJECT
@@ -36,16 +38,16 @@ class QTPLUSSHARED_EXPORT CConnectedStream : public QIODevice
 public:
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
+    // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //! Constructeur par défaut
+    //! Default constructor
     CConnectedStream();
 
-    //! Constructeur avec nom
+    //! Parametered constructor
     CConnectedStream(const QString& name);
 
-    //! Destructeur
+    //! Destructor
     virtual ~CConnectedStream();
 
     //-------------------------------------------------------------------------------------------------
@@ -59,7 +61,7 @@ public:
     // Getters
     //-------------------------------------------------------------------------------------------------
 
-    // Retourne le nom utilisé à la création de l'objet
+    // Returns the name of the stream
     virtual QString name() const;
 
     //-------------------------------------------------------------------------------------------------

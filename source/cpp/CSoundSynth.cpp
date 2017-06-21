@@ -5,8 +5,6 @@
 // Application
 #include "CSoundSynth.h"
 
-using namespace CarEmulator;
-
 const int DataSampleRateHz  = 44100;
 
 //-------------------------------------------------------------------------------------------------
