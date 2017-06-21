@@ -79,8 +79,8 @@ PTDMASlot CTDMADevice::s_ucLastSlot		= 250;
     \endlist
 
     \section1 How to use it as a slave
-    The slaves send messages to each other. It is up to the user of this class to define a protocol so to identify who
-    is the recipient of the message. \br
+    The slaves send messages that are received by every other slave. It is up to the user of this class to define a
+    protocol so to identify who is the recipient of the message, and eventually who is the sender. \br
     Note that without a master in the network, nothing will happen.
     \list
         \li Instantiate the class using a \c QIODevice as your data input and output provider (your physical device).
