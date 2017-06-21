@@ -40,8 +40,8 @@ PTDMASlot CTDMADevice::s_ucLastSlot		= 250;
     slave will speak the next time the master sends the register message (named aAnyone here). \br
     When the master receives a register demand, it allocates a slot to the slave. The slave is given
     its slot and acknowledges. \br
-    The rest of the time, the master sends a speak message for a slot number. The slave whose slot
-    corresponds sends its data. \br\br
+    The rest of the time, the master sends its own data and a speak message for each slot in turn.
+    The slave whose slot corresponds then sends its data. \br\br
 
     Below is an example of what can happen along a time line.
 
@@ -67,20 +67,19 @@ PTDMASlot CTDMADevice::s_ucLastSlot		= 250;
 
     \section1 What it does not
     The class does not provide any messaging protocol. The format of the payload is the reponsibility of the user
-    of this class. It acts like a socket in a TCP network.
+    of this class. It acts like a socket in a TCP network. \br
+    When the master sends data, all slaves receive it. It is up to the user of the class to properly process data
+    on slave side (i.e. who is the real recipient of the message, ...)
 
     \section1 How to use it as a master
-    Usually, the master is used only to synchronize devices and does not send/receive messages.
     \list
         \li Instantiate the class using a \c QIODevice as your data input and output provider (your physical device).
         Set the \c bIsMaster flag to \c true. The serial number is not important for masters, it may be 0.
-        \li If you need data from a particular device, call the \c readFromSerial() method.
-        \li Let the class do its work.
+        \li Process incoming data from slaves using readFromSerial() and send outgoing data, which is received by all slaves.
     \endlist
 
     \section1 How to use it as a slave
-    The slaves send data that is received by every other slave. It is up to the user of this class to define a
-    protocol so to identify who is the recipient of the message, and eventually who is the sender. \br
+    The slaves send data to the master and process data that comes from the master. \br
     Note that without a master in the network, nothing will happen.
     \list
         \li Instantiate the class using a \c QIODevice as your data input and output provider (your physical device).
