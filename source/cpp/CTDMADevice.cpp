@@ -79,7 +79,7 @@ PTDMASlot CTDMADevice::s_ucLastSlot		= 250;
     \endlist
 
     \section1 How to use it as a slave
-    The slaves send messages that are received by every other slave. It is up to the user of this class to define a
+    The slaves send data that is received by every other slave. It is up to the user of this class to define a
     protocol so to identify who is the recipient of the message, and eventually who is the sender. \br
     Note that without a master in the network, nothing will happen.
     \list
