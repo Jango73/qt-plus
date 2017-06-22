@@ -32,7 +32,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Parametered constructor
-    CTDMADevice(QIODevice* pDevice, PTDMASerial tSeriaNumber, int iMaxBytesPerSecond, bool bIsMaster = false);
+    CTDMADevice(QIODevice* pDevice, PTDMASerial tSeriaNumber, int iMaxBytesPerSecond = 0, bool bIsMaster = false);
 
     //! Destructor
     virtual ~CTDMADevice();
