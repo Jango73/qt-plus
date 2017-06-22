@@ -5,8 +5,8 @@
 #include <QThread>
 #include <QImage>
 
+#include "Image/CImageHistogram.h"
 #include "CGeoUtilities.h"
-#include "CImageHistogram.h"
 #include "QTree.h"
 #include "QMLTree/QMLTreeContext.h"
 #include "QMLTree/QMLAnalyzer.h"
