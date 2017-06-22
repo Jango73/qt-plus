@@ -295,6 +295,9 @@ void CTDMADevice::powerOff()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Timed processing.
+*/
 void CTDMADevice::onTimeout()
 {
     if (m_bIsMaster)
@@ -322,6 +325,9 @@ void CTDMADevice::onTimeout()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Handles the readyRead() signal of the target device.
+*/
 void CTDMADevice::onReadyRead()
 {
     m_tLastInputTime = QDateTime::currentDateTime();
@@ -345,6 +351,9 @@ void CTDMADevice::onReadyRead()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Called by onReadyRead() to process incoming \a baData based on the \c m_bIsMaster flag.
+*/
 int CTDMADevice::processInput(const QByteArray& baData)
 {
     if (m_bIsMaster)
@@ -361,6 +370,9 @@ int CTDMADevice::processInput(const QByteArray& baData)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Called by processInput() to process incoming \a baData in master mode.
+*/
 int CTDMADevice::processInput_Master(const QByteArray& baData)
 {
     PTDMAAction ucAction = baData[0];
@@ -425,6 +437,9 @@ int CTDMADevice::processInput_Master(const QByteArray& baData)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Called by processInput() to process incoming \a baData in slave mode.
+*/
 int CTDMADevice::processInput_Slave(const QByteArray& baData)
 {
     PTDMAAction ucAction = baData[0];
@@ -522,6 +537,11 @@ int CTDMADevice::processInput_Slave(const QByteArray& baData)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Processes the TSlaveData_SlaveSpeak message in master mode. \br\br
+    \a pSpeak contains the message header \br
+    \a baData contains the payload
+*/
 void CTDMADevice::handleSlaveSpeak_Master(const TSlaveData_SlaveSpeak* pSpeak, const QByteArray& baData)
 {
     CONSOLE_DEBUG(QString("Master receiving data from slot %1").arg(m_tSlot));
@@ -542,6 +562,11 @@ void CTDMADevice::handleSlaveSpeak_Master(const TSlaveData_SlaveSpeak* pSpeak, c
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Processes the TMasterData_MasterSpeak message in slave mode. \br\br
+    \a pSpeak contains the message header \br
+    \a baData contains the payload
+*/
 void CTDMADevice::handleMasterSpeak_Slave(const TMasterData_MasterSpeak* pSpeak, const QByteArray& baData)
 {
     CONSOLE_DEBUG(QString("Slave receiving data from slot %1").arg(m_tSlot));
@@ -556,6 +581,10 @@ void CTDMADevice::handleMasterSpeak_Slave(const TMasterData_MasterSpeak* pSpeak,
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Processes the handleNewUser_Master message in master mode. \br\br
+    \a pAnyone contains the message header
+*/
 void CTDMADevice::handleNewUser_Master(const TSlaveData_Anyone* pAnyone)
 {
     for (int iIndex = 0; iIndex < m_vNewUsers.count(); iIndex++)
@@ -574,6 +603,10 @@ void CTDMADevice::handleNewUser_Master(const TSlaveData_Anyone* pAnyone)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Processes the handleSetSlot_Master message in master mode. \br\br
+    \a pSetSlot contains the message header
+*/
 void CTDMADevice::handleSetSlot_Master(const TSlaveData_SetSlot* pSetSlot)
 {
     CONSOLE_DEBUG("Master receiving aSetSlotResponse for " << QString::number((int) pSetSlot->uiSerialNumber) << " : " << QString::number((int) pSetSlot->ucSlot));
@@ -599,6 +632,9 @@ void CTDMADevice::handleSetSlot_Master(const TSlaveData_SetSlot* pSetSlot)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Processes the handleSpeak_Master message in master mode.
+*/
 void CTDMADevice::handleSpeak_Master()
 {
     if (m_baOutput.count() > 0)
@@ -620,6 +656,10 @@ void CTDMADevice::handleSpeak_Master()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Processes the handleSpeak_Slave message in slave mode. \br\br
+    \a pSpeak contains the message header
+*/
 void CTDMADevice::handleSpeak_Slave(const TMasterData_SlaveSpeak* pSpeak)
 {
     if (pSpeak->ucSlot == m_tSlot)
@@ -644,6 +684,10 @@ void CTDMADevice::handleSpeak_Slave(const TMasterData_SlaveSpeak* pSpeak)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Processes the handleSetSlot_Slave message in slave mode. \br\br
+    \a pSetSlot contains the message header
+*/
 void CTDMADevice::handleSetSlot_Slave(const TMasterData_SetSlot* pSetSlot)
 {
     if (pSetSlot->uiSerialNumber == m_tSeriaNumber)
@@ -670,6 +714,9 @@ void CTDMADevice::handleSetSlot_Slave(const TMasterData_SetSlot* pSetSlot)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Processes the aAnyone action in slave mode.
+*/
 void CTDMADevice::handleAnyone_Slave()
 {
     if (m_tSlot == s_ucBadSlot)
@@ -695,6 +742,9 @@ void CTDMADevice::handleAnyone_Slave()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Processes the aReset action in slave mode.
+*/
 void CTDMADevice::handleReset_Slave()
 {
     if (m_tSlot == s_ucBadSlot && m_iNumFramesBeforeIdent == 0)
@@ -707,6 +757,9 @@ void CTDMADevice::handleReset_Slave()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Called in master mode to order slaves to speak.
+*/
 void CTDMADevice::sendSpeak()
 {
     if (m_mRegisteredUsers.count() > 0)
@@ -743,6 +796,9 @@ void CTDMADevice::sendSpeak()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Called in master mode to speak and assign slots.
+*/
 void CTDMADevice::sendSetSlot()
 {
     if (m_baOutput.count() > 0)
@@ -776,6 +832,9 @@ void CTDMADevice::sendSetSlot()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Called in master mode to send the aAnyone action.
+*/
 void CTDMADevice::sendAnyone()
 {
     // CONSOLE_DEBUG("Master sending Anyone");
@@ -785,6 +844,9 @@ void CTDMADevice::sendAnyone()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Called in master mode to send the aReset action.
+*/
 void CTDMADevice::sendReset()
 {
     CONSOLE_DEBUG("Master sending Reset");
@@ -794,6 +856,9 @@ void CTDMADevice::sendReset()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns a free slot number or s_ucBadSlot if none available.
+*/
 PTDMASlot CTDMADevice::getFreeSlot() const
 {
     for (PTDMASlot ucIndex = s_ucFirstSlot; ucIndex <= s_ucLastSlot; ucIndex++)
@@ -832,6 +897,11 @@ PTDMASlot CTDMADevice::getFreeSlot() const
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Implements the readData() virtual method of QIODevice. \br\br
+    \a data is a pointer to fill \br
+    \a maxSize is the number of bytes to read
+*/
 qint64 CTDMADevice::readData(char* data, qint64 maxSize)
 {
     qint64 iSize = maxSize;
@@ -853,6 +923,11 @@ qint64 CTDMADevice::readData(char* data, qint64 maxSize)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Implements the writeData() virtual method of QIODevice. \br\br
+    \a data is a pointer to read from \br
+    \a maxSize is the number of bytes to write
+*/
 qint64 CTDMADevice::writeData(const char* pData, qint64 iSize)
 {
     m_baOutput.append(QByteArray(pData, iSize));
