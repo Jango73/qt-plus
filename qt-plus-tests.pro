@@ -11,12 +11,12 @@ CONFIG   += console
 TEMPLATE = app
 
 SOURCES += \
-    source/cpp/tests-main.cpp \
-    source/cpp/ParsingMonitor.cpp
+    source/cpp/Test/tests-main.cpp \
+    source/cpp/Test/ParsingMonitor.cpp
 
 HEADERS += \
-    source/cpp/tests-main.h \
-    source/cpp/ParsingMonitor.h
+    source/cpp/Test/tests-main.h \
+    source/cpp/Test/ParsingMonitor.h
 
 DEPENDPATH += qt-plus
 

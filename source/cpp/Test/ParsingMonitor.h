@@ -4,8 +4,8 @@
 #include <QObject>
 #include <QDebug>
 
-#include "QMLTree/QMLTreeContext.h"
-#include "QMLTree/QMLAnalyzer.h"
+#include "../QMLTree/QMLTreeContext.h"
+#include "../QMLTree/QMLAnalyzer.h"
 
 class ParsingMonitor : public QObject
 {
