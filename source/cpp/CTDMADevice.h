@@ -67,6 +67,9 @@ public:
     // Control methods
     //-------------------------------------------------------------------------------------------------
 
+    //!
+    qint64 bytesAvailableFromSerial(quint16 uiSerialNumber);
+
     //! Read
     QByteArray readFromSerial(quint16 uiSerialNumber);
 

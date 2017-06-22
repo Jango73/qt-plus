@@ -233,6 +233,24 @@ qint64 CTDMADevice::bytesToWrite() const
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Returns available bytes to read from a given serial number.
+*/
+qint64 CTDMADevice::bytesAvailableFromSerial(quint16 uiSerialNumber)
+{
+    foreach (PTDMASlot ucSlot, m_mRegisteredUsers.keys())
+    {
+        if (m_mRegisteredUsers[ucSlot].m_tSerialNumber == uiSerialNumber)
+        {
+            return m_mRegisteredUsers[ucSlot].m_baData.count();
+        }
+    }
+
+    return 0;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Returns data read for the entity identified by \a uiSerialNumber.
 */
 QByteArray CTDMADevice::readFromSerial(quint16 uiSerialNumber)

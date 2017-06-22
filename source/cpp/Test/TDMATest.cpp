@@ -39,14 +39,23 @@ void TestApplication::onMasterReadyRead()
 {
     QString sText;
 
-    sText = m_pTDMAMaster->readFromSerial(20);
-    qDebug() << "Master reads from 20 : " << sText;
+    if (m_pTDMAMaster->bytesAvailableFromSerial(20) > 0)
+    {
+        sText = m_pTDMAMaster->readFromSerial(20);
+        qDebug() << "Master reads from 20 : " << sText;
+    }
 
-    sText = m_pTDMAMaster->readFromSerial(30);
-    qDebug() << "Master reads from 30 : " << sText;
+    if (m_pTDMAMaster->bytesAvailableFromSerial(30) > 0)
+    {
+        sText = m_pTDMAMaster->readFromSerial(30);
+        qDebug() << "Master reads from 30 : " << sText;
+    }
 
-    sText = m_pTDMAMaster->readFromSerial(40);
-    qDebug() << "Master reads from 40 : " << sText;
+    if (m_pTDMAMaster->bytesAvailableFromSerial(40) > 0)
+    {
+        sText = m_pTDMAMaster->readFromSerial(40);
+        qDebug() << "Master reads from 40 : " << sText;
+    }
 }
 
 void TestApplication::onSlave1ReadyRead()
@@ -77,11 +86,12 @@ void TestApplication::onTimeout()
     }
     else if (m_iSequence < 2)
     {
-        m_pTDMASlave2->write(QByteArray(QString("How are you").toUtf8()));
+        m_pTDMAMaster->write(QByteArray(QString("How are you").toUtf8()));
     }
     else if (m_iSequence < 3)
     {
-        m_pTDMAMaster->write(QByteArray(QString("Fine thanks").toUtf8()));
+        m_pTDMASlave1->write(QByteArray(QString("Fine thanks").toUtf8()));
+        m_pTDMASlave2->write(QByteArray(QString("Could be better").toUtf8()));
     }
 
     m_iSequence++;
