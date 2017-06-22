@@ -113,22 +113,22 @@ void TestRunner::runGeoCoordTests()
 
 void TestRunner::runHistogramTests()
 {
-    QImage image(sImageInputFile);
-    double dPeak, dPeakRadius;
+//    QImage image(sImageInputFile);
+//    double dPeak, dPeakRadius;
 
-    CImageHistogram histogram1(image, CImageHistogram::eHSV);
+//    CImageHistogram histogram1(image, CImageHistogram::eHSV);
 
-    dPeak = histogram1.peak(CImageHistogram::eHue, &dPeakRadius);
-    qDebug() << "Hue peak : " << dPeak << " (" << dPeakRadius << ") : value = " << histogram1.peakValue(CImageHistogram::eHue);
+//    dPeak = histogram1.peak(CImageHistogram::eHue, &dPeakRadius);
+//    qDebug() << "Hue peak : " << dPeak << " (" << dPeakRadius << ") : value = " << histogram1.peakValue(CImageHistogram::eHue);
 
-    dPeak = histogram1.peak(CImageHistogram::eSaturation, &dPeakRadius);
-    qDebug() << "Saturation peak : " << dPeak << " (" << dPeakRadius << ") : value = " << histogram1.peakValue(CImageHistogram::eSaturation);
+//    dPeak = histogram1.peak(CImageHistogram::eSaturation, &dPeakRadius);
+//    qDebug() << "Saturation peak : " << dPeak << " (" << dPeakRadius << ") : value = " << histogram1.peakValue(CImageHistogram::eSaturation);
 
-    dPeak = histogram1.peak(CImageHistogram::eValue, &dPeakRadius);
-    qDebug() << "Value peak : " << dPeak << " (" << dPeakRadius << ") : value = " << histogram1.peakValue(CImageHistogram::eValue);
+//    dPeak = histogram1.peak(CImageHistogram::eValue, &dPeakRadius);
+//    qDebug() << "Value peak : " << dPeak << " (" << dPeakRadius << ") : value = " << histogram1.peakValue(CImageHistogram::eValue);
 
-    dPeak = histogram1.peak(CImageHistogram::eAlpha, &dPeakRadius);
-    qDebug() << "Alpha peak : " << dPeak << " (" << dPeakRadius << ") : value = " << histogram1.peakValue(CImageHistogram::eAlpha);
+//    dPeak = histogram1.peak(CImageHistogram::eAlpha, &dPeakRadius);
+//    qDebug() << "Alpha peak : " << dPeak << " (" << dPeakRadius << ") : value = " << histogram1.peakValue(CImageHistogram::eAlpha);
 }
 
 void TestRunner::runQTreeTests()
