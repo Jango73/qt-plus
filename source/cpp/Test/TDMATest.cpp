@@ -92,6 +92,7 @@ void TestApplication::onTimeout()
     {
         m_pTDMASlave1->write(QByteArray(QString("Fine thanks").toUtf8()));
         m_pTDMASlave2->write(QByteArray(QString("Could be better").toUtf8()));
+        m_pTDMASlave3->write(QByteArray(QString("Doing ok").toUtf8()));
     }
 
     m_iSequence++;
