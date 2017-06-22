@@ -108,7 +108,7 @@ CTDMADevice::CTDMADevice(QIODevice* pDevice, PTDMASerial tSeriaNumber, int iMaxB
     , m_tLastSpeakTime(QDateTime::currentDateTime())
     , m_tPowerOnTime(QDateTime::currentDateTime())
     , m_iMaxBytesPerSecond(iMaxBytesPerSecond)
-    , m_iMaxBytesPerSlot(1)
+    , m_iMaxBytesPerSlot(4)
     , m_iNumFramesBeforeIdent(0)
     , m_bIsMaster(bIsMaster)
     , m_bAntennaPowered(false)
@@ -311,6 +311,8 @@ void CTDMADevice::onReadyRead()
 
     if (m_baRawInput.count() > 0)
     {
+        // CONSOLE_DEBUG(QString("%1 has %2 bytes to process").arg(m_tSeriaNumber).arg(m_baRawInput.count()));
+
         int iBytesUsed = processInput(m_baRawInput);
 
         if (iBytesUsed == -1)
@@ -413,13 +415,11 @@ int CTDMADevice::processInput_Slave(const QByteArray& baData)
         // Raw incoming data
         case aMasterSpeak:
         {
-            // Append input data
-            m_baInput.append(baData);
+            const TMasterData_MasterSpeak* pSpeak = (const TMasterData_MasterSpeak*) baData.constData();
 
-            // Tell the world that data is available for reading
-            emit readyRead();
+            handleMasterSpeak_Slave(pSpeak, baData.mid(sizeof(TMasterData_MasterSpeak)));
 
-            return baData.count();
+            return sizeof(TMasterData_MasterSpeak) + pSpeak->ucNumBytes;
         }
             break;
 
@@ -523,6 +523,20 @@ void CTDMADevice::handleSlaveSpeak_Master(const TSlaveData_SlaveSpeak* pSpeak, c
 
 //-------------------------------------------------------------------------------------------------
 
+void CTDMADevice::handleMasterSpeak_Slave(const TMasterData_MasterSpeak* pSpeak, const QByteArray& baData)
+{
+    CONSOLE_DEBUG(QString("Slave receiving data from slot %1").arg(m_tSlot));
+    CONSOLE_DEBUG("... " << baData);
+
+    m_baInput.append(baData);
+    m_tLastSpeakTime = QDateTime::currentDateTime();
+
+    // On envoie le signal de données arrivées
+    emit readyRead();
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void CTDMADevice::handleNewUser_Master(const TSlaveData_Anyone* pAnyone)
 {
     for (int iIndex = 0; iIndex < m_vNewUsers.count(); iIndex++)
@@ -561,6 +575,27 @@ void CTDMADevice::handleSetSlot_Master(const TSlaveData_SetSlot* pSetSlot)
 
             break;
         }
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CTDMADevice::handleSpeak_Master()
+{
+    if (m_baOutput.count() > 0)
+    {
+        QByteArray baOut = m_baOutput.left(m_iMaxBytesPerSlot);
+        m_baOutput = m_baOutput.mid(baOut.count());
+
+        TMasterData_MasterSpeak tSpeak;
+
+        tSpeak.ucAction = aMasterSpeak;
+        tSpeak.ucNumBytes = baOut.count();
+
+        m_pDevice->write((const char*) &tSpeak, sizeof(TMasterData_MasterSpeak));
+        m_pDevice->write(baOut);
+
+        m_tLastSpeakTime = QDateTime::currentDateTime();
     }
 }
 
@@ -669,7 +704,7 @@ void CTDMADevice::sendSpeak()
         }
         else
         {
-            CONSOLE_DEBUG("Master sending aSlaveSpeak for slot " << m_tSlot);
+            // CONSOLE_DEBUG("Master sending aSlaveSpeak for slot " << m_tSlot);
 
             TMasterData_SlaveSpeak tSpeak;
 
@@ -691,23 +726,32 @@ void CTDMADevice::sendSpeak()
 
 void CTDMADevice::sendSetSlot()
 {
-    if (m_vNewUsers.count() > 0)
+    if (m_baOutput.count() > 0)
     {
-        CONSOLE_DEBUG("Master sending SetSlot for " << QString::number(m_vNewUsers[0].m_tSerialNumber) << " : " << QString::number(m_vNewUsers[0].m_tSlot));
+        CONSOLE_DEBUG("Master speaking");
 
-        TMasterData_SetSlot tSetSlot;
-
-        tSetSlot.ucAction = aSetSlot;
-        tSetSlot.uiSerialNumber = m_vNewUsers[0].m_tSerialNumber;
-        tSetSlot.ucSlot = m_vNewUsers[0].m_tSlot;
-        tSetSlot.ucMaxBytesPerSlot = 4;
-        tSetSlot.ucActionEcho = aSetSlot;
-
-        m_pDevice->write((const char *) &tSetSlot, sizeof(TMasterData_SetSlot));
+        handleSpeak_Master();
     }
     else
     {
-        sendAnyone();
+        if (m_vNewUsers.count() > 0)
+        {
+            CONSOLE_DEBUG("Master sending SetSlot for " << QString::number(m_vNewUsers[0].m_tSerialNumber) << " : " << QString::number(m_vNewUsers[0].m_tSlot));
+
+            TMasterData_SetSlot tSetSlot;
+
+            tSetSlot.ucAction = aSetSlot;
+            tSetSlot.uiSerialNumber = m_vNewUsers[0].m_tSerialNumber;
+            tSetSlot.ucSlot = m_vNewUsers[0].m_tSlot;
+            tSetSlot.ucMaxBytesPerSlot = m_iMaxBytesPerSlot;
+            tSetSlot.ucActionEcho = aSetSlot;
+
+            m_pDevice->write((const char *) &tSetSlot, sizeof(TMasterData_SetSlot));
+        }
+        else
+        {
+            sendAnyone();
+        }
     }
 }
 
@@ -715,7 +759,7 @@ void CTDMADevice::sendSetSlot()
 
 void CTDMADevice::sendAnyone()
 {
-    CONSOLE_DEBUG("Master sending Anyone");
+    // CONSOLE_DEBUG("Master sending Anyone");
 
     m_pDevice->write(QByteArray(1, aAnyone));
 }

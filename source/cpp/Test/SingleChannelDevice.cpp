@@ -6,7 +6,7 @@ SingleChannelDevice::SingleChannelDevice(QString sName, SingleChannelDeviceRelay
     : m_sName(sName)
     , m_pRelay(pRelay)
 {
-    connect(m_pRelay, SIGNAL(readyRead(SingleChannelDevice*)), this, SLOT(onReadyRead(SingleChannelDevice*)));
+    connect(m_pRelay, SIGNAL(readyRead(SingleChannelDevice*)), this, SLOT(onReadyRead(SingleChannelDevice*)), Qt::QueuedConnection);
 
     QIODevice::open(QIODevice::ReadWrite);
 }

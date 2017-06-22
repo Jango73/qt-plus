@@ -111,6 +111,13 @@ protected:
         unsigned char   ucNumBytes;
     } TSlaveData_SlaveSpeak;
 
+    //! Defines the data sent by the master to order a slave to speak
+    typedef struct tag_TMasterData_MasterSpeak
+    {
+        PTDMAAction     ucAction;
+        unsigned char   ucNumBytes;
+    } TMasterData_MasterSpeak;
+
     //! Defines the data sent by the master to assign a slave's slot
     typedef struct tag_TMasterData_SetSlot
     {
@@ -205,11 +212,17 @@ protected:
     //! Handles a slave speak message
     void handleSlaveSpeak_Master(const TSlaveData_SlaveSpeak* pSpeak, const QByteArray& baData);
 
+    //!
+    void handleMasterSpeak_Slave(const TMasterData_MasterSpeak* pSpeak, const QByteArray& baData);
+
     //! Handles a register request
     void handleNewUser_Master(const TSlaveData_Anyone* pAnyone);
 
     //! Handles slot assignment acknowledge
     void handleSetSlot_Master(const TSlaveData_SetSlot* pSetSlot);
+
+    //!
+    void handleSpeak_Master();
 
     //! Handles slave speak order
     void handleSpeak_Slave(const TMasterData_SlaveSpeak* pSpeak);
