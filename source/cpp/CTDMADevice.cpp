@@ -21,7 +21,8 @@ PTDMASlot CTDMADevice::s_ucLastSlot		= 250;
 /*!
     \class CTDMADevice
     \inmodule qt-plus
-    \brief A Time Division Multiple Access class. Can input/output from any QIODevice.
+    \brief A Time Division for Multiple Access class. Can input/output from any QIODevice. Allows
+    many devices to transfer data on a single communication channel.
 
     \section1 Introduction
     This class is a form of Time Division for Multiple Access implementation. \br
@@ -40,7 +41,7 @@ PTDMASlot CTDMADevice::s_ucLastSlot		= 250;
     slave will speak the next time the master sends the register message (named aAnyone here). \br
     When the master receives a register demand, it allocates a slot to the slave. The slave is given
     its slot and acknowledges. \br
-    The rest of the time, the master sends its own data and a speak message for each slot in turn.
+    The rest of the time, the master sends its own data and a speak message for each slave in turn.
     The slave whose slot corresponds then sends its data. \br\br
 
     Below is an example of what can happen along a time line.
