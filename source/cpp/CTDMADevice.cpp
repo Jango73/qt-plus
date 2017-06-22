@@ -647,7 +647,7 @@ void CTDMADevice::handleReset_Slave()
     {
         m_iNumFramesBeforeIdent = 1 + (qrand() % 10);
 
-        CONSOLE_DEBUG(QString("Slave set m_iNumFramesBeforeIdent to %1").arg(m_iNumFramesBeforeIdent));
+        CONSOLE_DEBUG(QString("Slave %1 sets m_iNumFramesBeforeIdent to %2").arg(m_tSeriaNumber).arg(m_iNumFramesBeforeIdent));
     }
 }
 

@@ -18,7 +18,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Default constructor
-    SingleChannelDevice(SingleChannelDeviceRelay* pRelay);
+    SingleChannelDevice(QString sName, SingleChannelDeviceRelay* pRelay);
 
     //! Destructor
     virtual ~SingleChannelDevice();
@@ -36,10 +36,19 @@ protected:
     virtual qint64 writeData(const char * data, qint64 maxSize) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
+    // Slots
+    //-------------------------------------------------------------------------------------------------
+
+protected slots:
+
+    void onReadyRead(SingleChannelDevice* pDevice);
+
+    //-------------------------------------------------------------------------------------------------
     // Properties
     //-------------------------------------------------------------------------------------------------
 
 private:
 
+    QString                     m_sName;
     SingleChannelDeviceRelay*   m_pRelay;
 };

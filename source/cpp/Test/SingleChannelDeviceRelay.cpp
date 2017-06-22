@@ -42,7 +42,9 @@ qint64 SingleChannelDeviceRelay::writeData(SingleChannelDevice* pCaller, const c
     {
         if (pDevice != pCaller)
         {
-            // pDevice->writeData()
+             m_mDevices[pDevice].append(QByteArray(data, maxSize));
+             emit readyRead(pDevice);
+             return maxSize;
         }
     }
 
