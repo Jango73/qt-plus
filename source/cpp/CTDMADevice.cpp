@@ -91,6 +91,36 @@ PTDMASlot CTDMADevice::s_ucLastSlot		= 250;
     \endlist
 */
 
+/*!
+    \enum CTDMADevice::EAction
+    The first byte of a transmission, indicating the type of action and how to read the following bytes.
+
+    \value aMasterSpeak
+    The master device sends its payload.
+
+    \value aSlaveSpeak
+    A slave device is ordered to send its payload.
+
+    \value aSlaveSpeakResponse
+    A slave device sends its payload.
+
+    \value aSetSlot
+    The master device assigns a slot to a slave device.
+
+    \value aSetSlotResponse
+    A slave device acknowledges its slot.
+
+    \value aAnyone
+    The master device asks any unregistered device to indentify itself.
+
+    \value aAnyoneResponse
+    A slave device answers the aAnyone message and identifies itself.
+
+    \value aReset
+    The master device orders slave devices to randomly compute a frame offset before answering to aAnyone.
+    A simple solution against jamming.
+*/
+
 //-------------------------------------------------------------------------------------------------
 
 /*!
@@ -234,7 +264,7 @@ qint64 CTDMADevice::bytesToWrite() const
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns available bytes to read from a given serial number.
+    Returns available bytes to read from the device with \a uiSerialNumber.
 */
 qint64 CTDMADevice::bytesAvailableFromSerial(quint16 uiSerialNumber)
 {
