@@ -91,11 +91,17 @@ void QMLImport::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent)
     {
         if (m_pVersion == nullptr || m_pVersion->toString().isEmpty())
         {
-            sText = QString("import \"%1\"").arg(m_pName->toString());
+            QString sName = m_pName->toString();
+            sName.replace("\"", "");
+            sText = QString("import \"%1\"").arg(sName);
         }
         else
         {
-            sText = QString("import %1 %2").arg(m_pName->toString()).arg(m_pVersion->toString());
+            QString sName = m_pName->toString();
+            QString sVersion = m_pVersion->toString();
+            sName.replace("\"", "");
+            sVersion.replace("\"", "");
+            sText = QString("import %1 %2").arg(sName).arg(sVersion);
         }
 
         if (m_pAs != nullptr && m_pAs->toString().isEmpty() == false)
