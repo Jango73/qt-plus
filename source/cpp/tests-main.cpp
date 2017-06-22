@@ -20,6 +20,7 @@ QString GeoCoordinateString(const QGeoCoordinate& vec)
 void TestRunner::run()
 {
     runGeoCoordTests();
+    runHistogramTests();
     runQTreeTests();
     runQMLTreeTests();
     runQMLAnalyzerTests();
@@ -108,6 +109,26 @@ void TestRunner::runGeoCoordTests()
     vPosition = QVector3D(0.0, -98819.0, 1101919.88);
     Pos = CGeoUtilities::getInstance()->Vector3DToGeoCoordinate(vPosition, Ref);
     qDebug() << "ref 20.0, 0.0 and pos 0.0, -98819.0, 1101919.88 = " << GeoCoordinateString(Pos);
+}
+
+void TestRunner::runHistogramTests()
+{
+    QImage image(sImageInputFile);
+    double dPeak, dPeakRadius;
+
+    CImageHistogram histogram1(image, CImageHistogram::eHSV);
+
+    dPeak = histogram1.peak(CImageHistogram::eHue, &dPeakRadius);
+    qDebug() << "Hue peak : " << dPeak << " (" << dPeakRadius << ") : value = " << histogram1.peakValue(CImageHistogram::eHue);
+
+    dPeak = histogram1.peak(CImageHistogram::eSaturation, &dPeakRadius);
+    qDebug() << "Saturation peak : " << dPeak << " (" << dPeakRadius << ") : value = " << histogram1.peakValue(CImageHistogram::eSaturation);
+
+    dPeak = histogram1.peak(CImageHistogram::eValue, &dPeakRadius);
+    qDebug() << "Value peak : " << dPeak << " (" << dPeakRadius << ") : value = " << histogram1.peakValue(CImageHistogram::eValue);
+
+    dPeak = histogram1.peak(CImageHistogram::eAlpha, &dPeakRadius);
+    qDebug() << "Alpha peak : " << dPeak << " (" << dPeakRadius << ") : value = " << histogram1.peakValue(CImageHistogram::eAlpha);
 }
 
 void TestRunner::runQTreeTests()

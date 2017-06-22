@@ -3,8 +3,10 @@
 
 #include <QApplication>
 #include <QThread>
+#include <QImage>
 
 #include "CGeoUtilities.h"
+#include "CImageHistogram.h"
 #include "QTree.h"
 #include "QMLTree/QMLTreeContext.h"
 #include "QMLTree/QMLAnalyzer.h"
@@ -19,6 +21,7 @@ public:
     virtual void run() Q_DECL_OVERRIDE;
 
     void runGeoCoordTests();
+    void runHistogramTests();
     void runQTreeTests();
     void runQMLTreeTests();
     void runQMLAnalyzerTests();
