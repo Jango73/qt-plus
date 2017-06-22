@@ -17,6 +17,32 @@
     \class CHTTPServer
     \inmodule qt-plus
     \brief A basic HTTP server that can serve files and dynamic content.
+
+    \section1 How it works
+    This server listens to and processes HTTP requests on a given port. \br
+    When asked for a resource, the first thing it does is check if it exists on disk. If it does
+    not, the server executes its getContent() which may be overridden in order to
+    return some HTML content to the client. \br
+    The disk access will be limited to cetrain folders, which are specified using the addAuthorizedFolder()
+    method. \br
+    There is a flood protection mechanism which can be disabled with the useFloodProtection() method.
+
+    \section1 Sample
+    The following will create a HTTP server that listens on port 8080 and greets clients with "Hello world!"
+    \code
+    class MyHTTPServer : public CHTTPServer
+    {
+        MyHTTPServer() : CHTTPServer(8080)
+        {
+            addAuthorizedFolder("c:\mywebfolder");
+        }
+
+        virtual void getContent(const CWebContext& tContext, QString& sHead, QString& sBody, QString& sCustomResponse, QString& sCustomResponseMIME)
+        {
+            sBody = "<div>Hello world!</div>";
+        }
+    }
+    \endcode
 */
 
 //-------------------------------------------------------------------------------------------------
