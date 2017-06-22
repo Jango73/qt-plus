@@ -81,7 +81,7 @@ public:
     // Slots
     //-------------------------------------------------------------------------------------------------
 
-private slots:
+protected slots:
 
     //! Called by a timer, the interval depends on the master/slave mode
     void onTimeout();
@@ -93,7 +93,7 @@ private slots:
     // Classes imbriquées
     //-------------------------------------------------------------------------------------------------
 
-private:
+protected:
 
 #pragma pack (push, 1)
 
@@ -185,7 +185,7 @@ private:
     // Protected methods
     //-------------------------------------------------------------------------------------------------
 
-private:
+protected:
 
     //! Read data
     virtual qint64 readData(char * data, qint64 maxSize) Q_DECL_OVERRIDE;
@@ -243,7 +243,7 @@ private:
     // Propriétés
     //-------------------------------------------------------------------------------------------------
 
-private:
+protected:
 
     bool                       m_bIsMaster;                 // Is this entity a master?
     bool                       m_bAntennaPowered;           // Is the comm module activated?
