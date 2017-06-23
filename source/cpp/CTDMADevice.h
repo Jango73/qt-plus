@@ -63,6 +63,9 @@ public:
     //!
     virtual qint64 bytesToWrite() const Q_DECL_OVERRIDE;
 
+    //!
+    QDateTime now() const;
+
     //-------------------------------------------------------------------------------------------------
     // Control methods
     //-------------------------------------------------------------------------------------------------
@@ -88,6 +91,9 @@ protected slots:
 
     //! Called by a timer, the interval depends on the master/slave mode
     void onTimeout();
+
+    //! Called by a timer, the interval depends on the master/slave mode
+    void onMaintenanceTimeout();
 
     //!
     void onReadyRead();
@@ -174,21 +180,49 @@ protected:
         CClient()
             : m_tSerialNumber(0)
             , m_tSlot(CTDMADevice::s_ucBadSlot)
+            , m_tLastOrderSpeakTime(QDateTime::currentDateTime())
             , m_tLastSpeakTime(QDateTime::currentDateTime())
+            , m_iScore(0)
         {
         }
 
         CClient(PTDMASerial tSerialNumber, PTDMASlot ucSlot = CTDMADevice::s_ucBadSlot)
             : m_tSerialNumber(tSerialNumber)
             , m_tSlot(ucSlot)
+            , m_tLastOrderSpeakTime(QDateTime::currentDateTime())
             , m_tLastSpeakTime(QDateTime::currentDateTime())
+            , m_iScore(0)
         {
         }
 
-        PTDMASerial m_tSerialNumber;    // Numéro de série du client
-        PTDMASlot   m_tSlot;            // Slot temporel alloué au client
-        QDateTime   m_tLastSpeakTime;   // Horodatage de la dernière émission reçue de ce client
-        QByteArray  m_baData;           // Données entrantes pour ce client
+        void incScore()
+        {
+            m_iScore += 2;
+
+            if (m_iScore > m_iMaxScore)
+            {
+                m_iScore = m_iMaxScore;
+            }
+        }
+
+        void decScore()
+        {
+            m_iScore--;
+
+            if (m_iScore < 0)
+            {
+                m_iScore = 0;
+            }
+        }
+
+        PTDMASerial m_tSerialNumber;        // Serial number
+        PTDMASlot   m_tSlot;                // Assigned temporal slot
+        QDateTime   m_tLastOrderSpeakTime;  // Time at which client was ordered to speak
+        QDateTime   m_tLastSpeakTime;       // Time at which client last spoke
+        QByteArray  m_baData;               // Incoming payload
+        qint32      m_iScore;               // Speak score
+
+        static const qint32 m_iMaxScore = 10;
     };
 
     //-------------------------------------------------------------------------------------------------
@@ -271,6 +305,7 @@ protected:
     int                        m_iNumBytesToIgnore;         // For slave
     QIODevice*                 m_pDevice;                   // IO device for data
     QTimer                     m_tTimer;
+    QTimer                     m_tMaintenanceTimer;
     QDateTime                  m_tLastInputTime;            // For master
     QDateTime                  m_tLastSpeakTime;            // For slave, used to power on and off
     QDateTime                  m_tPowerOnTime;              // Time at which comm module was powered on

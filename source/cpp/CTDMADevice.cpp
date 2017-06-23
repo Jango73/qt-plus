@@ -7,8 +7,14 @@
 
 //-------------------------------------------------------------------------------------------------
 
-// #define CONSOLE_DEBUG(a)	qDebug() << a;
+// Uncomment this to see debug logs
+// #define TDMA_DEBUG
+
+#ifdef TDMA_DEBUG
+#define CONSOLE_DEBUG(a)	qDebug() << a;
+#else
 #define CONSOLE_DEBUG(a)
+#endif
 
 //-------------------------------------------------------------------------------------------------
 
@@ -135,9 +141,9 @@ CTDMADevice::CTDMADevice(QIODevice* pDevice, PTDMASerial tSeriaNumber, int iMaxB
     , m_tSeriaNumber(tSeriaNumber)
     , m_tSlot(s_ucBadSlot)
     , m_tTimer(this)
-    , m_tLastInputTime(QDateTime::currentDateTime())
-    , m_tLastSpeakTime(QDateTime::currentDateTime())
-    , m_tPowerOnTime(QDateTime::currentDateTime())
+    , m_tLastInputTime(now())
+    , m_tLastSpeakTime(now())
+    , m_tPowerOnTime(now())
     , m_iMaxBytesPerSecond(iMaxBytesPerSecond)
     , m_iMaxBytesPerSlot(4)
     , m_iNumFramesBeforeIdent(0)
@@ -151,17 +157,20 @@ CTDMADevice::CTDMADevice(QIODevice* pDevice, PTDMASerial tSeriaNumber, int iMaxB
         bSrandInit = true;
 
         // Initialize random numbers
-        qsrand(QDateTime::currentDateTime().toTime_t());
+        qsrand(now().toTime_t());
     }
 
     // Connect to IO device
     connect(m_pDevice, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
 
     connect(&m_tTimer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+    connect(&m_tMaintenanceTimer, SIGNAL(timeout()), this, SLOT(onMaintenanceTimeout()));
 
     if (m_bIsMaster)
     {
         m_tTimer.setInterval(10);
+        m_tMaintenanceTimer.setInterval(2000);
+        m_tMaintenanceTimer.start();
     }
     else
     {
@@ -263,6 +272,13 @@ qint64 CTDMADevice::bytesToWrite() const
 
 //-------------------------------------------------------------------------------------------------
 
+QDateTime CTDMADevice::now() const
+{
+    return QDateTime::currentDateTime();
+}
+
+//-------------------------------------------------------------------------------------------------
+
 /*!
     Returns available bytes to read from the device with \a uiSerialNumber.
 */
@@ -326,22 +342,22 @@ void CTDMADevice::powerOff()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Timed processing.
+    Master and slave timed processing.
 */
 void CTDMADevice::onTimeout()
 {
     if (m_bIsMaster)
     {
-        if (m_tLastInputTime.msecsTo(QDateTime::currentDateTime()) > 50)
+        if (m_tLastInputTime.msecsTo(now()) > 50)
         {
-            m_tLastInputTime = QDateTime::currentDateTime();
+            m_tLastInputTime = now();
 
             sendSpeak();
         }
     }
     else
     {
-        if (m_tLastSpeakTime.secsTo(QDateTime::currentDateTime()) > 3)
+        if (m_tLastSpeakTime.secsTo(now()) > 3)
         {
             if (m_bAntennaPowered)
             {
@@ -356,11 +372,34 @@ void CTDMADevice::onTimeout()
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Master only timed processing.
+*/
+void CTDMADevice::onMaintenanceTimeout()
+{
+    if (m_bIsMaster)
+    {
+        foreach (PTDMASlot slot, m_mRegisteredUsers.keys())
+        {
+            int iSeconds = m_mRegisteredUsers[slot].m_tLastSpeakTime.secsTo(now());
+
+            if (iSeconds > 10)
+            {
+                CONSOLE_DEBUG(QString("Kicking slot %1").arg(slot));
+
+                m_mRegisteredUsers.remove(slot);
+            }
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Handles the readyRead() signal of the target device.
 */
 void CTDMADevice::onReadyRead()
 {
-    m_tLastInputTime = QDateTime::currentDateTime();
+    m_tLastInputTime = now();
 
     m_baRawInput.append(m_pDevice->read(256));
 
@@ -581,7 +620,8 @@ void CTDMADevice::handleSlaveSpeak_Master(const TSlaveData_SlaveSpeak* pSpeak, c
     if (m_mRegisteredUsers.contains(m_tSlot))
     {
         m_mRegisteredUsers[m_tSlot].m_baData.append(baData);
-        m_mRegisteredUsers[m_tSlot].m_tLastSpeakTime = QDateTime::currentDateTime();
+        m_mRegisteredUsers[m_tSlot].m_tLastSpeakTime = now();
+        m_mRegisteredUsers[m_tSlot].incScore();
     }
 
     // On envoie le signal de données arrivées
@@ -603,7 +643,7 @@ void CTDMADevice::handleMasterSpeak_Slave(const TMasterData_MasterSpeak* pSpeak,
     CONSOLE_DEBUG("... " << baData);
 
     m_baInput.append(baData);
-    m_tLastSpeakTime = QDateTime::currentDateTime();
+    m_tLastSpeakTime = now();
 
     // On envoie le signal de données arrivées
     emit readyRead();
@@ -680,7 +720,7 @@ void CTDMADevice::handleSpeak_Master()
         m_pDevice->write((const char*) &tSpeak, sizeof(TMasterData_MasterSpeak));
         m_pDevice->write(baOut);
 
-        m_tLastSpeakTime = QDateTime::currentDateTime();
+        m_tLastSpeakTime = now();
     }
 }
 
@@ -707,7 +747,7 @@ void CTDMADevice::handleSpeak_Slave(const TMasterData_SlaveSpeak* pSpeak)
             m_pDevice->write((const char*) &tSpeak, sizeof(TSlaveData_SlaveSpeak));
             m_pDevice->write(baOut);
 
-            m_tLastSpeakTime = QDateTime::currentDateTime();
+            m_tLastSpeakTime = now();
         }
     }
 }
@@ -738,7 +778,7 @@ void CTDMADevice::handleSetSlot_Slave(const TMasterData_SetSlot* pSetSlot)
 
         m_pDevice->write((const char*) &tAnswer, sizeof(TSlaveData_SetSlot));
 
-        m_tLastSpeakTime = QDateTime::currentDateTime();
+        m_tLastSpeakTime = now();
     }
 }
 
@@ -761,7 +801,7 @@ void CTDMADevice::handleAnyone_Slave()
 
             m_pDevice->write((const char*) &tAnswer, sizeof(TSlaveData_Anyone));
 
-            m_tLastSpeakTime = QDateTime::currentDateTime();
+            m_tLastSpeakTime = now();
         }
         else
         {
@@ -806,14 +846,23 @@ void CTDMADevice::sendSpeak()
         }
         else
         {
-            // CONSOLE_DEBUG("Master sending aSlaveSpeak for slot " << m_tSlot);
+            if (m_mRegisteredUsers.contains(m_tSlot))
+            {
+                int iDifference = m_mRegisteredUsers[m_tSlot].m_tLastOrderSpeakTime.msecsTo(now());
 
-            TMasterData_SlaveSpeak tSpeak;
+                if (m_mRegisteredUsers[m_tSlot].m_iScore > 0 || iDifference > 1000)
+                {
+                    CONSOLE_DEBUG("Master sending aSlaveSpeak for slot " << m_tSlot);
 
-            tSpeak.ucAction = aSlaveSpeak;
-            tSpeak.ucSlot = m_tSlot;
+                    TMasterData_SlaveSpeak tSpeak;
+                    tSpeak.ucAction = aSlaveSpeak;
+                    tSpeak.ucSlot = m_tSlot;
 
-            m_pDevice->write((const char *) &tSpeak, sizeof(TMasterData_SlaveSpeak));
+                    m_mRegisteredUsers[m_tSlot].decScore();
+                    m_mRegisteredUsers[m_tSlot].m_tLastOrderSpeakTime = now();
+                    m_pDevice->write((const char *) &tSpeak, sizeof(TMasterData_SlaveSpeak));
+                }
+            }
         }
     }
     else
@@ -965,8 +1014,7 @@ qint64 CTDMADevice::writeData(const char* pData, qint64 iSize)
     if (m_bAntennaPowered == false)
     {
         m_bAntennaPowered = true;
-        m_tPowerOnTime = QDateTime::currentDateTime();
-        m_tLastSpeakTime = QDateTime::currentDateTime();
+        m_tLastSpeakTime = m_tPowerOnTime = now();
 
         int iPowerOnMS = powerOn();
     }
