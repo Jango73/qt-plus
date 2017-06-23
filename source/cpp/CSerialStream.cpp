@@ -18,7 +18,7 @@
 
 /*!
     Constructs a CSerialStream. \br\br
-    \a sName is a serial connection name like "/dev/ttyS1" or "COM2"
+    \a sName is a serial connection name like "/dev/ttyS1" or "COM2" \br
     \a sParameters are additional parameters for serial ports. See STREAM_PARAM_* in CSerialStream.h.
 */
 CSerialStream::CSerialStream(const QString& sName, const QMap<QString, QString>& sParameters)

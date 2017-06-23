@@ -6,6 +6,20 @@ using namespace CarEmulator;
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    \class CPIDController
+    \inmodule qt-plus
+    \brief A PID (Proportional Integral Derivative) controller.
+*/
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Constructs a CPIDController. \br\br
+    \a dNewProportional is the proportional factor \br
+    \a dNewIntegral is the integral factor \br
+    \a dNewDerivative is the derivative factor
+*/
 CPIDController::CPIDController(double dNewProportional, double dNewIntegral, double dNewDerivative)
 {
 	m_dProportionalConstant = dNewProportional;
@@ -17,12 +31,18 @@ CPIDController::CPIDController(double dNewProportional, double dNewIntegral, dou
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Destroys a CPIDController.
+*/
 CPIDController::~CPIDController()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Resets the controller.
+*/
 void CPIDController::reset()
 {
 	m_dSetPoint = 0.0;
@@ -35,6 +55,11 @@ void CPIDController::reset()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Updates the controller.
+    \a CurrentValue is the input value \br
+    \a DeltaTimeMillis is the delta time since last update in milliseconds
+*/
 void CPIDController::update(double CurrentValue, double DeltaTimeMillis)
 {
 	// Calculate the difference between the desired value and the actual value
