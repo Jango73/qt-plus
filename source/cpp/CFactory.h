@@ -48,7 +48,7 @@ public:
             return s_vInstanciators[sClassName]();
         }
 
-        return NULL;
+        return nullptr;
     }
 
     //-------------------------------------------------------------------------------------------------

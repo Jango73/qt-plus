@@ -417,7 +417,7 @@
     Constructs a CCodeAnalyzer.
 */
 QMLAnalyzer::QMLAnalyzer()
-    : QThread(NULL)
+    : QThread(nullptr)
     , m_mContextMutex(QMutex::Recursive)
     , m_pContext(nullptr)
     , m_bIncludeImports(false)

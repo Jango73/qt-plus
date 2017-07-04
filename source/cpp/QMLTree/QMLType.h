@@ -56,7 +56,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    virtual void toQML(QTextStream& stream, const QMLEntity* pParent = NULL, int iIdent = 0) const Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, const QMLEntity* pParent = nullptr, int iIdent = 0) const Q_DECL_OVERRIDE;
 
     //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;

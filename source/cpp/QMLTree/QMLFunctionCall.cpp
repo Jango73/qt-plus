@@ -17,10 +17,10 @@ QMLFunctionCall::QMLFunctionCall(const QPoint& pPosition, QMLEntity* pName, QMLC
 
 QMLFunctionCall::~QMLFunctionCall()
 {
-    if (m_pName != NULL)
+    if (m_pName != nullptr)
         delete m_pName;
 
-    if (m_pArguments != NULL)
+    if (m_pArguments != nullptr)
         delete m_pArguments;
 }
 
@@ -63,12 +63,12 @@ void QMLFunctionCall::toQML(QTextStream& stream, const QMLEntity* pParent, int i
 {
     Q_UNUSED(pParent);
 
-    if (m_pName != NULL)
+    if (m_pName != nullptr)
         m_pName->toQML(stream, this, iIdent);
 
     stream << " ( ";
 
-    if (m_pArguments != NULL)
+    if (m_pArguments != nullptr)
     {
         bool putDot = false;
 
@@ -79,7 +79,7 @@ void QMLFunctionCall::toQML(QTextStream& stream, const QMLEntity* pParent, int i
                 stream << ", ";
             }
 
-            if (pEntity != NULL)
+            if (pEntity != nullptr)
             {
                 pEntity->toQML(stream, this, iIdent);
             }
@@ -99,10 +99,10 @@ CXMLNode QMLFunctionCall::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* p
     CXMLNode xName("Name");
     CXMLNode xArguments("Arguments");
 
-    if (m_pName != NULL)
+    if (m_pName != nullptr)
         xName.nodes() << m_pName->toXMLNode(pContext, this);
 
-    if (m_pArguments != NULL)
+    if (m_pArguments != nullptr)
         xArguments.nodes() << m_pArguments->toXMLNode(pContext, this);
 
     xNode.nodes() << xName;

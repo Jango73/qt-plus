@@ -21,12 +21,12 @@ public:
 
     //! Default constructor
     QTree()
-        : m_Parent(NULL)
+        : m_Parent(nullptr)
     {
     }
 
     //! Constructor using value and parent
-    QTree(T value, QTree<T>* parent = NULL)
+    QTree(T value, QTree<T>* parent = nullptr)
         : m_tValue(value)
         , m_Parent(parent)
     {
@@ -118,7 +118,7 @@ public:
     {
         const QTree<T>* pReturnValue = this;
 
-        while (pReturnValue->m_Parent != NULL)
+        while (pReturnValue->m_Parent != nullptr)
         {
             pReturnValue = pReturnValue->m_Parent;
         }
@@ -145,7 +145,7 @@ public:
     {
         m_vChildren.append(QTree<T>(value, this));
 
-        assignParents(root(), NULL);
+        assignParents(root(), nullptr);
     }
 
     //! Appends a child node to this node
@@ -153,7 +153,7 @@ public:
     {
         m_vChildren.append(node);
 
-        assignParents(root(), NULL);
+        assignParents(root(), nullptr);
     }
 
     //! Appends a child node to this node
@@ -161,7 +161,7 @@ public:
     {
         m_vChildren.append(*node);
 
-        assignParents(root(), NULL);
+        assignParents(root(), nullptr);
     }
 
     //! Deletes a child node by index
@@ -186,7 +186,7 @@ public:
     //! Removes all value in children
     void removeAll(const QTree<T>* node)
     {
-        if (node != NULL)
+        if (node != nullptr)
         {
             T value = node->value();
 
@@ -206,30 +206,30 @@ public:
     {
         QTree<T>* pRoot = root();
 
-        if (newParentNode == NULL)
+        if (newParentNode == nullptr)
         {
             newParentNode = this;
         }
 
-        if (nodeToMove != NULL)
+        if (nodeToMove != nullptr)
         {
             QTree<T>* currentParentNode = nodeToMove->parent();
 
             if (newParentNode != currentParentNode)
             {
-                if (newParentNode != NULL)
+                if (newParentNode != nullptr)
                 {
                     newParentNode->append(nodeToMove);
                 }
 
-                if (currentParentNode != NULL)
+                if (currentParentNode != nullptr)
                 {
                     currentParentNode->removeAll(nodeToMove);
                 }
             }
         }
 
-        assignParents(pRoot, NULL);
+        assignParents(pRoot, nullptr);
     }
 
     //! Returns true if this node's chlidren contain the specified value
@@ -316,13 +316,13 @@ private:
         {
             QTree<T>* pFound = nodeForValue_internal(&(pTree->m_vChildren[index]), value);
 
-            if (pFound != NULL)
+            if (pFound != nullptr)
             {
                 return pFound;
             }
         }
 
-        return NULL;
+        return nullptr;
     }
 
     static void assignParents(QTree<T>* pNode, QTree<T>* pParentNode)

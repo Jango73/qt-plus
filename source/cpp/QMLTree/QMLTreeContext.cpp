@@ -769,7 +769,7 @@ void QMLTreeContext::run()
 
 int QMLTreeContext::parseNextToken(UParserValue* LVAL)
 {
-    if (SCOPE.m_pCurrentTokenValue != NULL)
+    if (SCOPE.m_pCurrentTokenValue != nullptr)
     {
         SCOPE.m_pCurrentTokenValue->clear();
     }
@@ -991,16 +991,6 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
     // 2's complement
     if (c == '~') { STORE(c); return TOKEN_COMPLEMENT; }
 
-    /*
-      // Simple '[' or '[]' dimension operator
-      if (c == '[')
-      {
-        STORE(c); GET(d);
-        if (d == ']') { STORE(d); return TOK_DIMENSION; }
-        UNGET(d); return c;
-      }
-    */
-
     // Simple '[' or '[]' dimension operator
     if (c == '[')
     {
@@ -1049,7 +1039,7 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
         return TOKEN_LITERAL;
     }
 
-    //
+    // Number starting with a dot
 
     if (c == '.')
     {

@@ -76,7 +76,7 @@ void QMLQualifiedExpression::toQML(QTextStream& stream, const QMLEntity* pParent
             stream << ".";
         }
 
-        if (pItem != NULL)
+        if (pItem != nullptr)
         {
             pItem->toQML(stream, this, iIdent);
         }

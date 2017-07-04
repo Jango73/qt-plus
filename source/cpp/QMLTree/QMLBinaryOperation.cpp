@@ -18,9 +18,9 @@ QMLBinaryOperation::QMLBinaryOperation(const QPoint& pPosition, QMLEntity* pLeft
 
 QMLBinaryOperation::~QMLBinaryOperation()
 {
-    if (m_pLeft != NULL)
+    if (m_pLeft != nullptr)
         delete m_pLeft;
-    if (m_pRight != NULL)
+    if (m_pRight != nullptr)
         delete m_pRight;
 }
 
@@ -151,10 +151,10 @@ CXMLNode QMLBinaryOperation::toXMLNode(CXMLNodableContext* pContext, CXMLNodable
 
     xNode.attributes()["Operator"] = operatorToString(m_eOperator);
 
-    if (m_pLeft != NULL)
+    if (m_pLeft != nullptr)
         xLeft.nodes() << m_pLeft->toXMLNode(pContext, this);
 
-    if (m_pRight != NULL)
+    if (m_pRight != nullptr)
         xRight.nodes() << m_pRight->toXMLNode(pContext, this);
 
     xNode.nodes() << xLeft;

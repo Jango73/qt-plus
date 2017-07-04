@@ -63,7 +63,7 @@ void QMLOnExpression::toQML(QTextStream& stream, const QMLEntity* pParent, int i
     {
         if (pEntity != nullptr)
         {
-            pEntity->toQML(stream, this, pParent != NULL ? iIdent + 1 : iIdent);
+            pEntity->toQML(stream, this, pParent != nullptr ? iIdent + 1 : iIdent);
         }
     }
 

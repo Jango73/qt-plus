@@ -17,7 +17,7 @@ QMLUnaryOperation::QMLUnaryOperation(const QPoint& pPosition, QMLEntity* pExpres
 
 QMLUnaryOperation::~QMLUnaryOperation()
 {
-    if (m_pExpression != NULL)
+    if (m_pExpression != nullptr)
         delete m_pExpression;
 }
 

@@ -19,7 +19,7 @@ public:
 	//! Gets the unique instance of the class
 	static T* getInstance()
 	{
-		if (s_pInstance == NULL)
+        if (s_pInstance == nullptr)
 		{
 			s_pInstance = new T();
 		}
@@ -30,12 +30,12 @@ public:
 	//! Destroys the unique instance of the class
 	static void killInstance()
 	{
-		if (s_pInstance != NULL)
+        if (s_pInstance != nullptr)
 		{
 			delete s_pInstance;
 		}
 
-		s_pInstance = NULL;
+        s_pInstance = nullptr;
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ private:
 };
 
 // Unique instance
-template<class T> T* CSingleton<T>::s_pInstance = NULL;
+template<class T> T* CSingleton<T>::s_pInstance = nullptr;
 
 // Data protection
 template<class T> QMutex CSingleton<T>::s_mutex(QMutex::Recursive);
