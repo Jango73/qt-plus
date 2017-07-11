@@ -17,7 +17,19 @@ A template for a factory of objects, based on the Factory design pattern.
 A helper class that wraps the XML and JSON facilities of Qt.
 
 ### CImageUtilities
-A singleton that provides helpful image processing functions. Can do the following:* Apply a filter matrix to a QImage* Select pixels in a QImage by tint, results in a grayscale mask image* Modify the HSV values of a QImage, using a mask QImage for pixel selection* Colorize a QImage, using a mask QImage for pixel selection* Split RGBA channels of a QImage* Merge RGBA channels of several QImages* Split HSVA channels of a QImage* Merge HSVA channels of several QImages* Find the dominant hue of a QImage* Find the dominant luminance (value) of a QImage* Compute the disparity map (depth) from two QImages (left and right eye)
+A singleton that provides helpful image processing functions.
+Can do the following:
+* Apply a filter matrix to a QImage
+* Select pixels in a QImage by tint, results in a grayscale mask image
+* Modify the HSV values of a QImage, using a mask QImage for pixel selection
+* Colorize a QImage, using a mask QImage for pixel selection
+* Split RGBA channels of a QImage
+* Merge RGBA channels of several QImages
+* Split HSVA channels of a QImage
+* Merge HSVA channels of several QImages
+* Find the dominant hue of a QImage
+* Find the dominant luminance (value) of a QImage
+* Compute the disparity map (depth) from two QImages (left and right eye)
 
 ### CImageHistogram
 A class that contains the histogram of a QImage.
