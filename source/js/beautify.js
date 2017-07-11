@@ -2484,4 +2484,4 @@ if (!Object.values) {
 }());
 
 // Addition for QMLTree
-global.js_beautify(analyzer.text());
+global.js_beautify(wrapper.text());

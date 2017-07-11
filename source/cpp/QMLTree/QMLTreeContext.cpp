@@ -424,6 +424,15 @@ QMLTreeContext::QMLTreeContext()
     m_mTokens["new"] = TOKEN_NEW;
     m_mTokens["null"] = TOKEN_NULL;
     m_mTokens["undefined"] = TOKEN_UNDEFINED;
+
+    m_eEngine.globalObject().setProperty("wrapper", m_eEngine.newQObject(new QMLTreeContextWrapper(this)));
+
+    QFile fScript(":/beautify.js");
+    if (fScript.open(QFile::ReadOnly))
+    {
+        m_sBeautifyScript = fScript.readAll();
+        fScript.close();
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -445,6 +454,8 @@ QMLTreeContext::~QMLTreeContext()
 
     m_sScopes.clear();
     m_vFiles.clear();
+
+    m_eEngine.globalObject().setProperty("wrapper", m_eEngine.newQObject(nullptr));
 
 #ifdef TRACK_ENTITIES
 
@@ -753,6 +764,27 @@ void QMLTreeContext::showError(const QString& sText)
 {
     m_eError = SCOPE.m_eError = peSyntaxError;
     m_tErrorObject = QMLAnalyzerError(SCOPE.m_pFile->fileName(), QPoint(SCOPE.m_iColumn, SCOPE.m_iLine), sText);
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void QMLTreeContext::writeFile(QMLFile* pFile)
+{
+    QFile file(pFile->fileName());
+
+    if (file.open(QFile::WriteOnly))
+    {
+        m_sText.clear();
+        QTextStream stream(&m_sText);
+
+        pFile->toQML(stream);
+
+        QJSValue output = m_eEngine.evaluate(m_sBeautifyScript);
+        m_sText = output.toString();
+
+        file.write(m_sText.toLatin1());
+        file.close();
+    }
 }
 
 //-------------------------------------------------------------------------------------------------

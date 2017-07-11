@@ -13,6 +13,7 @@
 #include <QTextStream>
 #include <QStack>
 #include <QThread>
+#include <QJSEngine>
 
 // Library
 #include "../CXMLNodable.h"
@@ -78,6 +79,8 @@ protected:
 class QTPLUSSHARED_EXPORT QMLTreeContext : public QThread, public CXMLNodableContext
 {
     Q_OBJECT
+
+    friend class QMLTreeContextWrapper;
 
 public:
 
@@ -247,6 +250,9 @@ public:
     //!
     void showError(const QString& sText);
 
+    //!
+    void writeFile(QMLFile* pFile);
+
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------
@@ -311,5 +317,33 @@ protected:
     QMap<QString, int>      m_mTokens;
     QVector<QMLFile*>       m_vFiles;
     QStack<QMLScope*>       m_sScopes;
+    QJSEngine               m_eEngine;
+    QString                 m_sText;
+    QString                 m_sBeautifyScript;
     bool                    m_bIncludeImports;
+};
+
+//-------------------------------------------------------------------------------------------------
+
+class QTPLUSSHARED_EXPORT QMLTreeContextWrapper : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    //!
+    QMLTreeContextWrapper(QMLTreeContext* pContext)
+        : m_pContext(pContext)
+    {
+    }
+
+    //!
+    Q_INVOKABLE QJSValue text()
+    {
+        return m_pContext->m_eEngine.toScriptValue(m_pContext->m_sText);
+    }
+
+protected:
+
+    QMLTreeContext*     m_pContext;
 };

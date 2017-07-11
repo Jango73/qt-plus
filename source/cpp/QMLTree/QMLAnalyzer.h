@@ -10,7 +10,6 @@
 #include <QMutex>
 #include <QString>
 #include <QVariant>
-#include <QJSEngine>
 
 // Foundations
 #include "../CXMLNode.h"
@@ -29,8 +28,6 @@
 class QTPLUSSHARED_EXPORT QMLAnalyzer : public QThread
 {
     Q_OBJECT
-
-    friend class QMLAnalyzerWrapper;
 
 public:
 
@@ -164,11 +161,8 @@ protected:
 protected:
 
     QMutex                          m_mContextMutex;
-    QJSEngine                       m_eEngine;
     QString                         m_sFolder;
     QString                         m_sFile;
-    QString                         m_sText;
-    QString                         m_sBeautifyScript;
     QMLTreeContext*                 m_pContext;
     QVector<QMLAnalyzerError>       m_vErrors;
     CXMLNode                        m_xGrammar;
@@ -178,29 +172,4 @@ protected:
     bool                            m_bRewriteFiles;
     bool                            m_bRemoveUnreferencedSymbols;
     bool                            m_bStopAnalyzeRequested;
-};
-
-//-------------------------------------------------------------------------------------------------
-
-class QTPLUSSHARED_EXPORT QMLAnalyzerWrapper : public QObject
-{
-    Q_OBJECT
-
-public:
-
-    //!
-    QMLAnalyzerWrapper(QMLAnalyzer* pAnalyzer)
-        : m_pAnalyzer(pAnalyzer)
-    {
-    }
-
-    //!
-    Q_INVOKABLE QJSValue text()
-    {
-        return m_pAnalyzer->m_eEngine.toScriptValue(m_pAnalyzer->m_sText);
-    }
-
-protected:
-
-    QMLAnalyzer* m_pAnalyzer;
 };
