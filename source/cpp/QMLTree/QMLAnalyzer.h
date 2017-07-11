@@ -138,19 +138,25 @@ protected:
     bool analyze_Recurse(QString sDirectory);
 
     //!
-    void runGrammar(const QString& sFileName, QMLFile* pFile);
+    void runGrammar(QMLFile* pFile);
 
     //!
-    void runGrammar_Recurse(const QString& sFileName, QMLEntity* pEntity);
+    void runGrammar_Recurse(QMLFile* pFile, QMLEntity* pEntity);
 
     //!
-    bool runGrammar_Reject(const QString& sFileName, const QString& sClassName, QMLEntity* pEntity, CXMLNode xRule, bool bInverseLogic);
+    bool runGrammar_Reject(QMLFile* pFile, const QString& sClassName, QMLEntity* pEntity, CXMLNode xRule, bool bInverseLogic);
 
     //!
-    bool runGrammar_SatisfiesConditions(const QString& sFileName, const QString& sClassName, QMLEntity* pEntity, CXMLNode xRule);
+    bool runGrammar_SatisfiesConditions(QMLFile* pFile, const QString& sClassName, QMLEntity* pEntity, CXMLNode xRule);
 
     //!
     int runGrammar_CountNested(const QString& sClassName, QMLEntity* pEntity);
+
+    //!
+    bool runGrammar_importUsed(QMLFile* pFile, QMLImport* pImport);
+
+    //!
+    bool isClassUsed(QMLFile* pFile, QMLEntity* pEntity, const QString& sClassName);
 
     //!
     void outputError(const QString& sFileName, const QPoint& pPosition, const QString& sText);
