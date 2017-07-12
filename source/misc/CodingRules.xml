@@ -4,6 +4,7 @@
     <Macro Name="TooManyStatements" Value="Too many statements, consider refactor"/>
     <Macro Name="BadImportVersion" Value="Bad import version"/>
     <Macro Name="OnlyCamelCasing" Value="Only camel casing allowed in names"/>
+    <Macro Name="NoHardcodedPosition" Value="No hardcoded positions allowed"/>
 
     <Check Class="QMLVariableDeclaration">
         <Accept Member="name" RegExp="$CamelCasingRegExp$" Text="$OnlyCamelCasing$"/>
@@ -28,11 +29,20 @@
             <Condition Member="name" Value="color"/>
             <Condition Member="content" Value="transparent" Negate="true"/>
         </Reject>
+        <Reject Member="content" Class="QMLEntity" Text="$NoHardcodedPosition$">
+            <Condition Member="name" Value="x"/>
+            <Condition Member="parent" Class="QMLItem"/>
+        </Reject>
+        <Reject Member="content" Class="QMLEntity" Text="$NoHardcodedPosition$">
+            <Condition Member="name" Value="y"/>
+            <Condition Member="parent" Class="QMLItem"/>
+        </Reject>
     </Check>
 
     <Check Class="QMLFunction">
         <Accept Member="name" RegExp="$CamelCasingRegExp$" Text="$OnlyCamelCasing$"/>
         <Reject Member="content" Count="20" Text="$TooManyStatements$"/>
+        <Reject UnreferencedSymbol="true"/>
     </Check>
 
     <Check Class="QMLConditional">
@@ -60,5 +70,8 @@
         <Reject Used="false" Text="Import directory not used">
             <Condition Member="version" Empty="true"/>
         </Reject>
+    </Check>
+    <Check Class="QMLItem">
+        <Reject UnreferencedSymbol="true"/>
     </Check>
 </Root>

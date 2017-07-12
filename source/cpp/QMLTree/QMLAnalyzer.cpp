@@ -386,31 +386,33 @@
 //-------------------------------------------------------------------------------------------------
 // XML Grammar File Tokens
 
-#define ANALYZER_TOKEN_MACRO        "Macro"
-#define ANALYZER_TOKEN_NAME         "Name"
-#define ANALYZER_TOKEN_CHECK        "Check"
-#define ANALYZER_TOKEN_CLASS        "Class"
-#define ANALYZER_TOKEN_LIST         "List"
-#define ANALYZER_TOKEN_COUNT        "Count"
-#define ANALYZER_TOKEN_MEMBER       "Member"
-#define ANALYZER_TOKEN_NESTED_COUNT "NestedCount"
-#define ANALYZER_TOKEN_ACCEPT       "Accept"
-#define ANALYZER_TOKEN_REJECT       "Reject"
-#define ANALYZER_TOKEN_TEXT         "Text"
-#define ANALYZER_TOKEN_TYPE         "Type"
-#define ANALYZER_TOKEN_VALUE        "Value"
-#define ANALYZER_TOKEN_REGEXP       "RegExp"
-#define ANALYZER_TOKEN_PATH         "Path"
-#define ANALYZER_TOKEN_OPERATION    "Operation"
-#define ANALYZER_TOKEN_EXISTS       "Exists"
-#define ANALYZER_TOKEN_CONTAINS     "Contains"
-#define ANALYZER_TOKEN_CONDITION    "Condition"
-#define ANALYZER_TOKEN_NEGATE       "Negate"
-#define ANALYZER_TOKEN_EMPTY        "Empty"
-#define ANALYZER_TOKEN_USED         "Used"
-#define ANALYZER_TOKEN_FILE_NAME    "filename"
-#define ANALYZER_TOKEN_TRUE         "true"
-#define ANALYZER_TOKEN_FALSE        "false"
+#define ANALYZER_TOKEN_MACRO            "Macro"
+#define ANALYZER_TOKEN_NAME             "Name"
+#define ANALYZER_TOKEN_CHECK            "Check"
+#define ANALYZER_TOKEN_CLASS            "Class"
+#define ANALYZER_TOKEN_LIST             "List"
+#define ANALYZER_TOKEN_COUNT            "Count"
+#define ANALYZER_TOKEN_MEMBER           "Member"
+#define ANALYZER_TOKEN_UNREFED_SYMBOL   "UnreferencedSymbol"
+#define ANALYZER_TOKEN_NESTED_COUNT     "NestedCount"
+#define ANALYZER_TOKEN_ACCEPT           "Accept"
+#define ANALYZER_TOKEN_REJECT           "Reject"
+#define ANALYZER_TOKEN_TEXT             "Text"
+#define ANALYZER_TOKEN_TYPE             "Type"
+#define ANALYZER_TOKEN_VALUE            "Value"
+#define ANALYZER_TOKEN_REGEXP           "RegExp"
+#define ANALYZER_TOKEN_PATH             "Path"
+#define ANALYZER_TOKEN_OPERATION        "Operation"
+#define ANALYZER_TOKEN_EXISTS           "Exists"
+#define ANALYZER_TOKEN_CONTAINS         "Contains"
+#define ANALYZER_TOKEN_CONDITION        "Condition"
+#define ANALYZER_TOKEN_NEGATE           "Negate"
+#define ANALYZER_TOKEN_EMPTY            "Empty"
+#define ANALYZER_TOKEN_USED             "Used"
+#define ANALYZER_TOKEN_PARENT           "parent"
+#define ANALYZER_TOKEN_FILE_NAME        "filename"
+#define ANALYZER_TOKEN_TRUE             "true"
+#define ANALYZER_TOKEN_FALSE            "false"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -783,87 +785,52 @@ void QMLAnalyzer::runGrammar(QMLFile* pFile)
 */
 void QMLAnalyzer::runGrammar_Recurse(QMLFile* pFile, QMLEntity* pEntity)
 {
-    if (pEntity == nullptr)
+    if (pEntity != nullptr)
     {
-        return;
-    }
+        bool bHasRejects = false;
 
-    // Check symbol usage if it is an item
-    QMLItem* pItem = dynamic_cast<QMLItem*>(pEntity);
+        QMap<QString, QMLEntity*> mMembers = pEntity->members();
 
-    if (pItem != nullptr)
-    {
-        QMap<QString, QMLEntity*> unusedProperties = pItem->unusedProperties();
+        QVector<CXMLNode> vChecks = m_xGrammar.getNodesByTagName(ANALYZER_TOKEN_CHECK);
 
-        foreach (QString sKey, unusedProperties.keys())
+        foreach (CXMLNode xCheck, vChecks)
         {
-            outputError(pFile->fileName(), unusedProperties[sKey]->position(), "Unreferenced property");
-        }
-    }
+            QString sClassName = xCheck.attributes()[ANALYZER_TOKEN_CLASS];
 
-    // Check symbol usage if it is a function
-    QMLFunction* pFunction = dynamic_cast<QMLFunction*>(pEntity);
-
-    if (pFunction != nullptr)
-    {
-        QMap<QString, QMLEntity*> unusedVariables = pFunction->unusedVariables();
-
-        foreach (QString sKey, unusedVariables.keys())
-        {
-            outputError(pFile->fileName(), unusedVariables[sKey]->position(), "Unreferenced variable");
-        }
-
-        QMap<QString, QMLEntity*> unusedParameters = pFunction->unusedParameters();
-
-        foreach (QString sKey, unusedParameters.keys())
-        {
-            outputError(pFile->fileName(), unusedParameters[sKey]->position(), "Unreferenced parameter");
-        }
-    }
-
-    bool bHasRejects = false;
-
-    QMap<QString, QMLEntity*> mMembers = pEntity->members();
-
-    QVector<CXMLNode> vChecks = m_xGrammar.getNodesByTagName(ANALYZER_TOKEN_CHECK);
-
-    foreach (CXMLNode xCheck, vChecks)
-    {
-        QString sClassName = xCheck.attributes()[ANALYZER_TOKEN_CLASS];
-
-        if (pEntity->metaObject()->className() == sClassName)
-        {
-            QVector<CXMLNode> vAccepts = xCheck.getNodesByTagName(ANALYZER_TOKEN_ACCEPT);
-            QVector<CXMLNode> vRejects = xCheck.getNodesByTagName(ANALYZER_TOKEN_REJECT);
-
-            foreach (CXMLNode xReject, vRejects)
+            if (pEntity->metaObject()->className() == sClassName)
             {
-                if (runGrammar_Reject(pFile, sClassName, pEntity, xReject, false))
-                    bHasRejects = true;
-            }
+                QVector<CXMLNode> vAccepts = xCheck.getNodesByTagName(ANALYZER_TOKEN_ACCEPT);
+                QVector<CXMLNode> vRejects = xCheck.getNodesByTagName(ANALYZER_TOKEN_REJECT);
 
-            foreach (CXMLNode xAccept, vAccepts)
-            {
-                if (runGrammar_Reject(pFile, sClassName, pEntity, xAccept, true))
-                    bHasRejects = true;
+                foreach (CXMLNode xReject, vRejects)
+                {
+                    if (runGrammar_Reject(pFile, sClassName, pEntity, xReject, false))
+                        bHasRejects = true;
+                }
+
+                foreach (CXMLNode xAccept, vAccepts)
+                {
+                    if (runGrammar_Reject(pFile, sClassName, pEntity, xAccept, true))
+                        bHasRejects = true;
+                }
             }
         }
-    }
 
-    if (bHasRejects == false)
-    {
-        foreach (QString sKey, mMembers.keys())
+        if (bHasRejects == false)
         {
-            runGrammar_Recurse(pFile, mMembers[sKey]);
-        }
-
-        QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(pEntity);
-
-        if (pComplex != nullptr)
-        {
-            foreach (QMLEntity* pChildItem, pComplex->contents())
+            foreach (QString sKey, mMembers.keys())
             {
-                runGrammar_Recurse(pFile, pChildItem);
+                runGrammar_Recurse(pFile, mMembers[sKey]);
+            }
+
+            QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(pEntity);
+
+            if (pComplex != nullptr)
+            {
+                foreach (QMLEntity* pChildItem, pComplex->contents())
+                {
+                    runGrammar_Recurse(pFile, pChildItem);
+                }
             }
         }
     }
@@ -886,6 +853,7 @@ bool QMLAnalyzer::runGrammar_Reject(QMLFile* pFile, const QString& sClassName, Q
     QString sType = processMacros(xRule.attributes()[ANALYZER_TOKEN_TYPE]);
     QString sText = processMacros(xRule.attributes()[ANALYZER_TOKEN_TEXT]);
     QString sNestedCount = processMacros(xRule.attributes()[ANALYZER_TOKEN_NESTED_COUNT]);
+    QString sUnrefedSymbol = processMacros(xRule.attributes()[ANALYZER_TOKEN_UNREFED_SYMBOL]);
     QString sCount = processMacros(xRule.attributes()[ANALYZER_TOKEN_COUNT]);
     QString sRegExp = processMacros(xRule.attributes()[ANALYZER_TOKEN_REGEXP]);
     QString sPath = processMacros(xRule.attributes()[ANALYZER_TOKEN_PATH]);
@@ -913,6 +881,57 @@ bool QMLAnalyzer::runGrammar_Reject(QMLFile* pFile, const QString& sClassName, Q
                 }
             }
         }
+        // Check unreferenced symbols
+        else if (sUnrefedSymbol.isEmpty() == false)
+        {
+            // Check symbol usage if it is an item
+            QMLItem* pItem = dynamic_cast<QMLItem*>(pEntity);
+
+            if (pItem != nullptr)
+            {
+                QMap<QString, QMLEntity*> unusedProperties = pItem->unusedProperties();
+
+                if ((unusedProperties.count() > 0) ^ bInverseLogic)
+                {
+                    foreach (QString sKey, unusedProperties.keys())
+                    {
+                        outputError(pFile->fileName(), unusedProperties[sKey]->position(), "Unreferenced property");
+                    }
+
+                    return true;
+                }
+            }
+
+            // Check symbol usage if it is a function
+            QMLFunction* pFunction = dynamic_cast<QMLFunction*>(pEntity);
+
+            if (pFunction != nullptr)
+            {
+                QMap<QString, QMLEntity*> unusedVariables = pFunction->unusedVariables();
+
+                if ((unusedVariables.count() > 0) ^ bInverseLogic)
+                {
+                    foreach (QString sKey, unusedVariables.keys())
+                    {
+                        outputError(pFile->fileName(), unusedVariables[sKey]->position(), "Unreferenced variable");
+                    }
+
+                    return true;
+                }
+
+                QMap<QString, QMLEntity*> unusedParameters = pFunction->unusedParameters();
+
+                if ((unusedParameters.count() > 0) ^ bInverseLogic)
+                {
+                    foreach (QString sKey, unusedParameters.keys())
+                    {
+                        outputError(pFile->fileName(), unusedParameters[sKey]->position(), "Unreferenced parameter");
+                    }
+
+                    return true;
+                }
+            }
+        }
         else if (sUsed.isEmpty() == false)
         {
             QMLImport* pImport = dynamic_cast<QMLImport*>(pEntity);
@@ -922,6 +941,7 @@ bool QMLAnalyzer::runGrammar_Reject(QMLFile* pFile, const QString& sClassName, Q
                 if ((runGrammar_importUsed(pFile, pImport) == false) ^ bInverseLogic)
                 {
                     outputError(pFile->fileName(), pEntity->position(), sText);
+                    return true;
                 }
             }
         }
@@ -1058,6 +1078,7 @@ bool QMLAnalyzer::runGrammar_SatisfiesConditions(QMLFile* pFile, const QString& 
         QString sEmpty = xCondition.attributes()[ANALYZER_TOKEN_EMPTY].toLower();
         QString sValue = xCondition.attributes()[ANALYZER_TOKEN_VALUE];
         QString sNegate = xCondition.attributes()[ANALYZER_TOKEN_NEGATE].toLower();
+        QString sClass = xCondition.attributes()[ANALYZER_TOKEN_CLASS];
 
         if (mMembers.contains(sMember) && mMembers[sMember] != nullptr)
         {
@@ -1093,8 +1114,34 @@ bool QMLAnalyzer::runGrammar_SatisfiesConditions(QMLFile* pFile, const QString& 
         }
         else
         {
+            // Check the parent condition
+            if (sMember == ANALYZER_TOKEN_PARENT)
+            {
+                QMLEntity* pParent = dynamic_cast<QMLEntity*>(pEntity->parent());
+
+                if (pParent != nullptr)
+                {
+                    if (sClass.isEmpty() == false)
+                    {
+                        if (pParent->metaObject()->className() == sClass)
+                        {
+                            if (sNegate == ANALYZER_TOKEN_TRUE)
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            if (sNegate != ANALYZER_TOKEN_TRUE)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
             // Check the file name condition
-            if (sMember == ANALYZER_TOKEN_FILE_NAME)
+            else if (sMember == ANALYZER_TOKEN_FILE_NAME)
             {
                 if (sOperation == ANALYZER_TOKEN_CONTAINS)
                 {
