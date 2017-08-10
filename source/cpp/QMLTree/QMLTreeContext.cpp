@@ -345,17 +345,24 @@ QMLAnalyzerError::QMLAnalyzerError(const QMLAnalyzerError& target)
 QMLAnalyzerError::QMLAnalyzerError(const QString& sFileName, QPoint pPosition, const QString& sText)
     : m_sFileName(sFileName)
     , m_pPosition(pPosition)
+    , m_pOriginalPosition(pPosition)
     , m_sText(sText)
 {
 }
 
 QMLAnalyzerError& QMLAnalyzerError::operator = (const QMLAnalyzerError& target)
 {
-    m_sFileName     = target.m_sFileName;
-    m_pPosition     = target.m_pPosition;
-    m_sText         = target.m_sText;
+    m_sFileName         = target.m_sFileName;
+    m_pPosition         = target.m_pPosition;
+    m_pOriginalPosition   = target.m_pOriginalPosition;
+    m_sText             = target.m_sText;
 
     return *this;
+}
+
+void QMLAnalyzerError::setPosition(const QPoint& point)
+{
+    m_pPosition = point;
 }
 
 QString QMLAnalyzerError::fileName() const
@@ -366,6 +373,11 @@ QString QMLAnalyzerError::fileName() const
 QPoint QMLAnalyzerError::position() const
 {
     return m_pPosition;
+}
+
+QPoint QMLAnalyzerError::originalPosition() const
+{
+    return m_pOriginalPosition;
 }
 
 QString QMLAnalyzerError::text() const
@@ -386,7 +398,13 @@ void QMLAnalyzerError::clear()
 {
     m_sFileName.clear();
     m_pPosition = QPoint(0, 0);
+    m_pOriginalPosition = QPoint(0, 0);
     m_sText.clear();
+}
+
+void QMLAnalyzerError::revertToOriginalPosition()
+{
+    m_pPosition = m_pOriginalPosition;
 }
 
 //-------------------------------------------------------------------------------------------------

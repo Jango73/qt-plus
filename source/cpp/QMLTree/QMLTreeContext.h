@@ -39,6 +39,9 @@ class QTPLUSSHARED_EXPORT QMLAnalyzerError
 {
 public:
 
+    //-------------------------------------------------------------------------------------------------
+    // Constructors and destructor
+
     //!
     QMLAnalyzerError();
 
@@ -51,6 +54,14 @@ public:
     //!
     QMLAnalyzerError& operator = (const QMLAnalyzerError& target);
 
+    //-------------------------------------------------------------------------------------------------
+    // Setters
+
+    void setPosition(const QPoint& point);
+
+    //-------------------------------------------------------------------------------------------------
+    // Getters
+
     //!
     QString fileName() const;
 
@@ -58,18 +69,28 @@ public:
     QPoint position() const;
 
     //!
+    QPoint originalPosition() const;
+
+    //!
     QString text() const;
 
     //!
     QString toString() const;
 
+    //-------------------------------------------------------------------------------------------------
+    // Control methods
+
     //!
     void clear();
+
+    //!
+    void revertToOriginalPosition();
 
 protected:
 
     QString m_sFileName;
     QPoint  m_pPosition;
+    QPoint  m_pOriginalPosition;
     QString m_sText;
 };
 
