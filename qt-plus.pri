@@ -48,6 +48,7 @@ HEADERS += \
     source/cpp/GeoTools/ups.h \
     source/cpp/GeoTools/utm.h \
     source/cpp/GeoTools/UtmMgrs.h \
+    source/cpp/GeoTools/geotrans.h \
     source/cpp/CGeoUtilities.h \
     source/cpp/QMLTree/QMLEntity.h \
     source/cpp/QMLTree/QMLComplexEntity.h \
@@ -121,6 +122,7 @@ SOURCES += \
     source/cpp/GeoTools/ups.cpp \
     source/cpp/GeoTools/utm.cpp \
     source/cpp/GeoTools/UtmMgrs.cpp \
+    source/cpp/GeoTools/geotrans.cpp \
     source/cpp/CGeoUtilities.cpp \
     source/cpp/QMLTree/QMLEntity.cpp \
     source/cpp/QMLTree/QMLComplexEntity.cpp \
