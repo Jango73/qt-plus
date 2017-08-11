@@ -118,6 +118,9 @@ public:
     //! Defines the token list to ignore
     void setIgnoreTokens(const QString& sTokens);
 
+    //! Sets the maximum file size
+    void setMaxFileSize(int iValue);
+
     //! Returns true if the token should be logged
     bool filterToken(QString sToken);
 
@@ -127,6 +130,9 @@ public:
 
     //! Returns the path name
     QString pathName() const;
+
+    //! Returns the maximum file size
+    int maxFileSize() const;
 
     //-------------------------------------------------------------------------------------------------
     // Control methods

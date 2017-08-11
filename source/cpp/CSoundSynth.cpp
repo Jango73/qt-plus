@@ -159,6 +159,9 @@ CSoundSynth::CSoundSynthGenerator::~CSoundSynthGenerator()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns the audio buffers.
+*/
 QList<QByteArray> CSoundSynth::CSoundSynthGenerator::getBuffers()
 {
     QList<QByteArray> baReturnValue;
@@ -184,6 +187,9 @@ QList<QByteArray> CSoundSynth::CSoundSynthGenerator::getBuffers()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Stops the synthesize thread.
+*/
 void CSoundSynth::CSoundSynthGenerator::stopMe()
 {
     m_bRun = false;

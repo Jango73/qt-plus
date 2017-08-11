@@ -786,6 +786,9 @@ void QMLTreeContext::showError(const QString& sText)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Writes the contents of \a pFile to disk.
+*/
 void QMLTreeContext::writeFile(QMLFile* pFile)
 {
     QFile file(pFile->fileName());

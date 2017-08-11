@@ -272,6 +272,9 @@ qint64 CTDMADevice::bytesToWrite() const
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns the current date time.
+*/
 QDateTime CTDMADevice::now() const
 {
     return QDateTime::currentDateTime();

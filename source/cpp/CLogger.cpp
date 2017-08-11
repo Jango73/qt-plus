@@ -50,16 +50,22 @@ CLogger::CLogger()
 
 CLogger::CLogger(QString sPath, QString sFileName)
     : m_tMutex(QMutex::Recursive)
+    , m_tTimer(this)
+    , m_tFlushTimer(this)
     , m_pFile(nullptr)
     , m_iFileSize(0)
     , m_eLogLevel(llDebug)
+    , m_iMaxFileSize(LOGGER_MAX_FILE_SIZE)
+    , m_bBackupActive(false)
 {
     // initialize(sPath, sFileName, CPreferencesManager::getInstance()->getPreferences());
     initialize(sPath, sFileName, CXMLNode());
 
     connect(&m_tTimer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+    connect(&m_tFlushTimer, SIGNAL(timeout()), this, SLOT(onFlushTimeout()));
 
     m_tTimer.start(1000);
+    m_tFlushTimer.start(2000);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -96,6 +102,13 @@ CLogger::~CLogger()
 QString CLogger::pathName() const
 {
     return m_sPathName;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+int CLogger::maxFileSize() const
+{
+    return m_iMaxFileSize;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -231,6 +244,13 @@ void CLogger::setIgnoreTokens(const QString& sTokens)
     {
         m_sIgnoreTokens = sTokens.split("|");
     }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CLogger::setMaxFileSize(int iValue)
+{
+    m_iMaxFileSize = iValue;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -464,7 +484,7 @@ void CLogger::onTimeout()
 
     if (m_pFile != nullptr)
     {
-        if (m_iFileSize > LOGGER_MAX_FILE_SIZE)
+        if (m_iFileSize > m_iMaxFileSize)
         {
             // Destruction du fichier
             m_pFile->close();
