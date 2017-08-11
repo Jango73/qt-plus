@@ -121,9 +121,6 @@ public:
     //! Sets the maximum file size
     void setMaxFileSize(int iValue);
 
-    //! Returns true if the token should be logged
-    bool filterToken(QString sToken);
-
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
@@ -141,8 +138,14 @@ public:
     //! Initializes the logger
     virtual void initialize(QString sPath, QString sFileName, CXMLNode xParameters);
 
-    //! D?finit un logger cha?n?
+    //! Registers a chained logger
     void registerChainedLogger(CLogger* logger);
+
+    //! Unregisters a chained logger
+    void unregisterChainedLogger(CLogger* logger);
+
+    //! Returns true if the token should be logged
+    bool filterToken(QString sToken);
 
     //! Logs a line
     virtual void log(ELogLevel eLevel, const QString& sText, const QString& sToken = "");

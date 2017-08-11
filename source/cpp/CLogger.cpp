@@ -8,10 +8,9 @@
 #include "CLogger.h"
 
 //-------------------------------------------------------------------------------------------------
-// Taille maximum d'un fichier log
+// Constants
 
-#define LOGGER_MAX_FILE_INDEX	5
-#define LOGGER_MAX_FILE_SIZE	(10 * 1024 * 1024)	// 4 mb
+#define DEFAULT_MAX_FILE_SIZE   (10 * 1024 * 1024)	// 10 mb
 
 //-------------------------------------------------------------------------------------------------
 
@@ -22,7 +21,7 @@ CLogger::CLogger()
     , m_pFile(nullptr)
     , m_iFileSize(0)
     , m_eLogLevel(llDebug)
-    , m_iMaxFileSize(LOGGER_MAX_FILE_SIZE)
+    , m_iMaxFileSize(DEFAULT_MAX_FILE_SIZE)
     , m_bBackupActive(false)
 {
     QString sName = QCoreApplication::applicationFilePath().split("/").last();
@@ -55,7 +54,7 @@ CLogger::CLogger(QString sPath, QString sFileName)
     , m_pFile(nullptr)
     , m_iFileSize(0)
     , m_eLogLevel(llDebug)
-    , m_iMaxFileSize(LOGGER_MAX_FILE_SIZE)
+    , m_iMaxFileSize(DEFAULT_MAX_FILE_SIZE)
     , m_bBackupActive(false)
 {
     // initialize(sPath, sFileName, CPreferencesManager::getInstance()->getPreferences());
@@ -66,16 +65,6 @@ CLogger::CLogger(QString sPath, QString sFileName)
 
     m_tTimer.start(1000);
     m_tFlushTimer.start(2000);
-}
-
-//-------------------------------------------------------------------------------------------------
-
-void CLogger::registerChainedLogger(CLogger* pLogger)
-{
-    if (m_vChainedLoggers.contains(pLogger) == false)
-    {
-        m_vChainedLoggers.append(pLogger);
-    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -95,6 +84,82 @@ CLogger::~CLogger()
 
         delete m_pFile;
     }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CLogger::setLevel(ELogLevel eLevel)
+{
+    QMutexLocker locker(&m_tMutex);
+
+    m_eLogLevel = eLevel;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CLogger::setLevel(const QString& sLevel)
+{
+    QMutexLocker locker(&m_tMutex);
+
+    if (sLevel.toLower() == "debug")
+    {
+        setLevel(llDebug);
+    }
+    else if (sLevel.toLower() == "info")
+    {
+        setLevel(llInfo);
+    }
+    else if (sLevel.toLower() == "warning")
+    {
+        setLevel(llWarning);
+    }
+    else if (sLevel.toLower() == "error")
+    {
+        setLevel(llError);
+    }
+    else if (sLevel.toLower() == "critical")
+    {
+        setLevel(llCritical);
+    }
+    else if (sLevel.toLower() == "always")
+    {
+        setLevel(llAlways);
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CLogger::setDisplayTokens(const QString& sTokens)
+{
+    if (sTokens == "")
+    {
+        m_sDisplayTokens.clear();
+    }
+    else
+    {
+        m_sDisplayTokens = sTokens.split("|");
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CLogger::setIgnoreTokens(const QString& sTokens)
+{
+    if (sTokens == "")
+    {
+        m_sIgnoreTokens.clear();
+    }
+    else
+    {
+        m_sIgnoreTokens = sTokens.split("|");
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CLogger::setMaxFileSize(int iValue)
+{
+    m_iMaxFileSize = iValue;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -179,133 +244,19 @@ void CLogger::initialize(QString sPath, QString sFileName, CXMLNode xParameters)
 
 //-------------------------------------------------------------------------------------------------
 
-void CLogger::setLevel(ELogLevel eLevel)
+void CLogger::registerChainedLogger(CLogger* pLogger)
 {
-    QMutexLocker locker(&m_tMutex);
-
-    m_eLogLevel = eLevel;
-}
-
-//-------------------------------------------------------------------------------------------------
-
-void CLogger::setLevel(const QString& sLevel)
-{
-    QMutexLocker locker(&m_tMutex);
-
-    if (sLevel.toLower() == "debug")
+    if (m_vChainedLoggers.contains(pLogger) == false)
     {
-        setLevel(llDebug);
-    }
-    else if (sLevel.toLower() == "info")
-    {
-        setLevel(llInfo);
-    }
-    else if (sLevel.toLower() == "warning")
-    {
-        setLevel(llWarning);
-    }
-    else if (sLevel.toLower() == "error")
-    {
-        setLevel(llError);
-    }
-    else if (sLevel.toLower() == "critical")
-    {
-        setLevel(llCritical);
-    }
-    else if (sLevel.toLower() == "always")
-    {
-        setLevel(llAlways);
+        m_vChainedLoggers.append(pLogger);
     }
 }
 
 //-------------------------------------------------------------------------------------------------
 
-void CLogger::setDisplayTokens(const QString& sTokens)
+void CLogger::unregisterChainedLogger(CLogger* pLogger)
 {
-    if (sTokens == "")
-    {
-        m_sDisplayTokens.clear();
-    }
-    else
-    {
-        m_sDisplayTokens = sTokens.split("|");
-    }
-}
-
-//-------------------------------------------------------------------------------------------------
-
-void CLogger::setIgnoreTokens(const QString& sTokens)
-{
-    if (sTokens == "")
-    {
-        m_sIgnoreTokens.clear();
-    }
-    else
-    {
-        m_sIgnoreTokens = sTokens.split("|");
-    }
-}
-
-//-------------------------------------------------------------------------------------------------
-
-void CLogger::setMaxFileSize(int iValue)
-{
-    m_iMaxFileSize = iValue;
-}
-
-//-------------------------------------------------------------------------------------------------
-
-QString CLogger::getShortStringForLevel(ELogLevel eLevel, const QString& sText)
-{
-    QString sLogLevel;
-
-    switch (eLevel)
-    {
-    case llDebug	: sLogLevel = "DEBUG"; break;
-    case llInfo		: sLogLevel = "INFO"; break;
-    case llWarning	: sLogLevel = "WARNING"; break;
-    case llError	: sLogLevel = "ERROR"; break;
-    case llCritical	: sLogLevel = "CRITICAL"; break;
-    case llAlways	: sLogLevel = "ALWAYS"; break;
-    }
-
-    QString sFinalText = QString("[%1] - %2\n")
-            .arg(sLogLevel)
-            .arg(sText);
-
-    return sFinalText;
-}
-
-//-------------------------------------------------------------------------------------------------
-
-QString CLogger::getFinalStringForLevel(ELogLevel eLevel, const QString& sText)
-{
-    QString sLogLevel;
-
-    switch (eLevel)
-    {
-    case llDebug	: sLogLevel = "DEBUG"; break;
-    case llInfo		: sLogLevel = "INFO"; break;
-    case llWarning	: sLogLevel = "WARNING"; break;
-    case llError	: sLogLevel = "ERROR"; break;
-    case llCritical	: sLogLevel = "CRITICAL"; break;
-    case llAlways	: sLogLevel = "ALWAYS"; break;
-    }
-
-    QDateTime tNow = QDateTime::currentDateTime();
-
-    QString sFinalText = QString("%1-%2-%3 %4:%5:%6.%7 [%8] - %9\n")
-            .arg(tNow.date().year())
-            .arg(tNow.date().month())
-            .arg(tNow.date().day())
-            .arg(tNow.time().hour())
-            .arg(tNow.time().minute())
-            .arg(tNow.time().second())
-            .arg(tNow.time().msec())
-            .arg(sLogLevel)
-            .arg(sText);
-
-    return sFinalText;
+    m_vChainedLoggers.removeAll(pLogger);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -441,17 +392,6 @@ void CLogger::log(ELogLevel eLevel, const QString& sText, const QString& sToken)
 }
 
 //-------------------------------------------------------------------------------------------------
-void CLogger::flush()
-{
-    QMutexLocker locker(&m_tMutex);
-
-    if (m_pFile != nullptr)
-    {
-        m_pFile->flush();
-    }
-}
-
-//-------------------------------------------------------------------------------------------------
 
 void CLogger::logBuffer(ELogLevel eLevel, const char* pBuffer, int iSize)
 {
@@ -478,6 +418,73 @@ void CLogger::logBuffer(ELogLevel eLevel, const char* pBuffer, int iSize)
 
 //-------------------------------------------------------------------------------------------------
 
+void CLogger::flush()
+{
+    QMutexLocker locker(&m_tMutex);
+
+    if (m_pFile != nullptr)
+    {
+        m_pFile->flush();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+QString CLogger::getShortStringForLevel(ELogLevel eLevel, const QString& sText)
+{
+    QString sLogLevel;
+
+    switch (eLevel)
+    {
+    case llDebug	: sLogLevel = "DEBUG"; break;
+    case llInfo		: sLogLevel = "INFO"; break;
+    case llWarning	: sLogLevel = "WARNING"; break;
+    case llError	: sLogLevel = "ERROR"; break;
+    case llCritical	: sLogLevel = "CRITICAL"; break;
+    case llAlways	: sLogLevel = "ALWAYS"; break;
+    }
+
+    QString sFinalText = QString("[%1] - %2\n")
+            .arg(sLogLevel)
+            .arg(sText);
+
+    return sFinalText;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+QString CLogger::getFinalStringForLevel(ELogLevel eLevel, const QString& sText)
+{
+    QString sLogLevel;
+
+    switch (eLevel)
+    {
+    case llDebug	: sLogLevel = "DEBUG"; break;
+    case llInfo		: sLogLevel = "INFO"; break;
+    case llWarning	: sLogLevel = "WARNING"; break;
+    case llError	: sLogLevel = "ERROR"; break;
+    case llCritical	: sLogLevel = "CRITICAL"; break;
+    case llAlways	: sLogLevel = "ALWAYS"; break;
+    }
+
+    QDateTime tNow = QDateTime::currentDateTime();
+
+    QString sFinalText = QString("%1-%2-%3 %4:%5:%6.%7 [%8] - %9\n")
+            .arg(tNow.date().year())
+            .arg(tNow.date().month())
+            .arg(tNow.date().day())
+            .arg(tNow.time().hour())
+            .arg(tNow.time().minute())
+            .arg(tNow.time().second())
+            .arg(tNow.time().msec())
+            .arg(sLogLevel)
+            .arg(sText);
+
+    return sFinalText;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void CLogger::onTimeout()
 {
     QMutexLocker locker(&m_tMutex);
@@ -486,16 +493,17 @@ void CLogger::onTimeout()
     {
         if (m_iFileSize > m_iMaxFileSize)
         {
-            // Destruction du fichier
+            // Close the file
             m_pFile->close();
             delete m_pFile;
 
+            // Backup if needed
             if (m_bBackupActive)
             {
                 backup();
             }
 
-            // Cr?ation du fichier
+            // Create the file
             m_pFile = new QFile(m_sFileName);
             m_pFile->open(QIODevice::WriteOnly | QIODevice::Text);
             m_iFileSize = 0;
