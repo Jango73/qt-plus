@@ -19,9 +19,10 @@ CLogger::CLogger()
     : m_tMutex(QMutex::Recursive)
     , m_tTimer(this)
     , m_tFlushTimer(this)
-    , m_pFile(NULL)
+    , m_pFile(nullptr)
     , m_iFileSize(0)
     , m_eLogLevel(llDebug)
+    , m_iMaxFileSize(LOGGER_MAX_FILE_SIZE)
     , m_bBackupActive(false)
 {
     QString sName = QCoreApplication::applicationFilePath().split("/").last();
@@ -49,7 +50,7 @@ CLogger::CLogger()
 
 CLogger::CLogger(QString sPath, QString sFileName)
     : m_tMutex(QMutex::Recursive)
-    , m_pFile(NULL)
+    , m_pFile(nullptr)
     , m_iFileSize(0)
     , m_eLogLevel(llDebug)
 {
@@ -92,16 +93,9 @@ CLogger::~CLogger()
 
 //-------------------------------------------------------------------------------------------------
 
-QString CLogger::getPathName() const
+QString CLogger::pathName() const
 {
     return m_sPathName;
-}
-
-//-------------------------------------------------------------------------------------------------
-
-QString CLogger::getFileName() const
-{
-    return m_sFileName;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -146,8 +140,11 @@ void CLogger::initialize(QString sPath, QString sFileName, CXMLNode xParameters)
         QDir().mkpath(sPath);
     }
 
-    // Backups
-    manageBackups(sFileName);
+    // Backup
+    if (m_bBackupActive)
+    {
+        backup();
+    }
 
     // Destroy the file
     if (m_pFile)
@@ -165,31 +162,6 @@ void CLogger::initialize(QString sPath, QString sFileName, CXMLNode xParameters)
     m_iFileSize = 0;
 
 #endif
-}
-
-//-------------------------------------------------------------------------------------------------
-
-void CLogger::manageBackups(const QString& sFileName)
-{
-    /*
-    if (m_bBackupActive)
-    {
-        QDateTime tTime = QDateTime::currentDateTime();
-
-        QString sCopyFileName = QString("%1.%2-%3-%4_%5-%6-%7.bak")
-                .arg(sFileName)
-                .arg(tTime.date().year())
-                .arg(tTime.date().month())
-                .arg(tTime.date().day())
-                .arg(tTime.time().hour())
-                .arg(tTime.time().minute())
-                .arg(tTime.time().second());
-
-        QFile tFile(sFileName);
-
-        if (tFile.exists()) tFile.copy(sCopyFileName);
-    }
-    */
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -453,7 +425,7 @@ void CLogger::flush()
 {
     QMutexLocker locker(&m_tMutex);
 
-    if (m_pFile != NULL)
+    if (m_pFile != nullptr)
     {
         m_pFile->flush();
     }
@@ -490,7 +462,7 @@ void CLogger::onTimeout()
 {
     QMutexLocker locker(&m_tMutex);
 
-    if (m_pFile != NULL)
+    if (m_pFile != nullptr)
     {
         if (m_iFileSize > LOGGER_MAX_FILE_SIZE)
         {
@@ -498,7 +470,10 @@ void CLogger::onTimeout()
             m_pFile->close();
             delete m_pFile;
 
-            // handleRollingCopies();
+            if (m_bBackupActive)
+            {
+                backup();
+            }
 
             // Cr?ation du fichier
             m_pFile = new QFile(m_sFileName);

@@ -18,6 +18,7 @@
 // Application
 #include "CSingleton.h"
 #include "CXMLNode.h"
+#include "File/CRollingFiles.h"
 
 //-------------------------------------------------------------------------------------------------
 // Use the following macros to log
@@ -82,7 +83,7 @@ enum ELogLevel
 
 //-------------------------------------------------------------------------------------------------
 
-class QTPLUSSHARED_EXPORT CLogger : public QObject, public CSingleton<CLogger>
+class QTPLUSSHARED_EXPORT CLogger : public QObject, public CRollingFiles, public CSingleton<CLogger>
 {
     Q_OBJECT
 
@@ -124,11 +125,8 @@ public:
     // Getters
     //-------------------------------------------------------------------------------------------------
 
-    //! Retourne le chemin du fichier log
-    QString getPathName() const;
-
-    //! Retourne le nom de fichier log
-    QString getFileName() const;
+    //! Returns the path name
+    QString pathName() const;
 
     //-------------------------------------------------------------------------------------------------
     // Control methods
@@ -137,14 +135,13 @@ public:
     //! Initializes the logger
     virtual void initialize(QString sPath, QString sFileName, CXMLNode xParameters);
 
-    //! Cr??e les backups si n?cessaire
-    void manageBackups(const QString& sFileName);
-
     //! D?finit un logger cha?n?
     void registerChainedLogger(CLogger* logger);
 
-    //! Log d'une ligne de texte
+    //! Logs a line
     virtual void log(ELogLevel eLevel, const QString& sText, const QString& sToken = "");
+
+    //! Logs a buffer
     virtual void logBuffer(ELogLevel eLevel, const char* pBuffer, int iSize);
 
     //! Flushes file contents to dosk (use only when necessary)
@@ -156,10 +153,10 @@ public:
 
 protected:
 
-    //! Retourne une cha?ne de caract?re finale courte ? ?crire en fichier
+    //! Returns a final short string to write in the log file
     QString getShortStringForLevel(ELogLevel eLevel, const QString& sText);
 
-    //! Retourne une cha?ne de caract?re finale ? ?crire en fichier
+    //! Returns a final string to write in the log file
     QString getFinalStringForLevel(ELogLevel eLevel, const QString& sText);
 
     //-------------------------------------------------------------------------------------------------
@@ -184,12 +181,12 @@ protected:
     QTimer              m_tTimer;
     QTimer              m_tFlushTimer;
     QString             m_sPathName;
-    QString             m_sFileName;
     QFile*              m_pFile;
     qint64              m_iFileSize;
     ELogLevel           m_eLogLevel;
     QStringList         m_sDisplayTokens;
     QStringList         m_sIgnoreTokens;
     QVector<CLogger*>   m_vChainedLoggers;
+    int                 m_iMaxFileSize;
     bool                m_bBackupActive;
 };
