@@ -9,6 +9,7 @@ HEADERS += \
     source/cpp/QTree.h \
     source/cpp/CPIDController.h \
     source/cpp/CAverager.h \
+    source/cpp/CLogger.h \
     source/cpp/Image/CLargeMatrix.h \
     source/cpp/Image/CImageHistogram.h \
     source/cpp/Image/CImageUtilities.h \
@@ -83,6 +84,7 @@ SOURCES += \
     source/cpp/CXMLNodable.cpp \
     source/cpp/CXMLNode.cpp \
     source/cpp/CPIDController.cpp \
+    source/cpp/CLogger.cpp \
     source/cpp/Image/CLargeMatrix.cpp \
     source/cpp/Image/CImageHistogram.cpp \
     source/cpp/Image/CImageUtilities.cpp \
