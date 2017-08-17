@@ -53,12 +53,18 @@ public:
     //! Returns the number of values
     int count() { return m_vValues.count(); }
 
-    //! Returns the vector of value
+    //! Returns the vector of values
     QVector<InterpolatorValue>& getValues() { return m_vValues; }
 
     //-------------------------------------------------------------------------------------------------
     // Control methods
     //-------------------------------------------------------------------------------------------------
+
+    //!
+    void clear()
+    {
+        m_vValues.clear();
+    }
 
     //! Adds an interpolation step
     //! An input value of type double yields an output value of type T
