@@ -75,7 +75,7 @@ CLogger::~CLogger()
 
     QMutexLocker locker(&m_tMutex);
 
-    if (m_pFile)
+    if (m_pFile != nullptr)
     {
         if (m_pFile->isOpen())
         {
@@ -225,7 +225,7 @@ void CLogger::initialize(QString sPath, QString sFileName, CXMLNode xParameters)
     }
 
     // Destroy the file
-    if (m_pFile)
+    if (m_pFile != nullptr)
     {
         if (m_pFile->isOpen())
         {
