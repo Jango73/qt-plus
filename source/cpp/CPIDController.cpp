@@ -2,8 +2,6 @@
 // Application
 #include "CPIDController.h"
 
-using namespace CarEmulator;
-
 //-------------------------------------------------------------------------------------------------
 
 /*!

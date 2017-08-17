@@ -5,9 +5,6 @@
 
 //-------------------------------------------------------------------------------------------------
 
-namespace CarEmulator
-{
-
 class QTPLUSSHARED_EXPORT CPIDController
 {
 public:
@@ -83,5 +80,3 @@ protected:
 	double m_dDerivativeConstant;
 	double m_dOutput;
 };
-
-}
