@@ -410,7 +410,7 @@ void CHTTPServer::processRequest(QTcpSocket* pSocket)
     }
 #endif
 
-    if (pData != NULL)
+    if (pData != nullptr)
     {
         bool bKeepAlive = false;
 

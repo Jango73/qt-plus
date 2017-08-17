@@ -41,8 +41,8 @@ CSocketStream::CSocketStream(const QString& sName, const QMap<QString, QString>&
     : CConnectedStream(sName)
     , m_tMutex(QMutex::Recursive)
     , m_iPort(0)
-    , m_pLocalServer(NULL)
-    , m_pServer(NULL)
+    , m_pLocalServer(nullptr)
+    , m_pServer(nullptr)
 {
     Q_UNUSED(sParameters);
 
@@ -145,7 +145,7 @@ CSocketStream::~CSocketStream()
 	}
 
 	// Destruction de la socket serveur
-	if (m_pServer != NULL)
+	if (m_pServer != nullptr)
 	{
 		CClientData::deleteFromSocket(m_pServer);
 		m_pServer->close();
@@ -153,7 +153,7 @@ CSocketStream::~CSocketStream()
 	}
 
 	// Fermeture du serveur
-	if (m_pLocalServer != NULL)
+	if (m_pLocalServer != nullptr)
 	{
 		m_pLocalServer->close();
 		delete m_pLocalServer;
@@ -189,11 +189,11 @@ bool CSocketStream::hasConnections() const
 */
 void CSocketStream::onReconnect()
 {
-	if (m_pServer != NULL)
+	if (m_pServer != nullptr)
 	{
 		CClientData::deleteFromSocket(m_pServer);
 		m_pServer->deleteLater();
-		m_pServer = NULL;
+		m_pServer = nullptr;
 	}
 
 	// Création de la socket client
@@ -285,7 +285,7 @@ void CSocketStream::onSocketReadyRead()
 {
 	int iBytesAvailable = 0;
 
-	if (m_pServer != NULL)
+	if (m_pServer != nullptr)
 	{
 		iBytesAvailable = m_pServer->bytesAvailable();
 	}
@@ -314,7 +314,7 @@ void CSocketStream::onSocketBytesWritten(qint64 iBytes)
 
 	CClientData* pData = CClientData::getFromSocket(pSocket);
 
-	if (pData != NULL)
+	if (pData != nullptr)
 	{
 		pData->m_iBytesToWrite -= iBytes;
 	}
@@ -334,7 +334,7 @@ void CSocketStream::onSendOutput()
 		sendOutputForSocket(pClient);
 	}
 
-	if (m_pServer != NULL)
+	if (m_pServer != nullptr)
 	{
 		sendOutputForSocket(m_pServer);
 	}
@@ -383,7 +383,7 @@ qint64 CSocketStream::bytesAvailable() const
 {
     qint64 uiBytes = 0;
 
-    if (m_pServer != NULL)
+    if (m_pServer != nullptr)
     {
         uiBytes = m_pServer->bytesAvailable();
     }
@@ -406,7 +406,7 @@ qint64 CSocketStream::bytesAvailable() const
 */
 qint64 CSocketStream::readData(char* data, qint64 maxSize)
 {
-	if (m_pServer != NULL)
+	if (m_pServer != nullptr)
 	{
 		return m_pServer->read(data, maxSize);
 	}
@@ -431,7 +431,7 @@ qint64 CSocketStream::writeData(const char* data, qint64 maxSize)
 {
 	QMutexLocker locker(&m_tMutex);
 
-	if (m_pServer != NULL)
+	if (m_pServer != nullptr)
 	{
 		CClientData* pData = CClientData::getFromSocket(m_pServer);
 

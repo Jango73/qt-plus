@@ -60,7 +60,7 @@ CWebControl::CWebControl(const QString& sName, const QString& sCaption, const QS
     , m_sEventParameter(sParam)
     , m_bVisible(true)
     , m_bReadOnly(false)
-    , m_pParentControl(NULL)
+    , m_pParentControl(nullptr)
 {
 }
 
@@ -302,7 +302,7 @@ const QVector<CWebControl*> CWebControl::getControls() const
 
 /*!
     Returns a control whose ID is equal to \a iID. \br\br
-    Looks in all child controls and can return \c this or \c NULL.
+    Looks in all child controls and can return \c this or \c nullptr.
 */
 CWebControl* CWebControl::findControl(qint32 iID)
 {
@@ -315,20 +315,20 @@ CWebControl* CWebControl::findControl(qint32 iID)
     {
         CWebControl* pTarget = pControl->findControl(iID);
 
-        if (pTarget != NULL)
+        if (pTarget != nullptr)
         {
             return pTarget;
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
 
 /*!
     Returns a control whose code name is equal to \a sCodeName. \br\br
-    Looks in all child controls and can return \c this or \c NULL.
+    Looks in all child controls and can return \c this or \c nullptr.
 */
 CWebControl* CWebControl::findControlByCodeName(QString sCodeName)
 {
@@ -341,20 +341,20 @@ CWebControl* CWebControl::findControlByCodeName(QString sCodeName)
     {
         CWebControl* pTarget = pControl->findControlByCodeName(sCodeName);
 
-        if (pTarget != NULL)
+        if (pTarget != nullptr)
         {
             return pTarget;
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
 
 /*!
     Returns a control whose name is equal to \a sName. \br\br
-    Looks in all child controls and can return \c this or \c NULL.
+    Looks in all child controls and can return \c this or \c nullptr.
 */
 CWebControl* CWebControl::findControlByName(QString sName)
 {
@@ -367,13 +367,13 @@ CWebControl* CWebControl::findControlByName(QString sName)
     {
         CWebControl* pTarget = pControl->findControlByName(sName);
 
-        if (pTarget != NULL)
+        if (pTarget != nullptr)
         {
             return pTarget;
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -395,7 +395,7 @@ CWebControl* CWebControl::getRoot()
 {
     CWebControl* pRoot = this;
 
-    while (pRoot->getParentControl() != NULL)
+    while (pRoot->getParentControl() != nullptr)
     {
         pRoot = pRoot->getParentControl();
     }
@@ -655,11 +655,11 @@ void CWebControl::scriptCall(const QString& sScript)
 {
     CWebControl* pRoot = getRoot();
 
-    if (pRoot != NULL)
+    if (pRoot != nullptr)
     {
         CWebPage* pPage = dynamic_cast<CWebPage*>(pRoot);
 
-        if (pPage != NULL)
+        if (pPage != nullptr)
         {
             pPage->scriptCall(sScript);
         }
@@ -677,7 +677,7 @@ void CWebControl::handleEvent(QString sControl, QString sEvent, QString sParam)
 {
     CWebControl* pTargetControl = findControlByCodeName(sControl);
 
-    if (pTargetControl != NULL)
+    if (pTargetControl != nullptr)
     {
         if (pTargetControl != this)
         {
@@ -792,7 +792,7 @@ void CWebControl::deserialize(QDataStream& stream, CObjectTracker *pTracker, QOb
 
             CWebControl* pControl = CWebFactory::getInstance()->instanciateProduct(sClassName);
 
-            if (pControl != NULL)
+            if (pControl != nullptr)
             {
                 pControl->deserialize(stream, pTracker, pRootObject);
 
@@ -806,17 +806,17 @@ void CWebControl::deserialize(QDataStream& stream, CObjectTracker *pTracker, QOb
         {
             CWebControl* pObservedControl = pRootControl->findControl(iObservedID);
 
-            if (pObservedControl != NULL)
+            if (pObservedControl != nullptr)
             {
                 foreach(qint32 iObserverID, m_mObservers[iObservedID])
                 {
                     CWebControl* pObserverControl = pRootControl->findControl(iObserverID);
 
-                    if (pObserverControl != NULL)
+                    if (pObserverControl != nullptr)
                     {
                         IWebControlObserver* pObserver = dynamic_cast<IWebControlObserver*>(pObserverControl);
 
-                        if (pObserver != NULL)
+                        if (pObserver != nullptr)
                         {
                             pObservedControl->addObserver(pObserver);
                         }

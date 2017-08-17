@@ -105,7 +105,7 @@ int yyerror (void*, char*);
 
 #define SAFE_DELETE(a)  if ((a) != nullptr) delete (a);
 
-#define ENSURE_NON_NULL(a)  { if (a == nullptr) a = new QMLEntity(pContext->position()); }
+#define ENSURE_NON_nullptr(a)  { if (a == nullptr) a = new QMLEntity(pContext->position()); }
 
 // #define PARSER_TRACE(state, rule)  { qDebug() << state " : " << rule; }
 #define PARSER_TRACE(state, rule)
@@ -145,7 +145,7 @@ int yyerror (void*, char*);
      TOKEN_BOOLCONSTANT = 302,
      TOKEN_INTEGERCONSTANT = 303,
      TOKEN_REALCONSTANT = 304,
-     TOKEN_NULL = 305,
+     TOKEN_nullptr = 305,
      TOKEN_UNDEFINED = 306,
      TOKEN_ASSIGN = 310,
      TOKEN_ADD = 311,
@@ -667,7 +667,7 @@ static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "TOKEN_IDENTIFIER", "TOKEN_LITERAL",
   "TOKEN_BOOLCONSTANT", "TOKEN_INTEGERCONSTANT", "TOKEN_REALCONSTANT",
-  "TOKEN_NULL", "TOKEN_UNDEFINED", "TOKEN_ASSIGN", "TOKEN_ADD",
+  "TOKEN_nullptr", "TOKEN_UNDEFINED", "TOKEN_ASSIGN", "TOKEN_ADD",
   "TOKEN_SUB", "TOKEN_MUL", "TOKEN_DIV", "TOKEN_MOD", "TOKEN_AND",
   "TOKEN_OR", "TOKEN_XOR", "TOKEN_SHL", "TOKEN_SHR", "TOKEN_ADD_ASSIGN",
   "TOKEN_SUB_ASSIGN", "TOKEN_MUL_ASSIGN", "TOKEN_DIV_ASSIGN",
@@ -3559,8 +3559,8 @@ yyreduce:
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
 
-        ENSURE_NON_NULL(pLeft);
-        ENSURE_NON_NULL(pRight);
+        ENSURE_NON_nullptr(pLeft);
+        ENSURE_NON_nullptr(pRight);
 
         (yyval.Object) = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
     ;}
@@ -3576,8 +3576,8 @@ yyreduce:
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
 
-        ENSURE_NON_NULL(pLeft);
-        ENSURE_NON_NULL(pRight);
+        ENSURE_NON_nullptr(pLeft);
+        ENSURE_NON_nullptr(pRight);
 
         (yyval.Object) = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
     ;}
@@ -3604,8 +3604,8 @@ yyreduce:
         QMLEntity* pExpression1 = (yyvsp[(1) - (3)].Object);
         QMLEntity* pExpression2 = (yyvsp[(3) - (3)].Object);
 
-        ENSURE_NON_NULL(pExpression1);
-        ENSURE_NON_NULL(pExpression2);
+        ENSURE_NON_nullptr(pExpression1);
+        ENSURE_NON_nullptr(pExpression2);
 
         QMLComplexEntity* pComplex = QMLComplexEntity::fromEntity(pExpression1);
 
@@ -4818,7 +4818,7 @@ yyreduce:
         }
         else
         {
-            PARSER_TRACE("JSAttributeNoComma", "... name or value is NULL !!");
+            PARSER_TRACE("JSAttributeNoComma", "... name or value is nullptr !!");
 
             (yyval.Object) = nullptr;
         }
@@ -4845,7 +4845,7 @@ yyreduce:
         }
         else
         {
-            PARSER_TRACE("JSAttributeNoComma", "... name or value is NULL !!");
+            PARSER_TRACE("JSAttributeNoComma", "... name or value is nullptr !!");
 
             (yyval.Object) = nullptr;
         }

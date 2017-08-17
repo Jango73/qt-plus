@@ -240,7 +240,7 @@ public:
         {
             CClientData* pData = getFromSocket(pSocket);
 
-            if (pData != NULL)
+            if (pData != nullptr)
             {
                 delete pData;
             }

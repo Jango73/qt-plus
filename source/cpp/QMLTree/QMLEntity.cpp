@@ -413,7 +413,7 @@ CXMLNode QMLEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent
 
     if (parent() == nullptr)
     {
-        xNode.attributes()["Parent"] = "NULL";
+        xNode.attributes()["Parent"] = "nullptr";
     }
 
     if (m_pOrigin != nullptr)

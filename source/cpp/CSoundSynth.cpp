@@ -200,7 +200,7 @@ void CSoundSynth::CSoundSynthGenerator::stopMe()
 
 void CSoundSynth::CSoundSynthGenerator::run()
 {
-    if (m_pSynth != NULL)
+    if (m_pSynth != nullptr)
     {
         while (m_bRun)
         {

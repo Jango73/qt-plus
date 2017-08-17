@@ -59,7 +59,7 @@ CMJPEGServer::CMJPEGServer(int iPort)
     : CHTTPServer(iPort)
     , m_tTimer(this)
     , m_tMutex(QMutex::Recursive)
-    , m_pOutputFile(NULL)
+    , m_pOutputFile(nullptr)
 {
     m_iCompressionRate = -1;
 
@@ -81,7 +81,7 @@ CMJPEGServer::CMJPEGServer(QString sFileName)
     : CHTTPServer(0)
     , m_tTimer(this)
     , m_tMutex(QMutex::Recursive)
-    , m_pOutputFile(NULL)
+    , m_pOutputFile(nullptr)
 {
     m_sFileName = sFileName;
 
@@ -95,7 +95,7 @@ CMJPEGServer::CMJPEGServer(QString sFileName)
     else
     {
         delete m_pOutputFile;
-        m_pOutputFile = NULL;
+        m_pOutputFile = nullptr;
     }
 
     connect(&m_tTimer, SIGNAL(timeout()), this, SLOT(onTimeout()));
@@ -118,7 +118,7 @@ CMJPEGServer::~CMJPEGServer()
 
     QMutexLocker locker(&m_tMutex);
 
-    if (m_pOutputFile != NULL)
+    if (m_pOutputFile != nullptr)
     {
         m_pOutputFile->close();
         delete m_pOutputFile;
@@ -133,7 +133,7 @@ CMJPEGServer::~CMJPEGServer()
 void CMJPEGServer::send(const QByteArray& baData)
 {
     // Si on écrit dans un fichier ou qu'on a des connections actives
-    if (m_pOutputFile != NULL || hasConnections())
+    if (m_pOutputFile != nullptr || hasConnections())
     {
         // Si les données entrantes existent
         if (baData.count() > 0)
@@ -160,7 +160,7 @@ void CMJPEGServer::send(const QByteArray& baData)
 void CMJPEGServer::sendRaw(const QByteArray& baData, int iWidth, int iHeight)
 {
     // Si on écrit dans un fichier ou qu'on a des connections actives
-    if (m_pOutputFile != NULL || hasConnections())
+    if (m_pOutputFile != nullptr || hasConnections())
     {
         // Création d'une image à la taille spécifiée
         QImage image(QSize(iWidth, iHeight), QImage::Format_RGB888);
@@ -185,7 +185,7 @@ void CMJPEGServer::sendRaw(const QByteArray& baData, int iWidth, int iHeight)
 */
 void CMJPEGServer::sendImage(const QImage& image)
 {
-    if (m_pOutputFile != NULL || hasConnections())
+    if (m_pOutputFile != nullptr || hasConnections())
     {
         if (image.width() > 0 && image.height() > 0)
         {
@@ -244,7 +244,7 @@ void CMJPEGServer::getContent(const CWebContext& tContext, QString& sHead, QStri
 
     CClientData* pData = CClientData::getFromSocket(tContext.m_pSocket);
 
-    if (pData != NULL)
+    if (pData != nullptr)
     {
         pData->m_vUserData["BytesToWrite"] = QVariant((qlonglong) 0);
 
@@ -281,7 +281,7 @@ void CMJPEGServer::handleSocketBytesWritten(QTcpSocket* pSocket, qint64 iBytes)
 {
     CClientData* pData = CClientData::getFromSocket(pSocket);
 
-    if (pData != NULL)
+    if (pData != nullptr)
     {
         qlonglong iBytesToWrite = pData->m_vUserData["BytesToWrite"].toLongLong();
 
@@ -305,7 +305,7 @@ void CMJPEGServer::onTimeout()
 {
     if (m_vOutput.count() > 0)
     {
-        if (m_pOutputFile != NULL)
+        if (m_pOutputFile != nullptr)
         {
             if (m_pOutputFile->isOpen())
             {
@@ -347,7 +347,7 @@ void CMJPEGServer::onTimeout()
             {
                 CClientData* pData = CClientData::getFromSocket(pSocket);
 
-                if (pData != NULL)
+                if (pData != nullptr)
                 {
                     // Is the socket ready?
                     if (pSocket->state() == QTcpSocket::ConnectedState)

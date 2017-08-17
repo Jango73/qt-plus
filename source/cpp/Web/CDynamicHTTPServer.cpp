@@ -143,7 +143,7 @@ void CDynamicHTTPServer::getContent(const CWebContext& tContext, QString& sHead,
 
                 CWebPage* pPage = dynamic_cast<CWebPage*>(pControl);
 
-                if (pPage != NULL)
+                if (pPage != nullptr)
                 {
                     pPage->setViewstate(pPage->getViewState(this));
                     sCustomResponse = pPage->getPropertyChanges();
@@ -196,7 +196,7 @@ CWebPage* CDynamicHTTPServer::getPage(CDynamicHTTPServer* pServer, const CWebCon
     Q_UNUSED(pServer);
     Q_UNUSED(tContext);
 
-    return NULL;
+    return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -154,7 +154,7 @@ void CMJPEGClient::onReadyRead()
     QTcpSocket* pSocket = dynamic_cast<QTcpSocket*>(QObject::sender());
 
     // Test d'intégrité de la socket
-    if (pSocket != NULL)
+    if (pSocket != nullptr)
     {
         // Est-on en état connecté?
         if (pSocket->state() == QTcpSocket::ConnectedState)
