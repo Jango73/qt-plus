@@ -15,7 +15,7 @@ A template for singleton objects, based on the Singleton design pattern.
 A template for a factory of objects, based on the Factory design pattern.
 
 ### CXMLNode
-A helper class that wraps the XML and JSON facilities of Qt.
+A helper class that wraps the XML and JSON facilities of Qt. Makes DOM style document easier to use.
 
 ### CLogger
 A simple yet efficient logger.
