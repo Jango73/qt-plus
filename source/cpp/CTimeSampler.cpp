@@ -1,8 +1,6 @@
 
-// qt-plus
-#include "CLogger.h"
-
 // Application
+#include "CLogger.h"
 #include "CTimeSampler.h"
 
 CTimeSampler::CTimeSampler()
