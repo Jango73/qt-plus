@@ -5,7 +5,7 @@ Utility classes extending Qt's functionnality.
 The full documentation for classes is available after project build, in the <help> directory.
 
 ### QTree
-Template for a tree structure. Each node has a value and 0 or more child nodes. <br>
+Template for a tree structure. Each node has a value and 0 or more child nodes.  
 May be used in a model where a variable can hold a scalar, a list or a tree.
 
 ### CSingleton
@@ -48,11 +48,11 @@ Holds the contents of a *QML* file in the form of a tree, made of specialized cl
 * Can convert the statement tree to *XML*.
 
 ### QMLAnalyzer
-A class that allows static analysis of a *QML* statement tree (parsed using *QMLTreeContext*). <br>
+A class that allows static analysis of a *QML* statement tree (parsed using *QMLTreeContext*).  
 Uses a grammar file in *XML* format that declares what to check and eventually reject.
 
 ### CHTTPServer
-Implements the base functionalities (GET and POST) of an *HTTP* server (see RFC 7230). <br>
+Implements the base functionalities (GET and POST) of an *HTTP* server (see RFC 7230).  
 Can do the following:
 * Handles GET and POST requests (maybe more in the future)
 * Serve local file ressources
@@ -67,8 +67,8 @@ A client for *MJPEG* streams. Notifies via signal whenever a new image arrives.
 A server that creates an *MJPEG* stream for clients, based on *CHTTPServer*.
 
 ### CTDMADevice
-A class that mimics the *TDMA* concept. But instead of devices auto-synchronizing themselves, a master device does it. <br>
-Can be used to transfer data from master <-> slave on a network with a single data channel. <br>
+A class that mimics the *TDMA* concept. But instead of devices auto-synchronizing themselves, a master device does it.  
+Can be used to transfer data from master <-> slave on a network with a single data channel.  
 Inherits *QIODevice* and uses a *QIODevice* instance for input and output.
 
 ### CPIDController
