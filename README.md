@@ -1,11 +1,12 @@
 # qt-plus
-Classes extending Qt
+Utility classes extending Qt's functionnality.
 
 ## Classes
 The full documentation for classes is available after project build, in the <help> directory.
 
 ### QTree
-Template for a tree structure. Each node has a value and 0 or more child nodes.
+Template for a tree structure. Each node has a value and 0 or more child nodes. <br>
+May be used in a model where a variable can hold a scalar, a list or a tree.
 
 ### CSingleton
 A template for singleton objects, based on the Singleton design pattern.
@@ -14,40 +15,70 @@ A template for singleton objects, based on the Singleton design pattern.
 A template for a factory of objects, based on the Factory design pattern.
 
 ### CXMLNode
-A helper class that wraps the XML and JSON facilities of Qt.
+A helper class that wraps the *XML* and *JSON* facilities of Qt. Makes *DOM* style documents easier to use.
+
+### CLogger
+A simple yet efficient logger.
 
 ### CImageUtilities
 A singleton that provides helpful image processing functions.
 Can do the following:
-* Apply a filter matrix to a QImage
-* Select pixels in a QImage by tint, results in a grayscale mask image
-* Modify the HSV values of a QImage, using a mask QImage for pixel selection
-* Colorize a QImage, using a mask QImage for pixel selection
-* Split RGBA channels of a QImage
-* Merge RGBA channels of several QImages
-* Split HSVA channels of a QImage
-* Merge HSVA channels of several QImages
-* Find the dominant hue of a QImage
-* Find the dominant luminance (value) of a QImage
-* Compute the disparity map (depth) from two QImages (left and right eye)
+* Apply a filter matrix to a *QImage*
+* Select pixels in a *QImage* by tint, resulting in a grayscale mask image
+* Modify the HSV values of a *QImage*, using a *QImage* mask for pixel selection
+* Colorize a *QImage*, using a *QImage* mask for pixel selection
+* Split RGBA channels of a *QImage*
+* Merge RGBA channels of several *QImage*s
+* Split HSVA channels of a *QImage*
+* Merge HSVA channels of several *QImage*s
+* Find the dominant hue of a *QImage*
+* Find the dominant luminance (value) of a *QImage*
+* Compute the disparity map (depth) from two *QImage*s (left and right eye)
 
 ### CImageHistogram
-A class that contains the histogram of a QImage.
+A class that contains the histogram of a *QImage*.
 
 ### CLargeMatrix
 A class that can hold an NxN matrix. Used, among other things, for image filtering.
 
 ### QMLTreeContext
-A full QML parser. Holds the contents of a QML file in the form of a tree, made of specialized items for each kind of QML and JS declarations.Can recreate the original QML file from the data tree, but currently throws comments away.
+A full *QML* parser. <br>
+Holds the contents of a *QML* file in the form of a tree, made of specialized classes for each kind of *QML* and JS declarations. <br>
+* Can recreate the original *QML* file from the statement tree, **but currently throws comments away**. (To be fixed in a near future)
+* Can convert the statement tree to *XML*.
+
+### QMLAnalyzer
+A class that allows static analysis of a *QML* statement tree (parsed using *QMLTreeContext*). <br>
+Uses a grammar file in *XML* format that declares what to check and eventually reject.
 
 ### CHTTPServer
-Implements the base functionalities of an HTTP server. Can be used to generate dynamic content.
+Implements the base functionalities (GET and POST) of an *HTTP* server (see RFC 7230). <br>
+Can do the following:
+* Handles GET and POST requests (maybe more in the future)
+* Serve local file ressources
+* Define the accessible folders for ressources
+* Generate dynamic *HTML* content via overridden methods.
+* More or less efficient flood protection (has not been tested on large scale)
 
 ### CMJPEGClient
-A client for MJPEG streams. Notifies via signal whenever a new image arrives.
+A client for *MJPEG* streams. Notifies via signal whenever a new image arrives.
 
 ### CMJPEGServer
-A server that creates an MJPEG stream for clients, based on CHTTPServer.
+A server that creates an *MJPEG* stream for clients, based on *CHTTPServer*.
+
+### CTDMADevice
+A class that mimics the *TDMA* concept. But instead of devices auto-synchronizing themselves, a master device does it. <br>
+Can be used to transfer data from master <-> slave on a network with a single data channel. <br>
+Inherits *QIODevice* and uses a *QIODevice* instance for input and output.
+
+### CPIDController
+A *PID* (Proportional Integral Derivative) controller for autopilots or mechanical controls.
+
+### CAverager
+A template used to average values.
+
+### CGeoUtilities
+Contains methods to convert from geo coordinates (latitude, longitude, altitude) to cartesian coordinates (x, y, z) and back.
 
 # Third party files
 

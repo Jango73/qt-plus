@@ -120,7 +120,7 @@ void CDynamicHTTPServer::getContent(const CWebContext& tContext, QString& sHead,
         {
             CWebControl* pControl = CWebPage::fromViewState(tContext.m_mArguments[TOKEN_VIEWSTATE], this);
 
-            if (pControl)
+            if (pControl != nullptr)
             {
                 QString sEventControlName = tContext.m_mArguments[TOKEN_CONTROL];
 
