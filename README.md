@@ -42,7 +42,8 @@ A class that contains the histogram of a QImage.
 A class that can hold an NxN matrix. Used, among other things, for image filtering.
 
 ### QMLTreeContext
-A full QML parser. Holds the contents of a QML file in the form of a tree, made of specialized items for each kind of QML and JS declarations.Can recreate the original QML file from the data tree, but currently throws comments away.
+A full QML parser. Holds the contents of a QML file in the form of a tree, made of specialized items for each kind of QML and JS declarations. <br>
+Can recreate the original QML file from the data tree, but currently throws comments away.
 
 ### CHTTPServer
 Implements the base functionalities of an HTTP server. Can be used to generate dynamic content.
