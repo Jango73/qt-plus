@@ -1,5 +1,5 @@
 # qt-plus
-Classes extending Qt
+Utility classes extending Qt's functionnality.
 
 ## Classes
 The full documentation for classes is available after project build, in the <help> directory.
