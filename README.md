@@ -5,7 +5,8 @@ Classes extending Qt
 The full documentation for classes is available after project build, in the <help> directory.
 
 ### QTree
-Template for a tree structure. Each node has a value and 0 or more child nodes.
+Template for a tree structure. Each node has a value and 0 or more child nodes. <br>
+May be used in a model where a variable can hold a scalar, a list or a tree.
 
 ### CSingleton
 A template for singleton objects, based on the Singleton design pattern.
@@ -15,6 +16,9 @@ A template for a factory of objects, based on the Factory design pattern.
 
 ### CXMLNode
 A helper class that wraps the XML and JSON facilities of Qt.
+
+### CLogger
+A simple yet efficient logger.
 
 ### CImageUtilities
 A singleton that provides helpful image processing functions.
@@ -48,6 +52,15 @@ A client for MJPEG streams. Notifies via signal whenever a new image arrives.
 
 ### CMJPEGServer
 A server that creates an MJPEG stream for clients, based on CHTTPServer.
+
+### CPIDController
+A PID (Proportional Integral Derivative) controller for autopilots or mechanical controls.
+
+### CAverager
+A class used to make averages.
+
+### CGeoUtilities
+Contains methods to convert from geo coordinates (latitude, longitude, altitude) to cartesian coordinates (x, y, z) and back.
 
 # Third party files
 
