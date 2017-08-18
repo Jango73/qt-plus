@@ -60,6 +60,10 @@ A client for MJPEG streams. Notifies via signal whenever a new image arrives.
 ### CMJPEGServer
 A server that creates an MJPEG stream for clients, based on CHTTPServer.
 
+### CTDMADevice
+A class that mimics the TDMA concept. But instead of devices auto-synchronizing themselves, a master device does it. <br>
+Can be used to transfer data from master <-> slave on a network with a single data channel.
+
 ### CPIDController
 A PID (Proportional Integral Derivative) controller for autopilots or mechanical controls.
 
