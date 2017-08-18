@@ -52,7 +52,13 @@ A class that allows static analysis of a *QML* statement tree (parsed using *QML
 Uses a grammar file in *XML* format that declares what to check and eventually reject.
 
 ### CHTTPServer
-Implements the base functionalities of an *HTTP* server. Can be used to generate dynamic content.
+Implements the base functionalities (GET and POST) of an *HTTP* server (see RFC 7230). <br>
+Can do the following:
+* Handles GET and POST requests (maybe more in the future)
+* Serve local file ressources
+* Define the accessible folders for ressources
+* Generate dynamic *HTML* content via overridden methods.
+* More or less efficient flood protection (has not been tested on large scale)
 
 ### CMJPEGClient
 A client for *MJPEG* streams. Notifies via signal whenever a new image arrives.
