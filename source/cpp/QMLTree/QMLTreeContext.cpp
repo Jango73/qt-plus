@@ -254,7 +254,7 @@
 #define TOKEN_BOOLCONSTANT      302
 #define TOKEN_INTEGERCONSTANT   303
 #define TOKEN_REALCONSTANT      304
-#define TOKEN_nullptr              305
+#define TOKEN_NULL              305
 #define TOKEN_UNDEFINED         306
 
 #define TOKEN_ASSIGN            310
@@ -440,7 +440,7 @@ QMLTreeContext::QMLTreeContext()
     m_mTokens["signal"] = TOKEN_SIGNAL;
     m_mTokens["var"] = TOKEN_VAR;
     m_mTokens["new"] = TOKEN_NEW;
-    m_mTokens["null"] = TOKEN_nullptr;
+    m_mTokens["null"] = TOKEN_NULL;
     m_mTokens["undefined"] = TOKEN_UNDEFINED;
 
     m_eEngine.globalObject().setProperty("wrapper", m_eEngine.newQObject(new QMLTreeContextWrapper(this)));
