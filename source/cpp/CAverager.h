@@ -22,6 +22,13 @@ public:
     {
     }
 
+    //! Adds a value
+    CAverager<T>& operator << (const T& value)
+    {
+        append(value);
+        return *this;
+    }
+
     //! Resets all values
     void reset()
     {
@@ -59,8 +66,8 @@ public:
 
 protected:
 
-    int			m_iMaxValues;			// Nombre maximum de valeurs
-    QVector<T>	m_mValues;				// Les valeurs ? moyenner
+    int         m_iMaxValues;           // Maximum number of values
+    QVector<T>  m_mValues;              // Values to average
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -80,6 +87,13 @@ public:
     //! Destructor
     virtual ~CRollingAverager()
     {
+    }
+
+    //! Adds a value
+    CAverager<T>& operator << (const T& value)
+    {
+        append(value);
+        return *this;
     }
 
     //! Resets all values
