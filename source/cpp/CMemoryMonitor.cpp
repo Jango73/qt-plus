@@ -37,6 +37,13 @@ qint64 CMemoryMonitor::allocatedBytes(const QString& sClassName) const
 
 //-------------------------------------------------------------------------------------------------
 
+const QMap<QString, qint64>& CMemoryMonitor::allocationMap() const
+{
+    return m_mAllocatedBytes;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void CMemoryMonitor::allocBytes(const QString& sClassName, qint64 iBytes)
 {
     if (m_mAllocatedBytes.contains(sClassName) == false)

@@ -46,6 +46,9 @@ public:
     //!
     qint64 allocatedBytes(const QString& sClassName) const;
 
+    //!
+    const QMap<QString, qint64>& allocationMap() const;
+
     //-------------------------------------------------------------------------------------------------
     // Control methods
     //-------------------------------------------------------------------------------------------------
