@@ -12,6 +12,7 @@ HEADERS += \
     source/cpp/CLogger.h \
     source/cpp/CTracableMutex.h \
     source/cpp/CTimeSampler.h \
+    source/cpp/CMemoryMonitor.h \
     source/cpp/Image/CLargeMatrix.h \
     source/cpp/Image/CImageHistogram.h \
     source/cpp/Image/CImageUtilities.h \
@@ -90,6 +91,7 @@ SOURCES += \
     source/cpp/CLogger.cpp \
     source/cpp/CTracableMutex.cpp \
     source/cpp/CTimeSampler.cpp \
+    source/cpp/CMemoryMonitor.cpp \
     source/cpp/Image/CLargeMatrix.cpp \
     source/cpp/Image/CImageHistogram.cpp \
     source/cpp/Image/CImageUtilities.cpp \

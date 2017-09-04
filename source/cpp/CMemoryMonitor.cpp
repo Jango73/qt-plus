@@ -1,0 +1,55 @@
+
+// Application
+#include "CMemoryMonitor.h"
+
+//-------------------------------------------------------------------------------------------------
+
+CMemoryMonitor::CMemoryMonitor()
+{
+}
+
+//-------------------------------------------------------------------------------------------------
+
+CMemoryMonitor::~CMemoryMonitor()
+{
+}
+
+//-------------------------------------------------------------------------------------------------
+
+qint64 CMemoryMonitor::allocatedBytes() const
+{
+    qint64 iReturnValue = 0;
+
+    foreach (QString sKey, m_mAllocatedBytes.keys())
+    {
+        iReturnValue += m_mAllocatedBytes[sKey];
+    }
+
+    return iReturnValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+qint64 CMemoryMonitor::allocatedBytes(const QString& sClassName) const
+{
+    return m_mAllocatedBytes[sClassName];
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CMemoryMonitor::allocBytes(const QString& sClassName, qint64 iBytes)
+{
+    if (m_mAllocatedBytes.contains(sClassName) == false)
+    {
+        m_mAllocatedBytes[sClassName] = 0;
+    }
+
+    m_mAllocatedBytes[sClassName] += iBytes;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CMemoryMonitor::freeBytes(const QString& sClassName, qint64 iBytes)
+{
+    m_mAllocatedBytes[sClassName] -= iBytes;
+}
