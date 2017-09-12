@@ -12,8 +12,22 @@
 
 //-------------------------------------------------------------------------------------------------
 
-#define MM_NEW(t) { CMemoryMonitor::getInstance()->allocBytes(sizeof(T));
-#define MM_DEL(t) { CMemoryMonitor::getInstance()->freeBytes(sizeof(T));
+#define DECLARE_MEMORY_MONITORED                                        \
+public:                                                                 \
+    void* operator new (size_t size);                                   \
+    void operator delete(void* ptr, size_t size);
+
+#define IMPLEMENT_MEMORY_MONITORED(t, n)                                \
+void* t::operator new (size_t size)                                     \
+{                                                                       \
+    CMemoryMonitor::getInstance()->allocBytes(n, size);                 \
+    return malloc(size);                                                \
+}                                                                       \
+void t::operator delete(void* ptr, size_t size)                         \
+{                                                                       \
+    CMemoryMonitor::getInstance()->freeBytes(n, size);                  \
+    free(ptr);                                                          \
+}
 
 //-------------------------------------------------------------------------------------------------
 
