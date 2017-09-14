@@ -1,5 +1,5 @@
 
-QT += core gui multimedia xml network serialport widgets positioning qml quickwidgets
+QT += core gui multimedia xml network serialport widgets positioning qml
 
 CONFIG += warn_off
 TEMPLATE = lib

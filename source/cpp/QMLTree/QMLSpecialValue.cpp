@@ -47,8 +47,11 @@ void QMLSpecialValue::toQML(QTextStream& stream, const QMLEntity* pParent, int i
     {
         case svNull:
             stream << "null";
+            break;
+
         case svUndefined:
             stream << "undefined";
+            break;
     }
 }
 
