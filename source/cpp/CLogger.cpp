@@ -22,7 +22,7 @@ CLogger::CLogger()
     , m_iFileSize(0)
     , m_eLogLevel(llDebug)
     , m_iMaxFileSize(DEFAULT_MAX_FILE_SIZE)
-    , m_bBackupActive(false)
+    , m_bBackupActive(true)
 {
     QString sName = QCoreApplication::applicationFilePath().split("/").last();
     QString sPath = QCoreApplication::applicationDirPath() + "/Logs";
@@ -151,6 +151,13 @@ void CLogger::setIgnoreTokens(const QString& sTokens)
 void CLogger::setMaxFileSize(int iValue)
 {
     m_iMaxFileSize = iValue;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CLogger::setBackupActive(bool value)
+{
+    m_bBackupActive = value;
 }
 
 //-------------------------------------------------------------------------------------------------

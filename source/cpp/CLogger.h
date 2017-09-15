@@ -133,6 +133,9 @@ public:
     //! Sets the maximum file size
     void setMaxFileSize(int iValue);
 
+    //! Defines if file back up is active
+    void setBackupActive(bool value);
+
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
