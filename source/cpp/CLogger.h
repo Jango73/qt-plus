@@ -1,10 +1,8 @@
 
 #pragma once
 
-#include "qtplus_global.h"
-
-//-------------------------------------------------------------------------------------------------
-// Includes
+// std
+#include <typeinfo>
 
 // Qt
 #include <QObject>
@@ -16,6 +14,7 @@
 #include <QVector>
 
 // Application
+#include "qtplus_global.h"
 #include "CSingleton.h"
 #include "CXMLNode.h"
 #include "File/CRollingFiles.h"
