@@ -3,6 +3,7 @@ HEADERS += \
     source/cpp/qtplus_global.h \
     source/cpp/CFactory.h \
     source/cpp/CSingleton.h \
+    source/cpp/CSingletonPool.h \
     source/cpp/CDumpable.h \
     source/cpp/CXMLNodable.h \
     source/cpp/CXMLNode.h \
@@ -84,6 +85,7 @@ HEADERS += \
     source/cpp/QMLTree/QMLAnalyzer.h
 
 SOURCES += \
+    source/cpp/CSingletonPool.cpp \
     source/cpp/CDumpable.cpp \
     source/cpp/CXMLNodable.cpp \
     source/cpp/CXMLNode.cpp \

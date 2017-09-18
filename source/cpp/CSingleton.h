@@ -1,8 +1,14 @@
 
 #pragma once
 
+// std
+#include <typeinfo>
+
 // Qt
-#include <QtCore/QMutex>
+#include <QString>
+
+// Application
+#include "CSingletonPool.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -19,23 +25,28 @@ public:
 	//! Gets the unique instance of the class
 	static T* getInstance()
 	{
-        if (s_pInstance == nullptr)
-		{
-			s_pInstance = new T();
-		}
+        CSingletonPool::init();
 
-		return s_pInstance;
+        QString sClassName(typeid(T).name());
+
+        if (CSingletonPool::s_pSingletons->contains(sClassName) == false)
+        {
+            (*CSingletonPool::s_pSingletons)[sClassName] = new T();
+        }
+
+        return (T*) (*CSingletonPool::s_pSingletons)[sClassName];
 	}
 
 	//! Destroys the unique instance of the class
 	static void killInstance()
 	{
-        if (s_pInstance != nullptr)
-		{
-			delete s_pInstance;
-		}
+        QString sClassName(typeid(T).name());
 
-        s_pInstance = nullptr;
+        if (CSingletonPool::s_pSingletons->contains(sClassName))
+        {
+            delete (*CSingletonPool::s_pSingletons)[sClassName];
+            CSingletonPool::s_pSingletons->remove(sClassName);
+        }
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -49,18 +60,4 @@ protected:
 
 	//! Destructor
 	virtual ~CSingleton() {}
-
-	//-------------------------------------------------------------------------------------------------
-	// Properties
-	//-------------------------------------------------------------------------------------------------
-
-private:
-    static T*		s_pInstance;	// Unique instance
-    static QMutex	s_mutex;		// Data protection
 };
-
-// Unique instance
-template<class T> T* CSingleton<T>::s_pInstance = nullptr;
-
-// Data protection
-template<class T> QMutex CSingleton<T>::s_mutex(QMutex::Recursive);

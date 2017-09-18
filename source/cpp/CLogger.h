@@ -14,6 +14,7 @@
 #include <QString>
 #include <QTimer>
 #include <QVector>
+#include <QMutex>
 
 // Application
 #include "CSingleton.h"
