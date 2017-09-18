@@ -44,7 +44,7 @@ public:
 
         if (CSingletonPool::s_pSingletons->contains(sClassName))
         {
-            delete (*CSingletonPool::s_pSingletons)[sClassName];
+            delete (T*) (*CSingletonPool::s_pSingletons)[sClassName];
             CSingletonPool::s_pSingletons->remove(sClassName);
         }
 	}
