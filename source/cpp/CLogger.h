@@ -103,6 +103,7 @@ public:
 
     //-------------------------------------------------------------------------------------------------
     // Constructors and destructor
+    // Those are public to enable creation of additional loggers
     //-------------------------------------------------------------------------------------------------
 
     //! Default constructor

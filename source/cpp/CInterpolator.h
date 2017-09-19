@@ -33,8 +33,8 @@ public:
             tOutput = NewOutput;
         }
 
-        double	dInput;
-        T		tOutput;
+        double  dInput;
+        T       tOutput;
     };
 
     //-------------------------------------------------------------------------------------------------
@@ -121,5 +121,5 @@ public:
 
 protected:
 
-    QVector<InterpolatorValue>	m_vValues;
+    QVector<InterpolatorValue>  m_vValues;
 };

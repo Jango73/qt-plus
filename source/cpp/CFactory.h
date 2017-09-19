@@ -119,6 +119,6 @@ public:
 
 protected:
 
-    CFactory<T>*	m_pFactory;
-    int				m_iCurrentIndex;
+    CFactory<T>*    m_pFactory;
+    int             m_iCurrentIndex;
 };

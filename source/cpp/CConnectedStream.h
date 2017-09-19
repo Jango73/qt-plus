@@ -82,6 +82,6 @@ signals:
 
 protected:
 
-    QString		m_sName;
+    QString     m_sName;
     int         m_iMinBytesForReadyRead;
 };

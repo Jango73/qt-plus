@@ -16,36 +16,56 @@ class QTPLUSSHARED_EXPORT CTracableMutex
 {
 public:
 
-	//! Default constructor
-	CTracableMutex();
+    //-------------------------------------------------------------------------------------------------
+    // Constructors and destructor
+    //-------------------------------------------------------------------------------------------------
 
-	//! Constructeur avec paramètres
-	CTracableMutex(QMutex::RecursionMode eMode, QString sName = "");
+    //! Default constructor
+    CTracableMutex();
 
-	//! Constructeur de copie
-	CTracableMutex(const CTracableMutex&);
+    //! Constructor with parameters
+    CTracableMutex(QMutex::RecursionMode eMode, QString sName = "");
 
-	//! Destructor
-	~CTracableMutex();
+    //! Copy constructor
+    CTracableMutex(const CTracableMutex&);
 
-	//! Opérateur de copie
-	CTracableMutex& operator =(const CTracableMutex&);
+    //! Destructor
+    ~CTracableMutex();
 
-	//! Enregistrement d'une thread
-	static void registerThread(int iThreadID, QString sName);
+    //-------------------------------------------------------------------------------------------------
+    // Operators
+    //-------------------------------------------------------------------------------------------------
 
-	//! Vérouillage du mutex, retourne true si le mutex a été pris
+    //! Assign operator
+    CTracableMutex& operator = (const CTracableMutex&);
+
+    //-------------------------------------------------------------------------------------------------
+    // Control methods
+    //-------------------------------------------------------------------------------------------------
+
+    //! Returns \c true if mutex could be locked
     bool lock(QString sName = "");
 
-	//! Dévérouillage du mutex
-	void unlock();
+    //! Unlocks the mutex
+    void unlock();
 
-	QMutex				m_tMutex;
-	QString				m_sName;
+    //-------------------------------------------------------------------------------------------------
+    // Static control methods
+    //-------------------------------------------------------------------------------------------------
 
-	static QMap<int, QString> m_vThreadNames;
+    //! Resgisters a thread
+    static void registerThread(int iThreadID, QString sName);
+
+    //-------------------------------------------------------------------------------------------------
+    // Properties
+    //-------------------------------------------------------------------------------------------------
+
+    QMutex                      m_tMutex;
+    QString                     m_sName;
+
+    static QMap<int, QString>   m_vThreadNames;
 
 #ifdef FULL_MUTEX_TRACE
-	QVector<QString>	m_sLockNames;
+    QVector<QString>            m_sLockNames;
 #endif
 };
