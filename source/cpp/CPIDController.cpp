@@ -19,11 +19,10 @@
     \a dNewDerivative is the derivative factor
 */
 CPIDController::CPIDController(double dNewProportional, double dNewIntegral, double dNewDerivative)
+    : m_dProportionalConstant(dNewProportional)
+    , m_dIntegralConstant(dNewIntegral)
+    , m_dDerivativeConstant(dNewDerivative)
 {
-	m_dProportionalConstant = dNewProportional;
-	m_dIntegralConstant = dNewIntegral;
-	m_dDerivativeConstant = dNewDerivative;
-
 	reset();
 }
 
