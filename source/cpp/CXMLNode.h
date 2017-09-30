@@ -76,7 +76,7 @@ public:
     //! Returns a child node by tag
     CXMLNode getNodeByTagName(const QString& sTagName) const;
 
-    //! Returns a child vector node by tag
+    //! Returns a child node vector by tag
     QVector<CXMLNode> getNodesByTagName(const QString& sTagName) const;
 
     //! Returns true if the node has the given attribute

@@ -584,7 +584,7 @@ CXMLNode CXMLNode::getNodeByTagName(const QString& sTagName)
 */
 CXMLNode CXMLNode::getNodeByTagName(const QString& sTagName) const
 {
-    foreach(CXMLNode tNode, m_vNodes)
+    foreach (CXMLNode tNode, m_vNodes)
     {
         if (tNode.m_sTag == sTagName) return tNode;
     }
@@ -601,11 +601,11 @@ QVector<CXMLNode> CXMLNode::getNodesByTagName(const QString& sTagName) const
 {
     QVector<CXMLNode> vNodes;
 
-    foreach (CXMLNode tNode, m_vNodes)
+    foreach (const CXMLNode& tNode, m_vNodes)
     {
         if (tNode.m_sTag == sTagName)
         {
-            vNodes.append(tNode);
+            vNodes << tNode;
         }
     }
 
