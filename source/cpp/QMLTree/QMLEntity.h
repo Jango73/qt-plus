@@ -133,6 +133,9 @@ public:
     //!
     virtual QString toString() const;
 
+    //!
+    QString toSimpleString() const;
+
     //! Returns all members
     virtual QMap<QString, QMLEntity*> members();
 

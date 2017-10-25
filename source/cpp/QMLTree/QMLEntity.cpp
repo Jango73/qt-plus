@@ -260,6 +260,16 @@ QString QMLEntity::toString() const
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Returns the entity as a simple string.
+*/
+QString QMLEntity::toSimpleString() const
+{
+    return m_vValue.toString();
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Returns a map of class members.
 */
 QMap<QString, QMLEntity*> QMLEntity::members()
@@ -291,6 +301,8 @@ QMLEntity* QMLEntity::clone() const
     pEntity->m_pOrigin              = m_pOrigin;
     pEntity->m_iUsageCount          = m_iUsageCount;
     pEntity->m_bIsParenthesized     = m_bIsParenthesized;
+
+    return pEntity;
 }
 
 //-------------------------------------------------------------------------------------------------

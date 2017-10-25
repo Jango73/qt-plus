@@ -45,8 +45,7 @@ void QMLOnExpression::toQML(QTextStream& stream, QMLFormatter& formatter, const 
 
     if (m_pName != nullptr)
     {
-        // stream << m_pName->toString();
-        m_pName->toQML(stream, formatter, this);
+        stream << m_pName->toSimpleString();
     }
 
     stream << " on ";
