@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../unislib_global.h"
+#include "../qtplus_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -21,7 +21,7 @@ class QMLTreeContext;
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a QML file item
-class UNISLIBSHARED_EXPORT QMLFile : public QMLComplexEntity
+class QTPLUSSHARED_EXPORT QMLFile : public QMLComplexEntity
 {
     Q_OBJECT
 

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../unislib_global.h"
+#include "../qtplus_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -14,7 +14,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a conditional expression
-class UNISLIBSHARED_EXPORT QMLConditional : public QMLIf
+class QTPLUSSHARED_EXPORT QMLConditional : public QMLIf
 {
     Q_OBJECT
 

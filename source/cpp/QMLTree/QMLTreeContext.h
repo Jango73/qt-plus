@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../unislib_global.h"
+#include "../qtplus_global.h"
 
 //-------------------------------------------------------------------------------------------------
 // Includes
@@ -35,7 +35,7 @@ typedef union
 
 //-------------------------------------------------------------------------------------------------
 
-class UNISLIBSHARED_EXPORT QMLAnalyzerError
+class QTPLUSSHARED_EXPORT QMLAnalyzerError
 {
 public:
 
@@ -97,7 +97,7 @@ protected:
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a context for parsing QML and JS files
-class UNISLIBSHARED_EXPORT QMLTreeContext : public QThread, public CXMLNodableContext
+class QTPLUSSHARED_EXPORT QMLTreeContext : public QThread, public CXMLNodableContext
 {
     Q_OBJECT
 
@@ -346,7 +346,7 @@ protected:
 
 //-------------------------------------------------------------------------------------------------
 
-class UNISLIBSHARED_EXPORT QMLTreeContextWrapper : public QObject
+class QTPLUSSHARED_EXPORT QMLTreeContextWrapper : public QObject
 {
     Q_OBJECT
 

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../unislib_global.h"
+#include "../qtplus_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -14,7 +14,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines an identifier
-class UNISLIBSHARED_EXPORT QMLIdentifier : public QMLEntity
+class QTPLUSSHARED_EXPORT QMLIdentifier : public QMLEntity
 {
     Q_OBJECT
 

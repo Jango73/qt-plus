@@ -42,7 +42,7 @@
 
 /*!
     \class QMLTreeContext
-    \inmodule unis-lib
+    \inmodule qt-plus
     \brief A QML parser using a Bison grammar file. \br
     \section1 How it works
     After parsing one or many QML files, QMLFile entites hold all QML declarations and JS code as a tree.

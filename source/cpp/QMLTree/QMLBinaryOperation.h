@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../unislib_global.h"
+#include "../qtplus_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -15,7 +15,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a binary expression
-class UNISLIBSHARED_EXPORT QMLBinaryOperation : public QMLEntity
+class QTPLUSSHARED_EXPORT QMLBinaryOperation : public QMLEntity
 {
     Q_OBJECT
 
@@ -44,7 +44,11 @@ public:
         boGreater,
         boGreaterOrEquals,
         boShiftLeft,
-        boShiftRight
+        boShiftRight,
+        boAddAssign,
+        boSubAssign,
+        boMulAssign,
+        boDivAssign
     };
 
     //-------------------------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../unislib_global.h"
+#include "../qtplus_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -14,7 +14,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines an alias statement
-class UNISLIBSHARED_EXPORT QMLPropertyAlias : public QMLPropertyAssignment
+class QTPLUSSHARED_EXPORT QMLPropertyAlias : public QMLPropertyAssignment
 {
     Q_OBJECT
 

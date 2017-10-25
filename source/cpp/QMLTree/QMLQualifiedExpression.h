@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../unislib_global.h"
+#include "../qtplus_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -15,7 +15,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a qualified expression (some.qualified.expression)
-class UNISLIBSHARED_EXPORT QMLQualifiedExpression : public QMLComplexEntity
+class QTPLUSSHARED_EXPORT QMLQualifiedExpression : public QMLComplexEntity
 {
     Q_OBJECT
 

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../unislib_global.h"
+#include "../qtplus_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -14,7 +14,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a for var in var loop
-class UNISLIBSHARED_EXPORT QMLForIn : public QMLEntity
+class QTPLUSSHARED_EXPORT QMLForIn : public QMLEntity
 {
     Q_OBJECT
 

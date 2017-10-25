@@ -13,7 +13,7 @@
 
 /*!
     \class QMLComplexEntity
-    \inmodule unis-lib
+    \inmodule qt-plus
     \brief The base entity for a QML tree.
 */
 

@@ -95,6 +95,14 @@ QString QMLBinaryOperation::operatorToString(EOperator eOperator) const
             return "<<";
         case boShiftRight:
             return ">>";
+        case boAddAssign:
+            return "+=";
+        case boSubAssign:
+            return "-=";
+        case boMulAssign:
+            return "*=";
+        case boDivAssign:
+            return "/=";
     }
 
     return "??";

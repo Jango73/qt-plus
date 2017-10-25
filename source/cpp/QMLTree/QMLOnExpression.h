@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../unislib_global.h"
+#include "../qtplus_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -15,7 +15,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a Something on Item expression
-class UNISLIBSHARED_EXPORT QMLOnExpression : public QMLComplexEntity
+class QTPLUSSHARED_EXPORT QMLOnExpression : public QMLComplexEntity
 {
     Q_OBJECT
 

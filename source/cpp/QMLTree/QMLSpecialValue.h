@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../unislib_global.h"
+#include "../qtplus_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -15,7 +15,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a type object
-class UNISLIBSHARED_EXPORT QMLSpecialValue : public QMLEntity
+class QTPLUSSHARED_EXPORT QMLSpecialValue : public QMLEntity
 {
     Q_OBJECT
 

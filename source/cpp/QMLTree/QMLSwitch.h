@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../unislib_global.h"
+#include "../qtplus_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -15,7 +15,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a switch/case statement
-class UNISLIBSHARED_EXPORT QMLSwitch : public QMLEntity
+class QTPLUSSHARED_EXPORT QMLSwitch : public QMLEntity
 {
     Q_OBJECT
 

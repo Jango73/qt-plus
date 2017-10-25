@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../unislib_global.h"
+#include "../qtplus_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -25,7 +25,7 @@ class QMLTreeContext;
 //-------------------------------------------------------------------------------------------------
 
 //! Defines the base entity of a QML tree
-class UNISLIBSHARED_EXPORT QMLFormatter
+class QTPLUSSHARED_EXPORT QMLFormatter
 {
 public:
 
@@ -76,7 +76,7 @@ public:
 //-------------------------------------------------------------------------------------------------
 
 //! Defines the base entity of a QML tree
-class UNISLIBSHARED_EXPORT QMLEntity : public QObject, public CDumpable, public CXMLNodable
+class QTPLUSSHARED_EXPORT QMLEntity : public QObject, public CDumpable, public CXMLNodable
 {
     Q_OBJECT
 

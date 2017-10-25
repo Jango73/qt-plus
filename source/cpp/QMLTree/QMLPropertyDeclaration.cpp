@@ -7,7 +7,7 @@
 
 /*!
     \class QMLPropertyDeclaration
-    \inmodule unis-lib
+    \inmodule qt-plus
     \brief A property declaration in a QML file, as in [ property string myColor: "red" ].
 */
 

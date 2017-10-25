@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../unislib_global.h"
+#include "../qtplus_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -14,7 +14,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines an if expression
-class UNISLIBSHARED_EXPORT QMLIf : public QMLEntity
+class QTPLUSSHARED_EXPORT QMLIf : public QMLEntity
 {
     Q_OBJECT
 

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../unislib_global.h"
+#include "../qtplus_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -15,7 +15,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a container for child entities
-class UNISLIBSHARED_EXPORT QMLComplexEntity : public QMLEntity
+class QTPLUSSHARED_EXPORT QMLComplexEntity : public QMLEntity
 {
     Q_OBJECT
 

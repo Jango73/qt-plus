@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../unislib_global.h"
+#include "../qtplus_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -16,7 +16,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a function variable declaration
-class UNISLIBSHARED_EXPORT QMLVariableDeclaration : public QMLComplexEntity
+class QTPLUSSHARED_EXPORT QMLVariableDeclaration : public QMLComplexEntity
 {
     Q_OBJECT
 

@@ -5,15 +5,13 @@ import QtQuick.Dialogs 1.0 as MyLib
 Item {
     id: root
 
-    property real prop1: root.prop8;
-    property real prop_2: 20;   // Camel casing error
+    property real prop1: root.prop8
+    property real prop_2: 20                                                                    // Camel casing error
     property real prop3: 30
     property real prop4: 40
-    property real Prop5: 50   // Camel casing error and unreferenced symbol
-
-    // Nested conditionals error
-    property bool prop6: prop1 > 0 ? prop1 : prop_2 > 0 ? prop_2 : prop3 > 0 ? prop3 : prop4;
-    property variant prop7: []  // Unreferenced symbol
+    property real Prop5: 50                                                                     // Camel casing error and unreferenced symbol
+    property bool prop6: prop1 > 0 ? prop1 : prop_2 > 0 ? prop_2 : prop3 > 0 ? prop3 : prop4    // Nested conditionals error
+    property variant prop7: []                                                                  // Unreferenced symbol
     property int prop8: 88
 
     property string property: ""

@@ -16,7 +16,7 @@
 
 /*!
     \class QMLAnalyzer
-    \inmodule unis-lib
+    \inmodule qt-plus
     \brief A QML analyzer (limited to the scope of a file for now).
 
     \section1 How it works

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../unislib_global.h"
+#include "../qtplus_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -15,7 +15,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a function call
-class UNISLIBSHARED_EXPORT QMLFunctionCall : public QMLEntity
+class QTPLUSSHARED_EXPORT QMLFunctionCall : public QMLEntity
 {
     Q_OBJECT
 

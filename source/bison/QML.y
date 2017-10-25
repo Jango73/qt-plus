@@ -1553,7 +1553,7 @@ JSAssignmentExpression :
 
         if (pLeft != nullptr && pRight != nullptr)
         {
-            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAddAssign);
         }
         else
         {
@@ -1570,7 +1570,7 @@ JSAssignmentExpression :
 
         if (pLeft != nullptr && pRight != nullptr)
         {
-            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boSubAssign);
         }
         else
         {
@@ -1587,7 +1587,7 @@ JSAssignmentExpression :
 
         if (pLeft != nullptr && pRight != nullptr)
         {
-            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boMulAssign);
         }
         else
         {
@@ -1604,7 +1604,7 @@ JSAssignmentExpression :
 
         if (pLeft != nullptr && pRight != nullptr)
         {
-            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boAssign);
+            $<Object>$ = new QMLBinaryOperation(pLeft->position(), pLeft, pRight, QMLBinaryOperation::boDivAssign);
         }
         else
         {

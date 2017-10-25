@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../unislib_global.h"
+#include "../qtplus_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -15,7 +15,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines an unary expression
-class UNISLIBSHARED_EXPORT QMLUnaryOperation : public QMLEntity
+class QTPLUSSHARED_EXPORT QMLUnaryOperation : public QMLEntity
 {
     Q_OBJECT
 
