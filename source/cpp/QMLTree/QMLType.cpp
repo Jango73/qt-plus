@@ -40,7 +40,7 @@ QVariant::Type QMLType::type() const
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLType::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLType::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
 

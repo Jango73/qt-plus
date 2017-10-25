@@ -39,7 +39,7 @@ QMLSpecialValue::ESpecialValue QMLSpecialValue::specialValue() const
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLSpecialValue::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLSpecialValue::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
 
@@ -48,7 +48,6 @@ void QMLSpecialValue::toQML(QTextStream& stream, const QMLEntity* pParent, int i
         case svNull:
             stream << "null";
             break;
-
         case svUndefined:
             stream << "undefined";
             break;

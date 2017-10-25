@@ -58,9 +58,14 @@ void QMLQualifiedExpression::solveSymbolUsages(QMLTreeContext* pContext)
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLQualifiedExpression::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLQualifiedExpression::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
+
+    if (QMLComplexEntity::isContainer(pParent))
+    {
+        formatter.processFragment(stream, QMLFormatter::qffBeforeQualifiedExpression);
+    }
 
     if (m_bIsParenthesized)
     {
@@ -78,7 +83,7 @@ void QMLQualifiedExpression::toQML(QTextStream& stream, const QMLEntity* pParent
 
         if (pItem != nullptr)
         {
-            pItem->toQML(stream, this, iIdent);
+            pItem->toQML(stream, formatter, this);
         }
 
         putDot = true;

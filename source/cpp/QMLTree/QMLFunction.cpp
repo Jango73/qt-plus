@@ -201,9 +201,11 @@ QMLEntity* QMLFunction::findSymbolDeclaration(const QString& sName)
     Dumps the item to \a stream using \a iIdent for indentation. \br\br
     \a pParent is the caller of this method.
 */
-void QMLFunction::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLFunction::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
+
+    formatter.processFragment(stream, QMLFormatter::qffBeforeFunction);
 
     if (m_bIsSignal)
     {
@@ -216,24 +218,25 @@ void QMLFunction::toQML(QTextStream& stream, const QMLEntity* pParent, int iIden
 
     if (m_pName != nullptr)
     {
-        m_pName->toQML(stream, this, iIdent + 1);
+        m_pName->toQML(stream, formatter, this);
     }
 
     stream << " ( ";
 
     if (m_pParameters != nullptr)
     {
-        m_pParameters->toQML(stream, this, iIdent + 1);
+        m_pParameters->toQML(stream, formatter, this);
     }
 
     stream << " ) ";
-    stream << "\n";
+
+    formatter.processFragment(stream, QMLFormatter::qffAfterFunction);
 
     if (m_bIsSignal == false)
     {
         if (m_pContent != nullptr)
         {
-            m_pContent->toQML(stream, this, iIdent + 1);
+            m_pContent->toQML(stream, formatter, this);
         }
     }
 }

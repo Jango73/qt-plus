@@ -68,7 +68,7 @@ void QMLIdentifier::solveSymbolUsages(QMLTreeContext* pContext)
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLIdentifier::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLIdentifier::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
 

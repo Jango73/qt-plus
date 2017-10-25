@@ -81,7 +81,7 @@ QMap<QString, QMLEntity*> QMLImport::members()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLImport::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLImport::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
 
@@ -109,7 +109,9 @@ void QMLImport::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent)
             sText += (" as " + m_pAs->toString());
         }
 
+        formatter.processFragment(stream, QMLFormatter::qffBeforeImport);
         stream << sText << " ";
+        formatter.processFragment(stream, QMLFormatter::qffAfterImport);
     }
 }
 

@@ -4,12 +4,16 @@
 
 // Application
 #include "QMLComplexEntity.h"
+#include "QMLQualifiedExpression.h"
+#include "QMLBinaryOperation.h"
+#include "QMLUnaryOperation.h"
+#include "QMLPropertyAssignment.h"
 
 //-------------------------------------------------------------------------------------------------
 
 /*!
     \class QMLComplexEntity
-    \inmodule qt-plus
+    \inmodule unis-lib
     \brief The base entity for a QML tree.
 */
 
@@ -338,7 +342,7 @@ void QMLComplexEntity::removeUnreferencedSymbols(QMLTreeContext* pContext)
     Dumps the entity as QML to \a stream using \a iIdent for indentation. \br\br
     \a pParent is the caller of this method.
 */
-void QMLComplexEntity::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLComplexEntity::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     if (m_bIsArray && m_vContents.count() == 0)
     {
@@ -348,13 +352,21 @@ void QMLComplexEntity::toQML(QTextStream& stream, const QMLEntity* pParent, int 
     {
         if (isNamed())
         {
-            m_pName->toQML(stream, this, iIdent);
+            if (isPropertyAssignment(pParent) == false) formatter.processFragment(stream, QMLFormatter::qffBeforeItemName);
+            m_pName->toQML(stream, formatter, this);
+            if (isPropertyAssignment(pParent) == false) formatter.processFragment(stream, QMLFormatter::qffAfterItemName);
         }
 
         if (m_bIsArray)
-            stream << " [ ";
+        {
+            stream << " [";
+            formatter.processFragment(stream, QMLFormatter::qffBeforeItemContent);
+        }
         else if (m_bIsObject || m_bIsBlock || isNamed())
-            stream << " { ";
+        {
+            stream << " {";
+            formatter.processFragment(stream, QMLFormatter::qffBeforeItemContent);
+        }
 
         if (m_bIsParenthesized)
         {
@@ -375,15 +387,7 @@ void QMLComplexEntity::toQML(QTextStream& stream, const QMLEntity* pParent, int 
                     }
                 }
 
-                pEntity->toQML(stream, this, pParent != nullptr ? iIdent + 1 : iIdent);
-
-                if (m_bIsArray || m_bIsObject || m_bIsArgumentList)
-                {
-                }
-                else
-                {
-                    stream << "\n";
-                }
+                pEntity->toQML(stream, formatter, this);
 
                 iCount++;
             }
@@ -395,9 +399,15 @@ void QMLComplexEntity::toQML(QTextStream& stream, const QMLEntity* pParent, int 
         }
 
         if (m_bIsArray)
-            stream << " ] ";
+        {
+            formatter.processFragment(stream, QMLFormatter::qffAfterItemContent);
+            stream << "] ";
+        }
         else if (m_bIsObject || m_bIsBlock || isNamed())
-            stream << " } ";
+        {
+            formatter.processFragment(stream, QMLFormatter::qffAfterItemContent);
+            stream << "} ";
+        }
     }
 }
 
@@ -478,4 +488,36 @@ QMLComplexEntity* QMLComplexEntity::makeBlock(QMLEntity* pEntity)
     pComplex->setIsBlock(true);
 
     return pComplex;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+bool QMLComplexEntity::isContainer(const QMLEntity* pEntity)
+{
+    if (pEntity != nullptr)
+    {
+        if (dynamic_cast<const QMLQualifiedExpression*>(pEntity) != nullptr)
+            return false;
+
+        if (dynamic_cast<const QMLUnaryOperation*>(pEntity) != nullptr)
+            return false;
+
+        if (dynamic_cast<const QMLBinaryOperation*>(pEntity) != nullptr)
+            return false;
+
+        if (dynamic_cast<const QMLComplexEntity*>(pEntity) != nullptr)
+            return true;
+    }
+
+    return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+bool QMLComplexEntity::isPropertyAssignment(const QMLEntity* pEntity)
+{
+    if (dynamic_cast<const QMLPropertyAssignment*>(pEntity) != nullptr)
+        return true;
+
+    return false;
 }

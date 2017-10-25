@@ -66,25 +66,30 @@ QMap<QString, QMLEntity*> QMLIf::members()
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLIf::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLIf::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
+
+    formatter.processFragment(stream, QMLFormatter::qffBeforeIf);
 
     stream << "if ( ";
 
     if (m_pCondition != nullptr)
     {
-        m_pCondition->toQML(stream, this, iIdent + 1);
+        m_pCondition->toQML(stream, formatter, this);
     }
 
     stream << " ) ";
 
-    m_pThen->toQML(stream, this, iIdent + 1);
+    formatter.processFragment(stream, QMLFormatter::qffAfterIf);
+
+    m_pThen->toQML(stream, formatter, this);
 
     if (m_pElse != nullptr)
     {
         stream << " else ";
-        m_pElse->toQML(stream, this, iIdent + 1);
+
+        m_pElse->toQML(stream, formatter, this);
     }
 }
 

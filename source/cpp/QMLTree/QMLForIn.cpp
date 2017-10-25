@@ -69,28 +69,31 @@ QMap<QString, QMLEntity*> QMLForIn::members()
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLForIn::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLForIn::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
+
+    formatter.processFragment(stream, QMLFormatter::qffBeforeFor);
 
     stream << "for (";
 
     if (m_pVariable != nullptr)
     {
-        m_pVariable->toQML(stream, this, iIdent + 1);
+        m_pVariable->toQML(stream, formatter, this);
     }
 
     stream << " in ";
 
     if (m_pExpression != nullptr)
     {
-        m_pExpression->toQML(stream, this, iIdent + 1);
+        m_pExpression->toQML(stream, formatter, this);
     }
 
     stream << ")";
-    stream << "\n";
 
-    m_pContent->toQML(stream, this, iIdent + 1);
+    formatter.processFragment(stream, QMLFormatter::qffAfterFor);
+
+    m_pContent->toQML(stream, formatter, this);
 }
 
 //-------------------------------------------------------------------------------------------------

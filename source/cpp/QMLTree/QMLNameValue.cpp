@@ -6,7 +6,7 @@
 
 /*!
     \class QMLNameValue
-    \inmodule qt-plus
+    \inmodule unis-lib
     \brief .
 */
 

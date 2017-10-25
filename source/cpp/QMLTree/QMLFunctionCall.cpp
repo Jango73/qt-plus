@@ -59,12 +59,17 @@ QMap<QString, QMLEntity*> QMLFunctionCall::members()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLFunctionCall::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLFunctionCall::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
 
+    if (QMLComplexEntity::isContainer(pParent))
+    {
+        formatter.processFragment(stream, QMLFormatter::qffBeforeFunctionCall);
+    }
+
     if (m_pName != nullptr)
-        m_pName->toQML(stream, this, iIdent);
+        m_pName->toQML(stream, formatter, this);
 
     stream << " ( ";
 
@@ -81,7 +86,7 @@ void QMLFunctionCall::toQML(QTextStream& stream, const QMLEntity* pParent, int i
 
             if (pEntity != nullptr)
             {
-                pEntity->toQML(stream, this, iIdent);
+                pEntity->toQML(stream, formatter, this);
             }
 
             putDot = true;
@@ -89,6 +94,8 @@ void QMLFunctionCall::toQML(QTextStream& stream, const QMLEntity* pParent, int i
     }
 
     stream << " ) ";
+
+    formatter.processFragment(stream, QMLFormatter::qffAfterFunctionCall);
 }
 
 //-------------------------------------------------------------------------------------------------

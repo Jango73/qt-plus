@@ -11,6 +11,7 @@ QMLFor::QMLFor(const QPoint& pPosition, QMLEntity* pInitialization, QMLEntity* p
     , m_pCondition(pCondition)
     , m_pIncrementation(pIncrementation)
     , m_pContent(pContent)
+    , m_bIsWhile(false)
 {
 }
 
@@ -26,6 +27,13 @@ QMLFor::~QMLFor()
         delete m_pIncrementation;
     if (m_pContent != nullptr)
         delete m_pContent;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void QMLFor::setIsWhile(bool bValue)
+{
+    m_bIsWhile = bValue;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -77,37 +85,63 @@ QMap<QString, QMLEntity*> QMLFor::members()
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLFor::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLFor::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
 
-    stream << "for (";
-
-    if (m_pInitialization != nullptr)
+    if (m_bIsWhile)
     {
-        m_pInitialization->toQML(stream, this, iIdent + 1);
+        formatter.processFragment(stream, QMLFormatter::qffBeforeWhile);
+
+        stream << "while (";
+
+        if (m_pCondition != nullptr)
+        {
+            m_pCondition->toQML(stream, formatter, this);
+        }
+
+        stream << ")";
+
+        formatter.processFragment(stream, QMLFormatter::qffAfterWhile);
+
+        if (m_pContent != nullptr)
+        {
+            m_pContent->toQML(stream, formatter, this);
+        }
     }
-
-    stream << "; ";
-
-    if (m_pCondition != nullptr)
+    else
     {
-        m_pCondition->toQML(stream, this, iIdent + 1);
-    }
+        formatter.processFragment(stream, QMLFormatter::qffBeforeFor);
 
-    stream << "; ";
+        stream << "for (";
 
-    if (m_pIncrementation != nullptr)
-    {
-        m_pIncrementation->toQML(stream, this, iIdent + 1);
-    }
+        if (m_pInitialization != nullptr)
+        {
+            m_pInitialization->toQML(stream, formatter, this);
+        }
 
-    stream << ")";
-    stream << "\n";
+        stream << "; ";
 
-    if (m_pContent != nullptr)
-    {
-        m_pContent->toQML(stream, this, iIdent + 1);
+        if (m_pCondition != nullptr)
+        {
+            m_pCondition->toQML(stream, formatter, this);
+        }
+
+        stream << "; ";
+
+        if (m_pIncrementation != nullptr)
+        {
+            m_pIncrementation->toQML(stream, formatter, this);
+        }
+
+        stream << ")";
+
+        formatter.processFragment(stream, QMLFormatter::qffAfterFor);
+
+        if (m_pContent != nullptr)
+        {
+            m_pContent->toQML(stream, formatter, this);
+        }
     }
 }
 

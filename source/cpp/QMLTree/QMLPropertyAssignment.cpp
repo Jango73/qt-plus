@@ -27,16 +27,20 @@ QMap<QString, QMLEntity*> QMLPropertyAssignment::getDeclaredSymbols()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLPropertyAssignment::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLPropertyAssignment::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
 
     if (m_pName != nullptr && m_pContent != nullptr)
     {
-        m_pName->toQML(stream, this, iIdent + 1);
+        formatter.processFragment(stream, QMLFormatter::qffBeforePropertyName);
+        m_pName->toQML(stream, formatter, this);
+        formatter.processFragment(stream, QMLFormatter::qffAfterPropertyName);
 
         stream << ": ";
 
-        m_pContent->toQML(stream, this, iIdent + 1);
+        formatter.processFragment(stream, QMLFormatter::qffBeforePropertyContent);
+        m_pContent->toQML(stream, formatter, this);
+        formatter.processFragment(stream, QMLFormatter::qffAfterPropertyContent);
     }
 }

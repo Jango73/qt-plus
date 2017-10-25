@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../qtplus_global.h"
+#include "../unislib_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -15,7 +15,7 @@
 #include "../CDumpable.h"
 #include "../CXMLNodable.h"
 
-#define TRACK_ENTITIES
+// #define TRACK_ENTITIES
 
 //-------------------------------------------------------------------------------------------------
 // Forward declarations
@@ -25,7 +25,58 @@ class QMLTreeContext;
 //-------------------------------------------------------------------------------------------------
 
 //! Defines the base entity of a QML tree
-class QTPLUSSHARED_EXPORT QMLEntity : public QObject, public CDumpable, public CXMLNodable
+class UNISLIBSHARED_EXPORT QMLFormatter
+{
+public:
+
+    enum EQMLFormatterFragment {
+        qffBeforeImport,
+        qffAfterImport,
+        qffBeforeItemName,
+        qffAfterItemName,
+        qffBeforeItemContent,
+        qffAfterItemContent,
+        qffBeforePropertyName,
+        qffAfterPropertyName,
+        qffBeforePropertyContent,
+        qffAfterPropertyContent,
+        qffBeforeFunction,
+        qffAfterFunction,
+        qffBeforeVariableDeclaration,
+        qffBeforeFunctionCall,
+        qffAfterFunctionCall,
+        qffBeforeFor,
+        qffAfterFor,
+        qffBeforeWhile,
+        qffAfterWhile,
+        qffBeforeSwitch,
+        qffAfterSwitch,
+        qffBeforeIf,
+        qffAfterIf,
+        qffBeforeTopLevelBinaryOp,
+        qffBeforeTopLevelUnaryOp,
+        qffBeforeQualifiedExpression
+    };
+
+    QMLFormatter();
+
+    void incIndentation();
+
+    void decIndentation();
+
+    void writeNewLine(QTextStream& stream);
+
+    void writeDoubleNewLine(QTextStream& stream);
+
+    void processFragment(QTextStream& stream, EQMLFormatterFragment fragment);
+
+    int m_iIndentation;
+};
+
+//-------------------------------------------------------------------------------------------------
+
+//! Defines the base entity of a QML tree
+class UNISLIBSHARED_EXPORT QMLEntity : public QObject, public CDumpable, public CXMLNodable
 {
     Q_OBJECT
 
@@ -121,7 +172,7 @@ public:
     virtual void removeUnreferencedSymbols(QMLTreeContext* pContext);
 
     //!
-    virtual void toQML(QTextStream& stream, const QMLEntity* pParent = nullptr, int iIdent = 0) const;
+    virtual void toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent = nullptr) const;
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods

@@ -17,12 +17,14 @@ QMLPropertyAlias::~QMLPropertyAlias()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLPropertyAlias::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLPropertyAlias::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
 
     if (m_pName != nullptr && m_pContent != nullptr)
     {
+        formatter.processFragment(stream, QMLFormatter::qffBeforePropertyName);
+
         if (m_eModifiers == mReadonly)
         {
             stream << "readonly ";
@@ -34,12 +36,17 @@ void QMLPropertyAlias::toQML(QTextStream& stream, const QMLEntity* pParent, int 
 
         stream << "property alias ";
 
-        m_pName->toQML(stream, this, iIdent + 1);
+        m_pName->toQML(stream, formatter, this);
 
-        stream << ": ";
+        formatter.processFragment(stream, QMLFormatter::qffAfterPropertyName);
 
-        m_pContent->toQML(stream, this, iIdent + 1);
+        if (m_pContent != nullptr)
+        {
+            stream << ": ";
 
-        stream << "\n";
+            formatter.processFragment(stream, QMLFormatter::qffBeforePropertyContent);
+            m_pContent->toQML(stream, formatter, this);
+            formatter.processFragment(stream, QMLFormatter::qffAfterPropertyContent);
+        }
     }
 }

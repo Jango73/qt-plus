@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../qtplus_global.h"
+#include "../unislib_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -14,7 +14,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a property assignment
-class QTPLUSSHARED_EXPORT QMLPropertyAssignment : public QMLPropertyDeclaration
+class UNISLIBSHARED_EXPORT QMLPropertyAssignment : public QMLPropertyDeclaration
 {
     Q_OBJECT
 
@@ -46,7 +46,7 @@ public:
     virtual QMap<QString, QMLEntity*> getDeclaredSymbols() Q_DECL_OVERRIDE;
 
     //!
-    virtual void toQML(QTextStream& stream, const QMLEntity* pParent = nullptr, int iIdent = 0) const Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent = nullptr) const Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Properties

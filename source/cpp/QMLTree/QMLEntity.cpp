@@ -9,9 +9,92 @@
 
 /*!
     \class QMLEntity
-    \inmodule qt-plus
+    \inmodule unis-lib
     \brief The base entity for a QML tree.
 */
+
+//-------------------------------------------------------------------------------------------------
+
+QMLFormatter::QMLFormatter()
+    : m_iIndentation(0)
+{
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void QMLFormatter::incIndentation()
+{
+    m_iIndentation++;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void QMLFormatter::decIndentation()
+{
+    m_iIndentation--;
+
+    if (m_iIndentation < 0)
+        m_iIndentation = 0;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void QMLFormatter::writeNewLine(QTextStream& stream)
+{
+    stream << "\r\n";
+
+    for (int i = 0; i < m_iIndentation * 4; i++)
+    {
+        stream << " ";
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void QMLFormatter::writeDoubleNewLine(QTextStream& stream)
+{
+    stream << "\r\n";
+    writeNewLine(stream);
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void QMLFormatter::processFragment(QTextStream& stream, EQMLFormatterFragment fragment)
+{
+    switch (fragment)
+    {
+        case qffBeforeImport:
+            writeNewLine(stream);
+            break;
+
+        case qffBeforeItemName:
+        case qffBeforeFunction:
+        case qffBeforeFor:
+        case qffBeforeWhile:
+        case qffBeforeSwitch:
+            writeDoubleNewLine(stream);
+            break;
+
+        case qffBeforeItemContent:
+            incIndentation();
+            break;
+
+        case qffAfterItemContent:
+            decIndentation();
+            writeNewLine(stream);
+            break;
+
+        case qffBeforePropertyName:
+        case qffBeforeVariableDeclaration:
+        case qffBeforeFunctionCall:
+        case qffBeforeIf:
+        case qffBeforeTopLevelBinaryOp:
+        case qffBeforeTopLevelUnaryOp:
+        case qffBeforeQualifiedExpression:
+            writeNewLine(stream);
+            break;
+    }
+}
 
 //-------------------------------------------------------------------------------------------------
 
@@ -169,7 +252,8 @@ QString QMLEntity::toString() const
 {
     QString sText;
     QTextStream stream(&sText);
-    toQML(stream, nullptr);
+    QMLFormatter formatter;
+    toQML(stream, formatter);
     return sText;
 }
 
@@ -355,7 +439,7 @@ void QMLEntity::removeUnreferencedSymbols(QMLTreeContext* pContext)
     Dumps the entity as QML to \a stream using \a iIdent for indentation. \br\br
     \a pParent is the caller of this method.
 */
-void QMLEntity::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLEntity::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
 
@@ -413,7 +497,7 @@ CXMLNode QMLEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent
 
     if (parent() == nullptr)
     {
-        xNode.attributes()["Parent"] = "nullptr";
+        xNode.attributes()["Parent"] = "NULL";
     }
 
     if (m_pOrigin != nullptr)

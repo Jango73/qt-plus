@@ -114,9 +114,14 @@ QMap<QString, QMLEntity*> QMLBinaryOperation::members()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLBinaryOperation::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLBinaryOperation::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
+
+    if (QMLComplexEntity::isContainer(pParent))
+    {
+        formatter.processFragment(stream, QMLFormatter::qffBeforeTopLevelBinaryOp);
+    }
 
     if (m_bIsParenthesized)
     {
@@ -125,14 +130,14 @@ void QMLBinaryOperation::toQML(QTextStream& stream, const QMLEntity* pParent, in
 
     if (m_pLeft != nullptr)
     {
-        m_pLeft->toQML(stream, this, iIdent);
+        m_pLeft->toQML(stream, formatter, this);
     }
 
     stream <<  QString(" %1 ").arg(operatorToString(m_eOperator));
 
     if (m_pRight != nullptr)
     {
-        m_pRight->toQML(stream, this, iIdent);
+        m_pRight->toQML(stream, formatter, this);
     }
 
     if (m_bIsParenthesized)

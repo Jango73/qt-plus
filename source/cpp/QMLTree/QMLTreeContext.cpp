@@ -42,7 +42,7 @@
 
 /*!
     \class QMLTreeContext
-    \inmodule qt-plus
+    \inmodule unis-lib
     \brief A QML parser using a Bison grammar file. \br
     \section1 How it works
     After parsing one or many QML files, QMLFile entites hold all QML declarations and JS code as a tree.
@@ -786,9 +786,6 @@ void QMLTreeContext::showError(const QString& sText)
 
 //-------------------------------------------------------------------------------------------------
 
-/*!
-    Writes the contents of \a pFile to disk.
-*/
 void QMLTreeContext::writeFile(QMLFile* pFile)
 {
     QFile file(pFile->fileName());
@@ -798,10 +795,11 @@ void QMLTreeContext::writeFile(QMLFile* pFile)
         m_sText.clear();
         QTextStream stream(&m_sText);
 
-        pFile->toQML(stream);
+        QMLFormatter formatter;
+        pFile->toQML(stream, formatter);
 
-        QJSValue output = m_eEngine.evaluate(m_sBeautifyScript);
-        m_sText = output.toString();
+        // QJSValue output = m_eEngine.evaluate(m_sBeautifyScript);
+        // m_sText = output.toString();
 
         file.write(m_sText.toLatin1());
         file.close();

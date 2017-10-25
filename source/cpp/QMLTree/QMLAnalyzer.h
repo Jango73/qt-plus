@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../qtplus_global.h"
+#include "../unislib_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -25,7 +25,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a static QML analyzer
-class QTPLUSSHARED_EXPORT QMLAnalyzer : public QThread
+class UNISLIBSHARED_EXPORT QMLAnalyzer : public QThread
 {
     Q_OBJECT
 

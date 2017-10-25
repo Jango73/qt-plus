@@ -1269,7 +1269,10 @@ JSStatement_While :
 
         pContent = QMLComplexEntity::makeBlock(pContent);
 
-        $<Object>$ = new QMLFor(pInitialization->position(), pInitialization, pCondition, pIncrementation, pContent);
+        QMLFor* pNewFor = new QMLFor(pInitialization->position(), pInitialization, pCondition, pIncrementation, pContent);
+        pNewFor->setIsWhile(true);
+
+        $<Object>$ = pNewFor;
     }
 ;
 

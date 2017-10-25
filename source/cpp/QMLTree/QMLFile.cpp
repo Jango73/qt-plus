@@ -9,7 +9,7 @@
 
 /*!
     \class QMLFile
-    \inmodule qt-plus
+    \inmodule unis-lib
     \brief A QML file.
 */
 

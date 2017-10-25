@@ -161,12 +161,14 @@ QMap<QString, QMLEntity*> QMLPropertyDeclaration::getDeclaredSymbols()
     Dumps the entity as QML to \a stream using \a iIdent for indentation. \br\br
     \a pParent is the caller of this method.
 */
-void QMLPropertyDeclaration::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLPropertyDeclaration::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
 
     if (m_pType != nullptr && m_pName != nullptr)
     {
+        formatter.processFragment(stream, QMLFormatter::qffBeforePropertyName);
+
         if (m_eModifiers == mReadonly)
         {
             stream << "readonly ";
@@ -177,14 +179,19 @@ void QMLPropertyDeclaration::toQML(QTextStream& stream, const QMLEntity* pParent
         }
 
         stream << "property ";
-        m_pType->toQML(stream, this, iIdent + 1);
+        m_pType->toQML(stream, formatter, this);
         stream << " ";
-        m_pName->toQML(stream, this, iIdent + 1);
+        m_pName->toQML(stream, formatter, this);
+
+        formatter.processFragment(stream, QMLFormatter::qffAfterPropertyName);
 
         if (m_pContent != nullptr)
         {
             stream << ": ";
-            m_pContent->toQML(stream, this, iIdent + 1);
+
+            formatter.processFragment(stream, QMLFormatter::qffBeforePropertyContent);
+            m_pContent->toQML(stream, formatter, this);
+            formatter.processFragment(stream, QMLFormatter::qffAfterPropertyContent);
         }
     }
 }

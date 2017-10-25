@@ -81,11 +81,13 @@ QMap<QString, QMLEntity*> QMLVariableDeclaration::getDeclaredSymbols()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLVariableDeclaration::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLVariableDeclaration::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
 
+    formatter.processFragment(stream, QMLFormatter::qffBeforeVariableDeclaration);
+
     stream << "var ";
 
-    QMLComplexEntity::toQML(stream, this, iIdent);
+    QMLComplexEntity::toQML(stream, formatter, this);
 }

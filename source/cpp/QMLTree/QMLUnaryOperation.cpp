@@ -81,18 +81,18 @@ QMap<QString, QMLEntity*> QMLUnaryOperation::members()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLUnaryOperation::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLUnaryOperation::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
+
+    if (QMLComplexEntity::isContainer(pParent))
+    {
+        formatter.processFragment(stream, QMLFormatter::qffBeforeTopLevelUnaryOp);
+    }
 
     if (m_bIsParenthesized)
     {
         stream << " ( ";
-    }
-
-    if (m_eOperator == uoBreak)
-    {
-        stream << "\n";
     }
 
     if (m_bIsPostFix == false)
@@ -101,7 +101,7 @@ void QMLUnaryOperation::toQML(QTextStream& stream, const QMLEntity* pParent, int
 
         if (m_pExpression != nullptr)
         {
-            m_pExpression->toQML(stream, this, iIdent);
+            m_pExpression->toQML(stream, formatter, this);
 
             if (m_eOperator == uoCase)
             {
@@ -113,7 +113,7 @@ void QMLUnaryOperation::toQML(QTextStream& stream, const QMLEntity* pParent, int
     {
         if (m_pExpression != nullptr)
         {
-            m_pExpression->toQML(stream, this, iIdent);
+            m_pExpression->toQML(stream, formatter, this);
 
             if (m_eOperator == uoCase)
             {

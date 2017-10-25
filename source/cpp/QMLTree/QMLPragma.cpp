@@ -44,7 +44,7 @@ QMap<QString, QMLEntity*> QMLPragma::members()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLPragma::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLPragma::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
 
@@ -52,7 +52,9 @@ void QMLPragma::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent)
 
     if (m_pStatement != nullptr)
     {
-        m_pStatement->toQML(stream, this, iIdent + 1);
+        formatter.incIndentation();
+        m_pStatement->toQML(stream, formatter, this);
+        formatter.decIndentation();
     }
 
     stream << " ";

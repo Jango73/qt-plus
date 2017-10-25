@@ -57,18 +57,22 @@ QMap<QString, QMLEntity*> QMLSwitch::members()
     \a pContext is the context of this item. \br
     \a pParent is the caller of this method.
 */
-void QMLSwitch::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLSwitch::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
+
+    formatter.processFragment(stream, QMLFormatter::qffBeforeSwitch);
 
     stream << "switch ( ";
 
     if (m_pExpression != nullptr)
     {
-        m_pExpression->toQML(stream, this, iIdent + 1);
+        m_pExpression->toQML(stream, formatter, this);
     }
 
     stream << " ) ";
+
+    formatter.processFragment(stream, QMLFormatter::qffAfterSwitch);
 
     stream << " { ";
 
@@ -82,12 +86,12 @@ void QMLSwitch::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent)
 
                 if (pUnary != nullptr && pUnary->oper() == QMLUnaryOperation::uoCase)
                 {
-                    pEntity->toQML(stream, this, iIdent + 1);
+                    pEntity->toQML(stream, formatter, this);
                     stream << "\n";
                 }
                 else
                 {
-                    pEntity->toQML(stream, this, iIdent + 2);
+                    pEntity->toQML(stream, formatter, this);
                     stream << " ";
                 }
             }

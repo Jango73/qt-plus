@@ -17,7 +17,7 @@ QMLConditional::~QMLConditional()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLConditional::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLConditional::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
 
@@ -28,11 +28,11 @@ void QMLConditional::toQML(QTextStream& stream, const QMLEntity* pParent, int iI
             stream << " ( ";
         }
 
-        m_pCondition->toQML(stream, this, iIdent);
+        m_pCondition->toQML(stream, formatter, this);
         stream <<  " ? ";
-        m_pThen->toQML(stream, this, iIdent);
+        m_pThen->toQML(stream, formatter, this);
         stream << " : ";
-        m_pElse->toQML(stream, this, iIdent);
+        m_pElse->toQML(stream, formatter, this);
 
         if (m_bIsParenthesized)
         {

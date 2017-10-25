@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../qtplus_global.h"
+#include "../unislib_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -14,7 +14,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines an identifier
-class QTPLUSSHARED_EXPORT QMLIdentifier : public QMLEntity
+class UNISLIBSHARED_EXPORT QMLIdentifier : public QMLEntity
 {
     Q_OBJECT
 
@@ -44,7 +44,7 @@ public:
     virtual void solveSymbolUsages(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
 
     //!
-    virtual void toQML(QTextStream& stream, const QMLEntity* pParent = nullptr, int iIdent = 0) const Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent = nullptr) const Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Properties

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../qtplus_global.h"
+#include "../unislib_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -16,7 +16,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a function variable declaration
-class QTPLUSSHARED_EXPORT QMLVariableDeclaration : public QMLComplexEntity
+class UNISLIBSHARED_EXPORT QMLVariableDeclaration : public QMLComplexEntity
 {
     Q_OBJECT
 
@@ -51,7 +51,7 @@ public:
     virtual QMap<QString, QMLEntity*> getDeclaredSymbols() Q_DECL_OVERRIDE;
 
     //!
-    virtual void toQML(QTextStream& stream, const QMLEntity* pParent = nullptr, int iIdent = 0) const Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent = nullptr) const Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Properties

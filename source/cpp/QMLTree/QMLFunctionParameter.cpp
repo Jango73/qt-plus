@@ -27,19 +27,23 @@ QMLFunctionParameter::~QMLFunctionParameter()
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLFunctionParameter::toQML(QTextStream& stream, const QMLEntity* pParent, int iIdent) const
+void QMLFunctionParameter::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
 {
     Q_UNUSED(pParent);
 
     if (m_pType != nullptr && m_pType->type() != QVariant::Invalid)
     {
-        m_pType->toQML(stream, this, iIdent + 1);
+        formatter.incIndentation();
+        m_pType->toQML(stream, formatter, this);
+        formatter.decIndentation();
 
         stream << " ";
     }
 
     if (m_pName != nullptr)
     {
-        m_pName->toQML(stream, this, iIdent + 1);
+        formatter.incIndentation();
+        m_pName->toQML(stream, formatter, this);
+        formatter.decIndentation();
     }
 }

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../qtplus_global.h"
+#include "../unislib_global.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -16,7 +16,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a function
-class QTPLUSSHARED_EXPORT QMLFunction : public QMLEntity
+class UNISLIBSHARED_EXPORT QMLFunction : public QMLEntity
 {
     Q_OBJECT
 
@@ -78,7 +78,7 @@ public:
     virtual QMLEntity* findSymbolDeclaration(const QString& sName) Q_DECL_OVERRIDE;
 
     //!
-    virtual void toQML(QTextStream& stream, const QMLEntity* pParent = nullptr, int iIdent = 0) const Q_DECL_OVERRIDE;
+    virtual void toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent = nullptr) const Q_DECL_OVERRIDE;
 
     //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
