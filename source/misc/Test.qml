@@ -64,7 +64,7 @@ Item {
     }
 
     // Camel casing error
-    function Func2(someParameter1) {
+    function Func2(someParameter1, someParameter2) {
         var someVariable1 = 10, someVariable2 = 20;         // Unreferenced symbol
 
         prop6 = Math.ceil(5.2);

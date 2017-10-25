@@ -33,17 +33,13 @@ void QMLFunctionParameter::toQML(QTextStream& stream, QMLFormatter& formatter, c
 
     if (m_pType != nullptr && m_pType->type() != QVariant::Invalid)
     {
-        formatter.incIndentation();
         m_pType->toQML(stream, formatter, this);
-        formatter.decIndentation();
 
         stream << " ";
     }
 
     if (m_pName != nullptr)
     {
-        formatter.incIndentation();
         m_pName->toQML(stream, formatter, this);
-        formatter.decIndentation();
     }
 }
