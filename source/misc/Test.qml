@@ -71,6 +71,10 @@ Item {
 
         var date = new Date;
         prop6 = date.getMinutes();
+
+        while (prop6 !== null) {
+            func3(0.5 * prop6);
+        }
     }
 
     function func3(someParameter1) {                        // Unreferenced parameter
