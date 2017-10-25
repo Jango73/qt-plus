@@ -145,7 +145,7 @@ const QVector<QMLEntity*>& QMLComplexEntity::contents() const
 */
 bool QMLComplexEntity::isNamed() const
 {
-    return (m_pName != nullptr && m_pName->value().toString().isEmpty() == false);
+    return (m_pName != nullptr && m_pName->toString().isEmpty() == false);
 }
 
 //-------------------------------------------------------------------------------------------------
