@@ -71,6 +71,7 @@
             <Condition Member="version" Empty="true"/>
         </Reject>
     </Check>
+
     <Check Class="QMLItem">
         <Reject UnreferencedSymbol="true"/>
     </Check>

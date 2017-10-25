@@ -38,7 +38,7 @@ Item {
         var someVariable3 = 30, someVariable4 = 40;
         var someVariable5 = 50;
         var someVariable6 = 60;
-        var SomeVariable7 = 70;   // Camel casing error and unreferenced symbol
+        var SomeVariable7 = 70;                                                                 // Camel casing error and unreferenced symbol
 
         // Too many nested ifs error
         if (someVariable1 > 0) {
@@ -65,7 +65,7 @@ Item {
 
     // Camel casing error
     function Func2(someParameter1) {
-        var someVariable1 = 10, someVariable2 = 20; // Unreferenced symbols
+        var someVariable1 = 10, someVariable2 = 20;         // Unreferenced symbol
 
         prop6 = Math.ceil(5.2);
 
@@ -73,7 +73,7 @@ Item {
         prop6 = date.getMinutes();
     }
 
-    function func3(someParameter1) {
+    function func3(someParameter1) {                        // Unreferenced parameter
         return { x: 0, y: 0 }
     }
 

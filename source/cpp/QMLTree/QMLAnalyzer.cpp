@@ -816,21 +816,18 @@ void QMLAnalyzer::runGrammar_Recurse(QMLFile* pFile, QMLEntity* pEntity)
             }
         }
 
-        if (bHasRejects == false)
+        foreach (QString sKey, mMembers.keys())
         {
-            foreach (QString sKey, mMembers.keys())
-            {
-                runGrammar_Recurse(pFile, mMembers[sKey]);
-            }
+            runGrammar_Recurse(pFile, mMembers[sKey]);
+        }
 
-            QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(pEntity);
+        QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(pEntity);
 
-            if (pComplex != nullptr)
+        if (pComplex != nullptr)
+        {
+            foreach (QMLEntity* pChildItem, pComplex->contents())
             {
-                foreach (QMLEntity* pChildItem, pComplex->contents())
-                {
-                    runGrammar_Recurse(pFile, pChildItem);
-                }
+                runGrammar_Recurse(pFile, pChildItem);
             }
         }
     }
