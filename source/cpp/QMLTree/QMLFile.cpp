@@ -1,4 +1,7 @@
 
+// Qt
+#include <QDebug>
+
 // Application
 #include "QMLFile.h"
 #include "QMLPragma.h"
@@ -47,6 +50,10 @@ QMLFile::QMLFile(const QMLFile& target)
 */
 QMLFile::~QMLFile()
 {
+    foreach (QMLComment* pComment, m_vComments)
+    {
+        delete pComment;
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -72,6 +79,16 @@ QString QMLFile::fileName() const
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Returns the file's comments.
+*/
+QVector<QMLComment*>& QMLFile::comments()
+{
+    return m_vComments;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Returns the parsed flag.
 */
 bool QMLFile::parsed() const
@@ -87,6 +104,122 @@ bool QMLFile::parsed() const
 bool QMLFile::isSingleton() const
 {
     return m_bIsSingleton;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Inserts comments stored in m_vComments where they should reside in the entity tree.
+*/
+void QMLFile::solveComments()
+{
+    for (int index = 0; index < m_vComments.count(); index++)
+    {
+        QMLComment* pComment = m_vComments[index];
+
+        if (pComment->type() == QMLComment::ctMultiLine || pComment->type() == QMLComment::ctMultiLineDoc)
+        {
+            QMLEntity* pTarget = locateEntityAtOrAfterLine(pComment->position(), false);
+
+            if (pTarget != nullptr)
+            {
+                QMLComplexEntity* pComplexParent = dynamic_cast<QMLComplexEntity*>(pTarget->parent());
+
+                if (pComplexParent != nullptr)
+                {
+                    int entityIndex = pComplexParent->contents().indexOf(pTarget);
+
+                    if (entityIndex != -1)
+                    {
+                        pComplexParent->contents().insert(entityIndex, pComment);
+                        m_vComments.removeAt(index);
+                        index--;
+                    }
+                }
+            }
+        }
+        else
+        {
+            QMLEntity* pTarget = locateEntityAtOrAfterLine(pComment->position(), true);
+
+            if (pTarget != nullptr)
+            {
+                QMLComplexEntity* pComplexParent = dynamic_cast<QMLComplexEntity*>(pTarget->parent());
+
+                if (pComplexParent != nullptr)
+                {
+                    int entityIndex = pComplexParent->contents().indexOf(pTarget);
+
+                    if (entityIndex != -1)
+                    {
+                        pComplexParent->contents().insert(entityIndex, pComment);
+                        m_vComments.removeAt(index);
+                        index--;
+                    }
+                }
+            }
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Locates an entity at a given line.
+*/
+QMLEntity* QMLFile::locateEntityAtOrAfterLine(const QPoint& pPosition, bool bExactlyAt)
+{
+    return locateEntityAtOrAfterLine_Recurse(this, pPosition, bExactlyAt);
+}
+
+//-------------------------------------------------------------------------------------------------
+
+QMLEntity* QMLFile::locateEntityAtOrAfterLine_Recurse(QMLEntity* pEntity, const QPoint& pPosition, bool bExactlyAt)
+{
+    if (bExactlyAt)
+    {
+        if (pEntity->position().y() >= pPosition.y())
+        {
+            return pEntity;
+        }
+    }
+    else
+    {
+        if (pEntity->position().y() > pPosition.y())
+        {
+            return pEntity;
+        }
+    }
+
+    QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(pEntity);
+
+    if (pComplex != nullptr)
+    {
+        foreach (QMLEntity* pChildEntity, pComplex->contents())
+        {
+            QMLEntity* pFoundEntity = locateEntityAtOrAfterLine_Recurse(pChildEntity, pPosition, bExactlyAt);
+
+            if (pFoundEntity != nullptr)
+                return pFoundEntity;
+        }
+    }
+
+    QMap<QString, QMLEntity*> mMembers = pEntity->members();
+
+    foreach (QString sMemberKey, mMembers.keys())
+    {
+        QMLEntity* pChildEntity = mMembers[sMemberKey];
+
+        if (pChildEntity != nullptr)
+        {
+            QMLEntity* pFoundEntity = locateEntityAtOrAfterLine_Recurse(pChildEntity, pPosition, bExactlyAt);
+
+            if (pFoundEntity != nullptr)
+                return pFoundEntity;
+        }
+    }
+
+    return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -169,6 +302,11 @@ CXMLNode QMLFile::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
     if (m_bIsSingleton)
     {
         xNode.attributes()["Singleton"] = "true";
+    }
+
+    foreach (QMLComment* pComment, m_vComments)
+    {
+        xNode << pComment->toXMLNode(pContext, this);
     }
 
     return xNode;

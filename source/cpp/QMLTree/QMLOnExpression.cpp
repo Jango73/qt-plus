@@ -58,6 +58,7 @@ void QMLOnExpression::toQML(QTextStream& stream, QMLFormatter& formatter, const 
     if (pParent != nullptr)
     {
         stream << " { ";
+        formatter.processFragment(stream, QMLFormatter::qffBeforeItemContent);
     }
 
     foreach (QMLEntity* pEntity, m_vContents)
@@ -70,6 +71,7 @@ void QMLOnExpression::toQML(QTextStream& stream, QMLFormatter& formatter, const 
 
     if (pParent != nullptr)
     {
-        stream << " } ";
+        formatter.processFragment(stream, QMLFormatter::qffAfterItemContent);
+        stream << "} ";
     }
 }

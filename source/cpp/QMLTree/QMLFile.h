@@ -12,6 +12,7 @@
 
 // Library
 #include "QMLComplexEntity.h"
+#include "QMLComment.h"
 
 //-------------------------------------------------------------------------------------------------
 // Forward declarations
@@ -55,14 +56,37 @@ public:
     virtual QString fileName() const;
 
     //!
+    QVector<QMLComment*>& comments();
+
+    //!
     bool parsed() const;
 
     //!
     bool isSingleton() const;
 
     //-------------------------------------------------------------------------------------------------
+    // Control methods
+    //-------------------------------------------------------------------------------------------------
+
+    //!
+    void solveComments();
+
+    //!
+    QMLEntity* locateEntityAtOrAfterLine(const QPoint& pPosition, bool bExactlyAt);
+
+    //-------------------------------------------------------------------------------------------------
+    // Protected control methods
+    //-------------------------------------------------------------------------------------------------
+
+protected:
+
+    QMLEntity* locateEntityAtOrAfterLine_Recurse(QMLEntity* pEntity, const QPoint& pPosition, bool bExactlyAt);
+
+    //-------------------------------------------------------------------------------------------------
     // Overridden methods
     //-------------------------------------------------------------------------------------------------
+
+public:
 
     //!
     virtual void solveReferences(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
@@ -79,7 +103,8 @@ public:
 
 protected:
 
-    QString     m_sFileName;
-    bool        m_bParsed;
-    bool        m_bIsSingleton;
+    QString                 m_sFileName;
+    QVector<QMLComment*>    m_vComments;
+    bool                    m_bParsed;
+    bool                    m_bIsSingleton;
 };

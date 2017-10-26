@@ -189,6 +189,7 @@ public:
         int                 m_iCommentLevel;
         bool                m_bParsingFloat;
         bool                m_bParsingHexa;
+        bool                m_bLineEmpty;
     };
 
     //-------------------------------------------------------------------------------------------------

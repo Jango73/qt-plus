@@ -81,6 +81,7 @@ HEADERS += \
     source/cpp/QMLTree/QMLForIn.h \
     source/cpp/QMLTree/QMLSwitch.h \
     source/cpp/QMLTree/QMLConditional.h \
+    source/cpp/QMLTree/QMLComment.h \
     source/cpp/QMLTree/QMLTreeContext.h \
     source/cpp/QMLTree/QMLAnalyzer.h
 
@@ -159,6 +160,7 @@ SOURCES += \
     source/cpp/QMLTree/QMLForIn.cpp \
     source/cpp/QMLTree/QMLSwitch.cpp \
     source/cpp/QMLTree/QMLConditional.cpp \
+    source/cpp/QMLTree/QMLComment.cpp \
     source/cpp/QMLTree/QMLTreeContext.cpp \
     source/cpp/QMLTree/QMLGrammarParser.cpp \
     source/cpp/QMLTree/QMLAnalyzer.cpp

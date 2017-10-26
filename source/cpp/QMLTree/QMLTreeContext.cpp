@@ -5,6 +5,7 @@
 
 // Library
 #include "QMLTreeContext.h"
+#include "QMLComment.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -682,6 +683,7 @@ QMLTreeContext::EParseError QMLTreeContext::parse()
             pFile->solveSymbols(this);
             pFile->solveReferences(this);
             pFile->solveSymbolUsages(this);
+            pFile->solveComments();
 
             // Mark the file as parsed
             pFile->setParsed(true);
@@ -821,15 +823,14 @@ void QMLTreeContext::run()
 int QMLTreeContext::parseNextToken(UParserValue* LVAL)
 {
     if (SCOPE.m_pCurrentTokenValue != nullptr)
-    {
         SCOPE.m_pCurrentTokenValue->clear();
-    }
 
     SCOPE.m_iCommentLevel   = 0;
     SCOPE.m_bParsingFloat   = false;
     SCOPE.m_bParsingHexa    = false;
 
     int c, d, e;
+    QPoint pCommentStart;
 
     // Skip white spaces and comments
     // Whites are considered to be every ASCII code below 0x21
@@ -847,6 +848,14 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
                 GET(d);
                 if (d == '/') // This is the end of a multi-line comment
                 {
+                    if (SCOPE.m_pCurrentTokenValue != nullptr)
+                    {
+                        QMLComment* pComment = new QMLComment(pCommentStart, SCOPE.m_pCurrentTokenValue->trimmed(), QMLComment::ctMultiLine);
+                        m_sScopes.last()->m_pFile->comments() << pComment;
+
+                        SCOPE.m_pCurrentTokenValue->clear();
+                    }
+
                     SCOPE.m_iCommentLevel--;
                 }
                 else
@@ -854,23 +863,40 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
                     UNGET(d);
                 }
             }
+            else
+            {
+                STORE(c);
+            }
         }
         else if (c == '/')
         {
             GET(d);
-            if (d == '*') // This is a multi-line comment
+            if (d == '*') // This is the start of a multi-line comment
             {
                 SCOPE.m_iCommentLevel++;
+
+                pCommentStart = position();
             }
             else
             if (d == '/') // This is a single-line comment
             {
+                pCommentStart = position();
+
                 if (SCOPE.m_iCommentLevel == 0)
                 {
                     while (c != '\n')
                     {
-                        GET(c);
+                        GET(c); STORE(c);
                         if (c == EOF) return 0;
+                    }
+
+                    if (SCOPE.m_pCurrentTokenValue != nullptr)
+                    {
+                        QMLComment::ECommentType eType = SCOPE.m_bLineEmpty ? QMLComment::ctSingleLine : QMLComment::ctSingleLineAtEnd;
+                        QMLComment* pComment = new QMLComment(pCommentStart, SCOPE.m_pCurrentTokenValue->trimmed(), eType);
+                        m_sScopes.last()->m_pFile->comments() << pComment;
+
+                        SCOPE.m_pCurrentTokenValue->clear();
                     }
                 }
             }
@@ -886,6 +912,11 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
             if (c > ' ') { UNGET(c); break; }
         }
     }
+
+    SCOPE.m_bLineEmpty = false;
+
+    if (SCOPE.m_pCurrentTokenValue != nullptr)
+        SCOPE.m_pCurrentTokenValue->clear();
 
     // Set context parsing stuff
 
@@ -1256,9 +1287,10 @@ int QMLTreeContext::getChar()
         case '\n' :
             SCOPE.m_iColumn = 0;
             SCOPE.m_iLine++;
+            SCOPE.m_bLineEmpty = true;
             break;
         case '\t' :
-            SCOPE.m_iColumn += 8;
+            SCOPE.m_iColumn += 4;
             break;
         case '\r' :
             break;
@@ -1283,7 +1315,7 @@ int QMLTreeContext::ungetChar(int iChar)
             SCOPE.m_iLine--;
             break;
         case '\t' :
-            SCOPE.m_iColumn -= 8;
+            SCOPE.m_iColumn -= 4;
             break;
         case '\r' :
             break;
