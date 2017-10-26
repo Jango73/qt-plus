@@ -146,6 +146,7 @@ public:
             , m_iPreviousColumn(0)
             , m_bParsingFloat(false)
             , m_bParsingHexa(false)
+            , m_bLineEmpty(true)
         {
             QFile fInputFile(pFile->fileName());
 

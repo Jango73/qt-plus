@@ -72,7 +72,7 @@ public:
     void solveComments();
 
     //!
-    QMLEntity* locateEntityAtOrAfterLine(const QPoint& pPosition, bool bExactlyAt);
+    QMLEntity* locateEntityAtOrAfterLine(const QPoint& pPosition);
 
     //-------------------------------------------------------------------------------------------------
     // Protected control methods
@@ -80,7 +80,7 @@ public:
 
 protected:
 
-    QMLEntity* locateEntityAtOrAfterLine_Recurse(QMLEntity* pEntity, const QPoint& pPosition, bool bExactlyAt);
+    QMLEntity* locateEntityAtOrAfterLine_Recurse(QMLEntity* pEntity, const QPoint& pPosition);
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods

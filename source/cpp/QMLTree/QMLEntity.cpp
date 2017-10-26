@@ -72,6 +72,7 @@ void QMLFormatter::processFragment(QTextStream& stream, EQMLFormatterFragment fr
         case qffBeforeFor:
         case qffBeforeWhile:
         case qffBeforeSwitch:
+        case qffBeforeIf:
             writeDoubleNewLine(stream);
             break;
 
@@ -87,7 +88,6 @@ void QMLFormatter::processFragment(QTextStream& stream, EQMLFormatterFragment fr
         case qffBeforePropertyName:
         case qffBeforeVariableDeclaration:
         case qffBeforeFunctionCall:
-        case qffBeforeIf:
         case qffBeforeTopLevelBinaryOp:
         case qffBeforeTopLevelUnaryOp:
         case qffBeforeQualifiedExpression:

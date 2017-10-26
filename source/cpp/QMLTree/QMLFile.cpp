@@ -119,7 +119,7 @@ void QMLFile::solveComments()
 
         if (pComment->type() == QMLComment::ctMultiLine || pComment->type() == QMLComment::ctMultiLineDoc)
         {
-            QMLEntity* pTarget = locateEntityAtOrAfterLine(pComment->position(), false);
+            QMLEntity* pTarget = locateEntityAtOrAfterLine(pComment->position());
 
             if (pTarget != nullptr)
             {
@@ -140,7 +140,7 @@ void QMLFile::solveComments()
         }
         else
         {
-            QMLEntity* pTarget = locateEntityAtOrAfterLine(pComment->position(), true);
+            QMLEntity* pTarget = locateEntityAtOrAfterLine(pComment->position());
 
             if (pTarget != nullptr)
             {
@@ -152,7 +152,15 @@ void QMLFile::solveComments()
 
                     if (entityIndex != -1)
                     {
-                        pComplexParent->contents().insert(entityIndex, pComment);
+                        if (pComment->type() == QMLComment::ctSingleLine)
+                        {
+                            pComplexParent->contents().insert(entityIndex, pComment);
+                        }
+                        else
+                        {
+                            pComplexParent->contents().insert(entityIndex + 1, pComment);
+                        }
+
                         m_vComments.removeAt(index);
                         index--;
                     }
@@ -167,28 +175,18 @@ void QMLFile::solveComments()
 /*!
     Locates an entity at a given line.
 */
-QMLEntity* QMLFile::locateEntityAtOrAfterLine(const QPoint& pPosition, bool bExactlyAt)
+QMLEntity* QMLFile::locateEntityAtOrAfterLine(const QPoint& pPosition)
 {
-    return locateEntityAtOrAfterLine_Recurse(this, pPosition, bExactlyAt);
+    return locateEntityAtOrAfterLine_Recurse(this, pPosition);
 }
 
 //-------------------------------------------------------------------------------------------------
 
-QMLEntity* QMLFile::locateEntityAtOrAfterLine_Recurse(QMLEntity* pEntity, const QPoint& pPosition, bool bExactlyAt)
+QMLEntity* QMLFile::locateEntityAtOrAfterLine_Recurse(QMLEntity* pEntity, const QPoint& pPosition)
 {
-    if (bExactlyAt)
+    if (pEntity->position().y() >= pPosition.y())
     {
-        if (pEntity->position().y() >= pPosition.y())
-        {
-            return pEntity;
-        }
-    }
-    else
-    {
-        if (pEntity->position().y() > pPosition.y())
-        {
-            return pEntity;
-        }
+        return pEntity;
     }
 
     QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(pEntity);
@@ -197,7 +195,7 @@ QMLEntity* QMLFile::locateEntityAtOrAfterLine_Recurse(QMLEntity* pEntity, const 
     {
         foreach (QMLEntity* pChildEntity, pComplex->contents())
         {
-            QMLEntity* pFoundEntity = locateEntityAtOrAfterLine_Recurse(pChildEntity, pPosition, bExactlyAt);
+            QMLEntity* pFoundEntity = locateEntityAtOrAfterLine_Recurse(pChildEntity, pPosition);
 
             if (pFoundEntity != nullptr)
                 return pFoundEntity;
@@ -212,7 +210,7 @@ QMLEntity* QMLFile::locateEntityAtOrAfterLine_Recurse(QMLEntity* pEntity, const 
 
         if (pChildEntity != nullptr)
         {
-            QMLEntity* pFoundEntity = locateEntityAtOrAfterLine_Recurse(pChildEntity, pPosition, bExactlyAt);
+            QMLEntity* pFoundEntity = locateEntityAtOrAfterLine_Recurse(pChildEntity, pPosition);
 
             if (pFoundEntity != nullptr)
                 return pFoundEntity;

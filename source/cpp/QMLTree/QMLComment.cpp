@@ -42,7 +42,7 @@ void QMLComment::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEn
             break;
 
         case ctSingleLine:
-            formatter.writeNewLine(stream);
+            formatter.writeDoubleNewLine(stream);
             stream << "// ";
             stream << m_vValue.toString();
             break;

@@ -355,7 +355,7 @@ QMLAnalyzerError& QMLAnalyzerError::operator = (const QMLAnalyzerError& target)
 {
     m_sFileName         = target.m_sFileName;
     m_pPosition         = target.m_pPosition;
-    m_pOriginalPosition   = target.m_pOriginalPosition;
+    m_pOriginalPosition = target.m_pOriginalPosition;
     m_sText             = target.m_sText;
 
     return *this;
@@ -846,8 +846,10 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
             if (c == '*')
             {
                 GET(d);
-                if (d == '/') // This is the end of a multi-line comment
+                if (d == '/')
                 {
+                    // This is the end of a multi-line comment
+
                     if (SCOPE.m_pCurrentTokenValue != nullptr)
                     {
                         QMLComment* pComment = new QMLComment(pCommentStart, SCOPE.m_pCurrentTokenValue->trimmed(), QMLComment::ctMultiLine);
@@ -871,16 +873,19 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
         else if (c == '/')
         {
             GET(d);
-            if (d == '*') // This is the start of a multi-line comment
+            if (d == '*')
             {
+                // This is the start of a multi-line comment
+
                 SCOPE.m_iCommentLevel++;
 
-                pCommentStart = position();
+                pCommentStart = QPoint(SCOPE.m_iColumn, SCOPE.m_iLine);
             }
-            else
-            if (d == '/') // This is a single-line comment
+            else if (d == '/')
             {
-                pCommentStart = position();
+                // This is a single-line comment
+
+                pCommentStart = QPoint(SCOPE.m_iColumn, SCOPE.m_iLine);
 
                 if (SCOPE.m_iCommentLevel == 0)
                 {
@@ -1001,18 +1006,18 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
         STORE(c); GET(d);
         if (d == '=') { STORE(d); return TOKEN_LOWER_EQUALS; }
         else
-        if (d == '<')
-        {
-          STORE(d); GET(e);
-          if (e == '=') { STORE(e); return TOKEN_SHL_ASSIGN; }
-          UNGET(e); return TOKEN_SHL;
-        }
-        else
-        if (d == '>')
-        {
-            // ParserWarning(Ctx, "'<>' operator should be '!='. This is not BASIC ! :)");
-            STORE(d); return TOKEN_NOT_EQUALS;
-        }
+            if (d == '<')
+            {
+                STORE(d); GET(e);
+                if (e == '=') { STORE(e); return TOKEN_SHL_ASSIGN; }
+                UNGET(e); return TOKEN_SHL;
+            }
+            else
+                if (d == '>')
+                {
+                    // ParserWarning(Ctx, "'<>' operator should be '!='. This is not BASIC ! :)");
+                    STORE(d); return TOKEN_NOT_EQUALS;
+                }
         UNGET(d); return TOKEN_LOWER;
     }
 
@@ -1022,12 +1027,12 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
         STORE(c); GET(d);
         if (d == '=') { STORE(d); return TOKEN_GREATER_EQUALS; }
         else
-        if (d == '>')
-        {
-          STORE(d); GET(e);
-          if (e == '=') { STORE(e); return TOKEN_SHR_ASSIGN; }
-          UNGET(e); return TOKEN_SHR;
-        }
+            if (d == '>')
+            {
+                STORE(d); GET(e);
+                if (e == '=') { STORE(e); return TOKEN_SHR_ASSIGN; }
+                UNGET(e); return TOKEN_SHR;
+            }
         UNGET(d); return TOKEN_GREATER;
     }
 
@@ -1079,12 +1084,12 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
         STORE(c);
         while (1)
         {
-          GET(d);
-          if (d > ' ')
-          {
-            if (d == ']') { STORE(d); return TOKEN_DIMENSION; }
-            else { UNGET(d); break; }
-          }
+            GET(d);
+            if (d > ' ')
+            {
+                if (d == ']') { STORE(d); return TOKEN_DIMENSION; }
+                else { UNGET(d); break; }
+            }
         }
         return c;
     }
@@ -1095,11 +1100,11 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
     {
         while (1)
         {
-          GET(c);
-          if (c == EOF ) return 0;
-          if (c == '"' ) break;
-          if (c == '\\') c = parseEscape();
-          STORE(c);
+            GET(c);
+            if (c == EOF ) return 0;
+            if (c == '"' ) break;
+            if (c == '\\') c = parseEscape();
+            STORE(c);
         }
 
         LVAL->String = SCOPE.m_pCurrentTokenValue;
@@ -1110,11 +1115,11 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
     {
         while (1)
         {
-          GET(c);
-          if (c == EOF ) return 0;
-          if (c == '\'' ) break;
-          if (c == '\\') c = parseEscape();
-          STORE(c);
+            GET(c);
+            if (c == EOF ) return 0;
+            if (c == '\'' ) break;
+            if (c == '\\') c = parseEscape();
+            STORE(c);
         }
 
         LVAL->String = SCOPE.m_pCurrentTokenValue;
@@ -1128,9 +1133,9 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
         GET(d);
         if (isdigit(d))
         {
-          SCOPE.m_bParsingFloat = true;
-          STORE('0'); STORE(c); STORE(d);
-          return parseNumber(LVAL);
+            SCOPE.m_bParsingFloat = true;
+            STORE('0'); STORE(c); STORE(d);
+            return parseNumber(LVAL);
         }
         STORE(c); UNGET(d);
         return c;
@@ -1142,15 +1147,15 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
     {
         if (c == '0')
         {
-          GET(d);
-          if (d == 'x' || d == 'X')
-          {
-            STORE(c);
-            STORE(d);
-            SCOPE.m_bParsingHexa = true;
-            return parseNumber(LVAL);
-          }
-          else UNGET(d);
+            GET(d);
+            if (d == 'x' || d == 'X')
+            {
+                STORE(c);
+                STORE(d);
+                SCOPE.m_bParsingHexa = true;
+                return parseNumber(LVAL);
+            }
+            else UNGET(d);
         }
         STORE(c);
         return parseNumber(LVAL);
@@ -1213,7 +1218,7 @@ int QMLTreeContext::parseNumber(UParserValue* LVAL)
             {
                 if (SCOPE.m_bParsingHexa) { STORE(c); } else { UNGET(c); Done = true; }
             }
-            break;
+                break;
 
             case '.' :
             {
@@ -1226,7 +1231,7 @@ int QMLTreeContext::parseNumber(UParserValue* LVAL)
                     UNGET(c); Done = true;
                 }
             }
-            break;
+                break;
 
             default : UNGET(c); Done = true; break;
         }
