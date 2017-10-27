@@ -935,8 +935,6 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
         }
     }
 
-    SCOPE.m_bLineEmpty = false;
-
     if (SCOPE.m_pCurrentTokenValue != nullptr)
         SCOPE.m_pCurrentTokenValue->clear();
 
@@ -1309,15 +1307,20 @@ int QMLTreeContext::getChar()
         case '\n' :
             SCOPE.m_iColumn = 0;
             SCOPE.m_iLine++;
+            SCOPE.m_bPreviousLineEmpty = SCOPE.m_bLineEmpty;
             SCOPE.m_bLineEmpty = true;
             break;
         case '\t' :
             SCOPE.m_iColumn += 4;
+            SCOPE.m_bPreviousLineEmpty = SCOPE.m_bLineEmpty;
+            SCOPE.m_bLineEmpty = false;
             break;
         case '\r' :
             break;
         default:
             SCOPE.m_iColumn++;
+            SCOPE.m_bPreviousLineEmpty = SCOPE.m_bLineEmpty;
+            SCOPE.m_bLineEmpty = false;
             break;
     }
 
@@ -1335,14 +1338,17 @@ int QMLTreeContext::ungetChar(int iChar)
         case '\n' :
             SCOPE.m_iColumn = 1024;
             SCOPE.m_iLine--;
+            SCOPE.m_bLineEmpty = SCOPE.m_bPreviousLineEmpty;
             break;
         case '\t' :
             SCOPE.m_iColumn -= 4;
+            SCOPE.m_bLineEmpty = SCOPE.m_bPreviousLineEmpty;
             break;
         case '\r' :
             break;
         default:
             SCOPE.m_iColumn--;
+            SCOPE.m_bLineEmpty = SCOPE.m_bPreviousLineEmpty;
             break;
     }
 

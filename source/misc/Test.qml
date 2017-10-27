@@ -96,11 +96,13 @@ Item {
 
     function getVisibleItemListRecurse(complexItems, item, level)
     {
+        // Comment 6
         if (item !== root)
         {
             var complexItem = { item: item, level: level, path: [] };
             complexItems.push(complexItem);
 
+            // Comment 7
             for (var i = 0; i < item.children.length; i++)
             {
                 getVisibleItemListRecurse(complexItems, item.children[i], level + 1);

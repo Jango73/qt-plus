@@ -135,6 +135,7 @@ public:
             , m_bParsingFloat(false)
             , m_bParsingHexa(false)
             , m_bLineEmpty(true)
+            , m_bPreviousLineEmpty(true)
             , m_bDocComment(false)
         {
         }
@@ -149,6 +150,7 @@ public:
             , m_bParsingFloat(false)
             , m_bParsingHexa(false)
             , m_bLineEmpty(true)
+            , m_bPreviousLineEmpty(true)
             , m_bDocComment(false)
         {
             QFile fInputFile(pFile->fileName());
@@ -194,6 +196,7 @@ public:
         bool                m_bParsingFloat;
         bool                m_bParsingHexa;
         bool                m_bLineEmpty;
+        bool                m_bPreviousLineEmpty;
         bool                m_bDocComment;
     };
 
