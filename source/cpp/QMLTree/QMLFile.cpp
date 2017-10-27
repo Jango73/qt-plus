@@ -135,7 +135,19 @@ void QMLFile::solveComments()
                         m_vComments.removeAt(index);
                         index--;
                     }
+                    else
+                    {
+                        qWarning() << QString("QMLFile::solveComments() : no valid index for comment at line %1").arg(pComment->position().y() + 1);
+                    }
                 }
+                else
+                {
+                    qWarning() << QString("QMLFile::solveComments() : no parent entity found for comment at line %1").arg(pComment->position().y() + 1);
+                }
+            }
+            else
+            {
+                qWarning() << QString("QMLFile::solveComments() : no entity found for comment at line %1").arg(pComment->position().y() + 1);
             }
         }
         else
@@ -164,7 +176,19 @@ void QMLFile::solveComments()
                         m_vComments.removeAt(index);
                         index--;
                     }
+                    else
+                    {
+                        qWarning() << QString("QMLFile::solveComments() : no valid index for comment at line %1").arg(pComment->position().y() + 1);
+                    }
                 }
+                else
+                {
+                    qWarning() << QString("QMLFile::solveComments() : no parent entity found for comment at line %1").arg(pComment->position().y() + 1);
+                }
+            }
+            else
+            {
+                qWarning() << QString("QMLFile::solveComments() : no entity found for comment at line %1").arg(pComment->position().y() + 1);
             }
         }
     }
@@ -173,7 +197,7 @@ void QMLFile::solveComments()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Locates an entity at a given line.
+    Locates an entity at a line specified by \a pPosition (the y component).
 */
 QMLEntity* QMLFile::locateEntityAtOrAfterLine(const QPoint& pPosition)
 {
@@ -182,38 +206,51 @@ QMLEntity* QMLFile::locateEntityAtOrAfterLine(const QPoint& pPosition)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Recursive part of locateEntityAtOrAfterLine. \br\br
+    \a pEntity is the current entity to process. \br
+    \a pPosition is the line to check (the y component).
+*/
 QMLEntity* QMLFile::locateEntityAtOrAfterLine_Recurse(QMLEntity* pEntity, const QPoint& pPosition)
 {
-    if (pEntity->position().y() >= pPosition.y())
+    // Continue only if the current entity is not a comment
+    if (dynamic_cast<QMLComment*>(pEntity) == nullptr)
     {
-        return pEntity;
-    }
-
-    QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(pEntity);
-
-    if (pComplex != nullptr)
-    {
-        foreach (QMLEntity* pChildEntity, pComplex->contents())
+        // If the line of the current entity is greater or equal to the specified line, return the current entity.
+        // if (dynamic_cast<QMLComplexEntity*>(pEntity) != nullptr && pEntity->position().y() >= pPosition.y())
+        if (pEntity->position().y() >= pPosition.y())
         {
-            QMLEntity* pFoundEntity = locateEntityAtOrAfterLine_Recurse(pChildEntity, pPosition);
-
-            if (pFoundEntity != nullptr)
-                return pFoundEntity;
+            return pEntity;
         }
-    }
 
-    QMap<QString, QMLEntity*> mMembers = pEntity->members();
+        // Look in the members of the current entity, if any
+        QMap<QString, QMLEntity*> mMembers = pEntity->members();
 
-    foreach (QString sMemberKey, mMembers.keys())
-    {
-        QMLEntity* pChildEntity = mMembers[sMemberKey];
-
-        if (pChildEntity != nullptr)
+        foreach (QString sMemberKey, mMembers.keys())
         {
-            QMLEntity* pFoundEntity = locateEntityAtOrAfterLine_Recurse(pChildEntity, pPosition);
+            QMLEntity* pChildEntity = mMembers[sMemberKey];
 
-            if (pFoundEntity != nullptr)
-                return pFoundEntity;
+            if (pChildEntity != nullptr)
+            {
+                QMLEntity* pFoundEntity = locateEntityAtOrAfterLine_Recurse(pChildEntity, pPosition);
+
+                if (pFoundEntity != nullptr)
+                    return pFoundEntity;
+            }
+        }
+
+        // Look in the children of the current entity, if it is a QMLComplexEntity
+        QMLComplexEntity* pComplex = dynamic_cast<QMLComplexEntity*>(pEntity);
+
+        if (pComplex != nullptr)
+        {
+            foreach (QMLEntity* pChildEntity, pComplex->contents())
+            {
+                QMLEntity* pFoundEntity = locateEntityAtOrAfterLine_Recurse(pChildEntity, pPosition);
+
+                if (pFoundEntity != nullptr)
+                    return pFoundEntity;
+            }
         }
     }
 

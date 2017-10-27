@@ -163,6 +163,9 @@ public:
     virtual void solveSymbolUsages(QMLTreeContext* pContext);
 
     //!
+    virtual void sortContents();
+
+    //!
     virtual QMap<QString, QMLEntity*> getDeclaredSymbols();
 
     //!
@@ -193,6 +196,18 @@ public:
 
     //!
     static QString listAsQualifiedName(const QStringList& sNameList);
+
+    //!
+    static bool isContainer(const QMLEntity* pEntity);
+
+    //!
+    static bool isPropertyAssignment(const QMLEntity* pEntity);
+
+    //!
+    static bool isVariableDeclaration(const QMLEntity* pEntity);
+
+    //!
+    static bool isFor(const QMLEntity* pEntity);
 
     //!
     static int entityCount();

@@ -4,10 +4,6 @@
 
 // Application
 #include "QMLComplexEntity.h"
-#include "QMLQualifiedExpression.h"
-#include "QMLBinaryOperation.h"
-#include "QMLUnaryOperation.h"
-#include "QMLPropertyAssignment.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -220,6 +216,33 @@ QVector<QMLEntity*> QMLComplexEntity::grabContents()
 
 //-------------------------------------------------------------------------------------------------
 
+static bool compareEntities(QMLEntity*& entity1, QMLEntity*& entity2)
+{
+    int iClassCompare = strcmp(entity1->metaObject()->className(), entity2->metaObject()->className());
+
+    if (iClassCompare != 0)
+    {
+        return iClassCompare;
+    }
+
+    return 0;
+}
+
+/*!
+    Sorts contents of entity.
+*/
+void QMLComplexEntity::sortContents()
+{
+//    qSort(m_vContents.begin(), m_vContents.end(), compareEntities);
+
+//    foreach (QMLEntity* pChild, m_vContents)
+//    {
+//        pChild->sortContents();
+//    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
 /*!
     Finds all symbols in the entity. \br\br
     \a pContext is the context of this entity. \br
@@ -352,9 +375,13 @@ void QMLComplexEntity::toQML(QTextStream& stream, QMLFormatter& formatter, const
     {
         if (isNamed())
         {
-            if (isPropertyAssignment(pParent) == false) formatter.processFragment(stream, QMLFormatter::qffBeforeItemName);
+            if (QMLEntity::isPropertyAssignment(pParent) == false && m_bIsArgumentList == false)
+                formatter.processFragment(stream, QMLFormatter::qffBeforeItemName);
+
             m_pName->toQML(stream, formatter, this);
-            if (isPropertyAssignment(pParent) == false) formatter.processFragment(stream, QMLFormatter::qffAfterItemName);
+
+            if (QMLEntity::isPropertyAssignment(pParent) == false && m_bIsArgumentList == false)
+                formatter.processFragment(stream, QMLFormatter::qffAfterItemName);
         }
 
         if (m_bIsArray)
@@ -488,36 +515,4 @@ QMLComplexEntity* QMLComplexEntity::makeBlock(QMLEntity* pEntity)
     pComplex->setIsBlock(true);
 
     return pComplex;
-}
-
-//-------------------------------------------------------------------------------------------------
-
-bool QMLComplexEntity::isContainer(const QMLEntity* pEntity)
-{
-    if (pEntity != nullptr)
-    {
-        if (dynamic_cast<const QMLQualifiedExpression*>(pEntity) != nullptr)
-            return false;
-
-        if (dynamic_cast<const QMLUnaryOperation*>(pEntity) != nullptr)
-            return false;
-
-        if (dynamic_cast<const QMLBinaryOperation*>(pEntity) != nullptr)
-            return false;
-
-        if (dynamic_cast<const QMLComplexEntity*>(pEntity) != nullptr)
-            return true;
-    }
-
-    return false;
-}
-
-//-------------------------------------------------------------------------------------------------
-
-bool QMLComplexEntity::isPropertyAssignment(const QMLEntity* pEntity)
-{
-    if (dynamic_cast<const QMLPropertyAssignment*>(pEntity) != nullptr)
-        return true;
-
-    return false;
 }

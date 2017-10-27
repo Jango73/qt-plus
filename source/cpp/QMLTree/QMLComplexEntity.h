@@ -102,6 +102,9 @@ public:
     virtual void solveSymbolUsages(QMLTreeContext* pContext) Q_DECL_OVERRIDE;
 
     //!
+    virtual void sortContents() Q_DECL_OVERRIDE;
+
+    //!
     virtual QMap<QString, QMLEntity*> getDeclaredSymbols() Q_DECL_OVERRIDE;
 
     //!
@@ -125,12 +128,6 @@ public:
 
     //!
     static QMLComplexEntity* makeBlock(QMLEntity* pEntity);
-
-    //!
-    static bool isContainer(const QMLEntity* pEntity);
-
-    //!
-    static bool isPropertyAssignment(const QMLEntity* pEntity);
 
     //-------------------------------------------------------------------------------------------------
     // Properties

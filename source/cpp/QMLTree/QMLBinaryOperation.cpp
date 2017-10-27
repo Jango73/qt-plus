@@ -126,10 +126,8 @@ void QMLBinaryOperation::toQML(QTextStream& stream, QMLFormatter& formatter, con
 {
     Q_UNUSED(pParent);
 
-    if (QMLComplexEntity::isContainer(pParent))
-    {
+    if (QMLEntity::isContainer(pParent) && QMLEntity::isVariableDeclaration(pParent) == false)
         formatter.processFragment(stream, QMLFormatter::qffBeforeTopLevelBinaryOp);
-    }
 
     if (m_bIsParenthesized)
     {

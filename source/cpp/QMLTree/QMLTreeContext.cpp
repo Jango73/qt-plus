@@ -446,12 +446,12 @@ QMLTreeContext::QMLTreeContext()
 
     m_eEngine.globalObject().setProperty("wrapper", m_eEngine.newQObject(new QMLTreeContextWrapper(this)));
 
-    QFile fScript(":/beautify.js");
-    if (fScript.open(QFile::ReadOnly))
-    {
-        m_sBeautifyScript = fScript.readAll();
-        fScript.close();
-    }
+//    QFile fScript(":/beautify.js");
+//    if (fScript.open(QFile::ReadOnly))
+//    {
+//        m_sBeautifyScript = fScript.readAll();
+//        fScript.close();
+//    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -852,7 +852,8 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
 
                     if (SCOPE.m_pCurrentTokenValue != nullptr)
                     {
-                        QMLComment* pComment = new QMLComment(pCommentStart, SCOPE.m_pCurrentTokenValue->trimmed(), QMLComment::ctMultiLine);
+                        QMLComment::ECommentType eType = SCOPE.m_bDocComment ? QMLComment::ctMultiLineDoc : QMLComment::ctMultiLine;
+                        QMLComment* pComment = new QMLComment(pCommentStart, SCOPE.m_pCurrentTokenValue->trimmed(), eType);
                         m_sScopes.last()->m_pFile->comments() << pComment;
 
                         SCOPE.m_pCurrentTokenValue->clear();
@@ -875,11 +876,27 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
             GET(d);
             if (d == '*')
             {
-                // This is the start of a multi-line comment
+                GET(e);
+                if (e == '!')
+                {
+                    // This is the start of a multi-line doc comment
 
-                SCOPE.m_iCommentLevel++;
+                    SCOPE.m_iCommentLevel++;
+                    SCOPE.m_bDocComment = true;
 
-                pCommentStart = QPoint(SCOPE.m_iColumn, SCOPE.m_iLine);
+                    pCommentStart = QPoint(SCOPE.m_iColumn, SCOPE.m_iLine);
+                }
+                else
+                {
+                    UNGET(e);
+
+                    // This is the start of a multi-line comment
+
+                    SCOPE.m_iCommentLevel++;
+                    SCOPE.m_bDocComment = false;
+
+                    pCommentStart = QPoint(SCOPE.m_iColumn, SCOPE.m_iLine);
+                }
             }
             else if (d == '/')
             {

@@ -49,15 +49,15 @@ QMap<QString, QMLEntity*> QMLVariableDeclaration::getDeclaredSymbols()
 
         if (pIdentifier == nullptr)
         {
-            QMLBinaryOperation* pAssign = dynamic_cast<QMLBinaryOperation*>(pVariable);
+            QMLBinaryOperation* pBynaryOp = dynamic_cast<QMLBinaryOperation*>(pVariable);
 
-            if (pAssign != nullptr)
+            if (pBynaryOp != nullptr)
             {
-                pIdentifier = dynamic_cast<QMLIdentifier*>(pAssign->left());
+                pIdentifier = dynamic_cast<QMLIdentifier*>(pBynaryOp->left());
 
-                if (pAssign->right() != nullptr)
+                if (pBynaryOp->right() != nullptr)
                 {
-                    QMap<QString, QMLEntity*> rightVariables = pAssign->right()->getDeclaredSymbols();
+                    QMap<QString, QMLEntity*> rightVariables = pBynaryOp->right()->getDeclaredSymbols();
 
                     foreach (QString sKey, rightVariables.keys())
                     {
@@ -85,7 +85,8 @@ void QMLVariableDeclaration::toQML(QTextStream& stream, QMLFormatter& formatter,
 {
     Q_UNUSED(pParent);
 
-    formatter.processFragment(stream, QMLFormatter::qffBeforeVariableDeclaration);
+    if (QMLEntity::isFor(pParent) == false)
+        formatter.processFragment(stream, QMLFormatter::qffBeforeVariableDeclaration);
 
     stream << "var ";
 

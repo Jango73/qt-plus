@@ -25,6 +25,19 @@ QMLComment::ECommentType QMLComment::type() const
 
 //-------------------------------------------------------------------------------------------------
 
+void QMLComment::writeMultiLineComment(QTextStream& stream, QMLFormatter& formatter, const QString& sText) const
+{
+    QStringList lLines = sText.split("\n");
+
+    foreach (QString sLine, lLines)
+    {
+        formatter.writeNewLine(stream);
+        stream << sLine.trimmed();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
 /*!
     Dumps the item to \a stream using \a iIdent for indentation. \br\br
     \a pContext is the context of this item. \br
@@ -51,8 +64,9 @@ void QMLComment::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEn
             formatter.writeDoubleNewLine(stream);
 
             stream << "/*";
-            formatter.writeNewLine(stream);
-            stream << m_vValue.toString();
+            formatter.incIndentation();
+            writeMultiLineComment(stream, formatter, m_vValue.toString());
+            formatter.decIndentation();
             formatter.writeNewLine(stream);
             stream << "*/";
             break;
@@ -61,8 +75,9 @@ void QMLComment::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEn
             formatter.writeDoubleNewLine(stream);
 
             stream << "/*!";
-            formatter.writeNewLine(stream);
-            stream << m_vValue.toString();
+            formatter.incIndentation();
+            writeMultiLineComment(stream, formatter, m_vValue.toString());
+            formatter.decIndentation();
             formatter.writeNewLine(stream);
             stream << "*/";
             break;

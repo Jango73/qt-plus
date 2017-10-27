@@ -703,6 +703,8 @@ bool QMLAnalyzer::analyzeFile(const QString& sFileName)
                     pFile->removeUnreferencedSymbols(m_pContext);
                 }
 
+                pFile->sortContents();
+
                 m_pContext->writeFile(pFile);
             }
         }
