@@ -638,25 +638,25 @@ static const yytype_int16 yyrhs[] =
 static const yytype_uint16 yyrline[] =
 {
        0,   151,   151,   157,   169,   181,   188,   195,   202,   209,
-     218,   233,   249,   263,   280,   291,   311,   331,   363,   382,
-     397,   414,   421,   428,   435,   442,   451,   458,   467,   493,
-     519,   542,   570,   598,   623,   648,   653,   660,   665,   672,
-     694,   718,   725,   732,   739,   748,   757,   777,   802,   809,
-     818,   841,   866,   883,   908,   915,   924,   931,   954,   974,
-     994,  1019,  1026,  1039,  1057,  1074,  1081,  1090,  1097,  1104,
-    1111,  1118,  1125,  1132,  1139,  1146,  1153,  1160,  1169,  1189,
-    1218,  1235,  1263,  1280,  1299,  1306,  1315,  1322,  1329,  1336,
-    1343,  1352,  1357,  1364,  1371,  1380,  1408,  1417,  1429,  1453,
-    1460,  1473,  1488,  1495,  1516,  1523,  1530,  1547,  1564,  1581,
-    1598,  1615,  1634,  1639,  1646,  1653,  1669,  1678,  1685,  1704,
-    1709,  1726,  1731,  1746,  1761,  1778,  1783,  1798,  1813,  1828,
-    1845,  1850,  1865,  1880,  1895,  1912,  1917,  1932,  1949,  1954,
-    1969,  1984,  1999,  2014,  2031,  2036,  2045,  2052,  2061,  2070,
-    2079,  2088,  2097,  2106,  2117,  2124,  2146,  2153,  2173,  2180,
-    2199,  2206,  2213,  2226,  2233,  2242,  2256,  2270,  2277,  2284,
-    2293,  2300,  2310,  2320,  2329,  2341,  2353,  2369,  2387,  2401,
-    2415,  2422,  2431,  2454,  2479,  2486,  2495,  2513,  2522,  2529,
-    2536,  2543,  2550,  2559,  2566,  2573,  2580,  2596,  2601,  2608
+     218,   235,   253,   269,   288,   299,   319,   339,   371,   390,
+     405,   422,   429,   436,   443,   450,   459,   466,   475,   501,
+     527,   550,   578,   606,   631,   656,   661,   668,   673,   680,
+     702,   726,   733,   740,   747,   756,   765,   785,   810,   817,
+     826,   849,   874,   891,   916,   923,   932,   939,   962,   982,
+    1002,  1027,  1034,  1047,  1065,  1082,  1089,  1098,  1105,  1112,
+    1119,  1126,  1133,  1140,  1147,  1154,  1161,  1168,  1177,  1197,
+    1226,  1243,  1271,  1288,  1307,  1314,  1323,  1330,  1337,  1344,
+    1351,  1360,  1365,  1372,  1379,  1388,  1416,  1425,  1437,  1461,
+    1468,  1481,  1496,  1503,  1524,  1531,  1538,  1555,  1572,  1589,
+    1606,  1623,  1642,  1647,  1654,  1661,  1677,  1686,  1693,  1712,
+    1717,  1734,  1739,  1754,  1769,  1786,  1791,  1806,  1821,  1836,
+    1853,  1858,  1873,  1888,  1903,  1920,  1925,  1940,  1957,  1962,
+    1977,  1992,  2007,  2022,  2039,  2044,  2053,  2060,  2069,  2078,
+    2087,  2096,  2105,  2114,  2125,  2132,  2154,  2161,  2181,  2188,
+    2207,  2214,  2221,  2234,  2241,  2250,  2264,  2278,  2285,  2292,
+    2301,  2308,  2318,  2328,  2337,  2349,  2361,  2377,  2395,  2409,
+    2423,  2430,  2439,  2462,  2487,  2494,  2503,  2521,  2530,  2537,
+    2544,  2551,  2558,  2567,  2574,  2581,  2588,  2604,  2609,  2616
 };
 #endif
 
@@ -2027,6 +2027,8 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 219 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
+        PARSER_TRACE("ImportStatement", "JSMemberExpression Version");
+
         QMLEntity* pName = (yyvsp[(2) - (3)].Object);
         QMLEntity* pVersion = (yyvsp[(3) - (3)].Object);
 
@@ -2044,8 +2046,10 @@ yyreduce:
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 234 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 236 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
+        PARSER_TRACE("ImportStatement", "JSMemberExpression Version TOKEN_AS Identifier");
+
         QMLEntity* pName = (yyvsp[(2) - (5)].Object);
         QMLEntity* pVersion = (yyvsp[(3) - (5)].Object);
         QMLEntity* pAs = (yyvsp[(5) - (5)].Object);
@@ -2064,8 +2068,10 @@ yyreduce:
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 250 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 254 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
+        PARSER_TRACE("ImportStatement", "JSMemberExpression");
+
         QMLEntity* pName = (yyvsp[(2) - (2)].Object);
 
         if (pName != nullptr)
@@ -2082,8 +2088,10 @@ yyreduce:
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 264 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 270 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
+        PARSER_TRACE("ImportStatement", "JSMemberExpression TOKEN_AS Identifier");
+
         QMLEntity* pName = (yyvsp[(2) - (4)].Object);
         QMLEntity* pAs = (yyvsp[(4) - (4)].Object);
 
@@ -2101,7 +2109,7 @@ yyreduce:
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 281 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 289 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("PragmaStatement", "TOKEN_PRAGMA JSMemberExpression");
 
@@ -2114,7 +2122,7 @@ yyreduce:
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 292 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 300 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("Item", "JSMemberExpression '{' ItemContents '}'");
 
@@ -2138,7 +2146,7 @@ yyreduce:
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 312 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 320 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("Item", "JSMemberExpression '{' '}'");
 
@@ -2162,7 +2170,7 @@ yyreduce:
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 332 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 340 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("Item", "Identifier TOKEN_ON JSMemberExpression '{' ItemContents '}'");
 
@@ -2196,7 +2204,7 @@ yyreduce:
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 364 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 372 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("ItemContents", "ItemContent");
 
@@ -2219,7 +2227,7 @@ yyreduce:
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 383 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 391 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("ItemContents", "ItemContents ItemContent");
 
@@ -2238,7 +2246,7 @@ yyreduce:
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 398 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 406 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("ItemContents", "ItemContents ',' ItemContent");
 
@@ -2257,7 +2265,7 @@ yyreduce:
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 415 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 423 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("ItemContent", "PropertyDeclaration");
 
@@ -2268,7 +2276,7 @@ yyreduce:
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 422 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 430 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("ItemContent", "PropertyAssignment");
 
@@ -2279,7 +2287,7 @@ yyreduce:
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 429 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 437 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("ItemContent", "Item");
 
@@ -2290,7 +2298,7 @@ yyreduce:
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 436 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 444 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("ItemContent", "JSFunction");
 
@@ -2301,7 +2309,7 @@ yyreduce:
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 443 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 451 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("ItemContent", "SignalDeclaration");
 
@@ -2312,7 +2320,7 @@ yyreduce:
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 452 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 460 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("PropertyDeclaration", "PropertyDeclarationNoColon");
 
@@ -2323,7 +2331,7 @@ yyreduce:
   case 27:
 
 /* Line 1455 of yacc.c  */
-#line 459 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 467 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("PropertyDeclaration", "PropertyDeclarationNoColon ';'");
 
@@ -2334,7 +2342,7 @@ yyreduce:
   case 28:
 
 /* Line 1455 of yacc.c  */
-#line 468 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 476 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY Identifier TOKEN_PROPERTY");
 
@@ -2364,7 +2372,7 @@ yyreduce:
   case 29:
 
 /* Line 1455 of yacc.c  */
-#line 494 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 502 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY Identifier Identifier");
 
@@ -2394,7 +2402,7 @@ yyreduce:
   case 30:
 
 /* Line 1455 of yacc.c  */
-#line 520 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 528 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY TOKEN_VAR Identifier");
 
@@ -2421,7 +2429,7 @@ yyreduce:
   case 31:
 
 /* Line 1455 of yacc.c  */
-#line 543 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 551 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY Identifier TOKEN_PROPERTY ':' PropertyContent");
 
@@ -2453,7 +2461,7 @@ yyreduce:
   case 32:
 
 /* Line 1455 of yacc.c  */
-#line 571 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 579 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY Identifier Identifier ':' PropertyContent");
 
@@ -2485,7 +2493,7 @@ yyreduce:
   case 33:
 
 /* Line 1455 of yacc.c  */
-#line 599 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 607 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("PropertyDeclarationNoColon", "PropertyModifiersOpt TOKEN_PROPERTY TOKEN_VAR Identifier ':' PropertyContent");
 
@@ -2514,7 +2522,7 @@ yyreduce:
   case 34:
 
 /* Line 1455 of yacc.c  */
-#line 624 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 632 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("PropertyDeclarationNoColon", "TOKEN_PROPERTY TOKEN_ALIAS Identifier ':' PropertyContent");
 
@@ -2541,7 +2549,7 @@ yyreduce:
   case 35:
 
 /* Line 1455 of yacc.c  */
-#line 649 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 657 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Integer) = (int) QMLPropertyDeclaration::mNone;
     ;}
@@ -2550,7 +2558,7 @@ yyreduce:
   case 36:
 
 /* Line 1455 of yacc.c  */
-#line 654 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 662 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Integer) = (yyvsp[(1) - (1)].Integer);
     ;}
@@ -2559,7 +2567,7 @@ yyreduce:
   case 37:
 
 /* Line 1455 of yacc.c  */
-#line 661 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 669 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Integer) = (int) QMLPropertyDeclaration::mDefault;
     ;}
@@ -2568,7 +2576,7 @@ yyreduce:
   case 38:
 
 /* Line 1455 of yacc.c  */
-#line 666 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 674 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Integer) = (int) QMLPropertyDeclaration::mReadonly;
     ;}
@@ -2577,7 +2585,7 @@ yyreduce:
   case 39:
 
 /* Line 1455 of yacc.c  */
-#line 673 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 681 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("PropertyAssignment", "PropertyModifiersOpt TOKEN_PROPERTY ':' PropertyContent");
 
@@ -2603,7 +2611,7 @@ yyreduce:
   case 40:
 
 /* Line 1455 of yacc.c  */
-#line 695 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 703 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("PropertyAssignment", "JSMemberExpression ':' PropertyContent");
 
@@ -2629,7 +2637,7 @@ yyreduce:
   case 41:
 
 /* Line 1455 of yacc.c  */
-#line 719 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 727 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("PropertyContent", "Item");
 
@@ -2640,7 +2648,7 @@ yyreduce:
   case 42:
 
 /* Line 1455 of yacc.c  */
-#line 726 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 734 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("PropertyContent", "ItemArray");
 
@@ -2651,7 +2659,7 @@ yyreduce:
   case 43:
 
 /* Line 1455 of yacc.c  */
-#line 733 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 741 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("PropertyContent", "JSStatement");
 
@@ -2662,7 +2670,7 @@ yyreduce:
   case 44:
 
 /* Line 1455 of yacc.c  */
-#line 740 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 748 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("PropertyContent", "JSObject");
 
@@ -2673,7 +2681,7 @@ yyreduce:
   case 45:
 
 /* Line 1455 of yacc.c  */
-#line 749 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 757 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("ItemArray", "'[' ItemArrayContents ']'");
 
@@ -2684,7 +2692,7 @@ yyreduce:
   case 46:
 
 /* Line 1455 of yacc.c  */
-#line 758 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 766 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("ItemArrayContents", "Item");
 
@@ -2708,7 +2716,7 @@ yyreduce:
   case 47:
 
 /* Line 1455 of yacc.c  */
-#line 778 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 786 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("ItemArrayContents", "ItemArrayContents ',' Item");
 
@@ -2735,7 +2743,7 @@ yyreduce:
   case 48:
 
 /* Line 1455 of yacc.c  */
-#line 803 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 811 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("SignalDeclaration", "SignalDeclarationNoColon");
 
@@ -2746,7 +2754,7 @@ yyreduce:
   case 49:
 
 /* Line 1455 of yacc.c  */
-#line 810 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 818 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("SignalDeclaration", "SignalDeclarationNoColon ';'");
 
@@ -2757,7 +2765,7 @@ yyreduce:
   case 50:
 
 /* Line 1455 of yacc.c  */
-#line 819 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 827 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("SignalDeclarationNoColon", "TOKEN_SIGNAL Identifier");
 
@@ -2784,7 +2792,7 @@ yyreduce:
   case 51:
 
 /* Line 1455 of yacc.c  */
-#line 842 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 850 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("SignalDeclarationNoColon", "TOKEN_SIGNAL Identifier JSFunctionParameterList");
 
@@ -2811,7 +2819,7 @@ yyreduce:
   case 52:
 
 /* Line 1455 of yacc.c  */
-#line 867 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 875 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSFunction", "TOKEN_FUNCTION Identifier JSFunctionParameterList JSStatementBlock");
 
@@ -2832,7 +2840,7 @@ yyreduce:
   case 53:
 
 /* Line 1455 of yacc.c  */
-#line 884 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 892 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSFunction", "TOKEN_FUNCTION JSFunctionParameterList JSStatementBlock");
 
@@ -2859,7 +2867,7 @@ yyreduce:
   case 54:
 
 /* Line 1455 of yacc.c  */
-#line 909 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 917 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSFunctionParameterList", "'(' JSFunctionParameters ')'");
 
@@ -2870,7 +2878,7 @@ yyreduce:
   case 55:
 
 /* Line 1455 of yacc.c  */
-#line 916 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 924 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSFunctionParameterList", "'(' ')'");
 
@@ -2881,7 +2889,7 @@ yyreduce:
   case 56:
 
 /* Line 1455 of yacc.c  */
-#line 925 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 933 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSFunctionParameters", "JSFunctionParameter");
 
@@ -2892,7 +2900,7 @@ yyreduce:
   case 57:
 
 /* Line 1455 of yacc.c  */
-#line 932 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 940 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSFunctionParameters", "JSFunctionParameters ',' JSFunctionParameter");
 
@@ -2917,7 +2925,7 @@ yyreduce:
   case 58:
 
 /* Line 1455 of yacc.c  */
-#line 955 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 963 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSFunctionParameter", "Identifier");
 
@@ -2941,7 +2949,7 @@ yyreduce:
   case 59:
 
 /* Line 1455 of yacc.c  */
-#line 975 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 983 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSFunctionParameter", "TOKEN_VAR Identifier");
 
@@ -2965,7 +2973,7 @@ yyreduce:
   case 60:
 
 /* Line 1455 of yacc.c  */
-#line 995 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1003 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSFunctionParameter", "Identifier Identifier");
 
@@ -2992,7 +3000,7 @@ yyreduce:
   case 61:
 
 /* Line 1455 of yacc.c  */
-#line 1020 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1028 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSStatementBlock", "'{' Empty '}'");
 
@@ -3003,7 +3011,7 @@ yyreduce:
   case 62:
 
 /* Line 1455 of yacc.c  */
-#line 1027 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1035 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSStatementBlock", "'{' JSStatements '}'");
 
@@ -3018,7 +3026,7 @@ yyreduce:
   case 63:
 
 /* Line 1455 of yacc.c  */
-#line 1040 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1048 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSStatements", "JSStatement");
 
@@ -3040,7 +3048,7 @@ yyreduce:
   case 64:
 
 /* Line 1455 of yacc.c  */
-#line 1058 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1066 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSStatements", "JSStatements JSStatement");
 
@@ -3059,7 +3067,7 @@ yyreduce:
   case 65:
 
 /* Line 1455 of yacc.c  */
-#line 1075 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1083 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSStatement", "JSStatementNoColon");
 
@@ -3070,7 +3078,7 @@ yyreduce:
   case 66:
 
 /* Line 1455 of yacc.c  */
-#line 1082 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1090 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSStatement", "JSStatementNoColon ';'");
 
@@ -3081,7 +3089,7 @@ yyreduce:
   case 67:
 
 /* Line 1455 of yacc.c  */
-#line 1091 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1099 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSStatementNoColon", "JSStatementBlock");
 
@@ -3092,7 +3100,7 @@ yyreduce:
   case 68:
 
 /* Line 1455 of yacc.c  */
-#line 1098 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1106 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSStatementNoColon", "JSVariablesOrExpression");
 
@@ -3103,7 +3111,7 @@ yyreduce:
   case 69:
 
 /* Line 1455 of yacc.c  */
-#line 1105 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1113 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSStatementNoColon", "JSStatement_If");
 
@@ -3114,7 +3122,7 @@ yyreduce:
   case 70:
 
 /* Line 1455 of yacc.c  */
-#line 1112 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1120 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSStatementNoColon", "JSStatement_For");
 
@@ -3125,7 +3133,7 @@ yyreduce:
   case 71:
 
 /* Line 1455 of yacc.c  */
-#line 1119 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1127 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSStatementNoColon", "JSStatement_While");
 
@@ -3136,7 +3144,7 @@ yyreduce:
   case 72:
 
 /* Line 1455 of yacc.c  */
-#line 1126 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1134 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSStatementNoColon", "JSStatement_Switch");
 
@@ -3147,7 +3155,7 @@ yyreduce:
   case 73:
 
 /* Line 1455 of yacc.c  */
-#line 1133 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1141 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSStatementNoColon", "JSStatement_Case");
 
@@ -3158,7 +3166,7 @@ yyreduce:
   case 74:
 
 /* Line 1455 of yacc.c  */
-#line 1140 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1148 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSStatement_Break", "JSStatement_Break");
 
@@ -3169,7 +3177,7 @@ yyreduce:
   case 75:
 
 /* Line 1455 of yacc.c  */
-#line 1147 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1155 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSStatement_Break", "JSStatement_Continue");
 
@@ -3180,7 +3188,7 @@ yyreduce:
   case 76:
 
 /* Line 1455 of yacc.c  */
-#line 1154 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1162 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSStatement_Break", "JSStatement_With");
 
@@ -3191,7 +3199,7 @@ yyreduce:
   case 77:
 
 /* Line 1455 of yacc.c  */
-#line 1161 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1169 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSStatement_Break", "JSStatement_Return");
 
@@ -3202,7 +3210,7 @@ yyreduce:
   case 78:
 
 /* Line 1455 of yacc.c  */
-#line 1170 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1178 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pCondition = (yyvsp[(3) - (5)].Object);
         QMLEntity* pThen = (yyvsp[(5) - (5)].Object);
@@ -3226,7 +3234,7 @@ yyreduce:
   case 79:
 
 /* Line 1455 of yacc.c  */
-#line 1190 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1198 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pCondition = (yyvsp[(3) - (7)].Object);
         QMLEntity* pThen = (yyvsp[(5) - (7)].Object);
@@ -3257,7 +3265,7 @@ yyreduce:
   case 80:
 
 /* Line 1455 of yacc.c  */
-#line 1219 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1227 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pInitialization = (yyvsp[(3) - (9)].Object);
         QMLEntity* pCondition = (yyvsp[(5) - (9)].Object);
@@ -3278,7 +3286,7 @@ yyreduce:
   case 81:
 
 /* Line 1455 of yacc.c  */
-#line 1236 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1244 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pVariable = (yyvsp[(3) - (7)].Object);
         QMLEntity* pExpression = (yyvsp[(5) - (7)].Object);
@@ -3308,7 +3316,7 @@ yyreduce:
   case 82:
 
 /* Line 1455 of yacc.c  */
-#line 1264 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1272 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pInitialization = new QMLEntity(pContext->position());
         QMLEntity* pCondition = (yyvsp[(3) - (5)].Object);
@@ -3327,7 +3335,7 @@ yyreduce:
   case 83:
 
 /* Line 1455 of yacc.c  */
-#line 1281 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1289 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pExpression = (yyvsp[(3) - (5)].Object);
         QMLComplexEntity* pCases = dynamic_cast<QMLComplexEntity*>((yyvsp[(5) - (5)].Object));
@@ -3348,7 +3356,7 @@ yyreduce:
   case 84:
 
 /* Line 1455 of yacc.c  */
-#line 1300 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1308 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pExpression = (yyvsp[(2) - (3)].Object);
 
@@ -3359,7 +3367,7 @@ yyreduce:
   case 85:
 
 /* Line 1455 of yacc.c  */
-#line 1307 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1315 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pExpression = new QMLEntity(pContext->position(), "default");
 
@@ -3370,7 +3378,7 @@ yyreduce:
   case 86:
 
 /* Line 1455 of yacc.c  */
-#line 1316 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1324 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = new QMLUnaryOperation(pContext->position(), nullptr, QMLUnaryOperation::uoBreak);
     ;}
@@ -3379,7 +3387,7 @@ yyreduce:
   case 87:
 
 /* Line 1455 of yacc.c  */
-#line 1323 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1331 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = new QMLUnaryOperation(pContext->position(), nullptr, QMLUnaryOperation::uoContinue);
     ;}
@@ -3388,7 +3396,7 @@ yyreduce:
   case 88:
 
 /* Line 1455 of yacc.c  */
-#line 1330 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1338 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(3) - (5)].Object);
     ;}
@@ -3397,7 +3405,7 @@ yyreduce:
   case 89:
 
 /* Line 1455 of yacc.c  */
-#line 1337 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1345 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pExpression = (yyvsp[(2) - (2)].Object);
 
@@ -3408,7 +3416,7 @@ yyreduce:
   case 90:
 
 /* Line 1455 of yacc.c  */
-#line 1344 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1352 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pExpression = (yyvsp[(2) - (2)].Object);
 
@@ -3419,7 +3427,7 @@ yyreduce:
   case 91:
 
 /* Line 1455 of yacc.c  */
-#line 1353 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1361 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = nullptr;
     ;}
@@ -3428,7 +3436,7 @@ yyreduce:
   case 92:
 
 /* Line 1455 of yacc.c  */
-#line 1358 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1366 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -3437,7 +3445,7 @@ yyreduce:
   case 93:
 
 /* Line 1455 of yacc.c  */
-#line 1365 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1373 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSVariablesOrExpressionOpt", "Empty");
 
@@ -3448,7 +3456,7 @@ yyreduce:
   case 94:
 
 /* Line 1455 of yacc.c  */
-#line 1372 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1380 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSVariablesOrExpressionOpt", "JSVariablesOrExpression");
 
@@ -3459,7 +3467,7 @@ yyreduce:
   case 95:
 
 /* Line 1455 of yacc.c  */
-#line 1381 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1389 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSVariablesOrExpression", "TOKEN_VAR JSVariables");
 
@@ -3491,7 +3499,7 @@ yyreduce:
   case 96:
 
 /* Line 1455 of yacc.c  */
-#line 1409 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1417 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSVariablesOrExpression", "JSExpression");
 
@@ -3502,7 +3510,7 @@ yyreduce:
   case 97:
 
 /* Line 1455 of yacc.c  */
-#line 1418 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1426 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSVariables", "JSVariable");
 
@@ -3518,7 +3526,7 @@ yyreduce:
   case 98:
 
 /* Line 1455 of yacc.c  */
-#line 1430 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1438 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSVariables", "JSVariables ',' JSVariable");
 
@@ -3544,7 +3552,7 @@ yyreduce:
   case 99:
 
 /* Line 1455 of yacc.c  */
-#line 1454 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1462 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSVariable", "Identifier");
 
@@ -3555,7 +3563,7 @@ yyreduce:
   case 100:
 
 /* Line 1455 of yacc.c  */
-#line 1461 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1469 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSVariable", "Identifier TOKEN_ASSIGN JSAssignmentExpression");
 
@@ -3572,7 +3580,7 @@ yyreduce:
   case 101:
 
 /* Line 1455 of yacc.c  */
-#line 1474 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1482 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSVariable", "Identifier TOKEN_ASSIGN JSObject");
 
@@ -3589,7 +3597,7 @@ yyreduce:
   case 102:
 
 /* Line 1455 of yacc.c  */
-#line 1489 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1497 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSExpression", "JSExpressionSingle");
 
@@ -3600,7 +3608,7 @@ yyreduce:
   case 103:
 
 /* Line 1455 of yacc.c  */
-#line 1496 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1504 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSExpression", "JSExpressionSingle ',' JSExpression");
 
@@ -3623,7 +3631,7 @@ yyreduce:
   case 104:
 
 /* Line 1455 of yacc.c  */
-#line 1517 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1525 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -3632,7 +3640,7 @@ yyreduce:
   case 105:
 
 /* Line 1455 of yacc.c  */
-#line 1524 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1532 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSAssignmentExpression", "JSConditionalExpression");
 
@@ -3643,7 +3651,7 @@ yyreduce:
   case 106:
 
 /* Line 1455 of yacc.c  */
-#line 1531 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1539 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSAssignmentExpression", "JSConditionalExpression TOKEN_ASSIGN JSAssignmentExpression");
 
@@ -3664,7 +3672,7 @@ yyreduce:
   case 107:
 
 /* Line 1455 of yacc.c  */
-#line 1548 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1556 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSAssignmentExpression", "JSConditionalExpression TOKEN_ADD_ASSIGN JSAssignmentExpression");
 
@@ -3685,7 +3693,7 @@ yyreduce:
   case 108:
 
 /* Line 1455 of yacc.c  */
-#line 1565 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1573 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSAssignmentExpression", "JSConditionalExpression TOKEN_SUB_ASSIGN JSAssignmentExpression");
 
@@ -3706,7 +3714,7 @@ yyreduce:
   case 109:
 
 /* Line 1455 of yacc.c  */
-#line 1582 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1590 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSAssignmentExpression", "JSConditionalExpression TOKEN_MUL_ASSIGN JSAssignmentExpression");
 
@@ -3727,7 +3735,7 @@ yyreduce:
   case 110:
 
 /* Line 1455 of yacc.c  */
-#line 1599 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1607 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSAssignmentExpression", "JSConditionalExpression TOKEN_DIV_ASSIGN JSAssignmentExpression");
 
@@ -3748,7 +3756,7 @@ yyreduce:
   case 111:
 
 /* Line 1455 of yacc.c  */
-#line 1616 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1624 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSAssignmentExpression", "JSConditionalExpression TOKEN_ASSIGN JSObject");
 
@@ -3769,7 +3777,7 @@ yyreduce:
   case 112:
 
 /* Line 1455 of yacc.c  */
-#line 1635 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1643 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -3778,7 +3786,7 @@ yyreduce:
   case 113:
 
 /* Line 1455 of yacc.c  */
-#line 1640 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1648 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -3787,7 +3795,7 @@ yyreduce:
   case 114:
 
 /* Line 1455 of yacc.c  */
-#line 1647 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1655 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSConditionalExpression", "JSOrExpression");
 
@@ -3798,7 +3806,7 @@ yyreduce:
   case 115:
 
 /* Line 1455 of yacc.c  */
-#line 1654 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1662 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSConditionalExpression", "JSOrExpression '?' JSAssignmentExpression ':' JSAssignmentExpression");
 
@@ -3818,7 +3826,7 @@ yyreduce:
   case 116:
 
 /* Line 1455 of yacc.c  */
-#line 1670 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1678 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSConditionalExpression", "JSFunction");
 
@@ -3829,7 +3837,7 @@ yyreduce:
   case 117:
 
 /* Line 1455 of yacc.c  */
-#line 1679 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1687 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSOrExpression", "JSAndExpression");
 
@@ -3840,7 +3848,7 @@ yyreduce:
   case 118:
 
 /* Line 1455 of yacc.c  */
-#line 1686 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1694 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSOrExpression", "JSAndExpression TOKEN_LOGICAL_OR JSOrExpression");
 
@@ -3861,7 +3869,7 @@ yyreduce:
   case 119:
 
 /* Line 1455 of yacc.c  */
-#line 1705 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1713 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -3870,7 +3878,7 @@ yyreduce:
   case 120:
 
 /* Line 1455 of yacc.c  */
-#line 1710 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1718 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -3889,7 +3897,7 @@ yyreduce:
   case 121:
 
 /* Line 1455 of yacc.c  */
-#line 1727 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1735 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -3898,7 +3906,7 @@ yyreduce:
   case 122:
 
 /* Line 1455 of yacc.c  */
-#line 1732 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1740 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -3917,7 +3925,7 @@ yyreduce:
   case 123:
 
 /* Line 1455 of yacc.c  */
-#line 1747 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1755 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -3936,7 +3944,7 @@ yyreduce:
   case 124:
 
 /* Line 1455 of yacc.c  */
-#line 1762 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1770 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -3955,7 +3963,7 @@ yyreduce:
   case 125:
 
 /* Line 1455 of yacc.c  */
-#line 1779 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1787 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -3964,7 +3972,7 @@ yyreduce:
   case 126:
 
 /* Line 1455 of yacc.c  */
-#line 1784 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1792 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -3983,7 +3991,7 @@ yyreduce:
   case 127:
 
 /* Line 1455 of yacc.c  */
-#line 1799 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1807 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -4002,7 +4010,7 @@ yyreduce:
   case 128:
 
 /* Line 1455 of yacc.c  */
-#line 1814 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1822 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -4021,7 +4029,7 @@ yyreduce:
   case 129:
 
 /* Line 1455 of yacc.c  */
-#line 1829 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1837 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -4040,7 +4048,7 @@ yyreduce:
   case 130:
 
 /* Line 1455 of yacc.c  */
-#line 1846 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1854 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -4049,7 +4057,7 @@ yyreduce:
   case 131:
 
 /* Line 1455 of yacc.c  */
-#line 1851 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1859 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -4068,7 +4076,7 @@ yyreduce:
   case 132:
 
 /* Line 1455 of yacc.c  */
-#line 1866 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1874 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -4087,7 +4095,7 @@ yyreduce:
   case 133:
 
 /* Line 1455 of yacc.c  */
-#line 1881 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1889 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -4106,7 +4114,7 @@ yyreduce:
   case 134:
 
 /* Line 1455 of yacc.c  */
-#line 1896 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1904 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -4125,7 +4133,7 @@ yyreduce:
   case 135:
 
 /* Line 1455 of yacc.c  */
-#line 1913 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1921 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -4134,7 +4142,7 @@ yyreduce:
   case 136:
 
 /* Line 1455 of yacc.c  */
-#line 1918 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1926 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -4153,7 +4161,7 @@ yyreduce:
   case 137:
 
 /* Line 1455 of yacc.c  */
-#line 1933 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1941 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -4172,7 +4180,7 @@ yyreduce:
   case 138:
 
 /* Line 1455 of yacc.c  */
-#line 1950 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1958 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -4181,7 +4189,7 @@ yyreduce:
   case 139:
 
 /* Line 1455 of yacc.c  */
-#line 1955 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1963 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -4200,7 +4208,7 @@ yyreduce:
   case 140:
 
 /* Line 1455 of yacc.c  */
-#line 1970 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1978 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -4219,7 +4227,7 @@ yyreduce:
   case 141:
 
 /* Line 1455 of yacc.c  */
-#line 1985 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 1993 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -4238,7 +4246,7 @@ yyreduce:
   case 142:
 
 /* Line 1455 of yacc.c  */
-#line 2000 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2008 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -4257,7 +4265,7 @@ yyreduce:
   case 143:
 
 /* Line 1455 of yacc.c  */
-#line 2015 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2023 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pLeft = (yyvsp[(1) - (3)].Object);
         QMLEntity* pRight = (yyvsp[(3) - (3)].Object);
@@ -4276,7 +4284,7 @@ yyreduce:
   case 144:
 
 /* Line 1455 of yacc.c  */
-#line 2032 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2040 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = (yyvsp[(1) - (1)].Object);
     ;}
@@ -4285,7 +4293,7 @@ yyreduce:
   case 145:
 
 /* Line 1455 of yacc.c  */
-#line 2037 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2045 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSUnaryExpression", "JSMemberExpression TOKEN_INC");
 
@@ -4298,7 +4306,7 @@ yyreduce:
   case 146:
 
 /* Line 1455 of yacc.c  */
-#line 2046 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2054 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QMLEntity* pEntity = (yyvsp[(2) - (2)].Object);
 
@@ -4309,7 +4317,7 @@ yyreduce:
   case 147:
 
 /* Line 1455 of yacc.c  */
-#line 2053 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2061 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSUnaryExpression", "JSMemberExpression TOKEN_DEC");
 
@@ -4322,7 +4330,7 @@ yyreduce:
   case 148:
 
 /* Line 1455 of yacc.c  */
-#line 2062 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2070 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSUnaryExpression", "TOKEN_DEC JSMemberExpression");
 
@@ -4335,7 +4343,7 @@ yyreduce:
   case 149:
 
 /* Line 1455 of yacc.c  */
-#line 2071 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2079 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSUnaryExpression", "TOKEN_NOT JSMemberExpression");
 
@@ -4348,7 +4356,7 @@ yyreduce:
   case 150:
 
 /* Line 1455 of yacc.c  */
-#line 2080 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2088 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSUnaryExpression", "TOKEN_NOT_NOT JSMemberExpression");
 
@@ -4361,7 +4369,7 @@ yyreduce:
   case 151:
 
 /* Line 1455 of yacc.c  */
-#line 2089 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2097 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSUnaryExpression", "TOKEN_TYPEOF JSMemberExpression");
 
@@ -4374,7 +4382,7 @@ yyreduce:
   case 152:
 
 /* Line 1455 of yacc.c  */
-#line 2098 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2106 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSUnaryExpression", "TOKEN_SUB JSMemberExpression");
 
@@ -4387,7 +4395,7 @@ yyreduce:
   case 153:
 
 /* Line 1455 of yacc.c  */
-#line 2107 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2115 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSUnaryExpression", "TOKEN_NEW JSMemberExpression");
 
@@ -4400,7 +4408,7 @@ yyreduce:
   case 154:
 
 /* Line 1455 of yacc.c  */
-#line 2118 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2126 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSMemberExpression", "JSArrayAccessExpression");
 
@@ -4411,7 +4419,7 @@ yyreduce:
   case 155:
 
 /* Line 1455 of yacc.c  */
-#line 2125 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2133 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSMemberExpression", "JSArrayAccessExpression '.' JSMemberExpression");
 
@@ -4435,7 +4443,7 @@ yyreduce:
   case 156:
 
 /* Line 1455 of yacc.c  */
-#line 2147 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2155 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSArrayAccessExpression", "JSFunctionCall");
 
@@ -4446,7 +4454,7 @@ yyreduce:
   case 157:
 
 /* Line 1455 of yacc.c  */
-#line 2154 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2162 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSArrayAccessExpression", "JSArrayAccessExpression '[' JSExpression ']'");
 
@@ -4468,7 +4476,7 @@ yyreduce:
   case 158:
 
 /* Line 1455 of yacc.c  */
-#line 2174 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2182 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSFunctionCall", "JSPrimaryExpression");
 
@@ -4479,7 +4487,7 @@ yyreduce:
   case 159:
 
 /* Line 1455 of yacc.c  */
-#line 2181 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2189 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSFunctionCall", "JSPrimaryExpression '(' JSArgumentListOpt ')'");
 
@@ -4500,7 +4508,7 @@ yyreduce:
   case 160:
 
 /* Line 1455 of yacc.c  */
-#line 2200 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2208 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSPrimaryExpression", "Identifier");
 
@@ -4511,7 +4519,7 @@ yyreduce:
   case 161:
 
 /* Line 1455 of yacc.c  */
-#line 2207 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2215 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSPrimaryExpression", "Value");
 
@@ -4522,7 +4530,7 @@ yyreduce:
   case 162:
 
 /* Line 1455 of yacc.c  */
-#line 2214 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2222 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSPrimaryExpression", "'(' JSExpression ')'");
 
@@ -4537,7 +4545,7 @@ yyreduce:
   case 163:
 
 /* Line 1455 of yacc.c  */
-#line 2227 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2235 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSArgumentListOpt", "Empty");
 
@@ -4548,7 +4556,7 @@ yyreduce:
   case 164:
 
 /* Line 1455 of yacc.c  */
-#line 2234 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2242 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSArgumentListOpt", "JSArgumentList");
 
@@ -4559,7 +4567,7 @@ yyreduce:
   case 165:
 
 /* Line 1455 of yacc.c  */
-#line 2243 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2251 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSArgumentList", "JSAssignmentExpression");
 
@@ -4577,7 +4585,7 @@ yyreduce:
   case 166:
 
 /* Line 1455 of yacc.c  */
-#line 2257 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2265 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSArgumentList", "JSArgumentList ',' JSAssignmentExpression");
 
@@ -4593,7 +4601,7 @@ yyreduce:
   case 167:
 
 /* Line 1455 of yacc.c  */
-#line 2271 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2279 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSArgument", "TOKEN_PROPERTY");
 
@@ -4604,7 +4612,7 @@ yyreduce:
   case 168:
 
 /* Line 1455 of yacc.c  */
-#line 2278 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2286 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSArgument", "JSObject");
 
@@ -4615,7 +4623,7 @@ yyreduce:
   case 169:
 
 /* Line 1455 of yacc.c  */
-#line 2285 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2293 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSArgument", "JSAssignmentExpression");
 
@@ -4626,7 +4634,7 @@ yyreduce:
   case 170:
 
 /* Line 1455 of yacc.c  */
-#line 2294 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2302 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSObject", "'{' JSAttributes '}'");
 
@@ -4637,7 +4645,7 @@ yyreduce:
   case 171:
 
 /* Line 1455 of yacc.c  */
-#line 2301 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2309 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSObject", "'{' '}'");
 
@@ -4651,7 +4659,7 @@ yyreduce:
   case 172:
 
 /* Line 1455 of yacc.c  */
-#line 2311 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2319 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSObject", "TOKEN_DIMENSION");
 
@@ -4665,7 +4673,7 @@ yyreduce:
   case 173:
 
 /* Line 1455 of yacc.c  */
-#line 2321 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2329 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSObject", "'[' JSArrayContents ']'");
 
@@ -4676,7 +4684,7 @@ yyreduce:
   case 174:
 
 /* Line 1455 of yacc.c  */
-#line 2330 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2338 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSArrayContents", "JSArrayContents ',' JSObject");
 
@@ -4692,7 +4700,7 @@ yyreduce:
   case 175:
 
 /* Line 1455 of yacc.c  */
-#line 2342 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2350 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSArrayContents", "JSArrayContents ',' JSExpressionSingle");
 
@@ -4708,7 +4716,7 @@ yyreduce:
   case 176:
 
 /* Line 1455 of yacc.c  */
-#line 2354 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2362 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSArrayContents", "JSObject");
 
@@ -4728,7 +4736,7 @@ yyreduce:
   case 177:
 
 /* Line 1455 of yacc.c  */
-#line 2370 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2378 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSArrayContents", "JSExpressionSingle");
 
@@ -4748,7 +4756,7 @@ yyreduce:
   case 178:
 
 /* Line 1455 of yacc.c  */
-#line 2388 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2396 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSAttributes", "JSAttribute");
 
@@ -4766,7 +4774,7 @@ yyreduce:
   case 179:
 
 /* Line 1455 of yacc.c  */
-#line 2402 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2410 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSAttributes", "JSAttributes JSAttribute");
 
@@ -4782,7 +4790,7 @@ yyreduce:
   case 180:
 
 /* Line 1455 of yacc.c  */
-#line 2416 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2424 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSAttribute", "JSAttributeNoComma");
 
@@ -4793,7 +4801,7 @@ yyreduce:
   case 181:
 
 /* Line 1455 of yacc.c  */
-#line 2423 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2431 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSAttribute", "JSAttributeNoComma ','");
 
@@ -4804,7 +4812,7 @@ yyreduce:
   case 182:
 
 /* Line 1455 of yacc.c  */
-#line 2432 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2440 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSAttributeNoComma", "JSAttributeName ':' JSObject");
 
@@ -4831,7 +4839,7 @@ yyreduce:
   case 183:
 
 /* Line 1455 of yacc.c  */
-#line 2455 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2463 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSAttributeNoComma", "JSAttributeName ':' JSExpressionSingle");
 
@@ -4858,7 +4866,7 @@ yyreduce:
   case 184:
 
 /* Line 1455 of yacc.c  */
-#line 2480 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2488 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSAttributeName", "Literal");
 
@@ -4869,7 +4877,7 @@ yyreduce:
   case 185:
 
 /* Line 1455 of yacc.c  */
-#line 2487 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2495 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("JSAttributeName", "Identifier");
 
@@ -4880,7 +4888,7 @@ yyreduce:
   case 186:
 
 /* Line 1455 of yacc.c  */
-#line 2496 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2504 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("Identifier", "TOKEN_IDENTIFIER");
 
@@ -4900,7 +4908,7 @@ yyreduce:
   case 187:
 
 /* Line 1455 of yacc.c  */
-#line 2514 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2522 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("Version", "TOKEN_REALCONSTANT");
 
@@ -4911,7 +4919,7 @@ yyreduce:
   case 188:
 
 /* Line 1455 of yacc.c  */
-#line 2523 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2531 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("Value", "Boolean");
 
@@ -4922,7 +4930,7 @@ yyreduce:
   case 189:
 
 /* Line 1455 of yacc.c  */
-#line 2530 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2538 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("Value", "Integer");
 
@@ -4933,7 +4941,7 @@ yyreduce:
   case 190:
 
 /* Line 1455 of yacc.c  */
-#line 2537 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2545 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("Value", "Double");
 
@@ -4944,7 +4952,7 @@ yyreduce:
   case 191:
 
 /* Line 1455 of yacc.c  */
-#line 2544 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2552 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("Value", "Literal");
 
@@ -4955,7 +4963,7 @@ yyreduce:
   case 192:
 
 /* Line 1455 of yacc.c  */
-#line 2551 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2559 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         PARSER_TRACE("Value", "SpecialValue");
 
@@ -4966,7 +4974,7 @@ yyreduce:
   case 193:
 
 /* Line 1455 of yacc.c  */
-#line 2560 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2568 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = new QMLEntity(pContext->position(), QVariant((yyvsp[(1) - (1)].Boolean)));
     ;}
@@ -4975,7 +4983,7 @@ yyreduce:
   case 194:
 
 /* Line 1455 of yacc.c  */
-#line 2567 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2575 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = new QMLEntity(pContext->position(), QVariant((yyvsp[(1) - (1)].Integer)));
     ;}
@@ -4984,7 +4992,7 @@ yyreduce:
   case 195:
 
 /* Line 1455 of yacc.c  */
-#line 2574 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2582 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) =  new QMLEntity(pContext->position(), QVariant((yyvsp[(1) - (1)].Real)));
     ;}
@@ -4993,7 +5001,7 @@ yyreduce:
   case 196:
 
 /* Line 1455 of yacc.c  */
-#line 2581 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2589 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         QString* pString = (yyvsp[(1) - (1)].String);
 
@@ -5011,7 +5019,7 @@ yyreduce:
   case 197:
 
 /* Line 1455 of yacc.c  */
-#line 2597 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2605 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = new QMLSpecialValue(pContext->position(), QMLSpecialValue::svNull);
     ;}
@@ -5020,7 +5028,7 @@ yyreduce:
   case 198:
 
 /* Line 1455 of yacc.c  */
-#line 2602 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2610 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = new QMLSpecialValue(pContext->position(), QMLSpecialValue::svUndefined);
     ;}
@@ -5029,7 +5037,7 @@ yyreduce:
   case 199:
 
 /* Line 1455 of yacc.c  */
-#line 2608 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2616 "D:/Work/Projects/qt-plus/source/bison/QML.y"
     {
         (yyval.Object) = nullptr;
     ;}
@@ -5038,7 +5046,7 @@ yyreduce:
 
 
 /* Line 1455 of yacc.c  */
-#line 5042 "D:/Work/Projects/qt-plus/source/cpp/QMLTree/QMLGrammarParser.cpp"
+#line 5050 "D:/Work/Projects/qt-plus/source/cpp/QMLTree/QMLGrammarParser.cpp"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -5250,7 +5258,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 2612 "D:/Work/Projects/qt-plus/source/bison/QML.y"
+#line 2620 "D:/Work/Projects/qt-plus/source/bison/QML.y"
 
 
 /* -------------- body section -------------- */

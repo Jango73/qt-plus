@@ -34,7 +34,10 @@ Item {
     ]
 
     function func1(someParameter1, someParameter2) {
+        // Comment 1
         var someVariable1 = 10, someVariable2 = 20;
+
+        // Comment 2
         var someVariable3 = 30, someVariable4 = 40;
         var someVariable5 = 50;
         var someVariable6 = 60;
@@ -55,6 +58,7 @@ Item {
             }
         }
 
+        // Comment 3
         someVariable1 += 10;
         someVariable2 += 10;
         someVariable3 += 10;
@@ -69,6 +73,7 @@ Item {
 
         prop6 = Math.ceil(5.2);
 
+        // Comment 4
         var date = new Date;
         prop6 = date.getMinutes();
 
@@ -83,6 +88,7 @@ Item {
 
     function getVisibleItemList(item)
     {
+        // Comment 5
         var complexItems = [];
         getVisibleItemListRecurse(complexItems, item, 0);
         return complexItems;
