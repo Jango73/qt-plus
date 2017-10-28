@@ -550,7 +550,7 @@ CXMLNode QMLEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent
     CXMLNode xNode(metaObject()->className());
     QString sValue = m_vValue.value<QString>();
 
-    xNode.attributes()["Position"] = QString("<%1, %2>").arg(m_pPosition.x()).arg(m_pPosition.y());
+    xNode.attributes()["Position"] = QString("[%1, %2]").arg(m_pPosition.x()).arg(m_pPosition.y());
 
     if (sValue.isEmpty() == false)
     {
