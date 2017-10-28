@@ -830,7 +830,8 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
     SCOPE.m_bParsingHexa    = false;
 
     int c, d, e;
-    QPoint pCommentStart;
+    QPoint pCommentStartPosition;
+    bool bCommentStartLineEmpty = SCOPE.m_bLineEmpty;
 
     // Skip white spaces and comments
     // Whites are considered to be every ASCII code below 0x21
@@ -853,7 +854,7 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
                     if (SCOPE.m_pCurrentTokenValue != nullptr)
                     {
                         QMLComment::ECommentType eType = SCOPE.m_bDocComment ? QMLComment::ctMultiLineDoc : QMLComment::ctMultiLine;
-                        QMLComment* pComment = new QMLComment(pCommentStart, SCOPE.m_pCurrentTokenValue->trimmed(), eType);
+                        QMLComment* pComment = new QMLComment(pCommentStartPosition, SCOPE.m_pCurrentTokenValue->trimmed(), eType);
                         m_sScopes.last()->m_pFile->comments() << pComment;
 
                         SCOPE.m_pCurrentTokenValue->clear();
@@ -884,7 +885,7 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
                     SCOPE.m_iCommentLevel++;
                     SCOPE.m_bDocComment = true;
 
-                    pCommentStart = QPoint(SCOPE.m_iColumn, SCOPE.m_iLine);
+                    pCommentStartPosition = QPoint(SCOPE.m_iColumn, SCOPE.m_iLine);
                 }
                 else
                 {
@@ -895,14 +896,14 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
                     SCOPE.m_iCommentLevel++;
                     SCOPE.m_bDocComment = false;
 
-                    pCommentStart = QPoint(SCOPE.m_iColumn, SCOPE.m_iLine);
+                    pCommentStartPosition = QPoint(SCOPE.m_iColumn, SCOPE.m_iLine);
                 }
             }
             else if (d == '/')
             {
                 // This is a single-line comment
 
-                pCommentStart = QPoint(SCOPE.m_iColumn, SCOPE.m_iLine);
+                pCommentStartPosition = QPoint(SCOPE.m_iColumn, SCOPE.m_iLine);
 
                 if (SCOPE.m_iCommentLevel == 0)
                 {
@@ -914,8 +915,8 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
 
                     if (SCOPE.m_pCurrentTokenValue != nullptr)
                     {
-                        QMLComment::ECommentType eType = SCOPE.m_bLineEmpty ? QMLComment::ctSingleLine : QMLComment::ctSingleLineAtEnd;
-                        QMLComment* pComment = new QMLComment(pCommentStart, SCOPE.m_pCurrentTokenValue->trimmed(), eType);
+                        QMLComment::ECommentType eType = bCommentStartLineEmpty ? QMLComment::ctSingleLine : QMLComment::ctSingleLineAtEnd;
+                        QMLComment* pComment = new QMLComment(pCommentStartPosition, SCOPE.m_pCurrentTokenValue->trimmed(), eType);
                         m_sScopes.last()->m_pFile->comments() << pComment;
 
                         SCOPE.m_pCurrentTokenValue->clear();
@@ -932,6 +933,8 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
         else
         {
             if (c > ' ') { UNGET(c); break; }
+
+            bCommentStartLineEmpty = SCOPE.m_bLineEmpty;
         }
     }
 
@@ -1304,6 +1307,9 @@ int QMLTreeContext::getChar()
 
     switch (iChar)
     {
+        case ' ' :
+            SCOPE.m_iColumn++;
+            break;
         case '\n' :
             SCOPE.m_iColumn = 0;
             SCOPE.m_iLine++;
@@ -1312,8 +1318,6 @@ int QMLTreeContext::getChar()
             break;
         case '\t' :
             SCOPE.m_iColumn += 4;
-            SCOPE.m_bPreviousLineEmpty = SCOPE.m_bLineEmpty;
-            SCOPE.m_bLineEmpty = false;
             break;
         case '\r' :
             break;
@@ -1342,13 +1346,11 @@ int QMLTreeContext::ungetChar(int iChar)
             break;
         case '\t' :
             SCOPE.m_iColumn -= 4;
-            SCOPE.m_bLineEmpty = SCOPE.m_bPreviousLineEmpty;
             break;
         case '\r' :
             break;
         default:
             SCOPE.m_iColumn--;
-            SCOPE.m_bLineEmpty = SCOPE.m_bPreviousLineEmpty;
             break;
     }
 

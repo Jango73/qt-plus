@@ -82,7 +82,9 @@ Item {
         }
     }
 
-    function func3(someParameter1) {                        // Unreferenced parameter
+    //-----------------------------------------------------------------------------
+    // Unreferenced parameter
+    function func3(someParameter1) {
         return { x: 0, y: 0 }
     }
 
