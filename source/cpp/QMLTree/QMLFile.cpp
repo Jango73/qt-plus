@@ -216,10 +216,9 @@ QMLEntity* QMLFile::locateEntityAtOrAfterLine(const QPoint& pPosition)
 QMLEntity* QMLFile::locateEntityAtOrAfterLine_Recurse(QMLEntity* pEntity, const QPoint& pPosition)
 {
     // Continue only if the current entity is not a comment
-    if (dynamic_cast<QMLComment*>(pEntity) == nullptr)
+    if (QMLEntity::isComment(pEntity) == false)
     {
         // If the line of the current entity is greater or equal to the specified line, return the current entity.
-        // if (dynamic_cast<QMLComplexEntity*>(pEntity) != nullptr && pEntity->position().y() >= pPosition.y())
         if (pEntity->position().y() >= pPosition.y())
         {
             return pEntity;
