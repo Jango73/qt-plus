@@ -109,9 +109,14 @@ Item {
             // Comment 7
             for (var i = 0; i < item.children.length; i++)
             {
-                getVisibleItemListRecurse(complexItems, item.children[i], level + 1);
+                var returnValue = getVisibleItemListRecurse(complexItems, item.children[i], level + 1);
+
+                if (returnValue !== null)
+                    return returnValue;
             }
         }
+
+        return null;
     }
 
     function Func4()

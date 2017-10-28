@@ -219,6 +219,9 @@ public:
     static bool isFor(const QMLEntity* pEntity);
 
     //!
+    static bool isComment(const QMLEntity* pEntity);
+
+    //!
     static int entityCount();
 
     //!

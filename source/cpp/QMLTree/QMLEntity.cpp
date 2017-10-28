@@ -11,6 +11,7 @@
 #include "QMLVariableDeclaration.h"
 #include "QMLFor.h"
 #include "QMLForIn.h"
+#include "QMLComment.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -643,30 +644,28 @@ bool QMLEntity::isContainer(const QMLEntity* pEntity)
 
 bool QMLEntity::isPropertyAssignment(const QMLEntity* pEntity)
 {
-    if (dynamic_cast<const QMLPropertyAssignment*>(pEntity) != nullptr)
-        return true;
-
-    return false;
+    return (dynamic_cast<const QMLPropertyAssignment*>(pEntity) != nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
 
 bool QMLEntity::isVariableDeclaration(const QMLEntity* pEntity)
 {
-    if (dynamic_cast<const QMLVariableDeclaration*>(pEntity) != nullptr)
-        return true;
-
-    return false;
+    return (dynamic_cast<const QMLVariableDeclaration*>(pEntity) != nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
 
 bool QMLEntity::isFor(const QMLEntity* pEntity)
 {
-    if (dynamic_cast<const QMLFor*>(pEntity) != nullptr || dynamic_cast<const QMLForIn*>(pEntity) != nullptr)
-        return true;
+    return (dynamic_cast<const QMLFor*>(pEntity) != nullptr || dynamic_cast<const QMLForIn*>(pEntity) != nullptr);
+}
 
-    return false;
+//-------------------------------------------------------------------------------------------------
+
+bool QMLEntity::isComment(const QMLEntity* pEntity)
+{
+    return (dynamic_cast<const QMLComment*>(pEntity) != nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
