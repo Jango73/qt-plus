@@ -452,7 +452,7 @@ CXMLNode QMLComplexEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* 
 
     if (m_pName != nullptr)
     {
-        xNode.attributes()["Name"] = m_pName->value().toString();
+        xNode.attributes()["Name"] = m_pName->toString();
     }
 
     if (m_bIsArray)
