@@ -114,7 +114,7 @@ void QMLFor::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity
     }
     else
     {
-        if (previousSibling() != nullptr)
+        if (previousSibling() == nullptr)
             formatter.processFragment(stream, QMLFormatter::qffBeforeFor);
         else
             formatter.processFragment(stream, QMLFormatter::qffBeforeForNoPreviousSibling);

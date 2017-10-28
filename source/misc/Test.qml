@@ -1,9 +1,10 @@
-import QtQuick 2.4
-import QtQuick.Controls 1.4
-import QtQuick.Dialogs 1.0 as MyLib
+
+import QtQuick 2.4                      // QtQuick
+import QtQuick.Controls 1.4             // QtQuick.Controls
+import QtQuick.Dialogs 1.0 as MyLib     // QtQuick.Dialogs
 
 Item {
-    id: root
+    id: root                                                                                    // Root
 
     property real prop1: root.prop8
     property real prop_2: 20                                                                    // Camel casing error
@@ -123,8 +124,13 @@ Item {
     {
         while (true)
         {
-            var foo = 1;
-            var bar = foo;
+            var foo1 = 1;
+            var bar1 = foo1;
+        }
+        while (true)
+        {
+            var foo2 = 1;
+            var bar2 = foo2;
         }
     }
 }

@@ -50,9 +50,9 @@ void QMLComment::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEn
     switch (m_eType)
     {
         case ctSingleLineAtEnd:
-            stream << "    // ";
-            stream << m_vValue.toString();
-            break;
+//            stream << "    // ";
+//            stream << m_vValue.toString();
+//            break;
 
         case ctSingleLine:
         {

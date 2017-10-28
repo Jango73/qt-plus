@@ -165,14 +165,14 @@ void QMLFile::solveComments()
 
                     if (entityIndex != -1)
                     {
-                        if (pComment->type() == QMLComment::ctSingleLine)
-                        {
+//                        if (pComment->type() == QMLComment::ctSingleLine)
+//                        {
                             pComplexParent->contents().insert(entityIndex, pComment);
-                        }
-                        else
-                        {
-                            pComplexParent->contents().insert(entityIndex + 1, pComment);
-                        }
+//                        }
+//                        else
+//                        {
+//                            pComplexParent->contents().insert(entityIndex + 1, pComment);
+//                        }
 
                         pComment->setParent(pComplexParent);
                         m_vComments.removeAt(index);
@@ -331,6 +331,9 @@ void QMLFile::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntit
 {
     QMLComplexEntity::toQML(stream, formatter, pParent);
 
+//    foreach (QMLComment* pComment, m_vComments)
+//        pComment->toQML(stream, formatter, this);
+
     formatter.writeNewLine(stream);
 }
 
@@ -349,14 +352,10 @@ CXMLNode QMLFile::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
     xNode.attributes()["Parsed"] = m_bParsed ? "true" : "false";
 
     if (m_bIsSingleton)
-    {
         xNode.attributes()["Singleton"] = "true";
-    }
 
     foreach (QMLComment* pComment, m_vComments)
-    {
         xNode << pComment->toXMLNode(pContext, this);
-    }
 
     return xNode;
 }
