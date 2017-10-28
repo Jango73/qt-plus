@@ -4,6 +4,7 @@
 
 // Application
 #include "QMLComplexEntity.h"
+#include "QMLItem.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -220,12 +221,7 @@ static bool compareEntities(QMLEntity*& entity1, QMLEntity*& entity2)
 {
     int iClassCompare = strcmp(entity1->metaObject()->className(), entity2->metaObject()->className());
 
-    if (iClassCompare != 0)
-    {
-        return iClassCompare;
-    }
-
-    return 0;
+    return iClassCompare > 0;
 }
 
 /*!
@@ -233,7 +229,12 @@ static bool compareEntities(QMLEntity*& entity1, QMLEntity*& entity2)
 */
 void QMLComplexEntity::sortContents()
 {
-//    qSort(m_vContents.begin(), m_vContents.end(), compareEntities);
+//    QMLEntity::sortContents();
+
+//    if (dynamic_cast<QMLItem*>(this) != nullptr)
+//    {
+//        qSort(m_vContents.begin(), m_vContents.end(), compareEntities);
+//    }
 
 //    foreach (QMLEntity* pChild, m_vContents)
 //    {

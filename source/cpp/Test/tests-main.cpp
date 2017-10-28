@@ -210,6 +210,7 @@ void TestRunner::runQMLTreeTests()
             {
                 QTextStream stream(&file);
                 QMLFormatter formatter;
+                pContext->files().first()->sortContents();
                 pContext->files().first()->toQML(stream, formatter);
                 file.close();
             }

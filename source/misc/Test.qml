@@ -11,8 +11,6 @@ Item {
     property real prop4: 40
     property real Prop5: 50                                                                     // Camel casing error and unreferenced symbol
     property bool prop6: prop1 > 0 ? prop1 : prop_2 > 0 ? prop_2 : prop3 > 0 ? prop3 : prop4    // Nested conditionals error
-    property variant prop7: []                                                                  // Unreferenced symbol
-    property int prop8: 88
 
     property string property: ""
 
@@ -32,6 +30,9 @@ Item {
             }
         }
     ]
+
+    property variant prop7: []                                                                  // Unreferenced symbol
+    property int prop8: 88
 
     function func1(someParameter1, someParameter2) {
         // Comment 1

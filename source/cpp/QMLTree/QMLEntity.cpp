@@ -398,7 +398,7 @@ void QMLEntity::solveSymbolUsages(QMLTreeContext* pContext)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Sorts entities. \br\br
+    Sorts entities.
 */
 void QMLEntity::sortContents()
 {
