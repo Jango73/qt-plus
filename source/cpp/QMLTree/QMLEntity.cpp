@@ -571,7 +571,7 @@ CXMLNode QMLEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent
     {
         xNode.attributes()["Origin"] = QString("(Class: %1, Address: %2)")
                 .arg(m_pOrigin->metaObject()->className())
-                .arg((qulonglong) m_pOrigin);
+                .arg(QString("0x") + QString::number((qulonglong) m_pOrigin, 16));
     }
 
     if (m_iUsageCount > 0)
