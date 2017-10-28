@@ -132,6 +132,7 @@ void QMLFile::solveComments()
                     if (entityIndex != -1)
                     {
                         pComplexParent->contents().insert(entityIndex, pComment);
+                        pComment->setParent(pComplexParent);
                         m_vComments.removeAt(index);
                         index--;
                     }
@@ -173,6 +174,7 @@ void QMLFile::solveComments()
                             pComplexParent->contents().insert(entityIndex + 1, pComment);
                         }
 
+                        pComment->setParent(pComplexParent);
                         m_vComments.removeAt(index);
                         index--;
                     }

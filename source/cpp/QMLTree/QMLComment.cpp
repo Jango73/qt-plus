@@ -55,10 +55,18 @@ void QMLComment::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEn
             break;
 
         case ctSingleLine:
-            formatter.writeDoubleNewLine(stream);
+        {
+            QMLComment* pPreviousComment = dynamic_cast<QMLComment*>(previousSibling());
+
+            if (pPreviousComment != nullptr && pPreviousComment->type() == ctSingleLine)
+                formatter.writeNewLine(stream);
+            else
+                formatter.writeDoubleNewLine(stream);
+
             stream << "// ";
             stream << m_vValue.toString();
             break;
+        }
 
         case ctMultiLine:
             formatter.writeDoubleNewLine(stream);

@@ -61,6 +61,9 @@ public:
     QVector<QMLEntity*>& contents();
 
     //!
+    const QVector<QMLEntity*>& contents() const;
+
+    //!
     bool isNamed() const;
 
     //!
@@ -74,9 +77,6 @@ public:
 
     //!
     bool isArgumentList() const;
-
-    //!
-    const QVector<QMLEntity*>& contents() const;
 
     //-------------------------------------------------------------------------------------------------
     // Control methods

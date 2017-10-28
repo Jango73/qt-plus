@@ -84,6 +84,7 @@ Item {
 
     //-----------------------------------------------------------------------------
     // Unreferenced parameter
+    // Single line comment
     function func3(someParameter1) {
         return { x: 0, y: 0 }
     }

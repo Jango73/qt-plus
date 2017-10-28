@@ -287,6 +287,28 @@ QMap<QString, QMLEntity*> QMLEntity::members()
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Returns the previous sibling of this entity if its parent is a QMLComplexEntity.
+*/
+QMLEntity* QMLEntity::previousSibling() const
+{
+    const QMLComplexEntity* pComplexParent = dynamic_cast<const QMLComplexEntity*>(parent());
+
+    if (pComplexParent != nullptr)
+    {
+        int iIndexOfThis = pComplexParent->contents().indexOf(const_cast<QMLEntity*>(this));
+
+        if (iIndexOfThis > 0 && iIndexOfThis < pComplexParent->contents().count())
+        {
+            return pComplexParent->contents()[iIndexOfThis - 1];
+        }
+    }
+
+    return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Increments the usage count for this object.
 */
 void QMLEntity::incUsageCount()
