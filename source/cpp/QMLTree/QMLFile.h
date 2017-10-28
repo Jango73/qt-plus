@@ -95,6 +95,9 @@ public:
     virtual QMLEntity* findSymbolDeclaration(const QString& sName);
 
     //!
+    virtual void toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent = nullptr) const Q_DECL_OVERRIDE;
+
+    //!
     virtual CXMLNode toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------

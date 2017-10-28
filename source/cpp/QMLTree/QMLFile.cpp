@@ -325,6 +325,19 @@ QMLEntity* QMLFile::findSymbolDeclaration(const QString& sName)
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Dumps the entity as QML to \a stream using \a iIdent for indentation. \br\br
+    \a pParent is the caller of this method.
+*/
+void QMLFile::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity* pParent) const
+{
+    QMLComplexEntity::toQML(stream, formatter, pParent);
+
+    formatter.writeNewLine(stream);
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Returns a CXMLNode representation of this item. \br\br
     \a pContext is a user defined context. \br
     \a pParent is the caller of this method.
