@@ -205,7 +205,10 @@ void QMLFunction::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLE
 {
     Q_UNUSED(pParent);
 
-    formatter.processFragment(stream, QMLFormatter::qffBeforeFunction);
+    if (m_bIsSignal)
+        formatter.processFragment(stream, QMLFormatter::qffBeforeSignal);
+    else
+        formatter.processFragment(stream, QMLFormatter::qffBeforeFunction);
 
     if (m_bIsSignal)
     {
@@ -230,7 +233,10 @@ void QMLFunction::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLE
 
     stream << " ) ";
 
-    formatter.processFragment(stream, QMLFormatter::qffAfterFunction);
+    if (m_bIsSignal)
+        formatter.processFragment(stream, QMLFormatter::qffAfterSignal);
+    else
+        formatter.processFragment(stream, QMLFormatter::qffAfterFunction);
 
     if (m_bIsSignal == false)
     {

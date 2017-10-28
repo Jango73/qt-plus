@@ -71,6 +71,10 @@ void QMLFormatter::processFragment(QTextStream& stream, EQMLFormatterFragment fr
     switch (fragment)
     {
         case qffBeforeImport:
+        case qffBeforeForNoPreviousSibling:
+        case qffBeforeWhileNoPreviousSibling:
+        case qffBeforeSwitchNoPreviousSibling:
+        case qffBeforeIfNoPreviousSibling:
             writeNewLine(stream);
             break;
 
@@ -93,6 +97,7 @@ void QMLFormatter::processFragment(QTextStream& stream, EQMLFormatterFragment fr
             break;
 
         case qffBeforePropertyName:
+        case qffBeforeSignal:
         case qffBeforeVariableDeclaration:
         case qffBeforeFunctionCall:
         case qffBeforeTopLevelBinaryOp:

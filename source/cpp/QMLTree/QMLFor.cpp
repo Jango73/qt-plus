@@ -91,7 +91,10 @@ void QMLFor::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity
 
     if (m_bIsWhile)
     {
-        formatter.processFragment(stream, QMLFormatter::qffBeforeWhile);
+        if (previousSibling() == nullptr)
+            formatter.processFragment(stream, QMLFormatter::qffBeforeWhileNoPreviousSibling);
+        else
+            formatter.processFragment(stream, QMLFormatter::qffBeforeWhile);
 
         stream << "while (";
 
@@ -111,7 +114,10 @@ void QMLFor::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity
     }
     else
     {
-        formatter.processFragment(stream, QMLFormatter::qffBeforeFor);
+        if (previousSibling() != nullptr)
+            formatter.processFragment(stream, QMLFormatter::qffBeforeFor);
+        else
+            formatter.processFragment(stream, QMLFormatter::qffBeforeForNoPreviousSibling);
 
         stream << "for (";
 

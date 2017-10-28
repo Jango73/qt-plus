@@ -61,7 +61,10 @@ void QMLSwitch::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEnt
 {
     Q_UNUSED(pParent);
 
-    formatter.processFragment(stream, QMLFormatter::qffBeforeSwitch);
+    if (previousSibling() == nullptr)
+        formatter.processFragment(stream, QMLFormatter::qffBeforeSwitchNoPreviousSibling);
+    else
+        formatter.processFragment(stream, QMLFormatter::qffBeforeSwitch);
 
     stream << "switch ( ";
 

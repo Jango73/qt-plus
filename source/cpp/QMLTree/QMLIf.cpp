@@ -70,7 +70,10 @@ void QMLIf::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity*
 {
     Q_UNUSED(pParent);
 
-    formatter.processFragment(stream, QMLFormatter::qffBeforeIf);
+    if (previousSibling() == nullptr)
+        formatter.processFragment(stream, QMLFormatter::qffBeforeIfNoPreviousSibling);
+    else
+        formatter.processFragment(stream, QMLFormatter::qffBeforeIf);
 
     stream << "if ( ";
 

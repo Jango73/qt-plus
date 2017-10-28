@@ -113,4 +113,13 @@ Item {
             }
         }
     }
+
+    function Func4()
+    {
+        while (true)
+        {
+            var foo = 1;
+            var bar = foo;
+        }
+    }
 }
