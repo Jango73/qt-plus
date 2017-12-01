@@ -69,7 +69,7 @@ void QMLQualifiedExpression::toQML(QTextStream& stream, QMLFormatter& formatter,
 
     if (m_bIsParenthesized)
     {
-        stream << " ( ";
+        stream << "(";
     }
 
     bool putDot = false;
@@ -91,6 +91,6 @@ void QMLQualifiedExpression::toQML(QTextStream& stream, QMLFormatter& formatter,
 
     if (m_bIsParenthesized)
     {
-        stream << " ) ";
+        stream << ")";
     }
 }

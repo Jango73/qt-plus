@@ -25,6 +25,21 @@ public:
         eHSV
     };
 
+    enum ERGBComponent
+    {
+        eRed = 0,
+        eGreen = 1,
+        eBlue = 2,
+        eAlpha = 3
+    };
+
+    enum EHSVComponent
+    {
+        eHue = 0,
+        eSaturation = 1,
+        eValue = 2
+    };
+
     //-------------------------------------------------------------------------------------------------
     // Constructeurs et destructeur
     // Constructors and destructor
@@ -42,10 +57,19 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //!
-    QVector<double>& channel(int channel);
+    int sampleCount() const;
 
     //!
-    double peak(int channel) const;
+    QVector<int> &channel(int channel);
+
+    //!
+    double peak(int channel, double* pRadius = nullptr) const;
+
+    //!
+    int peakValue(int channel) const;
+
+    //!
+    bool isSampleExclusive(int iChannel, int iSample, int iSpan = 0, double dTolerance = 0.01) const;
 
     //-------------------------------------------------------------------------------------------------
     // Méthodes privées
@@ -63,6 +87,6 @@ private:
 
 protected:
 
-    int                         m_iSamples;
-    QVector<QVector<double> >   m_vHistogram;       // First dimension is channel
+    int                     m_iSamples;
+    QVector<QVector<int> >  m_vHistogram;       // First dimension is channel
 };

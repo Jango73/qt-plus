@@ -71,7 +71,7 @@ void QMLFunctionCall::toQML(QTextStream& stream, QMLFormatter& formatter, const 
     if (m_pName != nullptr)
         m_pName->toQML(stream, formatter, this);
 
-    stream << " ( ";
+    stream << "(";
 
     if (m_pArguments != nullptr)
     {
@@ -93,7 +93,7 @@ void QMLFunctionCall::toQML(QTextStream& stream, QMLFormatter& formatter, const 
         }
     }
 
-    stream << " ) ";
+    stream << ")";
 
     formatter.processFragment(stream, QMLFormatter::qffAfterFunctionCall);
 }

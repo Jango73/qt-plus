@@ -25,7 +25,7 @@ void QMLConditional::toQML(QTextStream& stream, QMLFormatter& formatter, const Q
     {
         if (m_bIsParenthesized)
         {
-            stream << " ( ";
+            stream << "(";
         }
 
         m_pCondition->toQML(stream, formatter, this);
@@ -36,7 +36,7 @@ void QMLConditional::toQML(QTextStream& stream, QMLFormatter& formatter, const Q
 
         if (m_bIsParenthesized)
         {
-            stream << " ) ";
+            stream << ")";
         }
     }
 }

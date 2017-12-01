@@ -42,17 +42,31 @@ public:
     // Setters
     //-------------------------------------------------------------------------------------------------
 
+    //!
+    void setAttachedTo(QMLEntity* pAttachedTo);
+
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
 
+    //!
+    QMLEntity* attachedTo() const;
+
+    //!
     ECommentType type() const;
+
+    //!
+    bool deadCode() const;
 
     //-------------------------------------------------------------------------------------------------
     // Control methods
     //-------------------------------------------------------------------------------------------------
 
+    //!
     void writeMultiLineComment(QTextStream& stream, QMLFormatter& formatter, const QString& sText) const;
+
+    //!
+    void checkForCode();
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
@@ -70,5 +84,7 @@ public:
 
 protected:
 
+    QMLEntity*      m_pAttachedTo;
     ECommentType    m_eType;
+    bool            m_bDeadCode;
 };

@@ -125,30 +125,46 @@ void QMLFile::solveComments()
             {
                 QMLComplexEntity* pComplexParent = dynamic_cast<QMLComplexEntity*>(pTarget->parent());
 
+                if (pComplexParent == nullptr)
+                    pComplexParent = dynamic_cast<QMLComplexEntity*>(pTarget);
+
                 if (pComplexParent != nullptr)
                 {
                     int entityIndex = pComplexParent->contents().indexOf(pTarget);
+
+                    if (entityIndex == -1)
+                        entityIndex = 0;
 
                     if (entityIndex != -1)
                     {
                         pComplexParent->contents().insert(entityIndex, pComment);
                         pComment->setParent(pComplexParent);
+                        pComment->setAttachedTo(pTarget);
                         m_vComments.removeAt(index);
                         index--;
                     }
                     else
                     {
-                        qWarning() << QString("QMLFile::solveComments() : no valid index for comment at line %1").arg(pComment->position().y() + 1);
+                        qWarning() << QString("QMLFile::solveComments() : multiline comment : no valid index for comment at line %1").arg(pComment->position().y() + 1);
+                        qWarning() << QString("Target class is %1").arg(pTarget != nullptr ? pTarget->metaObject()->className() : "");
+                        qWarning() << QString("Parent class is %1").arg(pTarget != nullptr ? pTarget->parent()->metaObject()->className() : "");
+                        qWarning() << QString("Code: %1").arg(pTarget != nullptr ? pTarget->toString() : "");
                     }
                 }
                 else
                 {
-                    qWarning() << QString("QMLFile::solveComments() : no parent entity found for comment at line %1").arg(pComment->position().y() + 1);
+                    qWarning() << QString("QMLFile::solveComments() : multiline comment : no parent entity found for comment at line %1").arg(pComment->position().y() + 1);
+                    qWarning() << QString("Target class is %1").arg(pTarget != nullptr ? pTarget->metaObject()->className() : "");
+                    qWarning() << QString("Parent class is %1").arg(pTarget != nullptr ? pTarget->parent()->metaObject()->className() : "");
+                    qWarning() << QString("Code: %1").arg(pTarget != nullptr ? pTarget->toString() : "");
                 }
             }
             else
             {
-                qWarning() << QString("QMLFile::solveComments() : no entity found for comment at line %1").arg(pComment->position().y() + 1);
+                qWarning() << QString("QMLFile::solveComments() : multiline comment : no entity found for comment at line %1").arg(pComment->position().y() + 1);
+                qWarning() << QString("Target class is %1").arg(pTarget != nullptr ? pTarget->metaObject()->className() : "");
+                qWarning() << QString("Parent class is %1").arg(pTarget != nullptr ? pTarget->parent()->metaObject()->className() : "");
+                qWarning() << QString("Code: %1").arg(pTarget != nullptr ? pTarget->toString() : "");
             }
         }
         else
@@ -159,38 +175,46 @@ void QMLFile::solveComments()
             {
                 QMLComplexEntity* pComplexParent = dynamic_cast<QMLComplexEntity*>(pTarget->parent());
 
+                if (pComplexParent == nullptr)
+                    pComplexParent = dynamic_cast<QMLComplexEntity*>(pTarget);
+
                 if (pComplexParent != nullptr)
                 {
                     int entityIndex = pComplexParent->contents().indexOf(pTarget);
 
+                    if (entityIndex == -1)
+                        entityIndex = 0;
+
                     if (entityIndex != -1)
                     {
-//                        if (pComment->type() == QMLComment::ctSingleLine)
-//                        {
-                            pComplexParent->contents().insert(entityIndex, pComment);
-//                        }
-//                        else
-//                        {
-//                            pComplexParent->contents().insert(entityIndex + 1, pComment);
-//                        }
-
+                        pComplexParent->contents().insert(entityIndex, pComment);
                         pComment->setParent(pComplexParent);
+                        pComment->setAttachedTo(pTarget);
                         m_vComments.removeAt(index);
                         index--;
                     }
                     else
                     {
-                        qWarning() << QString("QMLFile::solveComments() : no valid index for comment at line %1").arg(pComment->position().y() + 1);
+                        qWarning() << QString("QMLFile::solveComments() : single line comment : no valid index for comment at line %1").arg(pComment->position().y() + 1);
+                        qWarning() << QString("Target class is %1").arg(pTarget != nullptr ? pTarget->metaObject()->className() : "");
+                        qWarning() << QString("Parent class is %1").arg(pTarget != nullptr ? pTarget->parent()->metaObject()->className() : "");
+                        qWarning() << QString("Code: %1").arg(pTarget != nullptr ? pTarget->toString() : "");
                     }
                 }
                 else
                 {
-                    qWarning() << QString("QMLFile::solveComments() : no parent entity found for comment at line %1").arg(pComment->position().y() + 1);
+                    qWarning() << QString("QMLFile::solveComments() : single line comment : no parent entity found for comment at line %1").arg(pComment->position().y() + 1);
+                    qWarning() << QString("Target class is %1").arg(pTarget != nullptr ? pTarget->metaObject()->className() : "");
+                    qWarning() << QString("Parent class is %1").arg(pTarget != nullptr ? pTarget->parent()->metaObject()->className() : "");
+                    qWarning() << QString("Code: %1").arg(pTarget != nullptr ? pTarget->toString() : "");
                 }
             }
             else
             {
-                qWarning() << QString("QMLFile::solveComments() : no entity found for comment at line %1").arg(pComment->position().y() + 1);
+                qWarning() << QString("QMLFile::solveComments() : single line comment : no entity found for comment at line %1").arg(pComment->position().y() + 1);
+                qWarning() << QString("Target class is %1").arg(pTarget != nullptr ? pTarget->metaObject()->className() : "");
+                qWarning() << QString("Parent class is %1").arg(pTarget != nullptr ? pTarget->parent()->metaObject()->className() : "");
+                qWarning() << QString("Code: %1").arg(pTarget != nullptr ? pTarget->toString() : "");
             }
         }
     }
@@ -331,8 +355,8 @@ void QMLFile::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntit
 {
     QMLComplexEntity::toQML(stream, formatter, pParent);
 
-//    foreach (QMLComment* pComment, m_vComments)
-//        pComment->toQML(stream, formatter, this);
+    //    foreach (QMLComment* pComment, m_vComments)
+    //        pComment->toQML(stream, formatter, this);
 
     formatter.writeNewLine(stream);
 }

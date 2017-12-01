@@ -500,7 +500,7 @@ double CImageUtilities::findDominantHue(const QImage& imgSource, double dPrecisi
 
     iSamples = qBound(16, iSamples, 512);
 
-    return CImageHistogram(imgSource, CImageHistogram::eHSV, iSamples, dMinimumSaturation).peak(0);
+    return CImageHistogram(imgSource, CImageHistogram::eHSV, iSamples, dMinimumSaturation).peak(CImageHistogram::eHue);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -515,7 +515,7 @@ double CImageUtilities::findDominantValue(const QImage& imgSource, double dPreci
 
     iSamples = qBound(16, iSamples, 512);
 
-    return CImageHistogram(imgSource, CImageHistogram::eHSV, iSamples).peak(2);
+    return CImageHistogram(imgSource, CImageHistogram::eHSV, iSamples).peak(CImageHistogram::eValue);
 }
 
 //-------------------------------------------------------------------------------------------------

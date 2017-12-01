@@ -131,7 +131,7 @@ void QMLBinaryOperation::toQML(QTextStream& stream, QMLFormatter& formatter, con
 
     if (m_bIsParenthesized)
     {
-        stream << " ( ";
+        stream << "(";
     }
 
     if (m_pLeft != nullptr)
@@ -148,7 +148,7 @@ void QMLBinaryOperation::toQML(QTextStream& stream, QMLFormatter& formatter, con
 
     if (m_bIsParenthesized)
     {
-        stream << " ) ";
+        stream << ")";
     }
 }
 

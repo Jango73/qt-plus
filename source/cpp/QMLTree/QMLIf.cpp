@@ -75,14 +75,14 @@ void QMLIf::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity*
     else
         formatter.processFragment(stream, QMLFormatter::qffBeforeIf);
 
-    stream << "if ( ";
+    stream << "if (";
 
     if (m_pCondition != nullptr)
     {
         m_pCondition->toQML(stream, formatter, this);
     }
 
-    stream << " ) ";
+    stream << ") ";
 
     formatter.processFragment(stream, QMLFormatter::qffAfterIf);
 

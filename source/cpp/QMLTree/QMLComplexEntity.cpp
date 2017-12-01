@@ -5,6 +5,9 @@
 // Application
 #include "QMLComplexEntity.h"
 #include "QMLItem.h"
+#include "QMLComment.h"
+#include "QMLFunction.h"
+#include "QMLPropertyAssignment.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -219,7 +222,86 @@ QVector<QMLEntity*> QMLComplexEntity::grabContents()
 
 static bool compareEntities(QMLEntity*& entity1, QMLEntity*& entity2)
 {
-    int iClassCompare = strcmp(entity1->metaObject()->className(), entity2->metaObject()->className());
+    QMLPropertyAssignment* pAssign1 = dynamic_cast<QMLPropertyAssignment*>(entity1);
+    QMLPropertyAssignment* pAssign2 = dynamic_cast<QMLPropertyAssignment*>(entity2);
+    QMLPropertyDeclaration* pDeclaration1 = dynamic_cast<QMLPropertyDeclaration*>(entity1);
+    QMLPropertyDeclaration* pDeclaration2 = dynamic_cast<QMLPropertyDeclaration*>(entity2);
+
+    // Check id property
+    if (pAssign1 != nullptr && pAssign1->name() != nullptr && pAssign1->name()->toString() == "id")
+        return true;
+
+    if (pAssign2 != nullptr && pAssign2->name() != nullptr && pAssign2->name()->toString() == "id")
+        return false;
+
+    // Check object name property
+    if (pAssign1 != nullptr && pAssign1->name() != nullptr && pAssign1->name()->toString() == "objectName")
+        return true;
+
+    if (pAssign2 != nullptr && pAssign2->name() != nullptr && pAssign2->name()->toString() == "objectName")
+        return false;
+
+    // Check width property
+    if (pAssign1 != nullptr && pAssign1->name() != nullptr && pAssign1->name()->toString() == "width")
+        return true;
+
+    if (pAssign2 != nullptr && pAssign2->name() != nullptr && pAssign2->name()->toString() == "width")
+        return false;
+
+    // Check height property
+    if (pAssign1 != nullptr && pAssign1->name() != nullptr && pAssign1->name()->toString() == "height")
+        return true;
+
+    if (pAssign2 != nullptr && pAssign2->name() != nullptr && pAssign2->name()->toString() == "height")
+        return false;
+
+    // Check property assignement
+    if (pAssign1 != nullptr && pAssign2 == nullptr)
+        return true;
+
+    if (pAssign2 != nullptr && pAssign1 == nullptr)
+        return false;
+
+    // Check property declaration
+    if (pDeclaration1 != nullptr && pDeclaration2 == nullptr)
+        return true;
+
+    if (pDeclaration2 != nullptr && pDeclaration1 == nullptr)
+        return false;
+
+    // Check class name
+    QString sClass1 = entity1->metaObject()->className();
+    QString sClass2 = entity2->metaObject()->className();
+
+    int iClassCompare = strcmp(sClass1.toLatin1().constData(), sClass2.toLatin1().constData());
+
+    if (iClassCompare == 0)
+    {
+        // Check function names
+        QMLFunction* pFunction1 = dynamic_cast<QMLFunction*>(entity1);
+        QMLFunction* pFunction2 = dynamic_cast<QMLFunction*>(entity2);
+
+        if (pFunction1 != nullptr && pFunction2 != nullptr && pFunction1->name() != nullptr && pFunction2->name() != nullptr)
+        {
+            int iNameCompare = strcmp(
+                        pFunction1->name()->toString().toLatin1().constData(),
+                        pFunction2->name()->toString().toLatin1().constData()
+                        );
+
+            return iNameCompare < 0;
+        }
+
+        // Check property declaration names
+        if (pDeclaration1 != nullptr && pDeclaration2 != nullptr && pDeclaration1->name() != nullptr && pDeclaration2->name() != nullptr)
+        {
+            int iNameCompare = strcmp(
+                        pDeclaration1->name()->toString().toLatin1().constData(),
+                        pDeclaration2->name()->toString().toLatin1().constData()
+                        );
+
+            return iNameCompare < 0;
+        }
+    }
 
     return iClassCompare > 0;
 }
@@ -229,17 +311,40 @@ static bool compareEntities(QMLEntity*& entity1, QMLEntity*& entity2)
 */
 void QMLComplexEntity::sortContents()
 {
-//    QMLEntity::sortContents();
+    QMLEntity::sortContents();
 
-//    if (dynamic_cast<QMLItem*>(this) != nullptr)
-//    {
-//        qSort(m_vContents.begin(), m_vContents.end(), compareEntities);
-//    }
+    // TODO : item orders must not change
+    /*
+    if (dynamic_cast<QMLItem*>(this) != nullptr)
+    {
+        QVector<QMLEntity*> vContentsCopy;
 
-//    foreach (QMLEntity* pChild, m_vContents)
-//    {
-//        pChild->sortContents();
-//    }
+        foreach (QMLEntity* pEntity, m_vContents)
+            vContentsCopy << pEntity;
+
+        qSort(m_vContents.begin(), m_vContents.end(), compareEntities);
+
+        // Put comments in correct order
+        for (int index = 0; index < m_vContents.count(); index++)
+        {
+            QMLComment* pComment = dynamic_cast<QMLComment*>(vContentsCopy[index]);
+
+            if (pComment != nullptr && pComment->attachedTo() != nullptr)
+            {
+                int from = m_vContents.indexOf(pComment);
+                int to = m_vContents.indexOf(pComment->attachedTo());
+
+                if (from != -1 && to != -1)
+                    m_vContents.move(from, to);
+            }
+        }
+    }
+
+    foreach (QMLEntity* pChild, m_vContents)
+    {
+        pChild->sortContents();
+    }
+    */
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -387,7 +492,7 @@ void QMLComplexEntity::toQML(QTextStream& stream, QMLFormatter& formatter, const
 
         if (m_bIsArray)
         {
-            stream << " [";
+            stream << "[";
             formatter.processFragment(stream, QMLFormatter::qffBeforeItemContent);
         }
         else if (m_bIsObject || m_bIsBlock || isNamed())
@@ -398,7 +503,7 @@ void QMLComplexEntity::toQML(QTextStream& stream, QMLFormatter& formatter, const
 
         if (m_bIsParenthesized)
         {
-            stream << " ( ";
+            stream << "(";
         }
 
         int iCount = 0;
@@ -423,18 +528,18 @@ void QMLComplexEntity::toQML(QTextStream& stream, QMLFormatter& formatter, const
 
         if (m_bIsParenthesized)
         {
-            stream << " ) ";
+            stream << ")";
         }
 
         if (m_bIsArray)
         {
             formatter.processFragment(stream, QMLFormatter::qffAfterItemContent);
-            stream << "] ";
+            stream << "]";
         }
         else if (m_bIsObject || m_bIsBlock || isNamed())
         {
             formatter.processFragment(stream, QMLFormatter::qffAfterItemContent);
-            stream << "} ";
+            stream << "}";
         }
     }
 }

@@ -410,6 +410,10 @@ void QMLAnalyzerError::revertToOriginalPosition()
 
 //-------------------------------------------------------------------------------------------------
 
+QStringList QMLTreeContext::s_lOperators;
+
+//-------------------------------------------------------------------------------------------------
+
 /*!
     Constructs a QMLTreeContext.
 */
@@ -444,14 +448,23 @@ QMLTreeContext::QMLTreeContext()
     m_mTokens["null"] = TOKEN_NULL;
     m_mTokens["undefined"] = TOKEN_UNDEFINED;
 
-    m_eEngine.globalObject().setProperty("wrapper", m_eEngine.newQObject(new QMLTreeContextWrapper(this)));
-
-//    QFile fScript(":/beautify.js");
-//    if (fScript.open(QFile::ReadOnly))
-//    {
-//        m_sBeautifyScript = fScript.readAll();
-//        fScript.close();
-//    }
+    if (s_lOperators.count() == 0)
+    {
+        s_lOperators << "{";
+        s_lOperators << "}";
+        s_lOperators << "(";
+        s_lOperators << ")";
+        s_lOperators << "[";
+        s_lOperators << "]";
+        s_lOperators << "+";
+        s_lOperators << "-";
+        s_lOperators << "*";
+        s_lOperators << "/";
+        s_lOperators << ">";
+        s_lOperators << "<";
+        s_lOperators << ">=";
+        s_lOperators << "<=";
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -473,8 +486,6 @@ QMLTreeContext::~QMLTreeContext()
 
     m_sScopes.clear();
     m_vFiles.clear();
-
-    m_eEngine.globalObject().setProperty("wrapper", m_eEngine.newQObject(nullptr));
 
 #ifdef TRACK_ENTITIES
 
@@ -638,6 +649,13 @@ QStack<QMLTreeContext::QMLScope*>& QMLTreeContext::scopes()
 
 //-------------------------------------------------------------------------------------------------
 
+const QStringList& QMLTreeContext::operators()
+{
+    return s_lOperators;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 /*!
     Adds \a sFileName for parsing.
 */
@@ -699,6 +717,43 @@ QMLTreeContext::EParseError QMLTreeContext::parse()
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Parses the input string.
+*/
+QMLTreeContext::EParseError QMLTreeContext::parseString(const QString& sText)
+{
+    m_eError = peSuccess;
+    m_tErrorObject.clear();
+
+    QMLFile* pFile = new QMLFile(QPoint(), this, "");
+
+    m_vFiles << pFile;
+
+    // Stack a new scope with the text
+    m_sScopes.push(new QMLScope(pFile, sText));
+
+    // Tell the world parsing started
+    emit parsingStarted("");
+
+    m_eError = parse_Internal();
+
+    // Delete all scopes
+    foreach (QMLScope* pScope, m_sScopes)
+    {
+        delete pScope;
+    }
+
+    // Clear scope stack
+    m_sScopes.clear();
+
+    // Tell the world parsing has ended
+    emit parsingFinished("");
+
+    return m_eError;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Starts parsing in a thread.
 */
 void QMLTreeContext::threadedParse()
@@ -743,7 +798,7 @@ QMLTreeContext::EParseError QMLTreeContext::parseImportFile(const QString& sFile
             m_sScopes.push(new QMLScope(pFile));
 
             // Tell the world parsing started
-            emit importParsingStarted(SCOPE.m_pFile->fileName());
+            emit importParsingStarted(SCOPE.fileName());
 
             parse_Internal();
 
@@ -783,7 +838,7 @@ QString QMLTreeContext::tokenValue() const
 void QMLTreeContext::showError(const QString& sText)
 {
     m_eError = SCOPE.m_eError = peSyntaxError;
-    m_tErrorObject = QMLAnalyzerError(SCOPE.m_pFile->fileName(), QPoint(SCOPE.m_iColumn, SCOPE.m_iLine), sText);
+    m_tErrorObject = QMLAnalyzerError(SCOPE.fileName(), QPoint(SCOPE.m_iColumn, SCOPE.m_iLine), sText);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -799,9 +854,6 @@ void QMLTreeContext::writeFile(QMLFile* pFile)
 
         QMLFormatter formatter;
         pFile->toQML(stream, formatter);
-
-        // QJSValue output = m_eEngine.evaluate(m_sBeautifyScript);
-        // m_sText = output.toString();
 
         file.write(m_sText.toLatin1());
         file.close();

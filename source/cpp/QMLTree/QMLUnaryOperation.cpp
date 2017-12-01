@@ -92,7 +92,7 @@ void QMLUnaryOperation::toQML(QTextStream& stream, QMLFormatter& formatter, cons
 
     if (m_bIsParenthesized)
     {
-        stream << " ( ";
+        stream << "(";
     }
 
     if (m_bIsPostFix == false)
@@ -118,6 +118,8 @@ void QMLUnaryOperation::toQML(QTextStream& stream, QMLFormatter& formatter, cons
             if (m_eOperator == uoCase)
             {
                 stream << ":";
+
+                formatter.writeNewLine(stream);
             }
         }
 
@@ -126,7 +128,7 @@ void QMLUnaryOperation::toQML(QTextStream& stream, QMLFormatter& formatter, cons
 
     if (m_bIsParenthesized)
     {
-        stream << " ) ";
+        stream << ")";
     }
 }
 

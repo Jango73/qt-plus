@@ -111,6 +111,8 @@
     \li name - The name of the entity
     \endlist
 
+    \li QMLComment (extends QMLEntity) - A string that is a comment.
+
     \li QMLIdentifier (extends QMLEntity) - A string that is an identifier.
 
     \li QMLPragma - A pragma statement like [ pragma Singleton ]
@@ -413,6 +415,7 @@
 #define ANALYZER_TOKEN_FILE_NAME        "filename"
 #define ANALYZER_TOKEN_TRUE             "true"
 #define ANALYZER_TOKEN_FALSE            "false"
+#define ANALYZER_TOKEN_DEAD_CODE        "DeadCode"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -859,6 +862,7 @@ bool QMLAnalyzer::runGrammar_Reject(QMLFile* pFile, const QString& sClassName, Q
     QString sList = processMacros(xRule.attributes()[ANALYZER_TOKEN_LIST]);
     QString sClass = processMacros(xRule.attributes()[ANALYZER_TOKEN_CLASS]);
     QString sUsed = processMacros(xRule.attributes()[ANALYZER_TOKEN_USED]);
+    QString sDeadCode = processMacros(xRule.attributes()[ANALYZER_TOKEN_DEAD_CODE]);
 
     if (runGrammar_SatisfiesConditions(pFile, sClassName, pEntity, xRule))
     {
@@ -931,6 +935,7 @@ bool QMLAnalyzer::runGrammar_Reject(QMLFile* pFile, const QString& sClassName, Q
                 }
             }
         }
+        // Check import usage
         else if (sUsed.isEmpty() == false)
         {
             QMLImport* pImport = dynamic_cast<QMLImport*>(pEntity);
@@ -938,6 +943,20 @@ bool QMLAnalyzer::runGrammar_Reject(QMLFile* pFile, const QString& sClassName, Q
             if (pImport != nullptr)
             {
                 if ((runGrammar_importUsed(pFile, pImport) == false) ^ bInverseLogic)
+                {
+                    outputError(pFile->fileName(), pEntity->position(), sText);
+                    return true;
+                }
+            }
+        }
+        // Check dead code statement
+        else if (sDeadCode.isEmpty() == false)
+        {
+            QMLComment* pComment = dynamic_cast<QMLComment*>(pEntity);
+
+            if (pComment != nullptr)
+            {
+                if ((pComment->deadCode() && sDeadCode.toLower() == ANALYZER_TOKEN_TRUE) ^ bInverseLogic)
                 {
                     outputError(pFile->fileName(), pEntity->position(), sText);
                     return true;

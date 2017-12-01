@@ -41,6 +41,7 @@ public:
 
     //-------------------------------------------------------------------------------------------------
     // Constructors and destructor
+    //-------------------------------------------------------------------------------------------------
 
     //!
     QMLAnalyzerError();
@@ -56,11 +57,13 @@ public:
 
     //-------------------------------------------------------------------------------------------------
     // Setters
+    //-------------------------------------------------------------------------------------------------
 
     void setPosition(const QPoint& point);
 
     //-------------------------------------------------------------------------------------------------
     // Getters
+    //-------------------------------------------------------------------------------------------------
 
     //!
     QString fileName() const;
@@ -79,6 +82,7 @@ public:
 
     //-------------------------------------------------------------------------------------------------
     // Control methods
+    //-------------------------------------------------------------------------------------------------
 
     //!
     void clear();
@@ -137,22 +141,16 @@ public:
             , m_bLineEmpty(true)
             , m_bPreviousLineEmpty(true)
             , m_bDocComment(false)
+            , m_pStream(new QTextStream(&m_sInputString))
+            , m_pCurrentTokenValue(new QString())
         {
         }
 
         QMLScope(QMLFile* pFile)
-            : m_pFile(pFile)
-            , m_eError(peSuccess)
-            , m_iLine(0)
-            , m_iColumn(0)
-            , m_iPreviousLine(0)
-            , m_iPreviousColumn(0)
-            , m_bParsingFloat(false)
-            , m_bParsingHexa(false)
-            , m_bLineEmpty(true)
-            , m_bPreviousLineEmpty(true)
-            , m_bDocComment(false)
+            : QMLScope()
         {
+            m_pFile = pFile;
+
             QFile fInputFile(pFile->fileName());
 
             if (fInputFile.open(QFile::ReadOnly))
@@ -160,9 +158,13 @@ public:
                 m_sInputString = fInputFile.readAll();
                 fInputFile.close();
             }
+        }
 
-            m_pStream = new QTextStream(&m_sInputString);
-            m_pCurrentTokenValue = new QString();
+        QMLScope(QMLFile* pFile, const QString& sText)
+            : QMLScope()
+        {
+            m_pFile = pFile;
+            m_sInputString = sText;
         }
 
         ~QMLScope()
@@ -183,6 +185,14 @@ public:
             return false;
         }
 
+        QString fileName() const
+        {
+            if (m_pFile == nullptr)
+                return "";
+
+            return m_pFile->fileName();
+        }
+
         QMLFile*            m_pFile;
         EParseError         m_eError;
         QString             m_sInputString;
@@ -201,7 +211,6 @@ public:
     };
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
@@ -254,8 +263,10 @@ public:
     //!
     QStack<QMLTreeContext::QMLScope*>& scopes();
 
+    //!
+    static const QStringList& operators();
+
     //-------------------------------------------------------------------------------------------------
-    // Méthodes de contrôle
     // Control methods
     //-------------------------------------------------------------------------------------------------
 
@@ -264,6 +275,9 @@ public:
 
     //!
     EParseError parse();
+
+    //!
+    EParseError parseString(const QString& sText);
 
     //!
     void threadedParse();
@@ -307,7 +321,6 @@ signals:
 private:
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes de contrôle privées
     // Private control methods
     //-------------------------------------------------------------------------------------------------
 
@@ -335,7 +348,6 @@ protected:
     EParseError parse_Internal();
 
     //-------------------------------------------------------------------------------------------------
-    // Propriétés
     // Properties
     //-------------------------------------------------------------------------------------------------
 
@@ -347,33 +359,8 @@ protected:
     QMap<QString, int>      m_mTokens;
     QVector<QMLFile*>       m_vFiles;
     QStack<QMLScope*>       m_sScopes;
-    QJSEngine               m_eEngine;
     QString                 m_sText;
-    // QString                 m_sBeautifyScript;
     bool                    m_bIncludeImports;
-};
 
-//-------------------------------------------------------------------------------------------------
-
-class QTPLUSSHARED_EXPORT QMLTreeContextWrapper : public QObject
-{
-    Q_OBJECT
-
-public:
-
-    //!
-    QMLTreeContextWrapper(QMLTreeContext* pContext)
-        : m_pContext(pContext)
-    {
-    }
-
-    //!
-    Q_INVOKABLE QJSValue text()
-    {
-        return m_pContext->m_eEngine.toScriptValue(m_pContext->m_sText);
-    }
-
-protected:
-
-    QMLTreeContext*     m_pContext;
+    static QStringList      s_lOperators;
 };

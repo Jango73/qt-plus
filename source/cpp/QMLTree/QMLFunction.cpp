@@ -224,14 +224,14 @@ void QMLFunction::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLE
         m_pName->toQML(stream, formatter, this);
     }
 
-    stream << " ( ";
+    stream << "(";
 
     if (m_pParameters != nullptr)
     {
         m_pParameters->toQML(stream, formatter, this);
     }
 
-    stream << " ) ";
+    stream << ")";
 
     if (m_bIsSignal)
         formatter.processFragment(stream, QMLFormatter::qffAfterSignal);

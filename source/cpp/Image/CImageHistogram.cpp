@@ -1,3 +1,5 @@
+// Qt
+#include <QDebug>
 
 // Library
 #include "CImageHistogram.h"
@@ -7,7 +9,7 @@
 /*!
     \class CImageHistogram
     \inmodule qt-plus
-    \brief Stores the histogram of an image as real numbers for 3 channels.
+    \brief Stores the histogram of an image as real numbers for 4 channels.
 */
 
 /*!
@@ -19,7 +21,37 @@
 
     \value eHSV
     This indicates the hue-saturation-value color space.
+*/
 
+/*!
+    \enum CImageHistogram::ERGBComponent
+    Used by methods to specify a RGBA channel.
+
+    \value eRed
+    This indicates the red channel.
+
+    \value eGreen
+    This indicates the green channel.
+
+    \value eBlue
+    This indicates the blue channel.
+
+    \value eAlpha
+    This indicates the alpha channel.
+*/
+
+/*!
+    \enum CImageHistogram::EHSVComponent
+    Used by methods to specify a HSV channel.
+
+    \value eHue
+    This indicates the hue channel.
+
+    \value eSaturation
+    This indicates the saturation channel.
+
+    \value eValue
+    This indicates the value channel.
 */
 
 //-------------------------------------------------------------------------------------------------
@@ -33,7 +65,7 @@
 */
 CImageHistogram::CImageHistogram(const QImage &imgSource, EOperateOn eOperateOn, int iSamples, double dMinimumSaturation)
 {
-    qreal r, g, b;
+    qreal r, g, b, a;
     qreal h, s, v;
     int where;
 
@@ -45,19 +77,21 @@ CImageHistogram::CImageHistogram(const QImage &imgSource, EOperateOn eOperateOn,
 
     m_iSamples = iSamples;
 
-    // Create 3 channels
+    // Create 4 channels
 
-    m_vHistogram.append(QVector<double>());
-    m_vHistogram.append(QVector<double>());
-    m_vHistogram.append(QVector<double>());
+    m_vHistogram.append(QVector<int>());
+    m_vHistogram.append(QVector<int>());
+    m_vHistogram.append(QVector<int>());
+    m_vHistogram.append(QVector<int>());
 
     // Create initial channel values
 
     for (int index = 0; index < m_iSamples; index++)
     {
-        m_vHistogram[0].append(0);
-        m_vHistogram[1].append(0);
-        m_vHistogram[2].append(0);
+        m_vHistogram[eRed].append(0);
+        m_vHistogram[eGreen].append(0);
+        m_vHistogram[eBlue].append(0);
+        m_vHistogram[eAlpha].append(0);
     }
 
     // Iterate on pixels
@@ -68,6 +102,7 @@ CImageHistogram::CImageHistogram(const QImage &imgSource, EOperateOn eOperateOn,
         {
             QRgb currentPixel = imgSource.pixel(x, y);
             QColor currentColor(currentPixel);
+            a = currentColor.alphaF();
 
             switch (eOperateOn)
             {
@@ -79,15 +114,15 @@ CImageHistogram::CImageHistogram(const QImage &imgSource, EOperateOn eOperateOn,
 
                     where = (int) (r * (qreal) (m_iSamples - 1));
                     where = qBound(0, where, m_iSamples - 1);
-                    m_vHistogram[0][where]++;
+                    m_vHistogram[eRed][where]++;
 
                     where = (int) (g * (qreal) (m_iSamples - 1));
                     where = qBound(0, where, m_iSamples - 1);
-                    m_vHistogram[1][where]++;
+                    m_vHistogram[eGreen][where]++;
 
                     where = (int) (b * (qreal) (m_iSamples - 1));
                     where = qBound(0, where, m_iSamples - 1);
-                    m_vHistogram[2][where]++;
+                    m_vHistogram[eBlue][where]++;
 
                     break;
                 }
@@ -100,19 +135,23 @@ CImageHistogram::CImageHistogram(const QImage &imgSource, EOperateOn eOperateOn,
                     {
                         where = (int) (h * (qreal) (m_iSamples - 1));
                         where = qBound(0, where, m_iSamples - 1);
-                        m_vHistogram[0][where]++;
+                        m_vHistogram[eHue][where]++;
 
                         where = (int) (s * (qreal) (m_iSamples - 1));
                         where = qBound(0, where, m_iSamples - 1);
-                        m_vHistogram[1][where]++;
+                        m_vHistogram[eSaturation][where]++;
                     }
 
                     where = (int) (v * (qreal) (m_iSamples - 1));
                     where = qBound(0, where, m_iSamples - 1);
-                    m_vHistogram[2][where]++;
+                    m_vHistogram[eValue][where]++;
 
                     break;
                 }
+
+                where = (int) (a * (qreal) (m_iSamples - 1));
+                where = qBound(0, where, m_iSamples - 1);
+                m_vHistogram[eAlpha][where]++;
             }
         }
     }
@@ -130,9 +169,19 @@ CImageHistogram::~CImageHistogram()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns a vector of doubles for \a channel.
+    Returns the number of samples.
 */
-QVector<double>& CImageHistogram::channel(int channel)
+int CImageHistogram::sampleCount() const
+{
+    return m_iSamples;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns a vector of integers for \a channel.
+*/
+QVector<int>& CImageHistogram::channel(int channel)
 {
     if (validChannel(channel))
     {
@@ -145,30 +194,98 @@ QVector<double>& CImageHistogram::channel(int channel)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns the peak value of \a channel.
+    Returns the normalized peak along the x axis of \a channel. \br\br
+    \a pRadius, if not null, will contain the normalized radius which contains values > 0 around the peak
 */
-double CImageHistogram::peak(int channel) const
+double CImageHistogram::peak(int channel, double* pRadius) const
 {
+    if (pRadius != nullptr)
+    {
+        *pRadius = 0.0;
+    }
+
     if (validChannel(channel))
     {
-        double dPeak = 0.0;
-        int dPeakIndex = 0;
+        int iPeak = 0;
+        int iPeakIndex = -1;
 
         for (int index = 0; index < m_iSamples; index++)
         {
-            double dStoredValue = m_vHistogram[channel][index];
+            int iStoredValue = m_vHistogram[channel][index];
 
-            if (dStoredValue > dPeak)
+            if (iStoredValue > iPeak)
             {
-                dPeak = dStoredValue;
-                dPeakIndex = index;
+                iPeak = iStoredValue;
+                iPeakIndex = index;
             }
         }
 
-        return (double) dPeakIndex / (double) (m_iSamples - 1);
+        if (iPeakIndex != -1)
+        {
+            if (pRadius != nullptr)
+            {
+                int iPeakStartIndex = iPeakIndex;
+                int iPeakEndIndex = iPeakIndex;
+
+                for (int index = iPeakIndex - 1; index > 0; index--)
+                {
+                    int iStoredValue = m_vHistogram[channel][index];
+
+                    if (iStoredValue == 0)
+                        break;
+
+                    iPeakStartIndex = index;
+                }
+
+                for (int index = iPeakIndex + 1; index < m_iSamples; index++)
+                {
+                    int iStoredValue = m_vHistogram[channel][index];
+
+                    if (iStoredValue == 0)
+                        break;
+
+                    iPeakEndIndex = index;
+                }
+
+                *pRadius = (double) (iPeakEndIndex - iPeakStartIndex) / (double) m_iSamples;
+            }
+
+            return (double) iPeakIndex / (double) m_iSamples;
+        }
+        else
+        {
+            // qDebug() << "iPeakIndex != -1 is false";
+        }
     }
 
     return 0.0;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns the peak along the y axis of \a channel (ie the number of pixels using the peak value). \br\br
+*/
+int CImageHistogram::peakValue(int channel) const
+{
+    if (validChannel(channel))
+    {
+        int iPeak = 0;
+
+        for (int index = 0; index < m_iSamples; index++)
+        {
+            int iStoredValue = m_vHistogram[channel][index];
+
+            if (iStoredValue > iPeak)
+            {
+                iPeak = iStoredValue;
+            }
+        }
+
+        return iPeak;
+    }
+
+    return 0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -180,6 +297,35 @@ bool CImageHistogram::validChannel(int channel) const
 
     if (channel > m_vHistogram.count() - 1)
         return false;
+
+    return true;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns true if the sample number \a iSample is the only one containing a value greater than \a dTolerance. \br\br
+    \a iChannel is the channel on which to operate \br
+    \a iSpan widens the range of \a iSample : if equal to 2, the logic for \a iSample will also be applied to \a iSample - 2, \a iSample - 1, \a iSample + 1, \a iSample + 2
+*/
+bool CImageHistogram::isSampleExclusive(int iChannel, int iSample, int iSpan, double dTolerance) const
+{
+    if (validChannel(iChannel))
+    {
+        for (int index = 0; index < m_iSamples; index++)
+        {
+            if (index >= iSample - iSpan && index <= iSample + iSpan)
+            {
+                if (m_vHistogram[iChannel][index] <= dTolerance)
+                    return false;
+            }
+            else
+            {
+                if (m_vHistogram[iChannel][index] > dTolerance)
+                    return false;
+            }
+        }
+    }
 
     return true;
 }
