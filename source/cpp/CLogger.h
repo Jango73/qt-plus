@@ -23,10 +23,11 @@
 //-------------------------------------------------------------------------------------------------
 // Use the following macros to log
 
-#ifdef LINUX
-#define __FILE_NOPATH__     (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
-#else
+#ifdef WIN32
 #define __FILE_NOPATH__         (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
+#define __PRETTY_FUNCTION__     (__func__)
+#else
+#define __FILE_NOPATH__         (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #define __PRETTY_FUNCTION__     (__func__)
 #endif
 
