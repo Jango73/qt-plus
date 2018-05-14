@@ -16,7 +16,10 @@
 #include <QVector3D>
 #include <QMatrix4x4>
 #include <QQuaternion>
+
+#ifdef WIN32
 #include <QGeoCoordinate>
+#endif
 
 // Application
 #include "CSingleton.h"
@@ -50,9 +53,14 @@ public:
     //! Returns a transform matrix that rotates a point from the geocentric coordinate \a vReference to the geocentric coordinate of lat/lon = 0.
     QMatrix4x4 getGeoReferenceMatrix(const QVector3D& vReference);
 
+#ifdef WIN32
+
     //! Returns a 3D point which is the xyz equivalent of \a gPosition relative to \a gReference.
     QVector3D GeoCoordinateToVector3D(const QGeoCoordinate& gPosition, const QGeoCoordinate& gReference);
 
     //! Returns a geo coordinate which is the geodetic equivalent of \a vPosition, relative to \a gReference.
     QGeoCoordinate Vector3DToGeoCoordinate(const QVector3D& gPosition, const QGeoCoordinate& gReference);
+
+#endif
+
 };
