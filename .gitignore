@@ -3,6 +3,7 @@
 *.lo
 *.o
 *.obj
+*.directory
 
 # Precompiled Headers
 *.gch
@@ -31,6 +32,9 @@
 # Other
 /bin/*.xml
 /bin/*.qml
+/bin/*.so.1
+/bin/*.so.1.0
+/bin/*.so.1.0.0
 /help
 /moc
 /obj
@@ -46,3 +50,4 @@ Makefile.*
 /_trash
 /debug/*
 /release/*
+qrc_*
