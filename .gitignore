@@ -3,7 +3,6 @@
 *.lo
 *.o
 *.obj
-*.directory
 
 # Precompiled Headers
 *.gch
@@ -11,6 +10,9 @@
 
 # Compiled Dynamic libraries
 *.so
+*.so.1
+*.so.1.0
+*.so.1.0.0
 *.dylib
 *.dll
 
@@ -29,25 +31,57 @@
 *.out
 *.app
 
-# Other
+# Qt
+/.qmake.cache
+/.qmake.stash
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.moc
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+*build-*
+
+# Make
+Makefile
+Makefile*
+Makefile.*
+
+# Git
+*.directory
+*.stash
+
+# Log
+*.log
+*.0
+*.1
+*.2
+*.3
+*.4
+*.5
+*.6
+*.7
+*.8
+*.9
+
+# Blender
+*.blend1
+
+# Project specific
 /bin/*.xml
 /bin/*.qml
-/bin/*.so.1
-/bin/*.so.1.0
-/bin/*.so.1.0.0
 /help
 /moc
 /obj
-Makefile
-Makefile.*
-*.stash
-*.Release
+/_trash
+/debug/*
+/release/*
 *.Debug
+*.Release
 *.output
 *.dot
 *.user
 *.bak
-/_trash
-/debug/*
-/release/*
-qrc_*
