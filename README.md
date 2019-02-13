@@ -60,6 +60,14 @@ Can do the following:
 * Generate dynamic *HTML* content via overridden methods.
 * More or less efficient flood protection (has not been tested on large scale)
 
+### CDynamicHTTPServer
+Implements the base functionalities of a web server that generates dynamic HTML content.
+A subclass of CDynamicHTTPServer may generate content in two ways:
+* Using a CWebComposer to generate HTML tags in a string
+* Using a CWebFactory to generate a CWebPage, which is a container of CWebControls
+
+The second method works like ASP, with a view state that enables to transfer a serialized, compressed and eventually crypted (when someone codes it) version of the CWebPage between server and client. See the documentation of CWebPage for more information.
+
 ### CMJPEGClient
 A client for *MJPEG* streams. Notifies via signal whenever a new image arrives.
 
