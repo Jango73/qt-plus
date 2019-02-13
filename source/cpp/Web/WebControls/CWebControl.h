@@ -32,7 +32,7 @@ class IWebControlObserver
 {
 public:
 
-    //! Méthode à implémenter pour gérer l'évènement de l'objet observé
+    //! Implement this to handle an event for the observed control
     virtual void controlEvent(CWebControl* pControl, QString sEvent, QString sParam) = 0;
 
     //!
@@ -41,7 +41,7 @@ public:
 
 //-------------------------------------------------------------------------------------------------
 
-//! Définit un contrôle de page web
+//! Defines a web control
 class QTPLUSSHARED_EXPORT CWebControl : public QObject, public ISerializable, public IWebControlObserver
 {
     Q_OBJECT
@@ -49,19 +49,19 @@ class QTPLUSSHARED_EXPORT CWebControl : public QObject, public ISerializable, pu
 public:
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
+    // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
     //!
     static CWebControl* instantiator();
 
-    //! Constructeur par défaut
+    //! Default constructor
     CWebControl();
 
-    //! Constructeur avec paramètres
+    //! Constructor
     CWebControl(const QString& sName, const QString& sCaption, const QString& sParam = "");
 
-    //! Destructeur
+    //! Destructor
     virtual ~CWebControl();
 
     //-------------------------------------------------------------------------------------------------
@@ -148,7 +148,7 @@ public:
     CWebControl* getRoot();
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes héritées
+    // Inherited methods
     //-------------------------------------------------------------------------------------------------
 
     //!
@@ -157,26 +157,26 @@ public:
     //!
     virtual qint32 getObserverID() const;
 
-    //!
+    //! Serializes the control to a stream
     virtual void serialize(QDataStream& stream, CObjectTracker* pTracker) const Q_DECL_OVERRIDE;
 
-    //!
+    //! Deserializes the control from a stream
     virtual void deserialize(QDataStream& stream, CObjectTracker* pTracker, QObject* pRootObject) Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes de construction de page
+    // Page construction methods
     //-------------------------------------------------------------------------------------------------
 
-    //!
+    //! Adds a control as a child of this control
     CWebControl* addControl(CWebControl* pControl);
 
-    //!
+    //! Deletes the child control referenced by pControl
     void deleteControl(CWebControl* pControl);
 
-    //!
+    //! Add a control observer that watches this control
     CWebControl* addObserver(IWebControlObserver* pObserver);
 
-    //!
+    //! Adds required HTML text in sHead and sBody to render this control
     virtual void addHTML(QString& sHead, QString& sBody);
 
     //!
@@ -189,49 +189,43 @@ public:
     QString addCustomHTMLEvent(QString& sHead, QString sEvent, QString sFunctionBody) const;
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes de gestion d'évènements
+    // Event handling methods
     //-------------------------------------------------------------------------------------------------
 
-    //!
+    //! Generates javascript that will modify an object property client-side
     void propertyModified(const QString& sPropertyName, const QString& sPropertyValue);
 
-    //!
+    //! Generates javascript that will add a child control client-side
     void controlAdded(CWebControl* pControl);
 
-    //!
+    //! Generates javascript that will delete a child control client-side
     void controlDeleted(const QString& sChildCodeName);
 
-    //!
+    //! This can be called to create a redirection to the URL in sPropertyValue
     void locationModified(const QString& sPropertyValue);
 
-    //!
+    //! Adds the javascript snippet in sScript to the page that owns this control
     void scriptCall(const QString& sScript);
 
-    //!
+    //! Finds sControl and calls its handleEvent method, then calls the controlEvent method of its observers
     virtual void handleEvent(QString sControl, QString sEvent, QString sParam);
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes diverses
+    // Various methods
     //-------------------------------------------------------------------------------------------------
 
-    //!
+    //! Adds a javascript snippet loaded from the resource file sFileName to sHead
     void addScriptFromResources(QString& sHead, const QString &sFileName) const;
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes statiques
+    // Static methods
     //-------------------------------------------------------------------------------------------------
 
-    //!
+    //! Returns a unique ID for a web control
     static qint32 generateID();
 
     //-------------------------------------------------------------------------------------------------
-    // Signaux
-    //-------------------------------------------------------------------------------------------------
-
-signals:
-
-    //-------------------------------------------------------------------------------------------------
-    // Propriétés
+    // Properties
     //-------------------------------------------------------------------------------------------------
 
 protected:

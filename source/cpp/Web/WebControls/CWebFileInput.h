@@ -8,6 +8,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
+//! Defines a web file input control
 class QTPLUSSHARED_EXPORT CWebFileInput : public CWebControl
 {
     Q_OBJECT
@@ -15,23 +16,23 @@ class QTPLUSSHARED_EXPORT CWebFileInput : public CWebControl
 public:
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
+    // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //!
+    //! Instantiates a new CWebFileInput
     static CWebControl* instantiator();
 
-    //! Constructeur par défaut
+    //! Default constructor
     CWebFileInput();
 
-    //! Constructeur avec paramètres
+    //! Constructor
     CWebFileInput(const QString& sName, const QString& sCaption);
 
-    //! Destructeur
+    //! Destructor
     virtual ~CWebFileInput();
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes héritées
+    // Inherited methods
     //-------------------------------------------------------------------------------------------------
 
     //!

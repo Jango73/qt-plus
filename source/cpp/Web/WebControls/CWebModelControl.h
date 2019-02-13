@@ -5,6 +5,7 @@
 #include "../../IJSONModelProvider.h"
 #include "CWebControl.h"
 
+//! Defines a control that uses a JSON model for data
 class QTPLUSSHARED_EXPORT CWebModelControl : public CWebControl
 {
     Q_OBJECT

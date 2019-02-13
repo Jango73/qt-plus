@@ -101,10 +101,10 @@ public:
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //! Constructeur
+    //! Constructor
     CHTTPServer(quint16 port, QObject* parent = 0);
 
-    //! Destructeur
+    //! Destructor
     virtual ~CHTTPServer();
 
     //-------------------------------------------------------------------------------------------------

@@ -8,6 +8,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
+//! Defines a web div element
 class QTPLUSSHARED_EXPORT CWebDiv : public CWebControl
 {
     Q_OBJECT
@@ -15,18 +16,18 @@ class QTPLUSSHARED_EXPORT CWebDiv : public CWebControl
 public:
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
+    // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //!
+    //! Instantiates a new CWebDiv
     static CWebControl* instantiator();
 
-    //! Constructeur par défaut
+    //! Default constructor
     CWebDiv();
 
-    //! Constructeur avec paramètres
+    //! Constructor
     CWebDiv(const QString& sName, const QString& sCaption);
 
-    //! Destructeur
+    //! Destructor
     virtual ~CWebDiv();
 };

@@ -420,7 +420,7 @@ void CWebPage::deserialize(QDataStream& stream, CObjectTracker *pTracker, QObjec
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns a string that holds the serialized page in BASE64 encoding. \br\br
+    Returns a string that holds the serialized and compressed page in BASE64 encoding. \br\br
     \a pTracker is an object that is used to serialize pointers, it keeps track of valid pointers. \br
 */
 QString CWebPage::getViewState(CObjectTracker *pTracker) const
@@ -440,7 +440,7 @@ QString CWebPage::getViewState(CObjectTracker *pTracker) const
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Returns a deserialized page from the BASE64 encoded string in \a sViewState. \br\br
+    Returns a decompressed and deserialized page from the BASE64 encoded string in \a sViewState. \br\br
     \a pTracker is an object that is used to serialize pointers, it keeps track of valid pointers. \br
 */
 CWebControl* CWebPage::fromViewState(QString sViewState, CObjectTracker *pTracker)

@@ -13,6 +13,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
+//! Keeps track of objects for serialization
 class QTPLUSSHARED_EXPORT CObjectTracker
 {
 public:

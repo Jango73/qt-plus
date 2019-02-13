@@ -14,7 +14,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Définit une usine de script
+//! Defines a factory of web controls
 class QTPLUSSHARED_EXPORT CWebFactory : public CSingleton<CWebFactory>, public CFactory<CWebControl>
 {
     friend class CSingleton<CWebFactory>;
@@ -22,18 +22,18 @@ class QTPLUSSHARED_EXPORT CWebFactory : public CSingleton<CWebFactory>, public C
 public:
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes de contrôle
+    // Control methods
     //-------------------------------------------------------------------------------------------------
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
+    // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
 protected:
 
-    //! Constructeur par défaut
+    //! Default constructor
     CWebFactory();
 
-    //! Destructeur
+    //! Destructor
     virtual ~CWebFactory();
 };
