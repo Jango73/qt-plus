@@ -11,6 +11,7 @@ HEADERS += \
     source/cpp/CPIDController.h \
     source/cpp/CAverager.h \
     source/cpp/CLogger.h \
+    source/cpp/CMacroable.h \
     source/cpp/CTracableMutex.h \
     source/cpp/CTimeSampler.h \
     source/cpp/CMemoryMonitor.h \
@@ -92,6 +93,7 @@ SOURCES += \
     source/cpp/CXMLNode.cpp \
     source/cpp/CPIDController.cpp \
     source/cpp/CLogger.cpp \
+    source/cpp/CMacroable.cpp \
     source/cpp/CTracableMutex.cpp \
     source/cpp/CTimeSampler.cpp \
     source/cpp/CMemoryMonitor.cpp \

@@ -388,8 +388,6 @@
 //-------------------------------------------------------------------------------------------------
 // XML Grammar File Tokens
 
-#define ANALYZER_TOKEN_MACRO            "Macro"
-#define ANALYZER_TOKEN_NAME             "Name"
 #define ANALYZER_TOKEN_CHECK            "Check"
 #define ANALYZER_TOKEN_CLASS            "Class"
 #define ANALYZER_TOKEN_LIST             "List"
@@ -401,7 +399,6 @@
 #define ANALYZER_TOKEN_REJECT           "Reject"
 #define ANALYZER_TOKEN_TEXT             "Text"
 #define ANALYZER_TOKEN_TYPE             "Type"
-#define ANALYZER_TOKEN_VALUE            "Value"
 #define ANALYZER_TOKEN_REGEXP           "RegExp"
 #define ANALYZER_TOKEN_PATH             "Path"
 #define ANALYZER_TOKEN_OPERATION        "Operation"
@@ -561,7 +558,7 @@ void QMLAnalyzer::clear()
 */
 bool QMLAnalyzer::analyze(CXMLNode xGrammar)
 {
-    m_xGrammar = xGrammar;
+    setGrammar(xGrammar);
 
     parseMacros();
 
@@ -603,7 +600,7 @@ void QMLAnalyzer::threadedAnalyze(CXMLNode xGrammar)
 {
     if (isRunning() == false)
     {
-        m_xGrammar = xGrammar;
+        setGrammar(xGrammar);
 
         start();
     }
@@ -631,53 +628,7 @@ void QMLAnalyzer::stopThreadedAnalyze()
 */
 void QMLAnalyzer::run()
 {
-    analyze(m_xGrammar);
-}
-
-//-------------------------------------------------------------------------------------------------
-
-/*!
-    Parses all macros defined in the current grammar file.
-*/
-void QMLAnalyzer::parseMacros()
-{
-    QVector<CXMLNode> vMacros = m_xGrammar.getNodesByTagName(ANALYZER_TOKEN_MACRO);
-
-    m_mMacros.clear();
-
-    foreach (CXMLNode xMacro, vMacros)
-    {
-        QString sName = xMacro.attributes()[ANALYZER_TOKEN_NAME];
-        QString sValue = xMacro.attributes()[ANALYZER_TOKEN_VALUE];
-
-        m_mMacros[sName] = sValue;
-    }
-}
-
-//-------------------------------------------------------------------------------------------------
-
-/*!
-    Returns \a sText with macro names replaced .with their respective value.
-*/
-QString QMLAnalyzer::processMacros(const QString& sText)
-{
-    QString sResult = sText;
-
-    foreach (QString sMacro, m_mMacros.keys())
-    {
-        QString sFullMacroName = QString("$%1$").arg(sMacro);
-
-        if (sResult.contains(sFullMacroName))
-        {
-            if (m_mMacros[sMacro].count() > 0)
-            {
-                QString sMacroValue = m_mMacros[sMacro];
-                sResult.replace(sFullMacroName, sMacroValue);
-            }
-        }
-    }
-
-    return sResult;
+    analyze(grammar());
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -796,7 +747,7 @@ void QMLAnalyzer::runGrammar_Recurse(QMLFile* pFile, QMLEntity* pEntity)
 
         QMap<QString, QMLEntity*> mMembers = pEntity->members();
 
-        QVector<CXMLNode> vChecks = m_xGrammar.getNodesByTagName(ANALYZER_TOKEN_CHECK);
+        QVector<CXMLNode> vChecks = grammar().getNodesByTagName(ANALYZER_TOKEN_CHECK);
 
         foreach (CXMLNode xCheck, vChecks)
         {
@@ -851,7 +802,7 @@ void QMLAnalyzer::runGrammar_Recurse(QMLFile* pFile, QMLEntity* pEntity)
 bool QMLAnalyzer::runGrammar_Reject(QMLFile* pFile, const QString& sClassName, QMLEntity* pEntity, CXMLNode xRule, bool bInverseLogic)
 {
     QString sMember = processMacros(xRule.attributes()[ANALYZER_TOKEN_MEMBER].toLower());
-    QString sValue = processMacros(xRule.attributes()[ANALYZER_TOKEN_VALUE]);
+    QString sValue = processMacros(xRule.attributes()[TOKEN_VALUE]);
     QString sType = processMacros(xRule.attributes()[ANALYZER_TOKEN_TYPE]);
     QString sText = processMacros(xRule.attributes()[ANALYZER_TOKEN_TEXT]);
     QString sNestedCount = processMacros(xRule.attributes()[ANALYZER_TOKEN_NESTED_COUNT]);
@@ -1094,7 +1045,7 @@ bool QMLAnalyzer::runGrammar_SatisfiesConditions(QMLFile* pFile, const QString& 
         QString sMember = xCondition.attributes()[ANALYZER_TOKEN_MEMBER].toLower();
         QString sOperation = xCondition.attributes()[ANALYZER_TOKEN_OPERATION];
         QString sEmpty = xCondition.attributes()[ANALYZER_TOKEN_EMPTY].toLower();
-        QString sValue = xCondition.attributes()[ANALYZER_TOKEN_VALUE];
+        QString sValue = xCondition.attributes()[TOKEN_VALUE];
         QString sNegate = xCondition.attributes()[ANALYZER_TOKEN_NEGATE].toLower();
         QString sClass = xCondition.attributes()[ANALYZER_TOKEN_CLASS];
 

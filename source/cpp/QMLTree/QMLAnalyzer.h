@@ -13,6 +13,7 @@
 
 // Foundations
 #include "../CXMLNode.h"
+#include "../CMacroable.h"
 #include "QMLTreeContext.h"
 #include "QMLComplexEntity.h"
 #include "QMLImport.h"
@@ -25,7 +26,7 @@
 //-------------------------------------------------------------------------------------------------
 
 //! Defines a static QML analyzer
-class QTPLUSSHARED_EXPORT QMLAnalyzer : public QThread
+class QTPLUSSHARED_EXPORT QMLAnalyzer : public QThread, public CMacroable
 {
     Q_OBJECT
 
@@ -126,12 +127,6 @@ signals:
 protected:
 
     //!
-    void parseMacros();
-
-    //!
-    QString processMacros(const QString& sText);
-
-    //!
     bool analyze_Recurse(QString sDirectory);
 
     //!
@@ -165,7 +160,6 @@ protected:
     QString                         m_sFile;
     QMLTreeContext*                 m_pContext;
     QVector<QMLAnalyzerError>       m_vErrors;
-    CXMLNode                        m_xGrammar;
     QMap<QString, QString>          m_mMacros;
     bool                            m_bIncludeImports;
     bool                            m_bIncludeSubFolders;
