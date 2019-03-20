@@ -89,7 +89,7 @@ QMatrix4x4 CGeoUtilities::getGeoReferenceMatrix(const QVector3D& vReference)
     \endlist
     \sa Vector3DToGeoCoordinate()
 */
-#ifdef WIN32
+#ifdef QT_POSITIONING_LIB
 
 QVector3D CGeoUtilities::GeoCoordinateToVector3D(const QGeoCoordinate& gPosition, const QGeoCoordinate& gReference)
 {
@@ -145,7 +145,7 @@ QVector3D CGeoUtilities::GeoCoordinateToVector3D(const QGeoCoordinate& gPosition
     It is the exact inverse of GeoCoordinateToVector3D().
     \sa GeoCoordinateToVector3D()
 */
-#ifdef WIN32
+#ifdef QT_POSITIONING_LIB
 
 QGeoCoordinate CGeoUtilities::Vector3DToGeoCoordinate(const QVector3D& vPosition, const QGeoCoordinate& gReference)
 {
