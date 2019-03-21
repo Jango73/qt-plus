@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root>
+    <Macro Name="Macro1" Value="Text1"/>
+
+    <Fragment Names="BeforeImport,BeforeForFirstSibling,BeforeWhileFirstSibling,BeforeSwitchFirstSibling,BeforeIfFirstSibling,BeforePropertyName,BeforeSignal">
+        <Action Type="NewLine"/>
+    </Fragment>
+
+    <Fragment Names="BeforeVariableDeclaration,BeforeFunctionCall,BeforeTopLevelBinaryOp,BeforeTopLevelUnaryOp,BeforeQualifiedExpression,BeforePrefixUnaryOp">
+        <Action Type="NewLine"/>
+    </Fragment>
+
+    <Fragment Names="BeforeItemName,BeforeFunction,BeforeFor,BeforeWhile,BeforeSwitch,BeforeIf">
+        <Action Type="DoubleNewLine"/>
+    </Fragment>
+
+    <Fragment Names="BeforeItemContent">
+        <Action Type="IndentationIncrement"/>
+    </Fragment>
+
+    <Fragment Names="AfterItemContent">
+        <Action Type="IndentationDecrement"/>
+        <Action Type="NewLine"/>
+    </Fragment>
+</Root>

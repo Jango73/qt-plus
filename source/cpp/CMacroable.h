@@ -59,6 +59,6 @@ public:
 
 protected:
 
-    CXMLNode                        m_xGrammar;
-    QMap<QString, QString>          m_mMacros;
+    CXMLNode                m_xGrammar;
+    QMap<QString, QString>  m_mMacros;
 };

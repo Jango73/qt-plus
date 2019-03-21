@@ -14,6 +14,7 @@
 // Library
 #include "../CDumpable.h"
 #include "../CXMLNodable.h"
+#include "QMLFormatter.h"
 
 // #define TRACK_ENTITIES
 
@@ -21,63 +22,6 @@
 // Forward declarations
 
 class QMLTreeContext;
-
-//-------------------------------------------------------------------------------------------------
-
-//! Defines the base entity of a QML tree
-class QTPLUSSHARED_EXPORT QMLFormatter
-{
-public:
-
-    enum EQMLFormatterFragment {
-        qffBeforeImport,
-        qffAfterImport,
-        qffBeforeItemName,
-        qffAfterItemName,
-        qffBeforeItemContent,
-        qffAfterItemContent,
-        qffBeforePropertyName,
-        qffAfterPropertyName,
-        qffBeforePropertyContent,
-        qffAfterPropertyContent,
-        qffBeforeFunction,
-        qffAfterFunction,
-        qffBeforeSignal,
-        qffAfterSignal,
-        qffBeforeVariableDeclaration,
-        qffBeforeFunctionCall,
-        qffAfterFunctionCall,
-        qffBeforeForNoPreviousSibling,
-        qffBeforeFor,
-        qffAfterFor,
-        qffBeforeWhile,
-        qffBeforeWhileNoPreviousSibling,
-        qffAfterWhile,
-        qffBeforeSwitchNoPreviousSibling,
-        qffBeforeSwitch,
-        qffAfterSwitch,
-        qffBeforeIfNoPreviousSibling,
-        qffBeforeIf,
-        qffAfterIf,
-        qffBeforeTopLevelBinaryOp,
-        qffBeforeTopLevelUnaryOp,
-        qffBeforeQualifiedExpression
-    };
-
-    QMLFormatter();
-
-    void incIndentation();
-
-    void decIndentation();
-
-    void writeNewLine(QTextStream& stream);
-
-    void writeDoubleNewLine(QTextStream& stream);
-
-    void processFragment(QTextStream& stream, EQMLFormatterFragment fragment);
-
-    int m_iIndentation;
-};
 
 //-------------------------------------------------------------------------------------------------
 

@@ -556,11 +556,12 @@ void QMLAnalyzer::clear()
 /*!
     Runs an analysis on the specified folder or file using \a xGrammar. Returns \c true on success.
 */
-bool QMLAnalyzer::analyze(CXMLNode xGrammar)
+bool QMLAnalyzer::analyze(const CXMLNode& xRules, const CXMLNode& xFormat)
 {
-    setGrammar(xGrammar);
+    m_xNewRules = xRules;
+    m_xNewFormat = xFormat;
 
-    parseMacros();
+    setGrammar(m_xNewRules);
 
     {
         QMutexLocker locker(&m_mContextMutex);
@@ -581,7 +582,7 @@ bool QMLAnalyzer::analyze(CXMLNode xGrammar)
 
     if (m_sFolder.isEmpty() == false)
     {
-        analyze_Recurse(m_sFolder);
+        analyzeRecurse(m_sFolder);
     }
     else if (m_sFile.isEmpty() == false)
     {
@@ -596,11 +597,12 @@ bool QMLAnalyzer::analyze(CXMLNode xGrammar)
 /*!
     Runs a threaded analyze on the specified folder or file using \a xGrammar. Returns \c true on success.
 */
-void QMLAnalyzer::threadedAnalyze(CXMLNode xGrammar)
+void QMLAnalyzer::threadedAnalyze(const CXMLNode& xRules, const CXMLNode& xFormat)
 {
     if (isRunning() == false)
     {
-        setGrammar(xGrammar);
+        m_xNewRules = xRules;
+        m_xNewFormat = xFormat;
 
         start();
     }
@@ -628,7 +630,7 @@ void QMLAnalyzer::stopThreadedAnalyze()
 */
 void QMLAnalyzer::run()
 {
-    analyze(grammar());
+    analyze(m_xNewRules, m_xNewFormat);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -659,7 +661,7 @@ bool QMLAnalyzer::analyzeFile(const QString& sFileName)
 
                 pFile->sortContents();
 
-                m_pContext->writeFile(pFile);
+                m_pContext->writeFile(pFile, m_xNewFormat);
             }
         }
     }
@@ -678,7 +680,7 @@ bool QMLAnalyzer::analyzeFile(const QString& sFileName)
 /*!
     Runs an analysis on the files in \a sDirectory. Returns \c true on success.
 */
-bool QMLAnalyzer::analyze_Recurse(QString sDirectory)
+bool QMLAnalyzer::analyzeRecurse(QString sDirectory)
 {
     if (m_bStopAnalyzeRequested)
         return false;
@@ -710,7 +712,7 @@ bool QMLAnalyzer::analyze_Recurse(QString sDirectory)
         {
             QString sFullName = QString("%1/%2").arg(sDirectory).arg(sNewDirectory);
 
-            if (analyze_Recurse(sFullName) == false)
+            if (analyzeRecurse(sFullName) == false)
             {
                 return false;
             }

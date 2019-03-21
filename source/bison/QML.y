@@ -2052,6 +2052,8 @@ JSUnaryExpression :
     |
     TOKEN_INC JSMemberExpression
     {
+        PARSER_TRACE("JSUnaryExpression", "TOKEN_INC JSMemberExpression");
+
         QMLEntity* pEntity = $<Object>2;
 
         $<Object>$ = new QMLUnaryOperation(pEntity->position(), pEntity, QMLUnaryOperation::uoIncrement);

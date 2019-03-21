@@ -843,7 +843,7 @@ void QMLTreeContext::showError(const QString& sText)
 
 //-------------------------------------------------------------------------------------------------
 
-void QMLTreeContext::writeFile(QMLFile* pFile)
+void QMLTreeContext::writeFile(QMLFile* pFile, const CXMLNode& xFormat)
 {
     QFile file(pFile->fileName());
 
@@ -853,6 +853,8 @@ void QMLTreeContext::writeFile(QMLFile* pFile)
         QTextStream stream(&m_sText);
 
         QMLFormatter formatter;
+        formatter.setGrammar(xFormat);
+
         pFile->toQML(stream, formatter);
 
         file.write(m_sText.toLatin1());

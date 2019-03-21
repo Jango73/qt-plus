@@ -1,4 +1,7 @@
 
+// Qt
+#include <QDebug>
+
 // Application
 #include "QMLUnaryOperation.h"
 
@@ -10,7 +13,10 @@ QMLUnaryOperation::QMLUnaryOperation(const QPoint& pPosition, QMLEntity* pExpres
     , m_eOperator(eOperator)
     , m_bIsPostFix(bIsPostFix)
 {
-    if (m_pExpression != nullptr) m_pExpression->setParent(this);
+    if (m_pExpression != nullptr)
+        m_pExpression->setParent(this);
+
+    qDebug() << "QMLUnaryOperation::QMLUnaryOperation " << m_bIsPostFix;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -101,26 +107,32 @@ void QMLUnaryOperation::toQML(QTextStream& stream, QMLFormatter& formatter, cons
 
         if (m_pExpression != nullptr)
         {
+            formatter.processFragment(stream, QMLFormatter::qffBeforePrefixUnaryOp);
+
             m_pExpression->toQML(stream, formatter, this);
 
             if (m_eOperator == uoCase)
             {
                 stream << ":";
             }
+
+            formatter.processFragment(stream, QMLFormatter::qffAfterPrefixUnaryOp);
         }
     }
     else
     {
         if (m_pExpression != nullptr)
         {
+            formatter.processFragment(stream, QMLFormatter::qffBeforePostfixUnaryOp);
+
             m_pExpression->toQML(stream, formatter, this);
 
             if (m_eOperator == uoCase)
             {
                 stream << ":";
-
-                formatter.writeNewLine(stream);
             }
+
+            formatter.processFragment(stream, QMLFormatter::qffAfterPostfixUnaryOp);
         }
 
         stream << QString("%1 ").arg(operatorToString(m_eOperator));

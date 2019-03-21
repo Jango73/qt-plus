@@ -85,10 +85,10 @@ public:
     void clear();
 
     //!
-    bool analyze(CXMLNode xGrammar);
+    bool analyze(const CXMLNode& xGrammar, const CXMLNode& xFormat = CXMLNode());
 
     //!
-    void threadedAnalyze(CXMLNode xGrammar);
+    void threadedAnalyze(const CXMLNode& xGrammar, const CXMLNode& xFormat = CXMLNode());
 
     //!
     void stopThreadedAnalyze();
@@ -127,7 +127,7 @@ signals:
 protected:
 
     //!
-    bool analyze_Recurse(QString sDirectory);
+    bool analyzeRecurse(QString sDirectory);
 
     //!
     void runGrammar(QMLFile* pFile);
@@ -158,9 +158,10 @@ protected:
     QMutex                          m_mContextMutex;
     QString                         m_sFolder;
     QString                         m_sFile;
+    CXMLNode                        m_xNewRules;
+    CXMLNode                        m_xNewFormat;
     QMLTreeContext*                 m_pContext;
     QVector<QMLAnalyzerError>       m_vErrors;
-    QMap<QString, QString>          m_mMacros;
     bool                            m_bIncludeImports;
     bool                            m_bIncludeSubFolders;
     bool                            m_bRewriteFiles;

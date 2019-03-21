@@ -71,7 +71,7 @@ void QMLIf::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntity*
     Q_UNUSED(pParent);
 
     if (previousSibling() == nullptr)
-        formatter.processFragment(stream, QMLFormatter::qffBeforeIfNoPreviousSibling);
+        formatter.processFragment(stream, QMLFormatter::qffBeforeIfFirstSibling);
     else
         formatter.processFragment(stream, QMLFormatter::qffBeforeIf);
 

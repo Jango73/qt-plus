@@ -31,6 +31,7 @@ CMacroable::~CMacroable()
 void CMacroable::setGrammar(const CXMLNode& xGrammar)
 {
     m_xGrammar = xGrammar;
+    parseMacros();
 }
 
 //-------------------------------------------------------------------------------------------------

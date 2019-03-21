@@ -295,7 +295,7 @@ public:
     void showError(const QString& sText);
 
     //!
-    void writeFile(QMLFile* pFile);
+    void writeFile(QMLFile* pFile, const CXMLNode& xFormat);
 
     //-------------------------------------------------------------------------------------------------
     // Overridden methods
