@@ -15,8 +15,6 @@ QMLUnaryOperation::QMLUnaryOperation(const QPoint& pPosition, QMLEntity* pExpres
 {
     if (m_pExpression != nullptr)
         m_pExpression->setParent(this);
-
-    qDebug() << "QMLUnaryOperation::QMLUnaryOperation " << m_bIsPostFix;
 }
 
 //-------------------------------------------------------------------------------------------------
