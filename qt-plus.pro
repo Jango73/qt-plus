@@ -9,12 +9,13 @@ CONFIG += warn_off
 TEMPLATE = lib
 DEFINES += QTPLUS_LIBRARY
 
-# Uncomment the following to generate QML grammar with Bison
-# CONFIG += qml_grammar
-
+# Dependencies
 INCLUDEPATH += $$PWD/src/cpp/QMLTree
 INCLUDEPATH += $$PWD/src/cpp
 INCLUDEPATH += $$PWD
+
+# Uncomment the following to generate QML grammar with Bison
+# CONFIG += qml_grammar
 
 qml_grammar {
     PRE_TARGETDEPS += $$PWD/source/cpp/QMLTree/QMLGrammarParser.cpp
@@ -26,14 +27,14 @@ qml_grammar {
 
 include(qt-plus.pri)
 
+# Directories
 DESTDIR = $$PWD/bin
-MOC_DIR = $$PWD/moc/qt-plus
-OBJECTS_DIR = $$PWD/obj/qt-plus
+OBJECTS_DIR = $$PWD/obj
+MOC_DIR = $$PWD/moc
+RCC_DIR = $$PWD/rcc
+UI_DIR = $$PWD/ui
 
-QMAKE_CLEAN *= $$DESTDIR/*$$TARGET*
-QMAKE_CLEAN *= $$MOC_DIR/*$$TARGET*
-QMAKE_CLEAN *= $$OBJECTS_DIR/*$$TARGET*
-
+# Target
 CONFIG(debug, debug|release) {
     TARGET = qt-plusd
 }
