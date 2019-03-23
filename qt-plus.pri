@@ -25,6 +25,9 @@ HEADERS += \
     source/cpp/CSocketStream.h \
     source/cpp/CSerialStream.h \
     source/cpp/File/CRollingFiles.h \
+    source/cpp/RemoteControl/CRemoteControl.h \
+    source/cpp/RemoteControl/CRemoteControlData.h \
+    source/cpp/RemoteControl/CRemoteControlUser.h \
     source/cpp/Web/CMJPEGClient.h \
     source/cpp/Web/CMJPEGServer.h \
     source/cpp/Web/CWebComposer.h \
@@ -85,7 +88,12 @@ HEADERS += \
     source/cpp/QMLTree/QMLConditional.h \
     source/cpp/QMLTree/QMLComment.h \
     source/cpp/QMLTree/QMLTreeContext.h \
-    source/cpp/QMLTree/QMLAnalyzer.h
+    source/cpp/QMLTree/QMLAnalyzer.h \
+    source/cpp/rsa/source/BigInt.h \
+    source/cpp/rsa/source/Key.h \
+    source/cpp/rsa/source/KeyPair.h \
+    source/cpp/rsa/source/PrimeGenerator.h \
+    source/cpp/rsa/source/RSA.h
 
 SOURCES += \
     source/cpp/CSingletonPool.cpp \
@@ -108,6 +116,9 @@ SOURCES += \
     source/cpp/CSocketStream.cpp \
     source/cpp/CSerialStream.cpp \
     source/cpp/File/CRollingFiles.cpp \
+    source/cpp/RemoteControl/CRemoteControl.cpp \
+    source/cpp/RemoteControl/CRemoteControlData.cpp \
+    source/cpp/RemoteControl/CRemoteControlUser.cpp \
     source/cpp/Web/CMJPEGClient.cpp \
     source/cpp/Web/CMJPEGServer.cpp \
     source/cpp/Web/CWebComposer.cpp \
@@ -167,7 +178,12 @@ SOURCES += \
     source/cpp/QMLTree/QMLComment.cpp \
     source/cpp/QMLTree/QMLTreeContext.cpp \
     source/cpp/QMLTree/QMLGrammarParser.cpp \
-    source/cpp/QMLTree/QMLAnalyzer.cpp
+    source/cpp/QMLTree/QMLAnalyzer.cpp \
+    source/cpp/rsa/source/BigInt.cpp \
+    source/cpp/rsa/source/Key.cpp \
+    source/cpp/rsa/source/KeyPair.cpp \
+    source/cpp/rsa/source/PrimeGenerator.cpp \
+    source/cpp/rsa/source/RSA.cpp
 
 RESOURCES += \
     resources.qrc

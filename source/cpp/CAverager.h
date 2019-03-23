@@ -51,17 +51,17 @@ public:
     {
         if (m_mValues.count() == 0)
         {
-            return (T) 0;
+            return T(0);
         }
 
-        T returnValue = (T) 0;
+        T returnValue = T(0);
 
         foreach (T iterValue, m_mValues)
         {
             returnValue += iterValue;
         }
 
-        return returnValue / (T) m_mValues.count();
+        return returnValue / T(m_mValues.count());
     }
 
 protected:
@@ -80,7 +80,7 @@ public:
     //! Default constructor
     CRollingAverager(int numSamples)
         : m_iNumSamples(numSamples)
-        , m_tAverage((T) 0)
+        , m_tAverage(T(0))
     {
     }
 
@@ -99,7 +99,7 @@ public:
     //! Resets all values
     void reset()
     {
-        m_tAverage = (T) 0;
+        m_tAverage = T(0);
     }
 
     //! Adds a value

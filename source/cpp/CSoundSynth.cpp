@@ -66,6 +66,9 @@ CSoundSynth::~CSoundSynth()
 */
 QByteArray CSoundSynth::synthesize(qint64 pos)
 {
+    Q_UNUSED(pos);
+
+    return QByteArray();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -130,7 +133,7 @@ qint64 CSoundSynth::writeData(const char *data, qint64 len)
 */
 qint64 CSoundSynth::bytesAvailable() const
 {
-    qint64 total;
+    qint64 total = 0;
 
     foreach (QByteArray baData, m_lBuffers)
     {

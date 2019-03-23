@@ -137,18 +137,18 @@ PTDMASlot CTDMADevice::s_ucLastSlot		= 250;
     \a bIsMaster tells if this TDMA entity is master (true) or slave (false)
 */
 CTDMADevice::CTDMADevice(QIODevice* pDevice, PTDMASerial tSeriaNumber, int iMaxBytesPerSecond, bool bIsMaster)
-    : m_pDevice(pDevice)
+    : m_bIsMaster(bIsMaster)
+    , m_bAntennaPowered(false)
     , m_tSeriaNumber(tSeriaNumber)
     , m_tSlot(s_ucBadSlot)
+    , m_iMaxBytesPerSecond(iMaxBytesPerSecond)
+    , m_iMaxBytesPerSlot(4)
+    , m_iNumFramesBeforeIdent(0)
+    , m_pDevice(pDevice)
     , m_tTimer(this)
     , m_tLastInputTime(now())
     , m_tLastSpeakTime(now())
     , m_tPowerOnTime(now())
-    , m_iMaxBytesPerSecond(iMaxBytesPerSecond)
-    , m_iMaxBytesPerSlot(4)
-    , m_iNumFramesBeforeIdent(0)
-    , m_bIsMaster(bIsMaster)
-    , m_bAntennaPowered(false)
 {
     static bool bSrandInit = false;
 
@@ -1012,14 +1012,14 @@ qint64 CTDMADevice::readData(char* data, qint64 maxSize)
 */
 qint64 CTDMADevice::writeData(const char* pData, qint64 iSize)
 {
-    m_baOutput.append(QByteArray(pData, iSize));
+    m_baOutput.append(QByteArray(pData, int(iSize)));
 
     if (m_bAntennaPowered == false)
     {
         m_bAntennaPowered = true;
         m_tLastSpeakTime = m_tPowerOnTime = now();
 
-        int iPowerOnMS = powerOn();
+        // int iPowerOnMS = powerOn();
     }
 
     return iSize;
