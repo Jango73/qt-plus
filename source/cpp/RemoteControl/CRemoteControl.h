@@ -53,7 +53,7 @@ protected:
     KeyPair*			m_pRSAKeys;
 };
 
-class CRemoteControl : public QTcpServer
+class QTPLUSSHARED_EXPORT CRemoteControl : public QTcpServer
 {
     Q_OBJECT
 
