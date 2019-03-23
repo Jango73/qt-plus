@@ -47,13 +47,15 @@
 #ifndef RSA_H_
 #define RSA_H_
 
+#include "../../qtplus_global.h"
+
 #include <string>
 #include <fstream>
 #include "KeyPair.h"
 #include "Key.h"
 #include "BigInt.h"
 
-class RSA
+class QTPLUSSHARED_EXPORT RSA
 {
 	private:
 		/* Instantiation of objects of type RSA is forbidden. */

@@ -33,10 +33,12 @@
 #ifndef KEY_H_
 #define KEY_H_
 
+#include "../../qtplus_global.h"
+
 #include "BigInt.h"
 #include <iostream>
 
-class Key
+class QTPLUSSHARED_EXPORT Key
 {
 	private:
 		BigInt modulus;

@@ -32,10 +32,12 @@
 #ifndef KEYPAIR_H_
 #define KEYPAIR_H_
 
+#include "../../qtplus_global.h"
+
 #include "Key.h"
 #include <iostream>
 
-class KeyPair
+class QTPLUSSHARED_EXPORT KeyPair
 {
 	private:
 		const Key privateKey;

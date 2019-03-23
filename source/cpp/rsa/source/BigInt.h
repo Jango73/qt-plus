@@ -110,11 +110,13 @@
 #ifndef BIGINT_H_
 #define BIGINT_H_
 
+#include "../../qtplus_global.h"
+
 #include <iostream>	//ostream, istream
 #include <cmath>	//sqrt()
 #include <string>	//ToString(), BigInt(std::string)
 
-class BigInt
+class QTPLUSSHARED_EXPORT BigInt
 {
 	private:
 		/* An array of digits stored right to left,

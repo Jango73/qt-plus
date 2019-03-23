@@ -30,9 +30,11 @@
 #ifndef PRIMEGENERATOR_H_
 #define PRIMEGENERATOR_H_
 
+#include "../../qtplus_global.h"
+
 #include "BigInt.h"
 
-class PrimeGenerator
+class QTPLUSSHARED_EXPORT PrimeGenerator
 {
 	private:
 		/* Generates a random "number" such as 1 <= "number" < "top".
