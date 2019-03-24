@@ -68,6 +68,9 @@ A subclass of CDynamicHTTPServer may generate content in two ways:
 
 The second method works like ASP, with a view state that enables to transfer a serialized, compressed and eventually crypted (when someone codes it) version of the CWebPage between server and client. See the documentation of CWebPage for more information.
 
+### CRemoteControl
+A server/client that acts somewhat like SSH on Linux. Enables remote file transfers and remote shell.
+
 ### CMJPEGClient
 A client for *MJPEG* streams. Notifies via signal whenever a new image arrives.
 
