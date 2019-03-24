@@ -19,7 +19,7 @@
     \brief A basic HTTP server that can serve files and dynamic content.
 
     \section1 How it works
-    This server listens to and processes HTTP requests on a given port. \br
+    This server listens to and processes HTTP requests on a specified port. \br
     When asked for a resource, the first thing it does is check if it exists on disk. If it does
     not, the server executes its getContent() which may be overridden in order to
     return some HTML content to the client. \br

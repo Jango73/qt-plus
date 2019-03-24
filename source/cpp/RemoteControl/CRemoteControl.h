@@ -25,7 +25,7 @@
 
 #include "CRemoteControlData.h"
 #include "CRemoteControlUser.h"
-#include "../rsa/source/RSA.h"
+#include "../CSecureContext.h"
 
 class QTPLUSSHARED_EXPORT CConnectionData : public QObject
 {
@@ -33,23 +33,24 @@ class QTPLUSSHARED_EXPORT CConnectionData : public QObject
 
 public:
 
-    CConnectionData(CRemoteControlUser*);
+    CConnectionData(CRemoteControlUser* pUser, bool bIsServer);
 
     ~CConnectionData();
 
     void setUser(CRemoteControlUser* value) { m_pUser = value; }
     void setWorkingDirectory(const QString& value) { m_sWorkingDirectory = value; }
-    void setRSAKeys(KeyPair* value) { m_pRSAKeys = value; }
 
     CRemoteControlUser* user() { return m_pUser; }
     QString workingDirectory() { return m_sWorkingDirectory; }
-    KeyPair* RSAKeys() { return m_pRSAKeys; }
+
+    CSecureContext& secureContext() { return m_tContext; }
+    const CSecureContext& secureContext() const { return m_tContext; }
 
 protected:
 
     CRemoteControlUser*	m_pUser;
     QString				m_sWorkingDirectory;
-    KeyPair*			m_pRSAKeys;
+    CSecureContext      m_tContext;
 };
 
 class QTPLUSSHARED_EXPORT CRemoteControl : public QTcpServer
@@ -58,8 +59,12 @@ class QTPLUSSHARED_EXPORT CRemoteControl : public QTcpServer
 
 public:
 
+    //-------------------------------------------------------------------------------------------------
+    // Constructors and destructor
+    //-------------------------------------------------------------------------------------------------
+
     // Server constructor
-    CRemoteControl(quint16 iPort, bool bRSA = true);
+    CRemoteControl(quint16 iPort, bool bROKE = true);
 
     // Client constructor
     CRemoteControl(const QString& sIP, quint16 iPort, int iConnectTimeoutMS, int iMaxWaitingTimeMS, bool bDoShell);
@@ -67,32 +72,66 @@ public:
     // Destructor
     ~CRemoteControl();
 
+    //-------------------------------------------------------------------------------------------------
     // Getters
+    //-------------------------------------------------------------------------------------------------
 
+    //!
     bool getClientConnected() { return m_bClientConnected; }
 
-    // Public methods
+    //-------------------------------------------------------------------------------------------------
+    // Control methods
+    //-------------------------------------------------------------------------------------------------
 
+    //! Sends a login and password to the server
     void setLoginPassword(QString sLogin, QString sPassword);
+
+    //! Sends a command ti the server
     void sendCommand(const QString& sCommand, bool bDetached);
+
+    //! Sends a privilege request to the server
     bool getRights();
+
+    //! Sends a shutdown command to the server
     bool sendShutdown();
+
+    //! Gets a file from the server
     bool getFile(const QString& sourceName, const QString& targetName, bool bKeepNewest, bool bCompCRC);
+
+    //! Puts a file on the server
     bool putFile(const QString& sourceName, const QString& targetName, bool bKeepNewest, bool bCompCRC);
+
+    //!
     bool mergeFile(const QString& sourceName, const QString& targetName);
+
+    //! Gets the CRC of a file on the server
     bool getRemoteFileCRC(const QString& targetName);
 
 protected:
 
     // Protected methods
 
+    //! Initializes the security members
     void initSecurity();
+
+    //! Initializes the registered users
     void initUsers();
-    void sendRSAKey(QTcpSocket* pSocket);
+
+    //! Sends a secure context to a client
+    void sendSecureContext(QTcpSocket* pSocket);
+
+    //! Fills the header of a message with specified values
     void fillMessageHeader(pRMC_Header pHeader, ERMCMessage eMessage, quint32 ulLength);
+
+    //! Reads a command from the console
     QString readCommand();
+
+    //! Encrypts a message using the socket's secure context
     pRMC_Header encryptMessage(QTcpSocket* pSocket, pRMC_Header pDecryptedMessage);
+
+    //! Decrypts a message using the socket's secure context
     pRMC_Header decryptMessage(QTcpSocket* pSocket, pRMC_Header pEncryptedMessage);
+
     bool readMessage(QTcpSocket* pSocket);
     QVector<QString> getFileListFromSourceName(const QString& sSourceName);
     void checkConnectionTransfers(QTcpSocket* pSocket, bool bIsDisconnected = false);
@@ -100,12 +139,12 @@ protected:
     quint32 getFileCRC(QFile& tFile);
     void sendProcessOutput(QProcess* pProcess, bool bFinished, int iExitCode);
     void echo(QString sText);
-    CConnectionData* newConnectionData(QTcpSocket* pSocket);
+    CConnectionData* newConnectionData(QTcpSocket* pSocket, bool bIsServer);
     CConnectionData* getConnectionData(QTcpSocket* pSocket);
     bool fileAccessOK(QString sFileName);
 
     void handleLogin(QTcpSocket* pSocket, RMC_Header* pHeader);
-    void handleRSAPublicKey(QTcpSocket* pSocket, RMC_Header* pHeader);
+    void handleSecureContext(QTcpSocket* pSocket, RMC_Header* pHeader);
     void handleExecute(QTcpSocket* pSocket, RMC_Header* pHeader);
     void handleChangeDirectory(QTcpSocket* pSocket, RMC_Header* pHeader);
     void handleResponse(QTcpSocket* pSocket, RMC_Header* pHeader);

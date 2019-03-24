@@ -19,6 +19,7 @@ HEADERS += \
     source/cpp/Image/CImageHistogram.h \
     source/cpp/Image/CImageUtilities.h \
     source/cpp/CSoundSynth.h \
+    source/cpp/CSecureContext.h \
     source/cpp/CTDMADevice.h \
     source/cpp/CStreamFactory.h \
     source/cpp/CConnectedStream.h \
@@ -93,7 +94,8 @@ HEADERS += \
     source/cpp/rsa/source/Key.h \
     source/cpp/rsa/source/KeyPair.h \
     source/cpp/rsa/source/PrimeGenerator.h \
-    source/cpp/rsa/source/RSA.h
+    source/cpp/rsa/source/RSA.h \
+    source/cpp/roke/ROKE.h
 
 SOURCES += \
     source/cpp/CSingletonPool.cpp \
@@ -110,6 +112,7 @@ SOURCES += \
     source/cpp/Image/CImageHistogram.cpp \
     source/cpp/Image/CImageUtilities.cpp \
     source/cpp/CSoundSynth.cpp \
+    source/cpp/CSecureContext.cpp \
     source/cpp/CTDMADevice.cpp \
     source/cpp/CStreamFactory.cpp \
     source/cpp/CConnectedStream.cpp \
@@ -183,7 +186,8 @@ SOURCES += \
     source/cpp/rsa/source/Key.cpp \
     source/cpp/rsa/source/KeyPair.cpp \
     source/cpp/rsa/source/PrimeGenerator.cpp \
-    source/cpp/rsa/source/RSA.cpp
+    source/cpp/rsa/source/RSA.cpp \
+    source/cpp/roke/ROKE.cpp
 
 RESOURCES += \
     resources.qrc

@@ -44,7 +44,7 @@ enum ERMCMessage
     RMC_FILE_TRANSFER		= 11,
     RMC_LOGIN				= 12,
     RMC_MERGE_FILE			= 13,
-    RMC_RSA_PUBLIC_KEY		= 14,
+    RMC_SECURE_CONTEXT		= 14,
     RMC_LAST				= 100
 };
 
@@ -60,7 +60,7 @@ enum ERMCRequest
 enum ERMCEncyption
 {
     RMC_ENCRYPTION_NONE		= 0,
-    RMC_ENCRYPTION_RSA		= 1
+    RMC_ENCRYPTION_ROKE		= 1
 };
 
 #define RMC_MERGETYPE_INI		1
@@ -72,6 +72,7 @@ typedef struct tag_RMC_Header
     quint32		ulType;
     quint32		ulLength;
     quint32		ulEncryption;
+    quint32		ulChecksum;
 } RMC_Header, *pRMC_Header;
 
 typedef struct tag_RMC_Date
@@ -98,12 +99,11 @@ typedef struct tag_RMC_Login
     char		cPassword [512];
 } RMC_Login, *pRMC_Login;
 
-typedef struct tag_RMC_RSA_Public_Key
+typedef struct tag_RMC_Secure_Context
 {
     RMC_Header	tHeader;
-    char		cMod [512];
-    char		cExp [512];
-} RMC_RSA_Public_Key, *pRMC_RSA_Public_Key;
+    char		cData [MAX_DATA_SIZE];
+} RMC_Secure_Context, *pRMC_Secure_Context;
 
 typedef struct tag_RMC_ChangeDirectory
 {
