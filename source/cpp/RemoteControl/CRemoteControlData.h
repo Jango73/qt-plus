@@ -16,14 +16,15 @@
 #include <QProcess>
 #include <QNetworkInterface>
 
-#define REMOTECONTROL_VERSION	"2.2"
+#define REMOTECONTROL_VERSION	"2.3"
 #define REMOTECONTROL_SIGNATURE	"rmc22"
 #define REMOTECONTROL_REVISION		1
 
 #define FILE_OPEN_TRIES		20
 #define MAX_DATA_SIZE		0x8000
 
-#pragma pack(push, 1)
+#pragma pack(push)
+#pragma pack(1)
 
 // Message types
 
@@ -86,15 +87,15 @@ typedef struct tag_RMC_Date
 typedef struct tag_RMC_Execute
 {
     RMC_Header	tHeader;
-    char		cText [0x200];
+    char		cText [512];
     char		bDetached;
 } RMC_Execute, *pRMC_Execute;
 
 typedef struct tag_RMC_Login
 {
     RMC_Header	tHeader;
-    char		cLogin [0x100];
-    char		cPassword [0x100];
+    char		cLogin [512];
+    char		cPassword [512];
 } RMC_Login, *pRMC_Login;
 
 typedef struct tag_RMC_RSA_Public_Key

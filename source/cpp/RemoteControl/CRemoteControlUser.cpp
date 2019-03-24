@@ -26,7 +26,7 @@ CRemoteControlUser::CRemoteControlUser(QString sName, QString sPassword, int iPr
     , m_sPassword(sPassword)
     , m_iPrivileges(iPrivileges)
 {
-    m_sEncPassword = QString(QCryptographicHash::hash(sPassword.toLatin1(), QCryptographicHash::Md5));
+    m_sEncodedPassword = encoded(sPassword);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -39,10 +39,17 @@ CRemoteControlUser::~CRemoteControlUser()
 
 CRemoteControlUser& CRemoteControlUser::operator = (const CRemoteControlUser& target)
 {
-    m_sLogin		= target.m_sLogin;
-    m_sPassword		= target.m_sPassword;
-    m_sEncPassword	= target.m_sEncPassword;
-    m_iPrivileges	= target.m_iPrivileges;
+    m_sLogin            = target.m_sLogin;
+    m_sPassword         = target.m_sPassword;
+    m_sEncodedPassword  = target.m_sEncodedPassword;
+    m_iPrivileges       = target.m_iPrivileges;
 
     return *this;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+QString CRemoteControlUser::encoded(QString sText)
+{
+    return QString(QCryptographicHash::hash(sText.toLatin1(), QCryptographicHash::Md5).toBase64());
 }

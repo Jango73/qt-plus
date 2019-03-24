@@ -51,14 +51,17 @@ public:
 	// Getters
 	QString login() { return m_sLogin; }
 	QString password() { return m_sPassword; }
-	QString encPassword() { return m_sEncPassword; }
+    QString encodedPassword() { return m_sEncodedPassword; }
 	int privileges() { return m_iPrivileges; }
+
+    // Static methods
+    static QString encoded(QString sText);
 
 protected:
 
 	QString		m_sLogin;
 	QString		m_sPassword;
-	QString		m_sEncPassword;
+    QString		m_sEncodedPassword;
 	int			m_iPrivileges;
 };
 

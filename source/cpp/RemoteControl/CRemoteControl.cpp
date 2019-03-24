@@ -1,11 +1,13 @@
 
+// Std
 #include <sstream>
 
+// Application
 #include "CRemoteControl.h"
 #include "../CXMLNode.h"
 
-// #define LOG_DEBUG(a)
-#define LOG_DEBUG(a) echo(QString("(%1) DEBUG : %2\n").arg(m_sSelfIP).arg(a))
+#define LOG_DEBUG(a)
+// #define LOG_DEBUG(a) echo(QString("(%1) DEBUG : %2\n").arg(m_sSelfIP).arg(a))
 
 #define LOG_ERROR(a) echo(QString("(%1) ERROR : %2\n").arg(m_sSelfIP).arg(a))
 
@@ -44,6 +46,7 @@ CRemoteControl::CRemoteControl(quint16 iPort)
     , m_sIP("0.0.0.0")
     , m_sSelfIP("0.0.0.0")
     , m_sRMC("RMC: ")
+    , m_eEncryption(RMC_ENCRYPTION_NONE)
     , m_bClientConnected(false)
     , m_bDoShell(false)
     , m_iConnectTimeoutMS(3000)
@@ -62,7 +65,7 @@ CRemoteControl::CRemoteControl(quint16 iPort)
     {
         setMaxPendingConnections(10);
 
-        LOG_DEBUG(QString("Listening to %1:%2").arg(m_sIP).arg(serverPort()));
+        LOG_INFO(QString("Listening to %1:%2").arg(m_sIP).arg(serverPort()));
     }
     else
     {
@@ -86,6 +89,7 @@ CRemoteControl::CRemoteControl(const QString& sIP, quint16 iPort, int iConnectTi
     , m_sIP(sIP)
     , m_sSelfIP("0.0.0.0")
     , m_sRMC("RMC: ")
+    , m_eEncryption(RMC_ENCRYPTION_NONE)
     , m_bClientConnected(false)
     , m_bDoShell(bDoShell)
     , m_iConnectTimeoutMS(iConnectTimeoutMS)
@@ -97,6 +101,8 @@ CRemoteControl::CRemoteControl(const QString& sIP, quint16 iPort, int iConnectTi
     initSecurity();
 
     m_pClient = new QTcpSocket(this);
+
+    newConnectionData(m_pClient);
 
     connect(&m_Timer, SIGNAL(timeout()), this, SLOT(onTimer()));
     connect(m_pClient, SIGNAL(connected()), this, SLOT(onSocketConnected()));
@@ -157,7 +163,7 @@ void CRemoteControl::initUsers()
     bool bGotGuestUser = false;
 
     // Read user configuration
-    CXMLNode tConfiguration = CXMLNode::parseXML(CONF_FILE);
+    CXMLNode tConfiguration = CXMLNode::loadXMLFromFile(CONF_FILE);
 
     CXMLNode tUsersNode = tConfiguration.getNodeByTagName("Users");
 
@@ -193,10 +199,14 @@ void CRemoteControl::initUsers()
 
 void CRemoteControl::setLoginPassword(QString sLogin, QString sPassword)
 {
+    LOG_DEBUG(QString("CRemoteControl::setLoginPassword(%1, %2)").arg(sLogin).arg(sPassword));
+
     if (m_bClientConnected)
     {
         if (!sLogin.isEmpty())
         {
+            LOG_DEBUG(QString("CRemoteControl::setLoginPassword() : sendLogin"));
+
             sendLogin(m_pClient, sLogin, sPassword);
         }
     }
@@ -352,11 +362,19 @@ bool CRemoteControl::readMessage(QTcpSocket* pSocket)
 {
     if (m_vIncomingData.contains(pSocket) && m_vIncomingData[pSocket].count() >= int(sizeof(RMC_Header)))
     {
+        LOG_DEBUG(QString("CRemoteControl::readMessage() : Socket has incoming data"));
+
         pRMC_Header pHeader = pRMC_Header(m_vIncomingData[pSocket].data());
 
         if (m_vIncomingData[pSocket].count() >= int(pHeader->ulLength))
         {
             pRMC_Header pDecryptedHeader = decryptMessage(pSocket, pHeader);
+
+            LOG_DEBUG(QString("... pDecryptedHeader %1, %2, %3")
+                      .arg(pDecryptedHeader->ulType)
+                      .arg(pDecryptedHeader->ulLength)
+                      .arg(pDecryptedHeader->ulEncryption)
+                      );
 
             // Switch on message type and call appropriate handler
 
@@ -378,16 +396,20 @@ bool CRemoteControl::readMessage(QTcpSocket* pSocket)
             case RMC_MERGE_FILE:			handleMergeFile			(pSocket, pDecryptedHeader); break;
 
             default:
-            {
-                LOG_DEBUG(QString("CRemoteControl::readMessage() : unknown message : %1").arg(pDecryptedHeader->ulType));
-            }
+                LOG_DEBUG(QString("... unknown message : %1").arg(pDecryptedHeader->ulType));
                 break;
             }
 
-            m_vIncomingData[pSocket].remove(0, int(pHeader->ulLength));
+            int bytesToRemove = int(pHeader->ulLength);
+
+            LOG_DEBUG(QString("... remove %1 bytes from incoming data").arg(bytesToRemove));
+
+            m_vIncomingData[pSocket].remove(0, bytesToRemove);
 
             return true;
         }
+
+        return false;
     }
 
     return false;
@@ -410,10 +432,9 @@ QVector<QString> CRemoteControl::getFileListFromSourceName(const QString& sSourc
         sFilters.append(tFileInfo.fileName());
         QDir tDirectory = tFileInfo.dir();
 
-        LOG_DEBUG(
-                    QString("CRemoteControl::getFileListFromSourceName() : listing files in %1")
-                    .arg(tDirectory.path())
-                    );
+        LOG_DEBUG(QString("... listing files in %1")
+                  .arg(tDirectory.path())
+                  );
 
         // List all files matching the wildcard expression
         QStringList sFiles = tDirectory.entryList(sFilters);
@@ -621,8 +642,12 @@ bool CRemoteControl::getRemoteFileCRC(const QString& sTargetName)
 
 bool CRemoteControl::getRights()
 {
+    LOG_DEBUG(QString("CRemoteControl::getRights()"));
+
     if (m_pClient != nullptr && m_bClientConnected)
     {
+        LOG_DEBUG(QString("... sendRequest(RMC_REQUEST_GETRIGHTS)"));
+
         sendRequest(m_pClient, RMC_REQUEST_GETRIGHTS, "");
     }
 
@@ -732,55 +757,80 @@ void CRemoteControl::echo(QString sText)
 
 bool CRemoteControl::sendMessage(QTcpSocket* pSocket, pRMC_Header pMessage)
 {
+    LOG_DEBUG(QString("CRemoteControl::sendMessage()"));
+
     if (pSocket->state() != QTcpSocket::ConnectedState)
     {
+        LOG_DEBUG(QString("... pSocket->state() != QTcpSocket::ConnectedState, returning"));
+
         return false;
     }
 
-    LOG_DEBUG(QString("CRemoteControl::sendMessage(%1, %2)")
-              .arg(pMessage->ulType)
-              .arg(pMessage->ulLength)
-              );
-
     CConnectionData* pData = getConnectionData(pSocket);
 
-    if (pMessage->ulType != RMC_RSA_PUBLIC_KEY && pData != nullptr && pData->RSAKeys() != nullptr)
+    if (pData != nullptr)
     {
-        LOG_DEBUG(QString("CRemoteControl::sendMessage() : encrypting message"));
+        LOG_DEBUG(QString("... Type and length : %1, %2")
+                  .arg(pMessage->ulType)
+                  .arg(pMessage->ulLength)
+                  );
 
-        QString sMessage = QString(QByteArray((char*) pMessage, pMessage->ulLength).toHex());
-        QString sEncMessage;
+        bool doRSA = false;
 
-        if (m_pClient != nullptr)
+        // If we are server
+        if (m_pClient == nullptr)
         {
-            // We are client
-            sEncMessage = QString::fromStdString(RSA::Encrypt(sMessage.toStdString(), pData->RSAKeys()->GetPublicKey()));
+            doRSA = m_eEncryption == RMC_ENCRYPTION_RSA && pMessage->ulType != RMC_RSA_PUBLIC_KEY;
         }
         else
         {
-            // We are server
-            sEncMessage = QString::fromStdString(RSA::Encrypt(sMessage.toStdString(), pData->RSAKeys()->GetPrivateKey()));
+            doRSA = m_eEncryption == RMC_ENCRYPTION_RSA;
         }
 
-        LOG_DEBUG(QString("CRemoteControl::sendMessage() : %1").arg(sEncMessage));
+        if (doRSA)
+        {
+            LOG_DEBUG(QString("... encrypting message"));
 
-        RMC_Header EncryptedHeader;
+            QString sMessage = QString(QByteArray((char*) pMessage, pMessage->ulLength).toHex());
+            QString sEncMessage;
 
-        EncryptedHeader.ulType = pMessage->ulType;
-        EncryptedHeader.ulLength = sizeof(RMC_Header) + sEncMessage.length();
-        EncryptedHeader.ulEncryption = RMC_ENCRYPTION_RSA;
+            if (m_pClient != nullptr)
+            {
+                // We are client
+                sEncMessage = QString::fromStdString(RSA::Encrypt(sMessage.toStdString(), pData->RSAKeys()->GetPublicKey()));
+            }
+            else
+            {
+                // We are server
+                sEncMessage = QString::fromStdString(RSA::Encrypt(sMessage.toStdString(), pData->RSAKeys()->GetPrivateKey()));
+            }
 
-        pSocket->write((char*) &EncryptedHeader, sizeof(RMC_Header));
-        pSocket->write(QByteArray(sEncMessage.toLatin1().constData(), sEncMessage.length()));
-        pSocket->waitForBytesWritten();
+            LOG_DEBUG(QString("... %1").arg(sEncMessage));
+
+            RMC_Header EncryptedHeader;
+
+            EncryptedHeader.ulType = pMessage->ulType;
+            EncryptedHeader.ulLength = sizeof(RMC_Header) + sEncMessage.length();
+            EncryptedHeader.ulEncryption = RMC_ENCRYPTION_RSA;
+
+            pSocket->write((char*) &EncryptedHeader, sizeof(RMC_Header));
+            pSocket->write(QByteArray(sEncMessage.toLatin1().constData(), sEncMessage.length()));
+            pSocket->waitForBytesWritten();
+        }
+        else
+        {
+            LOG_DEBUG(QString("... sending non encrypted message"));
+
+            pSocket->write((char*) pMessage, pMessage->ulLength);
+            pSocket->waitForBytesWritten();
+        }
+
+        return true;
     }
-    else
-    {
-        pSocket->write((char*) pMessage, pMessage->ulLength);
-        pSocket->waitForBytesWritten();
-    }
 
-    return true;
+    LOG_DEBUG(QString("No data found for socket, returning false"));
+
+    return false;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -818,7 +868,9 @@ void CRemoteControl::sendLogin(QTcpSocket* pSocket, QString sLogin, QString sPas
 {
     LOG_DEBUG(QString("CRemoteControl::sendLogin(%1, %2)").arg(sLogin).arg(sPassword));
 
-    QString sEncPassword = QString(QCryptographicHash::hash(sPassword.toLatin1(), QCryptographicHash::Md5));
+    QString sEncPassword = CRemoteControlUser::encoded(sPassword);
+
+    LOG_DEBUG(QString("... encoded password = %1").arg(sEncPassword));
 
     RMC_Login tLogin;
 
@@ -1173,12 +1225,11 @@ void CRemoteControl::onTimer()
 
     // Read incoming messages for each socket
     foreach (QTcpSocket* pSocket, m_vSockets)
-    {
         while (readMessage(pSocket)) {}
-    }
 
     // Read incoming messages for the client socket if any
-    if (m_pClient != nullptr) while (readMessage(m_pClient)) {}
+    if (m_pClient != nullptr)
+        while (readMessage(m_pClient)) {}
 
     m_Timer.start();
 }
@@ -1250,10 +1301,7 @@ void CRemoteControl::onServerConnection()
 
     LOG_DEBUG(QString("CRemoteControl::onServerConnection() : adding socket %1").arg(SOCKET_NAME(pSocket)));
 
-    // Assign the default user to this socket
-    CConnectionData* pData = new CConnectionData(&(m_vUsers[0]));
-
-    pSocket->setProperty(PROP_DATA, qulonglong(pData));
+    newConnectionData(pSocket);
 
     // Add this socket to our socket list
     m_vSockets.append(pSocket);
@@ -1271,11 +1319,14 @@ void CRemoteControl::onServerConnection()
 
 void CRemoteControl::sendRSAKey(QTcpSocket* pSocket)
 {
-    CConnectionData* pData = getConnectionData(pSocket);
-
-    if (pData)
+    if (m_eEncryption == RMC_ENCRYPTION_RSA)
     {
-        if (pData->RSAKeys() == nullptr) return;
+        CConnectionData* pData = getConnectionData(pSocket);
+
+        if (pData == nullptr || pData->RSAKeys() == nullptr)
+            return;
+
+        LOG_DEBUG("CRemoteControl::sendRSAKey()");
 
         RMC_RSA_Public_Key tKey;
 
@@ -1352,12 +1403,19 @@ void CRemoteControl::onSocketDisconnected()
 
 void CRemoteControl::onSocketReadyRead()
 {
+    LOG_DEBUG(QString("CRemoteControl::onSocketReadyRead()"));
+
     QTcpSocket* pSocket = dynamic_cast<QTcpSocket*>(QObject::sender());
 
     if (pSocket != nullptr)
     {
+        LOG_DEBUG(QString("CRemoteControl::onSocketReadyRead() %1")
+                  .arg(pSocket->peerAddress().toString()));
+
         if (pSocket->state() == QTcpSocket::ConnectedState)
         {
+            LOG_DEBUG(QString("... state is QTcpSocket::ConnectedState"));
+
             // Add data to the buffer of this socket
             m_vIncomingData[pSocket].append(pSocket->read(pSocket->bytesAvailable()));
         }
@@ -1368,35 +1426,44 @@ void CRemoteControl::onSocketReadyRead()
 
 void CRemoteControl::handleLogin(QTcpSocket* pSocket, RMC_Header* pHeader)
 {
+    LOG_DEBUG("CRemoteControl::handleLogin()");
+
     pRMC_Login pLogin = pRMC_Login(pHeader);
 
-    LOG_DEBUG(
-                QString("CRemoteControl::handleLogin(%1, %2)")
-                .arg(QString(pLogin->cLogin))
-                .arg(QString(pLogin->cPassword))
-                );
-
-    QString sLogin(pLogin->cLogin);
-    QString sPassword(pLogin->cPassword);
-
-    // Check login and password against all registered users
-    for (int Index = 0; Index < m_vUsers.count(); Index++)
+    if (pLogin != nullptr)
     {
-        if (m_vUsers[Index].login() == sLogin && m_vUsers[Index].encPassword() == sPassword)
+        LOG_DEBUG(QString("... Login, password = %1, %2")
+                  .arg(QString(pLogin->cLogin))
+                  .arg(QString(pLogin->cPassword))
+                  );
+
+        QString sLogin(pLogin->cLogin);
+        QString sPassword(pLogin->cPassword);
+
+        // Check login and password against all registered users
+        for (int Index = 0; Index < m_vUsers.count(); Index++)
         {
-            // Tell the client it is logged in
-            sendText(pSocket, QString("Logged in as %1\n").arg(sLogin));
+            LOG_DEBUG(QString("... checking against %1 ...").arg(m_vUsers[Index].login()));
 
-            CConnectionData* pData = getConnectionData(pSocket);
+            if (m_vUsers[Index].login() == sLogin && m_vUsers[Index].encodedPassword() == sPassword)
+            {
+                // Tell the client it is logged in
+                sendText(pSocket, QString("Logged in as %1\n").arg(sLogin));
 
-            if (pData) pData->setUser(&(m_vUsers[Index]));
+                CConnectionData* pData = getConnectionData(pSocket);
 
-            return;
+                if (pData != nullptr)
+                    pData->setUser(&(m_vUsers[Index]));
+
+                return;
+            }
+
+            LOG_DEBUG(QString("... failed"));
         }
-    }
 
-    // Tell the client we could not identify it
-    sendText(pSocket, "Wrong login or password, try again\n");
+        // Tell the client we could not identify it
+        sendText(pSocket, "Wrong login or password, try again\n");
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1420,6 +1487,8 @@ void CRemoteControl::handleRSAPublicKey(QTcpSocket* pSocket, RMC_Header* pHeader
     {
         pData->setRSAKeys(new KeyPair(Key(BigInt(), BigInt()), Key(biMod, biExp)));
     }
+
+    m_eEncryption = RMC_ENCRYPTION_RSA;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1677,7 +1746,7 @@ void CRemoteControl::handleGetFile(QTcpSocket* pSocket, RMC_Header* pHeader)
                 strcpy(tChunk.cTargetName, pTransfer->getTargetName().toLatin1().constData());
 #endif
 
-                sendMessage(pSocket, (pRMC_Header) &tChunk);
+                sendMessage(pSocket, pRMC_Header(&tChunk));
             }
             else
             {
@@ -2140,11 +2209,13 @@ void CRemoteControl::onProcessError(QProcess::ProcessError Error)
 int CRemoteControl::getPrivilegesForSocket(QTcpSocket* pSocket)
 {
     // If in client mode, access all
-    if (m_pClient != nullptr) return 0xFFFF;
+    if (m_pClient != nullptr)
+        return 0xFFFF;
 
     CConnectionData* pData = getConnectionData(pSocket);
 
-    if (pData == nullptr || pData->user() == nullptr) return m_vUsers[0].privileges();
+    if (pData == nullptr || pData->user() == nullptr)
+        return m_vUsers[0].privileges();
 
     return pData->user()->privileges();
 }
@@ -2159,6 +2230,18 @@ bool CRemoteControl::fileAccessOK(QString sFileName)
     }
 
     return true;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+CConnectionData* CRemoteControl::newConnectionData(QTcpSocket* pSocket)
+{
+    // Assign the default user to this socket
+    CConnectionData* pData = new CConnectionData(&(m_vUsers[0]));
+
+    pSocket->setProperty(PROP_DATA, qulonglong(pData));
+
+    return pData;
 }
 
 //-------------------------------------------------------------------------------------------------

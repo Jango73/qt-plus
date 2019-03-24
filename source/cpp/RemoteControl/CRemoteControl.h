@@ -7,7 +7,6 @@
 // Includes
 
 // Qt
-#include <QCryptographicHash>
 #include <QCoreApplication>
 #include <QStringList>
 #include <QTextStream>
@@ -100,6 +99,7 @@ protected:
     quint32 getFileCRC(QFile& tFile);
     void sendProcessOutput(QProcess* pProcess, bool bFinished, int iExitCode);
     void echo(QString sText);
+    CConnectionData* newConnectionData(QTcpSocket* pSocket);
     CConnectionData* getConnectionData(QTcpSocket* pSocket);
     bool fileAccessOK(QString sFileName);
 
@@ -181,6 +181,7 @@ protected:
     QString                         m_sSelfIP;
     QString                         m_sRMC;
     QString                         m_sRemotePwd;
+    ERMCEncyption                   m_eEncryption;
     bool                            m_bClientConnected;
     bool                            m_bDoShell;
     int                             m_iConnectTimeoutMS;
