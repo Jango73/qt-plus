@@ -27,7 +27,7 @@ CConnectionData::CConnectionData(CRemoteControlUser* pUser)
     , m_sWorkingDirectory(QDir::currentPath())
     , m_pRSAKeys(nullptr)
 {
-    m_pRSAKeys = new KeyPair(RSA::GenerateKeyPair(8));
+    m_pRSAKeys = new KeyPair(RSA::GenerateKeyPair(10));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ CConnectionData::~CConnectionData()
 //-------------------------------------------------------------------------------------------------
 // Server constructor
 
-CRemoteControl::CRemoteControl(quint16 iPort)
+CRemoteControl::CRemoteControl(quint16 iPort, bool bRSA)
     : m_Timer(this)
     , m_pClient(nullptr)
     , m_sIP("0.0.0.0")
@@ -53,7 +53,13 @@ CRemoteControl::CRemoteControl(quint16 iPort)
     , m_iMaxWaitingTimeMS(0)
     , m_iTransactionResult(0)
 {
-    LOG_DEBUG(QString("CRemoteControl::CRemoteControl(%12)").arg(iPort));
+    LOG_DEBUG(QString("CRemoteControl::CRemoteControl(%1)").arg(iPort));
+
+    if (bRSA)
+    {
+        LOG_DEBUG(QString("... using RSA encryption"));
+        m_eEncryption = RMC_ENCRYPTION_RSA;
+    }
 
     initSecurity();
     initUsers();
@@ -306,6 +312,71 @@ QString CRemoteControl::readCommand()
 
 //-------------------------------------------------------------------------------------------------
 
+pRMC_Header CRemoteControl::encryptMessage(QTcpSocket* pSocket, pRMC_Header pDecryptedMessage)
+{
+    static char cBuffer [MAX_DATA_SIZE * 2];
+
+    LOG_DEBUG(QString("CRemoteControl::encryptMessage(%1, %2)")
+              .arg(pDecryptedMessage->ulType)
+              .arg(pDecryptedMessage->ulLength)
+              );
+
+    if (m_eEncryption == RMC_ENCRYPTION_NONE || pDecryptedMessage->ulType == RMC_RSA_PUBLIC_KEY)
+    {
+        LOG_DEBUG(QString("... returning message without encryption"));
+
+        return pDecryptedMessage;
+    }
+
+    CConnectionData* pData = getConnectionData(pSocket);
+
+    if (pData != nullptr && pData->RSAKeys() != nullptr)
+    {
+        QByteArray baMessage = QByteArray(
+                    (char*) pDecryptedMessage + sizeof(RMC_Header),
+                    int(size_t(pDecryptedMessage->ulLength) - sizeof(RMC_Header))
+                    );
+        QString sMessage = QString(baMessage.toBase64());
+        QString sEncMessage;
+
+        if (m_pClient != nullptr)
+        {
+            // We are client
+            sEncMessage = QString::fromStdString(RSA::Encrypt(sMessage.toStdString(), pData->RSAKeys()->GetPublicKey()));
+        }
+        else
+        {
+            // We are server
+            sEncMessage = QString::fromStdString(RSA::Encrypt(sMessage.toStdString(), pData->RSAKeys()->GetPrivateKey()));
+        }
+
+        LOG_DEBUG(QString("... finished encrypting"));
+
+        if (sEncMessage.length() < 500)
+        {
+            LOG_DEBUG(QString("... message : %1").arg(sEncMessage));
+        }
+
+        QByteArray lArray = QByteArray(sEncMessage.toLatin1());
+
+        pRMC_Header pEncryptedHeader = pRMC_Header(cBuffer);
+
+        pEncryptedHeader->ulType = pDecryptedMessage->ulType;
+        pEncryptedHeader->ulLength = sizeof(RMC_Header) + lArray.count();
+        pEncryptedHeader->ulEncryption = RMC_ENCRYPTION_RSA;
+
+        memcpy(cBuffer + sizeof(RMC_Header), lArray.constData(), size_t(lArray.count()));
+
+        return pEncryptedHeader;
+    }
+
+    LOG_ERROR(QString("... no key to encrypt message"));
+
+    return nullptr;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 pRMC_Header CRemoteControl::decryptMessage(QTcpSocket* pSocket, pRMC_Header pEncryptedMessage)
 {
     static char cBuffer [MAX_DATA_SIZE * 2];
@@ -316,42 +387,44 @@ pRMC_Header CRemoteControl::decryptMessage(QTcpSocket* pSocket, pRMC_Header pEnc
               );
 
     if (pEncryptedMessage->ulEncryption == RMC_ENCRYPTION_NONE)
-    {
         return pEncryptedMessage;
-    }
-    else
+
+    CConnectionData* pData = getConnectionData(pSocket);
+
+    if (pData != nullptr && pData->RSAKeys() != nullptr)
     {
-        CConnectionData* pData = getConnectionData(pSocket);
+        char* pBuffer = ((char*) pEncryptedMessage) + sizeof(RMC_Header);
+        quint32 ulSize = pEncryptedMessage->ulLength - sizeof(RMC_Header);
+        QString sMessage = QString(QByteArray(pBuffer, int(ulSize)));
+        QString sDecMessage;
 
-        if (pData != nullptr && pData->RSAKeys() != nullptr)
+        if (m_pClient != nullptr)
         {
-            char* pBuffer = ((char*) pEncryptedMessage) + sizeof(RMC_Header);
-            quint32 ulSize = pEncryptedMessage->ulLength - sizeof(RMC_Header);
-            QString sMessage = QString(QByteArray(pBuffer, int(ulSize)));
-            QString sDecMessage;
-
-            if (m_pClient != nullptr)
-            {
-                // We are client
-                sDecMessage = QString::fromStdString(RSA::Decrypt(sMessage.toStdString(), pData->RSAKeys()->GetPublicKey()));
-            }
-            else
-            {
-                // We are server
-                sDecMessage = QString::fromStdString(RSA::Decrypt(sMessage.toStdString(), pData->RSAKeys()->GetPrivateKey()));
-            }
-
-            QByteArray lArray = QByteArray::fromHex(QByteArray(sDecMessage.toLatin1().constData(), sDecMessage.length()));
-
-            memcpy(cBuffer, lArray.constData(), lArray.length());
-
-            return pRMC_Header(cBuffer);
+            // We are client
+            sDecMessage = QString::fromStdString(RSA::Decrypt(sMessage.toStdString(), pData->RSAKeys()->GetPublicKey()));
         }
         else
         {
-            LOG_ERROR(QString("CRemoteControl::decryptMessage() : no key to decrypt message"));
+            // We are server
+            sDecMessage = QString::fromStdString(RSA::Decrypt(sMessage.toStdString(), pData->RSAKeys()->GetPrivateKey()));
         }
+
+        QByteArray lArray = QByteArray::fromBase64(QByteArray(sDecMessage.toLatin1().constData(), sDecMessage.length()));
+
+        pRMC_Header pDecryptedHeader = pRMC_Header(cBuffer);
+
+        pDecryptedHeader->ulType = pEncryptedMessage->ulType;
+        pDecryptedHeader->ulLength = sizeof(RMC_Header) + lArray.count();
+        pDecryptedHeader->ulEncryption = RMC_ENCRYPTION_NONE;
+
+        memcpy(cBuffer + sizeof(RMC_Header), lArray.constData(), size_t(lArray.count()));
+
+        LOG_DEBUG(QString("... finished decrypting"));
+
+        return pDecryptedHeader;
     }
+
+    LOG_ERROR(QString("CRemoteControl::decryptMessage() : no key to decrypt message"));
 
     return nullptr;
 }
@@ -364,11 +437,11 @@ bool CRemoteControl::readMessage(QTcpSocket* pSocket)
     {
         LOG_DEBUG(QString("CRemoteControl::readMessage() : Socket has incoming data"));
 
-        pRMC_Header pHeader = pRMC_Header(m_vIncomingData[pSocket].data());
+        pRMC_Header pOriginalHeader = pRMC_Header(m_vIncomingData[pSocket].data());
 
-        if (m_vIncomingData[pSocket].count() >= int(pHeader->ulLength))
+        if (m_vIncomingData[pSocket].count() >= int(pOriginalHeader->ulLength))
         {
-            pRMC_Header pDecryptedHeader = decryptMessage(pSocket, pHeader);
+            pRMC_Header pDecryptedHeader = decryptMessage(pSocket, pOriginalHeader);
 
             LOG_DEBUG(QString("... pDecryptedHeader %1, %2, %3")
                       .arg(pDecryptedHeader->ulType)
@@ -400,7 +473,7 @@ bool CRemoteControl::readMessage(QTcpSocket* pSocket)
                 break;
             }
 
-            int bytesToRemove = int(pHeader->ulLength);
+            int bytesToRemove = int(pOriginalHeader->ulLength);
 
             LOG_DEBUG(QString("... remove %1 bytes from incoming data").arg(bytesToRemove));
 
@@ -775,55 +848,12 @@ bool CRemoteControl::sendMessage(QTcpSocket* pSocket, pRMC_Header pMessage)
                   .arg(pMessage->ulLength)
                   );
 
-        bool doRSA = false;
+        pMessage = encryptMessage(pSocket, pMessage);
 
-        // If we are server
-        if (m_pClient == nullptr)
-        {
-            doRSA = m_eEncryption == RMC_ENCRYPTION_RSA && pMessage->ulType != RMC_RSA_PUBLIC_KEY;
-        }
-        else
-        {
-            doRSA = m_eEncryption == RMC_ENCRYPTION_RSA;
-        }
+        LOG_DEBUG(QString("... sending message"));
 
-        if (doRSA)
-        {
-            LOG_DEBUG(QString("... encrypting message"));
-
-            QString sMessage = QString(QByteArray((char*) pMessage, pMessage->ulLength).toHex());
-            QString sEncMessage;
-
-            if (m_pClient != nullptr)
-            {
-                // We are client
-                sEncMessage = QString::fromStdString(RSA::Encrypt(sMessage.toStdString(), pData->RSAKeys()->GetPublicKey()));
-            }
-            else
-            {
-                // We are server
-                sEncMessage = QString::fromStdString(RSA::Encrypt(sMessage.toStdString(), pData->RSAKeys()->GetPrivateKey()));
-            }
-
-            LOG_DEBUG(QString("... %1").arg(sEncMessage));
-
-            RMC_Header EncryptedHeader;
-
-            EncryptedHeader.ulType = pMessage->ulType;
-            EncryptedHeader.ulLength = sizeof(RMC_Header) + sEncMessage.length();
-            EncryptedHeader.ulEncryption = RMC_ENCRYPTION_RSA;
-
-            pSocket->write((char*) &EncryptedHeader, sizeof(RMC_Header));
-            pSocket->write(QByteArray(sEncMessage.toLatin1().constData(), sEncMessage.length()));
-            pSocket->waitForBytesWritten();
-        }
-        else
-        {
-            LOG_DEBUG(QString("... sending non encrypted message"));
-
-            pSocket->write((char*) pMessage, pMessage->ulLength);
-            pSocket->waitForBytesWritten();
-        }
+        pSocket->write((char*) pMessage, pMessage->ulLength);
+        pSocket->waitForBytesWritten();
 
         return true;
     }
@@ -854,8 +884,8 @@ void CRemoteControl::sendText(QTcpSocket* pSocket, const QString& sText)
         fillMessageHeader(pRMC_Header(&tResponse), RMC_RESPONSE, sizeof(RMC_Response));
 
         tResponse.ulDataSize = quint32(strlen(szBuffer) + 1);
+        tResponse.tHeader.ulLength = (sizeof(tResponse) - sizeof(tResponse.cData)) + tResponse.ulDataSize;
 
-        memset(tResponse.cData, 0, MAX_DATA_SIZE);
         memcpy(tResponse.cData, szBuffer, strlen(szBuffer) + 1);
 
         sendMessage(pSocket, pRMC_Header(&tResponse));
@@ -1454,6 +1484,8 @@ void CRemoteControl::handleLogin(QTcpSocket* pSocket, RMC_Header* pHeader)
 
                 if (pData != nullptr)
                     pData->setUser(&(m_vUsers[Index]));
+
+                LOG_DEBUG(QString("... passed"));
 
                 return;
             }

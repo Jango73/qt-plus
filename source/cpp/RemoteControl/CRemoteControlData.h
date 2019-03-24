@@ -116,7 +116,6 @@ typedef struct tag_RMC_ExecuteFinished
     RMC_Header	tHeader;
     qint32		iProcess;
     qint32		iErrorCode;
-    char		cData [MAX_DATA_SIZE];
 } RMC_ExecuteFinished, *pRMC_ExecuteFinished;
 
 typedef struct tag_RMC_Response

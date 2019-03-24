@@ -59,7 +59,7 @@ class QTPLUSSHARED_EXPORT CRemoteControl : public QTcpServer
 public:
 
     // Server constructor
-    CRemoteControl(quint16 iPort);
+    CRemoteControl(quint16 iPort, bool bRSA = true);
 
     // Client constructor
     CRemoteControl(const QString& sIP, quint16 iPort, int iConnectTimeoutMS, int iMaxWaitingTimeMS, bool bDoShell);
@@ -91,6 +91,7 @@ protected:
     void sendRSAKey(QTcpSocket* pSocket);
     void fillMessageHeader(pRMC_Header pHeader, ERMCMessage eMessage, quint32 ulLength);
     QString readCommand();
+    pRMC_Header encryptMessage(QTcpSocket* pSocket, pRMC_Header pDecryptedMessage);
     pRMC_Header decryptMessage(QTcpSocket* pSocket, pRMC_Header pEncryptedMessage);
     bool readMessage(QTcpSocket* pSocket);
     QVector<QString> getFileListFromSourceName(const QString& sSourceName);
