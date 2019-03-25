@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include "../qtplus_global.h"
+
 //-------------------------------------------------------------------------------------------------
 
 // Qt
@@ -10,8 +12,8 @@
 
 //-------------------------------------------------------------------------------------------------
 
-// Defines an encryption class - Random Order Key Enctryption
-class ROKE : public QObject
+// Defines an encryption class - Random Order Key Encryption
+class QTPLUSSHARED_EXPORT ROKE : public QObject
 {
     Q_OBJECT
 
@@ -92,6 +94,8 @@ protected:
 
     static QByteArray reverseArray(const QByteArray& seq);
 
+    static void test();
+
 signals:
 
     //-------------------------------------------------------------------------------------------------
@@ -104,4 +108,6 @@ protected:
     quint32             m_uiKeySize;
     QVector<quint8>     m_vKeyOrders;
     QVector<quint8>     m_vKeyMasks;
+
+    static bool s_bSeedInit;
 };

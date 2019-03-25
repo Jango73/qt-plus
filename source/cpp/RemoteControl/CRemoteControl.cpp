@@ -93,7 +93,7 @@ CRemoteControl::CRemoteControl(const QString& sIP, quint16 iPort, int iConnectTi
     , m_sIP(sIP)
     , m_sSelfIP("0.0.0.0")
     , m_sRMC("RMC: ")
-    , m_eEncryption(RMC_ENCRYPTION_NONE)
+    , m_eEncryption(RMC_ENCRYPTION_UNDEF)
     , m_bClientConnected(false)
     , m_bDoShell(bDoShell)
     , m_iConnectTimeoutMS(iConnectTimeoutMS)
@@ -319,7 +319,11 @@ pRMC_Header CRemoteControl::encryptMessage(QTcpSocket* pSocket, pRMC_Header pMes
               .arg(pMessage->ulEncryption)
               );
 
-    if (m_eEncryption == RMC_ENCRYPTION_NONE || pMessage->ulType == RMC_SECURE_CONTEXT)
+    if (
+            m_eEncryption == RMC_ENCRYPTION_UNDEF ||
+            m_eEncryption == RMC_ENCRYPTION_NONE ||
+            pMessage->ulType == RMC_SECURE_CONTEXT
+            )
     {
         LOG_DEBUG(QString("... returning message without encryption"));
 
@@ -356,13 +360,13 @@ pRMC_Header CRemoteControl::encryptMessage(QTcpSocket* pSocket, pRMC_Header pMes
 
 pRMC_Header CRemoteControl::decryptMessage(QTcpSocket* pSocket, pRMC_Header pMessage)
 {
-    LOG_DEBUG(QString("CRemoteControl::encryptMessage(%1, %2, %3)")
+    LOG_DEBUG(QString("CRemoteControl::decryptMessage(%1, %2, %3)")
               .arg(pMessage->ulType)
               .arg(pMessage->ulLength)
               .arg(pMessage->ulEncryption)
               );
 
-    if (m_eEncryption == RMC_ENCRYPTION_NONE || pMessage->ulType == RMC_SECURE_CONTEXT)
+    if (pMessage->ulEncryption == RMC_ENCRYPTION_NONE)
     {
         LOG_DEBUG(QString("... returning message without encryption"));
 
@@ -1191,31 +1195,34 @@ void CRemoteControl::onTimer()
     // Are we in client mode?
     if (m_pClient != nullptr && m_bClientConnected)
     {
-        // Loop through one command
-        for (qint32 Index = 0; Index < m_vCommands.count(); Index++)
+        if (m_eEncryption != RMC_ENCRYPTION_UNDEF)
         {
-            LOG_DEBUG(QString("CRemoteControl::onTimer() : sending RMC_EXECUTE"));
+            // Loop through one command
+            for (qint32 Index = 0; Index < m_vCommands.count(); Index++)
+            {
+                LOG_DEBUG(QString("CRemoteControl::onTimer() : sending RMC_EXECUTE"));
 
-            CProcessInfo tCommand = m_vCommands[Index];
+                CProcessInfo tCommand = m_vCommands[Index];
 
-            // Send an execute message to server
-            RMC_Execute tExec;
+                // Send an execute message to server
+                RMC_Execute tExec;
 
-            fillMessageHeader(pRMC_Header(&tExec), RMC_EXECUTE, sizeof(RMC_Execute));
+                fillMessageHeader(pRMC_Header(&tExec), RMC_EXECUTE, sizeof(RMC_Execute));
 
-            tExec.bDetached = tCommand.m_bDetached;
+                tExec.bDetached = tCommand.m_bDetached;
 
 #ifdef WIN32
-            strcpy_s(tExec.cText, sizeof(tExec.cText), tCommand.m_sCommand.toLatin1().data());
+                strcpy_s(tExec.cText, sizeof(tExec.cText), tCommand.m_sCommand.toLatin1().data());
 #else
-            strcpy(tExec.cText, tCommand.m_sCommand.toLatin1().data());
+                strcpy(tExec.cText, tCommand.m_sCommand.toLatin1().data());
 #endif
-            sendMessage(m_pClient, pRMC_Header(&tExec));
+                sendMessage(m_pClient, pRMC_Header(&tExec));
 
-            m_vCommands.remove(Index);
+                m_vCommands.remove(Index);
 
-            m_Timer.start();
-            return;
+                m_Timer.start();
+                return;
+            }
         }
     }
 
@@ -1306,8 +1313,7 @@ void CRemoteControl::onServerConnection()
     connect(pSocket, SIGNAL(readyRead()), this, SLOT(onSocketReadyRead()));
     connect(pSocket, SIGNAL(disconnected()), this, SLOT(onSocketDisconnected()));
 
-    // Send RSA public key
-
+    // Send secure context
     sendSecureContext(pSocket);
 }
 
@@ -1319,22 +1325,22 @@ void CRemoteControl::sendSecureContext(QTcpSocket* pSocket)
     {
         CConnectionData* pData = getConnectionData(pSocket);
 
-        if (pData == nullptr)
-            return;
+        if (pData != nullptr)
+        {
+            LOG_DEBUG("CRemoteControl::sendSecureContext()");
 
-        LOG_DEBUG("CRemoteControl::sendSecureContext()");
+            RMC_Secure_Context tContext;
 
-        RMC_Secure_Context tContext;
+            fillMessageHeader(pRMC_Header(&tContext), RMC_SECURE_CONTEXT, sizeof(RMC_Secure_Context));
 
-        fillMessageHeader(pRMC_Header(&tContext), RMC_SECURE_CONTEXT, sizeof(RMC_Secure_Context));
+            QByteArray baData = pData->secureContext().contextData();
 
-        QByteArray baData = pData->secureContext().contextData();
+            memcpy(tContext.cData, baData.constData(), size_t(baData.count()));
 
-        memcpy(tContext.cData, baData.constData(), size_t(baData.count()));
+            tContext.tHeader.ulLength = (sizeof(tContext) - sizeof(tContext.cData)) + baData.count();
 
-        tContext.tHeader.ulLength = (sizeof(tContext) - sizeof(tContext.cData)) + baData.count();
-
-        sendMessage(pSocket, pRMC_Header(&tContext));
+            sendMessage(pSocket, pRMC_Header(&tContext));
+        }
     }
 }
 

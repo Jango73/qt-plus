@@ -59,8 +59,9 @@ enum ERMCRequest
 
 enum ERMCEncyption
 {
-    RMC_ENCRYPTION_NONE		= 0,
-    RMC_ENCRYPTION_ROKE		= 1
+    RMC_ENCRYPTION_UNDEF    = 0,
+    RMC_ENCRYPTION_NONE		= 1,
+    RMC_ENCRYPTION_ROKE		= 2
 };
 
 #define RMC_MERGETYPE_INI		1
