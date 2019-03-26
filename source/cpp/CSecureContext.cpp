@@ -12,8 +12,39 @@
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    \class CSecureContext
+    \inmodule qt-plus
+    \brief A context that enables secure data transfer.
+
+    \section1 How to use
+    Both server and client must use this context, but in slightly different ways.
+    When the server receives a connection:
+    \list
+        \li create a CSecureContext by specifying \c true
+        \li Associate the context with the client
+        \li Call \c contextData() and send the returned \c QByteArray to the client
+    \endlist
+    When the client receives the QByteArray containing the secure data:
+    \list
+        \li create a CSecureContext by specifying \c false
+        \li Associate the context with the server
+        \li Call \c setContextData() with the \c QByteArray sent by the server
+    \endlist
+    Now that both sides are ready for secure transfers, we just have to call
+    \c encrypt() just before sending a packet and \c decrypt() just afert receiving
+    one. That's it.
+
+    \section1 How it works
+    The actual data encryption is made using ROKE, a home made, rather simple, algorithm which
+    uses a key of random size (between 32 and 64 digits). Since the key is symetric, it is
+    send to the client using RSA (64 bit key). It then becomes quite difficult to guess the key.
+*/
+
+//-------------------------------------------------------------------------------------------------
+
 CSecureContext::CSecureContext(bool bIsServer)
-    : m_pRSAKeys(new KeyPair(RSA::GenerateKeyPair(10)))
+    : m_pRSAKeys(new KeyPair(RSA::GenerateKeyPair(16)))
     , m_tROKE(ROKE::generateKey())
     , m_bIsServer(bIsServer)
 {

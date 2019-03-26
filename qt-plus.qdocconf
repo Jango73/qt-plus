@@ -1,6 +1,8 @@
 project = qt-plus
 description = qt-plus Documentation
 
+moduleheader = AllDoc.h
+
 sourcedirs = source/cpp
 headerdirs = source/cpp
 
