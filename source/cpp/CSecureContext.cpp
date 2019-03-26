@@ -21,28 +21,32 @@
     Both server and client must use this context, but in slightly different ways.
     When the server receives a connection:
     \list
-        \li create a CSecureContext by specifying \c true
-        \li Associate the context with the client
-        \li Call \c contextData() and send the returned \c QByteArray to the client
+        \li Create a CSecureContext by specifying \c true
+        \li Associate the context with the connection to the client
+        \li Call contextData() and send the returned QByteArray to the client
     \endlist
     When the client receives the QByteArray containing the secure data:
     \list
-        \li create a CSecureContext by specifying \c false
-        \li Associate the context with the server
-        \li Call \c setContextData() with the \c QByteArray sent by the server
+        \li Create a CSecureContext by specifying \c false
+        \li Associate the context with the connection to the server
+        \li Call setContextData() with the ByteArray sent by the server
     \endlist
     Now that both sides are ready for secure transfers, we just have to call
-    \c encrypt() just before sending a packet and \c decrypt() just afert receiving
+    encrypt() just before sending a packet and decrypt() just afert receiving
     one. That's it.
 
     \section1 How it works
     The actual data encryption is made using ROKE, a home made, rather simple, algorithm which
     uses a key of random size (between 32 and 64 digits). Since the key is symetric, it is
-    send to the client using RSA (64 bit key). It then becomes quite difficult to guess the key.
+    sent to the client using RSA (64 bit key). It then becomes quite difficult to guess the key.
 */
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Constructs a CSecureContext. \br\br
+    \a bIsServer tells if the class behavior is for a server \br
+*/
 CSecureContext::CSecureContext(bool bIsServer)
     : m_pRSAKeys(new KeyPair(RSA::GenerateKeyPair(16)))
     , m_tROKE(ROKE::generateKey())
@@ -54,6 +58,9 @@ CSecureContext::CSecureContext(bool bIsServer)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Destroys a CSecureContext.
+*/
 CSecureContext::~CSecureContext()
 {
     if (m_pRSAKeys != nullptr)
@@ -62,6 +69,9 @@ CSecureContext::~CSecureContext()
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Echoes text on standard output.
+*/
 void CSecureContext::echo(QString sText)
 {
     QTextStream stream(stdout);
@@ -71,6 +81,9 @@ void CSecureContext::echo(QString sText)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Sets the key data from \a baContext.
+*/
 void CSecureContext::setContextData(const QByteArray& baContext)
 {
     LOG_DEBUG("CSecureContext::setContextData");
@@ -111,6 +124,9 @@ void CSecureContext::setContextData(const QByteArray& baContext)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Returns the key data.
+*/
 QByteArray CSecureContext::contextData() const
 {
     QString sROKEKey = m_tROKE.key();
@@ -132,6 +148,9 @@ QByteArray CSecureContext::contextData() const
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Encrypts the data in \a baData.
+*/
 QByteArray CSecureContext::encrypt(const QByteArray& baData)
 {
     return m_tROKE.encrypt(baData);
@@ -139,6 +158,9 @@ QByteArray CSecureContext::encrypt(const QByteArray& baData)
 
 //-------------------------------------------------------------------------------------------------
 
+/*!
+    Decrypts the data in \a baData.
+*/
 QByteArray CSecureContext::decrypt(const QByteArray& baData)
 {
     return m_tROKE.decrypt(baData);
