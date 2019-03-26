@@ -21,6 +21,8 @@ A template for a factory of objects, based on the Factory design pattern.
 ### CXMLNode
 A helper class that wraps the *XML* and *JSON* facilities of Qt. Makes *DOM* style documents easier to use.
 
+Attention : This class is really slow with very large documents because a lot of nodes are created and copied around...
+
 ### CLogger
 A simple yet efficient logger.
 
@@ -56,25 +58,27 @@ A class that allows static analysis of a *QML* statement tree (parsed using *QML
 Uses a grammar file in *XML* format that declares what to check and eventually reject.
 
 ### CSecureContext
-A class that allows easy secure data exchange between servers and client of any kind. Based on RSA (copyright Nedim Srndic) and ROKE, a home made symetric encryption algorithm.
+A class that allows easy secure data exchange between servers and client of any kind. Based on *RSA* (copyright Nedim Srndic) and *ROKE*, a home made symetric encryption algorithm.
 
 ### CHTTPServer
 Implements the base functionalities (GET and POST) of an *HTTP* server (see RFC 7230).  
 Can do the following:
-* Handles GET and POST requests (maybe more in the future)
+* Handles *GET* and *POST* requests (maybe more in the future)
 * Serve local file ressources
 * Define the accessible folders for ressources
 * Generate dynamic *HTML* content via overridden methods.
 * More or less efficient flood protection (has not been tested on large scale)
-* NO https for now
+* No *https* for now
 
 ### CDynamicHTTPServer
 Implements the base functionalities of a web server that generates dynamic HTML content.
-A subclass of CDynamicHTTPServer may generate content in two ways:
-* Using a CWebComposer to generate HTML tags in a string
-* Using a CWebFactory to generate a CWebPage, which is a container of CWebControls
+A subclass of *CDynamicHTTPServer* may generate content in two ways:
+* Using a *CWebComposer* to generate *HTML* tags in a string
+* Using a *CWebFactory* to generate a *CWebPage*, which is a container of *CWebControls*
 
-The second method works like ASP, with a view state that enables to transfer a serialized, compressed and eventually crypted (when someone wants to code it) version of the CWebPage between server and client. See the documentation of CWebPage for more information.
+The second method works like *ASP*, with a view state that enables to transfer a serialized, compressed and eventually crypted (when someone wants to code it) version of the *CWebPage* between server and client.
+This method enables 
+See the documentation of *CWebPage* for more information.
 
 ### CRemoteControl
 A server/client that acts somewhat like SSH on Linux. Enables remote file transfers and remote shell.
