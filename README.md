@@ -50,8 +50,9 @@ A class that can hold an NxN matrix. Used, among other things, for image filteri
 ### QMLTreeContext
 A full *QML* parser. <br>
 Holds the contents of a *QML* file in the form of a tree, made of specialized classes for each kind of *QML* and JS declarations. <br>
-* Can recreate the original *QML* file from the statement tree, **but currently throws comments away**. (To be fixed in a near future)
+* Can recreate the original *QML* file from the statement tree.
 * Can convert the statement tree to *XML*.
+* Has a known parsing problem : when using a prefix operator (like ++a)
 
 ### QMLAnalyzer
 A class that allows static analysis of a *QML* statement tree (parsed using *QMLTreeContext*).  
