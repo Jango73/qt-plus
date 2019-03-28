@@ -26,6 +26,7 @@
 #include "CRemoteControlData.h"
 #include "CRemoteControlUser.h"
 #include "../CSecureContext.h"
+#include "../CXMLNode.h"
 
 class QTPLUSSHARED_EXPORT CConnectionData : public QObject
 {
@@ -107,9 +108,14 @@ public:
     //! Gets the CRC of a file on the server
     bool getRemoteFileCRC(const QString& targetName);
 
+    //-------------------------------------------------------------------------------------------------
+    // Protected control methods
+    //-------------------------------------------------------------------------------------------------
+
 protected:
 
-    // Protected methods
+    //! Reads configuration file
+    void readConfiguration();
 
     //! Initializes the security members
     void initSecurity();
@@ -209,6 +215,7 @@ protected slots:
 
 protected:
 
+    CXMLNode                        m_tConfiguration;
     QTimer                          m_Timer;
     QVector<CRemoteControlUser>     m_vUsers;
     QTcpSocket*                     m_pClient;

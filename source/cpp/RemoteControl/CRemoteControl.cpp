@@ -4,7 +4,9 @@
 
 // Application
 #include "CRemoteControl.h"
-#include "../CXMLNode.h"
+
+//-------------------------------------------------------------------------------------------------
+// Logging macros
 
 #define LOG_DEBUG(a)
 // #define LOG_DEBUG(a) echo(QString("(%1) DEBUG : %2\n").arg(m_sSelfIP).arg(a))
@@ -59,12 +61,16 @@ CRemoteControl::CRemoteControl(quint16 iPort, bool bROKE)
         m_eEncryption = RMC_ENCRYPTION_ROKE;
     }
 
+    // Security
+    readConfiguration();
     initSecurity();
     initUsers();
 
+    // Events
     connect(&m_Timer, SIGNAL(timeout()), this, SLOT(onTimer()));
     connect(this, SIGNAL(newConnection()), this, SLOT(onServerConnection()));
 
+    // Startup socket listener
     if (listen(QHostAddress::Any, quint16(iPort)))
     {
         setMaxPendingConnections(10);
@@ -76,9 +82,10 @@ CRemoteControl::CRemoteControl(quint16 iPort, bool bROKE)
         LOG_ERROR(errorString());
     }
 
-    // Get our own IP address
+    // Get own IP address
     QList<QHostAddress> sList = QNetworkInterface::allAddresses();
-    if (sList.count() > 0) m_sSelfIP = sList[0].toString();
+    if (sList.count() > 0)
+        m_sSelfIP = sList[0].toString();
 
     // Start the timer that deals with commands and transfers
     m_Timer.start(5);
@@ -102,12 +109,15 @@ CRemoteControl::CRemoteControl(const QString& sIP, quint16 iPort, int iConnectTi
 {
     LOG_DEBUG(QString("CRemoteControl::CRemoteControl(%1, %2)").arg(sIP).arg(iPort));
 
+    // Security
+    readConfiguration();
     initSecurity();
 
+    // Create connection to server
     m_pClient = new QTcpSocket(this);
-
     newConnectionData(m_pClient, false);
 
+    // Events
     connect(&m_Timer, SIGNAL(timeout()), this, SLOT(onTimer()));
     connect(m_pClient, SIGNAL(connected()), this, SLOT(onSocketConnected()));
     connect(m_pClient, SIGNAL(disconnected()), this, SLOT(onSocketDisconnected()));
@@ -129,14 +139,15 @@ CRemoteControl::CRemoteControl(const QString& sIP, quint16 iPort, int iConnectTi
         LOG_ERROR(sError);
     }
 
-    // Get our own IP address
+    // Get own IP address
     QList<QHostAddress> sList = QNetworkInterface::allAddresses();
-    if (sList.count() > 0) m_sSelfIP = sList[0].toString();
+    if (sList.count() > 0)
+        m_sSelfIP = sList[0].toString();
 
     // Start the timer that deals with commands and transfers
     m_Timer.start(5);
 
-    // If we are in shell mode, ask for the currecnt directory
+    // If we are in shell mode, ask for the current directory
     if (m_bDoShell && m_bClientConnected)
     {
         sendRequest(m_pClient, RMC_REQUEST_PWD, "");
@@ -155,9 +166,27 @@ CRemoteControl::~CRemoteControl()
 
 //-------------------------------------------------------------------------------------------------
 
+void CRemoteControl::readConfiguration()
+{
+    m_tConfiguration = CXMLNode::loadXMLFromFile(CONF_FILE);
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void CRemoteControl::initSecurity()
 {
-    m_vProhibitedFiles.append(CONF_FILE);
+    CXMLNode tFilesNode = m_tConfiguration.getNodeByTagName("Files");
+
+    QVector<CXMLNode> vFiles = tFilesNode.getNodesByTagName("ProhibitedFile");
+
+    foreach (CXMLNode tFile, vFiles)
+    {
+        QString sPath = tFile.attributes()["path"];
+
+        LOG_DEBUG(QString("Access to %1 is prohibited").arg(sPath));
+
+        m_vProhibitedFiles << sPath;
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -166,10 +195,7 @@ void CRemoteControl::initUsers()
 {
     bool bGotGuestUser = false;
 
-    // Read user configuration
-    CXMLNode tConfiguration = CXMLNode::loadXMLFromFile(CONF_FILE);
-
-    CXMLNode tUsersNode = tConfiguration.getNodeByTagName("Users");
+    CXMLNode tUsersNode = m_tConfiguration.getNodeByTagName("Users");
 
     QVector<CXMLNode> vUsers = tUsersNode.getNodesByTagName("User");
 
@@ -187,7 +213,8 @@ void CRemoteControl::initUsers()
                             sPrivileges.toInt()
                             ));
 
-        if (sLogin == "guest") bGotGuestUser = true;
+        if (sLogin == "guest")
+            bGotGuestUser = true;
     }
 
     if (bGotGuestUser == false)
