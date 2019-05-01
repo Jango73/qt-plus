@@ -23,6 +23,13 @@
 #define SOCKET_NAME(a)	(a->peerAddress().toString() + ":" + QString::number(a->peerPort()))
 
 //-------------------------------------------------------------------------------------------------
+// Static properties
+
+const int CRemoteControl::s_iDefaultPort = 8419;
+const int CRemoteControl::s_iDefaultTimeout = 3000;
+const int CRemoteControl::s_iDefaultMaxWaitingTime = 5000;
+
+//-------------------------------------------------------------------------------------------------
 
 CConnectionData::CConnectionData(CRemoteControlUser* pUser, bool bIsServer)
     : m_pUser(pUser)
@@ -40,7 +47,7 @@ CConnectionData::~CConnectionData()
 //-------------------------------------------------------------------------------------------------
 // Server constructor
 
-CRemoteControl::CRemoteControl(quint16 iPort, bool bROKE)
+CRemoteControl::CRemoteControl(int iPort, bool bROKE)
     : m_Timer(this)
     , m_pClient(nullptr)
     , m_sIP("0.0.0.0")
@@ -94,7 +101,7 @@ CRemoteControl::CRemoteControl(quint16 iPort, bool bROKE)
 //-------------------------------------------------------------------------------------------------
 // Client constructor
 
-CRemoteControl::CRemoteControl(const QString& sIP, quint16 iPort, int iConnectTimeoutMS, int iMaxWaitingTimeMS, bool bDoShell)
+CRemoteControl::CRemoteControl(const QString& sIP, int iPort, int iConnectTimeoutMS, int iMaxWaitingTimeMS, bool bDoShell)
     : m_Timer(this)
     , m_pClient(nullptr)
     , m_sIP(sIP)
@@ -124,7 +131,7 @@ CRemoteControl::CRemoteControl(const QString& sIP, quint16 iPort, int iConnectTi
     connect(m_pClient, SIGNAL(readyRead()), this, SLOT(onSocketReadyRead()));
 
     // Connect to server
-    m_pClient->connectToHost(sIP, iPort);
+    m_pClient->connectToHost(sIP, quint16(iPort));
 
     LOG_DEBUG(QString("CRemoteControl::CRemoteControl() : waitForConnected(%1)").arg(m_iConnectTimeoutMS));
 
@@ -161,6 +168,7 @@ CRemoteControl::~CRemoteControl()
     if (m_pClient != nullptr && m_bClientConnected)
     {
         m_pClient->flush();
+        m_pClient->deleteLater();
     }
 }
 

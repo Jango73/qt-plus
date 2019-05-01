@@ -65,10 +65,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     // Server constructor
-    CRemoteControl(quint16 iPort, bool bROKE = true);
+    CRemoteControl(int iPort, bool bROKE = true);
 
     // Client constructor
-    CRemoteControl(const QString& sIP, quint16 iPort, int iConnectTimeoutMS, int iMaxWaitingTimeMS, bool bDoShell);
+    CRemoteControl(const QString& sIP, int iPort, int iConnectTimeoutMS, int iMaxWaitingTimeMS, bool bDoShell);
 
     // Destructor
     ~CRemoteControl();
@@ -107,6 +107,14 @@ public:
 
     //! Gets the CRC of a file on the server
     bool getRemoteFileCRC(const QString& targetName);
+
+    //-------------------------------------------------------------------------------------------------
+    // Static properties
+    //-------------------------------------------------------------------------------------------------
+
+    static int defaultPort() { return s_iDefaultPort; }
+    static int defaultTimeout() { return s_iDefaultTimeout; }
+    static int defaultMaxWaitingTime() { return s_iDefaultMaxWaitingTime; }
 
     //-------------------------------------------------------------------------------------------------
     // Protected control methods
@@ -212,6 +220,11 @@ protected slots:
     void onDoEmitTransactionTerminated();
     void onDoEmitShutdown();
     void nextCommand();
+
+private:
+    static const int s_iDefaultPort;
+    static const int s_iDefaultTimeout;
+    static const int s_iDefaultMaxWaitingTime;
 
 protected:
 
