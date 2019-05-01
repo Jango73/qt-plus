@@ -108,3 +108,6 @@ Contains methods to convert from geo coordinates (latitude, longitude, altitude)
 
 ## beautify.js
 Copyright (c) 2007-2017 Einar Lielmanis, Liam Newman, and contributors
+
+## Content of source/cpp/rsa
+Copyright (c) 2008 Nedim Srndic. Originally hosted on http://code.google.com/p/rsa
