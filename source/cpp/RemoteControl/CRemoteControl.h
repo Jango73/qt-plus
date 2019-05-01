@@ -65,10 +65,19 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     // Server constructor
-    CRemoteControl(int iPort, bool bROKE = true);
+    CRemoteControl(
+            int iPort,
+            bool bROKE = true
+            );
 
     // Client constructor
-    CRemoteControl(const QString& sIP, int iPort, int iConnectTimeoutMS, int iMaxWaitingTimeMS, bool bDoShell);
+    CRemoteControl(
+            const QString& sIP,
+            int iPort,
+            int iConnectTimeoutMS = CRemoteControl::defaultTimeout(),
+            int iMaxWaitingTimeMS = CRemoteControl::defaultMaxWaitingTime(),
+            bool bDoShell = false
+            );
 
     // Destructor
     ~CRemoteControl();
@@ -77,8 +86,11 @@ public:
     // Getters
     //-------------------------------------------------------------------------------------------------
 
-    //!
-    bool getClientConnected() { return m_bClientConnected; }
+    //! Deprecated
+    bool getClientConnected() { return m_bConnectedToServer; }
+
+    //! Returns true if connected to a server
+    bool connectedToServer() { return m_bConnectedToServer; }
 
     //-------------------------------------------------------------------------------------------------
     // Control methods
@@ -242,7 +254,7 @@ protected:
     QString                         m_sRMC;
     QString                         m_sRemotePwd;
     ERMCEncyption                   m_eEncryption;
-    bool                            m_bClientConnected;
+    bool                            m_bConnectedToServer;
     bool                            m_bDoShell;
     int                             m_iConnectTimeoutMS;
     int                             m_iMaxWaitingTimeMS;

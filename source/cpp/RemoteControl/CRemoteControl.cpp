@@ -54,7 +54,7 @@ CRemoteControl::CRemoteControl(int iPort, bool bROKE)
     , m_sSelfIP("0.0.0.0")
     , m_sRMC("RMC: ")
     , m_eEncryption(RMC_ENCRYPTION_NONE)
-    , m_bClientConnected(false)
+    , m_bConnectedToServer(false)
     , m_bDoShell(false)
     , m_iConnectTimeoutMS(3000)
     , m_iMaxWaitingTimeMS(0)
@@ -108,7 +108,7 @@ CRemoteControl::CRemoteControl(const QString& sIP, int iPort, int iConnectTimeou
     , m_sSelfIP("0.0.0.0")
     , m_sRMC("RMC: ")
     , m_eEncryption(RMC_ENCRYPTION_UNDEF)
-    , m_bClientConnected(false)
+    , m_bConnectedToServer(false)
     , m_bDoShell(bDoShell)
     , m_iConnectTimeoutMS(iConnectTimeoutMS)
     , m_iMaxWaitingTimeMS(iMaxWaitingTimeMS)
@@ -137,7 +137,7 @@ CRemoteControl::CRemoteControl(const QString& sIP, int iPort, int iConnectTimeou
 
     if (m_pClient->waitForConnected(m_iConnectTimeoutMS))
     {
-        m_bClientConnected = true;
+        m_bConnectedToServer = true;
     }
     else
     {
@@ -155,7 +155,7 @@ CRemoteControl::CRemoteControl(const QString& sIP, int iPort, int iConnectTimeou
     m_Timer.start(5);
 
     // If we are in shell mode, ask for the current directory
-    if (m_bDoShell && m_bClientConnected)
+    if (m_bDoShell && m_bConnectedToServer)
     {
         sendRequest(m_pClient, RMC_REQUEST_PWD, "");
     }
@@ -165,7 +165,7 @@ CRemoteControl::CRemoteControl(const QString& sIP, int iPort, int iConnectTimeou
 
 CRemoteControl::~CRemoteControl()
 {
-    if (m_pClient != nullptr && m_bClientConnected)
+    if (m_pClient != nullptr && m_bConnectedToServer)
     {
         m_pClient->flush();
         m_pClient->deleteLater();
@@ -240,7 +240,7 @@ void CRemoteControl::setLoginPassword(QString sLogin, QString sPassword)
 {
     LOG_DEBUG(QString("CRemoteControl::setLoginPassword(%1, %2)").arg(sLogin).arg(sPassword));
 
-    if (m_bClientConnected)
+    if (m_bConnectedToServer)
     {
         if (!sLogin.isEmpty())
         {
@@ -265,7 +265,7 @@ void CRemoteControl::fillMessageHeader(pRMC_Header pHeader, ERMCMessage eMessage
 
 void CRemoteControl::nextCommand()
 {
-    if (m_bDoShell && m_bClientConnected)
+    if (m_bDoShell && m_bConnectedToServer)
     {
         // Print a prompt
         if (m_bDoShell) echo("\n" + m_sRMC + m_sRemotePwd + "\n" + m_sRMC + "==>");
@@ -369,7 +369,7 @@ pRMC_Header CRemoteControl::encryptMessage(QTcpSocket* pSocket, pRMC_Header pMes
 
     if (pData != nullptr)
     {
-        char* pBytes = (char*)pMessage + sizeof(RMC_Header);
+        char* pBytes = reinterpret_cast<char*>(pMessage) + sizeof(RMC_Header);
         int iCount = int(pMessage->ulLength - sizeof(RMC_Header));
 
         QByteArray baData = QByteArray(pBytes, iCount);
@@ -412,7 +412,7 @@ pRMC_Header CRemoteControl::decryptMessage(QTcpSocket* pSocket, pRMC_Header pMes
 
     if (pData != nullptr)
     {
-        char* pBytes = (char*)pMessage + sizeof(RMC_Header);
+        char* pBytes = reinterpret_cast<char*>(pMessage) + sizeof(RMC_Header);
         int iCount = int(pMessage->ulLength - sizeof(RMC_Header));
 
         QByteArray baData = QByteArray(pBytes, iCount);
@@ -560,7 +560,7 @@ bool CRemoteControl::getFile(const QString& sSourceName, const QString& sTargetN
                 );
 
     // Are we in client mode?
-    if (m_pClient != nullptr && m_bClientConnected)
+    if (m_pClient != nullptr && m_bConnectedToServer)
     {
         // Send a get file message to server
         RMC_GetFile tGet;
@@ -600,7 +600,7 @@ bool CRemoteControl::putFile(const QString& sSourceName, const QString& sTargetN
     bool bIsWildCard = sSourceName.contains('*');
 
     // Are we in client mode?
-    if (m_pClient != nullptr && m_bClientConnected)
+    if (m_pClient != nullptr && m_bConnectedToServer)
     {
         QVector<QString> vSourceFiles = getFileListFromSourceName(sSourceName);
 
@@ -700,7 +700,7 @@ bool CRemoteControl::getRemoteFileCRC(const QString& sTargetName)
     LOG_DEBUG(QString("CRemoteControl::getRemoteFileCRC(%1)").arg(sTargetName));
 
     // Are we in client mode?
-    if (m_pClient != nullptr && m_bClientConnected)
+    if (m_pClient != nullptr && m_bConnectedToServer)
     {
         // Create a new file transfer object
         CFileTransferData* pTransfer = new CFileTransferData(m_pClient, sTargetName, sTargetName, 0, false);
@@ -722,7 +722,7 @@ bool CRemoteControl::getRights()
 {
     LOG_DEBUG(QString("CRemoteControl::getRights()"));
 
-    if (m_pClient != nullptr && m_bClientConnected)
+    if (m_pClient != nullptr && m_bConnectedToServer)
     {
         LOG_DEBUG(QString("... sendRequest(RMC_REQUEST_GETRIGHTS)"));
 
@@ -739,7 +739,7 @@ bool CRemoteControl::sendShutdown()
     LOG_DEBUG(QString("CRemoteControl::sendShutdown()"));
 
     // Are we in client mode?
-    if (m_pClient != nullptr && m_bClientConnected)
+    if (m_pClient != nullptr && m_bConnectedToServer)
     {
         sendRequest(m_pClient, RMC_REQUEST_SHUTDOWN, "");
     }
@@ -763,7 +763,7 @@ quint32 CRemoteControl::getFileCRC(QFile& tFile)
         while (!tFile.atEnd())
         {
             quint32 ulData;
-            qint64 iSize = tFile.read((char*) &ulData, sizeof(quint32));
+            qint64 iSize = tFile.read(reinterpret_cast<char*>(&ulData), sizeof(quint32));
 
             if (iSize != sizeof(quint32)) break;
 
@@ -784,7 +784,7 @@ void CRemoteControl::sendProcessOutput(QProcess* pProcess, bool bFinished, qint3
 
     if (pProcess != nullptr)
     {
-        QTcpSocket* pSocket = dynamic_cast<QTcpSocket*>((QObject*) pProcess->property(PROP_SOCKET).toULongLong());
+        QTcpSocket* pSocket = dynamic_cast<QTcpSocket*>(reinterpret_cast<QObject*>(pProcess->property(PROP_SOCKET).toULongLong()));
 
         if (pSocket != nullptr)
         {
@@ -805,7 +805,7 @@ void CRemoteControl::sendProcessOutput(QProcess* pProcess, bool bFinished, qint3
 
                 tResponse.ulDataSize = quint32(iSize);
                 memset(tResponse.cData, 0, sizeof(tResponse.cData));
-                memcpy(tResponse.cData, tArray.data(), iSize);
+                memcpy(tResponse.cData, tArray.data(), quint32(iSize));
 
                 sendMessage(pSocket, pRMC_Header(&tResponse));
 
@@ -857,7 +857,7 @@ bool CRemoteControl::sendMessage(QTcpSocket* pSocket, pRMC_Header pMessage)
 
         LOG_DEBUG(QString("... sending message"));
 
-        pSocket->write((char*) pMessage, pMessage->ulLength);
+        pSocket->write(reinterpret_cast<char*>(pMessage), pMessage->ulLength);
         pSocket->waitForBytesWritten();
 
         return true;
@@ -948,7 +948,7 @@ void CRemoteControl::sendFileReceived(QTcpSocket* pSocket, quint32 ulTransferID,
 
     tReceived.ulTransferID		= ulTransferID;
     tReceived.iError			= iError;
-    tReceived.uiCRC				= ulCRC;
+    tReceived.ulCRC				= ulCRC;
 
     sendMessage(pSocket, pRMC_Header(&tReceived));
 }
@@ -1094,19 +1094,19 @@ void CRemoteControl::onTimer()
                                 QByteArray aBytes = tFileToRead.read(ulBytesToSend);
 
                                 // Update current offset in file
-                                pTransfer->setOffsetInFile(pTransfer->getOffsetInFile() + aBytes.count());
+                                pTransfer->setOffsetInFile(pTransfer->getOffsetInFile() + quint32(aBytes.count()));
 
                                 // Send chunk to client
                                 RMC_FileChunk tChunk;
 
-                                fillMessageHeader((pRMC_Header) &tChunk, RMC_FILE_CHUNK, sizeof(RMC_FileChunk));
+                                fillMessageHeader(pRMC_Header(&tChunk), RMC_FILE_CHUNK, sizeof(RMC_FileChunk));
 
                                 tChunk.ulTransferID		= pTransfer->getTransferID();
                                 tChunk.ulOffsetInFile	= pTransfer->getOffsetInFile();
                                 tChunk.ulFileSize		= pTransfer->getFileSize();
                                 tChunk.ulCRC			= pTransfer->getSourceFileCRC();
                                 tChunk.cIsLastChunk		= pTransfer->getOffsetInFile() >= tFileToRead.size();
-                                tChunk.ulDataSize		= aBytes.count();
+                                tChunk.ulDataSize		= quint32(aBytes.count());
 
 #ifdef WIN32
                                 strcpy_s(tChunk.cSourceName, sizeof(tChunk.cSourceName), pTransfer->getSourceName().toLatin1().constData());
@@ -1116,7 +1116,7 @@ void CRemoteControl::onTimer()
                                 strcpy(tChunk.cTargetName, pTransfer->getTargetName().toLatin1().constData());
 #endif
 
-                                memcpy(tChunk.cData, aBytes.data(), aBytes.count());
+                                memcpy(tChunk.cData, aBytes.data(), size_t(aBytes.count()));
 
                                 LOG_DEBUG(
                                             QString("CRemoteControl::onTimer() : transfering chunk at offset %1 for transfer ID %2, size %3")
@@ -1228,12 +1228,13 @@ void CRemoteControl::onTimer()
     }
 
     // Are we in client mode?
-    if (m_pClient != nullptr && m_bClientConnected)
+    if (m_pClient != nullptr && m_bConnectedToServer)
     {
         if (m_eEncryption != RMC_ENCRYPTION_UNDEF)
         {
             // Loop through one command
-            for (qint32 Index = 0; Index < m_vCommands.count(); Index++)
+            qint32 Index = 0;
+            // for (qint32 Index = 0; Index < m_vCommands.count(); Index++)
             {
                 LOG_DEBUG(QString("CRemoteControl::onTimer() : sending RMC_EXECUTE"));
 
@@ -1372,7 +1373,7 @@ void CRemoteControl::sendSecureContext(QTcpSocket* pSocket)
 
             memcpy(tContext.cData, baData.constData(), size_t(baData.count()));
 
-            tContext.tHeader.ulLength = (sizeof(tContext) - sizeof(tContext.cData)) + baData.count();
+            tContext.tHeader.ulLength = quint32((sizeof(tContext) - sizeof(tContext.cData)) + quint64(baData.count()));
 
             sendMessage(pSocket, pRMC_Header(&tContext));
         }
@@ -1385,7 +1386,7 @@ void CRemoteControl::onSocketConnected()
 {
     LOG_DEBUG("CRemoteControl::onSocketConnected()");
 
-    m_bClientConnected = true;
+    m_bConnectedToServer = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1396,7 +1397,7 @@ void CRemoteControl::onSocketDisconnected()
 
     QTcpSocket* pSocket = dynamic_cast<QTcpSocket*>(QObject::sender());
 
-    m_bClientConnected = false;
+    m_bConnectedToServer = false;
 
     // Check if any transfer is associated to this socket
     checkConnectionTransfers(pSocket, true);
@@ -1740,7 +1741,7 @@ void CRemoteControl::handleGetFile(QTcpSocket* pSocket, RMC_Header* pHeader)
                             pSocket,
                             sFileName,
                             sFullTargetName,
-                            tFile.size(),
+                            quint32(tFile.size()),
                             true
                             );
 
@@ -1765,7 +1766,7 @@ void CRemoteControl::handleGetFile(QTcpSocket* pSocket, RMC_Header* pHeader)
 
                 RMC_FileTransfer tChunk;
 
-                fillMessageHeader((pRMC_Header) &tChunk, RMC_FILE_TRANSFER, sizeof(RMC_FileTransfer));
+                fillMessageHeader(pRMC_Header(&tChunk), RMC_FILE_TRANSFER, sizeof(RMC_FileTransfer));
 
                 tChunk.ulTransferID		= pTransfer->getTransferID();
                 tChunk.ulFileSize		= pTransfer->getFileSize();
@@ -2280,7 +2281,7 @@ CConnectionData* CRemoteControl::newConnectionData(QTcpSocket* pSocket, bool bIs
 
 CConnectionData* CRemoteControl::getConnectionData(QTcpSocket* pSocket)
 {
-    CConnectionData* pData = dynamic_cast<CConnectionData*>((QObject*) pSocket->property(PROP_DATA).toULongLong());
+    CConnectionData* pData = dynamic_cast<CConnectionData*>(reinterpret_cast<QObject*>(pSocket->property(PROP_DATA).toULongLong()));
 
     return pData;
 }

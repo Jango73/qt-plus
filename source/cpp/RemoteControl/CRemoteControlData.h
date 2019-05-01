@@ -188,7 +188,7 @@ typedef struct tag_RMC_FileReceived
     RMC_Header	tHeader;
     quint32		ulTransferID;
     qint32		iError;
-    qint32		uiCRC;
+    quint32		ulCRC;
 } RMC_FileReceived, *pRMC_FileReceived;
 
 typedef struct tag_RMC_FileSetFinished
