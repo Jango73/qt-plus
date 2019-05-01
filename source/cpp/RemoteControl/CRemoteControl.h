@@ -99,8 +99,8 @@ public:
     //! Sends a login and password to the server
     void setLoginPassword(QString sLogin, QString sPassword);
 
-    //! Sends a command ti the server
-    void sendCommand(const QString& sCommand, bool bDetached);
+    //! Sends a command to the server, will go when timer decides
+    void sendCommand(const QString& sCommand, bool bDetached = false, bool bRightNow = false);
 
     //! Sends a privilege request to the server
     bool getRights();
@@ -141,7 +141,7 @@ protected:
     void initSecurity();
 
     //! Initializes the registered users
-    void initUsers();
+    void initUsers(bool bSilent = false);
 
     //! Sends a secure context to a client
     void sendSecureContext(QTcpSocket* pSocket);
@@ -158,6 +158,9 @@ protected:
     //! Decrypts a message using the socket's secure context
     pRMC_Header decryptMessage(QTcpSocket* pSocket, pRMC_Header pEncryptedMessage);
 
+    //! Sends a command immediately
+    void doSendCommand(const QString& sCommand, bool bDetached);
+
     bool readMessage(QTcpSocket* pSocket);
     QVector<QString> getFileListFromSourceName(const QString& sSourceName);
     void checkConnectionTransfers(QTcpSocket* pSocket, bool bIsDisconnected = false);
@@ -167,6 +170,7 @@ protected:
     void echo(QString sText);
     CConnectionData* newConnectionData(QTcpSocket* pSocket, bool bIsServer);
     CConnectionData* getConnectionData(QTcpSocket* pSocket);
+    void discardConnectionData(QTcpSocket* pSocket);
     bool fileAccessOK(QString sFileName);
 
     void handleLogin(QTcpSocket* pSocket, RMC_Header* pHeader);
@@ -231,7 +235,7 @@ protected slots:
     void onProcessError(QProcess::ProcessError Error);
     void onDoEmitTransactionTerminated();
     void onDoEmitShutdown();
-    void nextCommand();
+    void onNextCommand();
 
 private:
     static const int s_iDefaultPort;

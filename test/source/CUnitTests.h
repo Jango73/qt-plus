@@ -25,5 +25,6 @@ public:
 
 private slots:
 
-    void helloWorld();
+    void xml();
+    void remoteControlMultiClient();
 };

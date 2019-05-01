@@ -119,6 +119,7 @@ CRemoteControl::CRemoteControl(const QString& sIP, int iPort, int iConnectTimeou
     // Security
     readConfiguration();
     initSecurity();
+    initUsers(true);
 
     // Create connection to server
     m_pClient = new QTcpSocket(this);
@@ -165,9 +166,14 @@ CRemoteControl::CRemoteControl(const QString& sIP, int iPort, int iConnectTimeou
 
 CRemoteControl::~CRemoteControl()
 {
-    if (m_pClient != nullptr && m_bConnectedToServer)
+    if (m_pClient != nullptr)
     {
-        m_pClient->flush();
+        if (m_bConnectedToServer)
+        {
+            m_pClient->flush();
+        }
+
+        discardConnectionData(m_pClient);
         m_pClient->deleteLater();
     }
 }
@@ -199,7 +205,7 @@ void CRemoteControl::initSecurity()
 
 //-------------------------------------------------------------------------------------------------
 
-void CRemoteControl::initUsers()
+void CRemoteControl::initUsers(bool bSilent)
 {
     bool bGotGuestUser = false;
 
@@ -213,7 +219,8 @@ void CRemoteControl::initUsers()
         QString sPassword = tNode.attributes()["password"];
         QString sPrivileges = tNode.attributes()["privileges"];
 
-        LOG_INFO(QString("Registered user : %1 (Privileges: %2)").arg(sLogin).arg(sPrivileges));
+        if (!bSilent)
+            LOG_INFO(QString("Registered user : %1 (Privileges: %2)").arg(sLogin).arg(sPrivileges));
 
         m_vUsers.append(CRemoteControlUser(
                             sLogin,
@@ -227,7 +234,8 @@ void CRemoteControl::initUsers()
 
     if (bGotGuestUser == false)
     {
-        LOG_INFO(QString("Registered user : guest (Privileges: %2)").arg(EP_FileRead));
+        if (!bSilent)
+            LOG_INFO(QString("Registered user : guest (Privileges: %2)").arg(EP_FileRead));
 
         // Add the guest user (default)
         m_vUsers.prepend(CRemoteControlUser("guest", "guest", EP_FileRead));
@@ -263,7 +271,7 @@ void CRemoteControl::fillMessageHeader(pRMC_Header pHeader, ERMCMessage eMessage
 
 //-------------------------------------------------------------------------------------------------
 
-void CRemoteControl::nextCommand()
+void CRemoteControl::onNextCommand()
 {
     if (m_bDoShell && m_bConnectedToServer)
     {
@@ -283,7 +291,7 @@ void CRemoteControl::nextCommand()
                 echo("  quit : terminate session\n");
                 echo("\n");
 
-                QTimer::singleShot(10, this, SLOT(nextCommand()));
+                QTimer::singleShot(10, this, SLOT(onNextCommand()));
             }
             else
                 if (sText == "quit")
@@ -326,7 +334,7 @@ void CRemoteControl::nextCommand()
         else
         {
             // Call this method from idle in 10 ms
-            QTimer::singleShot(10, this, SLOT(nextCommand()));
+            QTimer::singleShot(10, this, SLOT(onNextCommand()));
         }
     }
 }
@@ -535,13 +543,39 @@ QVector<QString> CRemoteControl::getFileListFromSourceName(const QString& sSourc
 
 //-------------------------------------------------------------------------------------------------
 
-void CRemoteControl::sendCommand(const QString& sCommand, bool bDetached)
+void CRemoteControl::sendCommand(const QString& sCommand, bool bDetached, bool bRightNow)
 {
-    // Just add command to command list, sent later
-    if (m_pClient != nullptr)
+    if (bRightNow)
     {
-        m_vCommands.append(CProcessInfo(sCommand, bDetached));
+        // Just add command to command list, sent later
+        if (m_pClient != nullptr)
+        {
+            m_vCommands.append(CProcessInfo(sCommand, bDetached));
+        }
     }
+    else
+    {
+        doSendCommand(sCommand, bDetached);
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CRemoteControl::doSendCommand(const QString& sCommand, bool bDetached)
+{
+    // Send an execute message to server
+    RMC_Execute tExec;
+
+    fillMessageHeader(pRMC_Header(&tExec), RMC_EXECUTE, sizeof(RMC_Execute));
+
+    tExec.bDetached = bDetached;
+
+#ifdef WIN32
+    strcpy_s(tExec.cText, sizeof(tExec.cText), sCommand.toLatin1().data());
+#else
+    strcpy(tExec.cText, tCommand.m_sCommand.toLatin1().data());
+#endif
+    sendMessage(m_pClient, pRMC_Header(&tExec));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1240,19 +1274,7 @@ void CRemoteControl::onTimer()
 
                 CProcessInfo tCommand = m_vCommands[Index];
 
-                // Send an execute message to server
-                RMC_Execute tExec;
-
-                fillMessageHeader(pRMC_Header(&tExec), RMC_EXECUTE, sizeof(RMC_Execute));
-
-                tExec.bDetached = tCommand.m_bDetached;
-
-#ifdef WIN32
-                strcpy_s(tExec.cText, sizeof(tExec.cText), tCommand.m_sCommand.toLatin1().data());
-#else
-                strcpy(tExec.cText, tCommand.m_sCommand.toLatin1().data());
-#endif
-                sendMessage(m_pClient, pRMC_Header(&tExec));
+                doSendCommand(tCommand.m_sCommand, tCommand.m_bDetached);
 
                 m_vCommands.remove(Index);
 
@@ -1410,7 +1432,7 @@ void CRemoteControl::onSocketDisconnected()
                     .arg(SOCKET_NAME(pSocket))
                     );
 
-        m_vSockets.remove(m_vSockets.indexOf(pSocket));
+        m_vSockets.removeAll(pSocket);
     }
 
     // Remove any incoming data associated to this socket
@@ -1686,7 +1708,7 @@ void CRemoteControl::handleExecuteFinished(QTcpSocket* pSocket, RMC_Header* pHea
     }
     else
     {
-        QTimer::singleShot(10, this, SLOT(nextCommand()));
+        QTimer::singleShot(10, this, SLOT(onNextCommand()));
     }
 }
 
@@ -2080,7 +2102,7 @@ void CRemoteControl::handleProgramWorkingDir(QTcpSocket* pSocket, RMC_Header* pH
 
     LOG_DEBUG(QString("CRemoteControl::handleProgramWorkingDir() : cPath = %1").arg(m_sRemotePwd));
 
-    QTimer::singleShot(10, this, SLOT(nextCommand()));
+    QTimer::singleShot(10, this, SLOT(onNextCommand()));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2284,4 +2306,16 @@ CConnectionData* CRemoteControl::getConnectionData(QTcpSocket* pSocket)
     CConnectionData* pData = dynamic_cast<CConnectionData*>(reinterpret_cast<QObject*>(pSocket->property(PROP_DATA).toULongLong()));
 
     return pData;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CRemoteControl::discardConnectionData(QTcpSocket* pSocket)
+{
+    CConnectionData* pData = dynamic_cast<CConnectionData*>(reinterpret_cast<QObject*>(pSocket->property(PROP_DATA).toULongLong()));
+
+    if (pData != nullptr)
+    {
+        delete pData;
+    }
 }

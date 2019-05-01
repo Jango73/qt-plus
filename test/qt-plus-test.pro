@@ -9,8 +9,6 @@ TEMPLATE = app
 
 # Dependencies
 INCLUDEPATH += $$PWD/../source/cpp
-INCLUDEPATH += $$PWD/../source/cpp/Web
-
 DEPENDPATH += $$PWD/../source
 
 # Directories
@@ -22,9 +20,9 @@ UI_DIR = $$PWD/ui
 
 # Target
 CONFIG(debug, debug|release) {
-    TARGET = QtPlusTestd
+    TARGET = qt-plus-testd
 } else {
-    TARGET = QtPlusTest
+    TARGET = qt-plus-test
 }
 
 # Libraries
