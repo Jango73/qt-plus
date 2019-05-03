@@ -573,7 +573,7 @@ void CRemoteControl::doSendCommand(const QString& sCommand, bool bDetached)
 #ifdef WIN32
     strcpy_s(tExec.cText, sizeof(tExec.cText), sCommand.toLatin1().data());
 #else
-    strcpy(tExec.cText, tCommand.m_sCommand.toLatin1().data());
+    strcpy(tExec.cText, sCommand.toLatin1().data());
 #endif
     sendMessage(m_pClient, pRMC_Header(&tExec));
 }
