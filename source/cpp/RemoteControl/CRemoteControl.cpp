@@ -17,10 +17,10 @@
 
 //-------------------------------------------------------------------------------------------------
 
-#define PROP_SOCKET		"Socket"
-#define PROP_DATA		"Data"
-#define CONF_FILE		"rmc.conf.xml"
-#define SOCKET_NAME(a)	(a->peerAddress().toString() + ":" + QString::number(a->peerPort()))
+#define PROP_SOCKET     "Socket"
+#define PROP_DATA       "Data"
+#define CONF_FILE       "rmc.conf.xml"
+#define SOCKET_NAME(a)  (a->peerAddress().toString() + ":" + QString::number(a->peerPort()))
 
 //-------------------------------------------------------------------------------------------------
 // Static properties
@@ -466,20 +466,20 @@ bool CRemoteControl::readMessage(QTcpSocket* pSocket)
 
             switch (pDecryptedHeader->ulType)
             {
-            case RMC_LOGIN:					handleLogin				(pSocket, pDecryptedHeader); break;
-            case RMC_SECURE_CONTEXT:		handleSecureContext		(pSocket, pDecryptedHeader); break;
-            case RMC_EXECUTE:				handleExecute			(pSocket, pDecryptedHeader); break;
-            case RMC_CHANGE_DIRECTORY:		handleChangeDirectory	(pSocket, pDecryptedHeader); break;
-            case RMC_RESPONSE:				handleResponse			(pSocket, pDecryptedHeader); break;
-            case RMC_EXECUTE_FINISHED:		handleExecuteFinished	(pSocket, pDecryptedHeader); break;
-            case RMC_GET_FILE:				handleGetFile			(pSocket, pDecryptedHeader); break;
-            case RMC_FILE_TRANSFER:			handleFileTransfer		(pSocket, pDecryptedHeader); break;
-            case RMC_FILE_CHUNK:			handleFileChunk			(pSocket, pDecryptedHeader); break;
-            case RMC_FILE_RECEIVED:			handleFileReceived		(pSocket, pDecryptedHeader); break;
-            case RMC_FILE_INFO:				handleFileInfo			(pSocket, pDecryptedHeader); break;
-            case RMC_PROGRAM_WORKING_DIR:	handleProgramWorkingDir	(pSocket, pDecryptedHeader); break;
-            case RMC_REQUEST:				handleRequest			(pSocket, pDecryptedHeader); break;
-            case RMC_MERGE_FILE:			handleMergeFile			(pSocket, pDecryptedHeader); break;
+            case RMC_LOGIN:                 handleLogin             (pSocket, pDecryptedHeader); break;
+            case RMC_SECURE_CONTEXT:        handleSecureContext     (pSocket, pDecryptedHeader); break;
+            case RMC_EXECUTE:               handleExecute           (pSocket, pDecryptedHeader); break;
+            case RMC_CHANGE_DIRECTORY:      handleChangeDirectory   (pSocket, pDecryptedHeader); break;
+            case RMC_RESPONSE:              handleResponse          (pSocket, pDecryptedHeader); break;
+            case RMC_EXECUTE_FINISHED:      handleExecuteFinished   (pSocket, pDecryptedHeader); break;
+            case RMC_GET_FILE:              handleGetFile           (pSocket, pDecryptedHeader); break;
+            case RMC_FILE_TRANSFER:         handleFileTransfer      (pSocket, pDecryptedHeader); break;
+            case RMC_FILE_CHUNK:            handleFileChunk         (pSocket, pDecryptedHeader); break;
+            case RMC_FILE_RECEIVED:         handleFileReceived      (pSocket, pDecryptedHeader); break;
+            case RMC_FILE_INFO:             handleFileInfo          (pSocket, pDecryptedHeader); break;
+            case RMC_PROGRAM_WORKING_DIR:   handleProgramWorkingDir (pSocket, pDecryptedHeader); break;
+            case RMC_REQUEST:               handleRequest           (pSocket, pDecryptedHeader); break;
+            case RMC_MERGE_FILE:            handleMergeFile         (pSocket, pDecryptedHeader); break;
 
             default:
                 LOG_DEBUG(QString("... unknown message : %1").arg(pDecryptedHeader->ulType));
@@ -1135,12 +1135,12 @@ void CRemoteControl::onTimer()
 
                                 fillMessageHeader(pRMC_Header(&tChunk), RMC_FILE_CHUNK, sizeof(RMC_FileChunk));
 
-                                tChunk.ulTransferID		= pTransfer->getTransferID();
-                                tChunk.ulOffsetInFile	= pTransfer->getOffsetInFile();
-                                tChunk.ulFileSize		= pTransfer->getFileSize();
-                                tChunk.ulCRC			= pTransfer->getSourceFileCRC();
-                                tChunk.cIsLastChunk		= pTransfer->getOffsetInFile() >= tFileToRead.size();
-                                tChunk.ulDataSize		= quint32(aBytes.count());
+                                tChunk.ulTransferID     = pTransfer->getTransferID();
+                                tChunk.ulOffsetInFile   = pTransfer->getOffsetInFile();
+                                tChunk.ulFileSize       = pTransfer->getFileSize();
+                                tChunk.ulCRC            = pTransfer->getSourceFileCRC();
+                                tChunk.cIsLastChunk     = pTransfer->getOffsetInFile() >= tFileToRead.size();
+                                tChunk.ulDataSize       = quint32(aBytes.count());
 
 #ifdef WIN32
                                 strcpy_s(tChunk.cSourceName, sizeof(tChunk.cSourceName), pTransfer->getSourceName().toLatin1().constData());
@@ -1790,8 +1790,8 @@ void CRemoteControl::handleGetFile(QTcpSocket* pSocket, RMC_Header* pHeader)
 
                 fillMessageHeader(pRMC_Header(&tChunk), RMC_FILE_TRANSFER, sizeof(RMC_FileTransfer));
 
-                tChunk.ulTransferID		= pTransfer->getTransferID();
-                tChunk.ulFileSize		= pTransfer->getFileSize();
+                tChunk.ulTransferID = pTransfer->getTransferID();
+                tChunk.ulFileSize   = pTransfer->getFileSize();
 
 #ifdef WIN32
                 strcpy_s(tChunk.cSourceName, sizeof(tChunk.cSourceName), pTransfer->getSourceName().toLatin1().constData());
@@ -1837,10 +1837,10 @@ void CRemoteControl::handleFileTransfer(QTcpSocket* pSocket, RMC_Header* pHeader
 
     RMC_FileChunk tChunk; memset(&tChunk, 0, sizeof(RMC_FileChunk));
 
-    tChunk.ulTransferID = pFileTransfer->ulTransferID;
-    tChunk.ulFileSize = pFileTransfer->ulFileSize;
-    tChunk.ulOffsetInFile = 0;
-    tChunk.ulDataSize = 0;
+    tChunk.ulTransferID     = pFileTransfer->ulTransferID;
+    tChunk.ulFileSize       = pFileTransfer->ulFileSize;
+    tChunk.ulOffsetInFile   = 0;
+    tChunk.ulDataSize       = 0;
     memcpy(tChunk.cSourceName, pFileTransfer->cSourceName, sizeof(tChunk.cSourceName));
     memcpy(tChunk.cTargetName, pFileTransfer->cTargetName, sizeof(tChunk.cTargetName));
 

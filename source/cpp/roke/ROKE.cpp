@@ -228,6 +228,8 @@ quint32 ROKE::reverseBits32(quint32 n)
 {
     return n;
 
+    // TODO : Find a working method
+
 //    return ((n * 0x0802 & 0x22110) | (n * 0x8020 & 0x88440)) * 0x10101 >> 16;
 
 //    quint32 x;
@@ -260,11 +262,11 @@ QByteArray ROKE::reverseArray(const QByteArray& seq)
 
 void ROKE::test()
 {
-//    quint32 uiData = 1000;
-//    uiData = reverseBits32(uiData);
-//    uiData = reverseBits32(uiData);
+    quint32 uiData = 1000;
+    uiData = reverseBits32(uiData);
+    uiData = reverseBits32(uiData);
 
-//    qDebug() << QString("reverseBits32(1000) : %1").arg(uiData);
+    qDebug() << QString("reverseBits32(1000) : %1").arg(uiData);
 
     ROKE tROKE(ROKE::generateKey());
 

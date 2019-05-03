@@ -86,14 +86,19 @@ protected:
 
 protected:
 
+    // Shuffles a vector of 8 bit integers
     static void shuffle(QVector<quint8>& vValues, int iIterations);
 
+    // Returns a true random 32 bit integer
     static quint32 randomInt32();
 
+    // Reverses the bits of a 32 bit integer
     static quint32 reverseBits32(quint32 n);
 
+    // Reverses the content of a byte array
     static QByteArray reverseArray(const QByteArray& seq);
 
+    // Tests some features
     static void test();
 
 signals:
@@ -109,5 +114,5 @@ protected:
     QVector<quint8>     m_vKeyOrders;
     QVector<quint8>     m_vKeyMasks;
 
-    static bool s_bSeedInit;
+    static bool         s_bSeedInit;
 };
