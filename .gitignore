@@ -73,6 +73,7 @@ Makefile.*
 # Project specific
 /bin/*.xml
 /bin/*.qml
+/bin/qt-plus-test
 /help
 /moc
 /obj
