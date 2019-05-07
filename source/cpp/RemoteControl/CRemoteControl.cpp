@@ -1204,7 +1204,7 @@ void CRemoteControl::onTimer()
                     {
                         LOG_ERROR(QString("CRemoteControl::onTimer() : could not open file %1").arg(pTransfer->getSourceName()));
 
-                        sendText(pTransfer->getSocket(), QString("Could not open file %1\n").arg(pTransfer->getSourceName()));
+                        sendText(pTransfer->getSocket(), QString(tr("Could not open file %1\n")).arg(pTransfer->getSourceName()));
 
                         pTransfer->setDone(true);
                         checkConnectionTransfers(pSocket);
@@ -1513,7 +1513,7 @@ void CRemoteControl::handleLogin(QTcpSocket* pSocket, RMC_Header* pHeader)
             if (m_vUsers[Index].login() == sLogin && m_vUsers[Index].encodedPassword() == sPassword)
             {
                 // Tell the client it is logged in
-                sendText(pSocket, QString("Logged in as %1\n").arg(sLogin));
+                sendText(pSocket, QString(tr("Logged in as %1\n")).arg(sLogin));
 
                 CConnectionData* pData = getConnectionData(pSocket);
 
@@ -1529,7 +1529,7 @@ void CRemoteControl::handleLogin(QTcpSocket* pSocket, RMC_Header* pHeader)
         }
 
         // Tell the client we could not identify it
-        sendText(pSocket, "Wrong login or password, try again\n");
+        sendText(pSocket, tr("Wrong login or password, try again\n"));
     }
 }
 
@@ -1568,7 +1568,7 @@ void CRemoteControl::handleExecute(QTcpSocket* pSocket, RMC_Header* pHeader)
     // Check for execution privilege
     if (!(getPrivilegesForSocket(pSocket) & EP_Execute))
     {
-        sendText(pSocket, QString("No privilege for execution."));
+        sendText(pSocket, QString(tr("No privilege for execution.")));
         sendExecuteFinished(pSocket, 0, 1);
         return;
     }
@@ -1577,7 +1577,7 @@ void CRemoteControl::handleExecute(QTcpSocket* pSocket, RMC_Header* pHeader)
 
     if (fileAccessOK(QString(pExec->cText)) == false)
     {
-        sendText(pSocket, QString("Access denied."));
+        sendText(pSocket, QString(tr("Access denied.")));
         sendExecuteFinished(pSocket, 0, 1);
         return;
     }
@@ -1602,7 +1602,7 @@ void CRemoteControl::handleExecute(QTcpSocket* pSocket, RMC_Header* pHeader)
     {
         if (!(getPrivilegesForSocket(pSocket) & EP_FileDelete))
         {
-            sendText(pSocket, QString("No privilege for file delete."));
+            sendText(pSocket, QString(tr("No privilege for file delete.")));
             sendExecuteFinished(pSocket, 0, 1);
             return;
         }
@@ -1612,7 +1612,7 @@ void CRemoteControl::handleExecute(QTcpSocket* pSocket, RMC_Header* pHeader)
     {
         if (!(getPrivilegesForSocket(pSocket) & EP_Shutdown))
         {
-            sendText(pSocket, QString("No privilege for shutdown."));
+            sendText(pSocket, QString(tr("No privilege for shutdown.")));
             sendExecuteFinished(pSocket, 0, 1);
             return;
         }
@@ -1662,14 +1662,14 @@ void CRemoteControl::handleChangeDirectory(QTcpSocket* pSocket, RMC_Header* pHea
 
     if (QDir::setCurrent(pData->workingDirectory()) == false)
     {
-        sendText(pSocket, "Internal error");
+        sendText(pSocket, tr("Internal error"));
     }
     else
     {
         // Try to change the current directory
         if (QDir::setCurrent(pChange->cTargetDirectory) == false)
         {
-            sendText(pSocket, "No such directory");
+            sendText(pSocket, tr("No such directory"));
         }
         else
         {
@@ -1822,7 +1822,7 @@ void CRemoteControl::handleGetFile(QTcpSocket* pSocket, RMC_Header* pHeader)
                     bFileNotFoundSent = true;
 
                     // Send a file not found text
-                    sendText(pSocket, QString("File not found : %1\n").arg(tFile.fileName()));
+                    sendText(pSocket, QString(tr("File not found : %1\n")).arg(tFile.fileName()));
                     sendExecuteFinished(pSocket, 0, 1);
                 }
             }
@@ -1831,7 +1831,7 @@ void CRemoteControl::handleGetFile(QTcpSocket* pSocket, RMC_Header* pHeader)
 
     if (iFileCount == 0)
     {
-        sendText(pSocket, "File set empty\n");
+        sendText(pSocket, tr("File set empty\n"));
         sendExecuteFinished(pSocket, 0, 1);
     }
 }
@@ -1919,7 +1919,7 @@ void CRemoteControl::handleFileChunk(QTcpSocket* pSocket, RMC_Header* pHeader)
                             );
 
                 // Return error to caller
-                sendText(pSocket, QString("Could not delete file %1\n").arg(pTransfer->getTargetName()));
+                sendText(pSocket, QString(tr("Could not delete file %1\n")).arg(pTransfer->getTargetName()));
 
                 // Tell caller the file transfer is finished
                 sendExecuteFinished(pSocket, 0, 1);
@@ -1980,7 +1980,7 @@ void CRemoteControl::handleFileChunk(QTcpSocket* pSocket, RMC_Header* pHeader)
                     );
 
         // Return error to caller
-        sendText(pSocket, QString("File %1 is not open\n").arg(pTransfer->getTargetName()));
+        sendText(pSocket, QString(tr("File %1 is not open\n")).arg(pTransfer->getTargetName()));
 
         // Tell caller the file transfer is finished
         sendExecuteFinished(pSocket, 0, 1);
@@ -2007,7 +2007,7 @@ void CRemoteControl::handleFileChunk(QTcpSocket* pSocket, RMC_Header* pHeader)
                         .arg(pTransfer->getFile()->size())
                         );
 
-            sendText(pSocket, QString("File size incorrect after last chunk for file %1\n").arg(pTransfer->getTargetName()));
+            sendText(pSocket, QString(tr("File size incorrect after last chunk for file %1\n")).arg(pTransfer->getTargetName()));
         }
 
         // Tell the sender the transfer is finished
@@ -2155,11 +2155,20 @@ void CRemoteControl::handleRequest(QTcpSocket* pSocket, RMC_Header* pHeader)
 
     case RMC_REQUEST_SHUTDOWN:
     {
-        // Tell the sender we are shutting down
-        sendText(pSocket, QString("Shutting down in two seconds...\n"));
-        sendExecuteFinished(pSocket, 0, 0);
+        if (getPrivilegesForSocket(pSocket) & EP_Shutdown)
+        {
+            // Tell the sender we are shutting down
+            sendText(pSocket, QString(tr("Shutting down in two seconds...\n")));
+            sendExecuteFinished(pSocket, 0, 0);
 
-        QTimer::singleShot(2000, this, SLOT(onDoEmitShutdown()));
+            QTimer::singleShot(2000, this, SLOT(onDoEmitShutdown()));
+        }
+        else
+        {
+            // Tell the sender that no such thing will be done
+            sendText(pSocket, QString(tr("Cannot comply...\n")));
+            sendExecuteFinished(pSocket, 0, 0);
+        }
     }
         break;
 
@@ -2167,12 +2176,13 @@ void CRemoteControl::handleRequest(QTcpSocket* pSocket, RMC_Header* pHeader)
     {
         int iRights = getPrivilegesForSocket(pSocket);
 
-        sendText(pSocket, QString("Your privileges:\n"));
-        if (iRights & EP_FileRead) sendText(pSocket, QString("- File read\n"));
-        if (iRights & EP_FileWrite) sendText(pSocket, QString("- File write\n"));
-        if (iRights & EP_FileDelete) sendText(pSocket, QString("- File delete\n"));
-        if (iRights & EP_Execute) sendText(pSocket, QString("- Execution\n"));
-        if (iRights & EP_Shutdown) sendText(pSocket, QString("- Shut down\n"));
+        sendText(pSocket, QString(tr("Your privileges:\n")));
+
+        if (iRights & EP_FileRead) sendText(pSocket, QString(tr("- File read\n")));
+        if (iRights & EP_FileWrite) sendText(pSocket, QString(tr("- File write\n")));
+        if (iRights & EP_FileDelete) sendText(pSocket, QString(tr("- File delete\n")));
+        if (iRights & EP_Execute) sendText(pSocket, QString(tr("- Execution\n")));
+        if (iRights & EP_Shutdown) sendText(pSocket, QString(tr("- Shut down\n")));
 
         sendExecuteFinished(pSocket, 0, 0);
     }
@@ -2218,7 +2228,7 @@ void CRemoteControl::handleMergeFile(QTcpSocket* pSocket, RMC_Header* pHeader)
             }
         }
 
-        sendText(pSocket, "Merge done.");
+        sendText(pSocket, tr("Merge done."));
     }
 
     sendExecuteFinished(pSocket, 0, 0);
