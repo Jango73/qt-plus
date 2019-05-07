@@ -102,11 +102,14 @@ public:
     //! Sends a command to the server, will go when timer decides
     void sendCommand(const QString& sCommand, bool bDetached = false, bool bRightNow = false);
 
-    //! Sends a privilege request to the server
-    bool getRights();
-
     //! Sends a shutdown command to the server
     bool sendShutdown();
+
+    //! Gets the CRC of a file on the server
+    bool getRemoteFileCRC(const QString& targetName);
+
+    //! Sends a privilege request to the server
+    bool getRights();
 
     //! Gets a file from the server
     bool getFile(const QString& sourceName, const QString& targetName, bool bKeepNewest, bool bCompCRC);
@@ -117,8 +120,8 @@ public:
     //!
     bool mergeFile(const QString& sourceName, const QString& targetName);
 
-    //! Gets the CRC of a file on the server
-    bool getRemoteFileCRC(const QString& targetName);
+    //! Wait for response
+    void waitForResponse();
 
     //-------------------------------------------------------------------------------------------------
     // Static properties
@@ -161,16 +164,37 @@ protected:
     //! Sends a command immediately
     void doSendCommand(const QString& sCommand, bool bDetached);
 
+    //!
     bool readMessage(QTcpSocket* pSocket);
+
+    //!
     QVector<QString> getFileListFromSourceName(const QString& sSourceName);
+
+    //!
     void checkConnectionTransfers(QTcpSocket* pSocket, bool bIsDisconnected = false);
+
+    //!
     int getPrivilegesForSocket(QTcpSocket* pSocket);
+
+    //!
     quint32 getFileCRC(QFile& tFile);
+
+    //!
     void sendProcessOutput(QProcess* pProcess, bool bFinished, int iExitCode);
+
+    //! Sends text to the standard output
     void echo(QString sText);
+
+    //!
     CConnectionData* newConnectionData(QTcpSocket* pSocket, bool bIsServer);
+
+    //!
     CConnectionData* getConnectionData(QTcpSocket* pSocket);
+
+    //!
     void discardConnectionData(QTcpSocket* pSocket);
+
+    //!
     bool fileAccessOK(QString sFileName);
 
     void handleLogin(QTcpSocket* pSocket, RMC_Header* pHeader);

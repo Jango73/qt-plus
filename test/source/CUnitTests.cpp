@@ -40,6 +40,9 @@ void CUnitTests::remoteControlMultiClient()
 
     rcClient1.setLoginPassword("guest", "guest");
     rcClient1.sendCommand("dir", false, true);
+
+    rcClient2.setLoginPassword("guest", "guest");
+    rcClient2.sendCommand("dir", false, true);
 }
 
 //-------------------------------------------------------------------------------------------------

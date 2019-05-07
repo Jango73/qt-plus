@@ -545,17 +545,17 @@ QVector<QString> CRemoteControl::getFileListFromSourceName(const QString& sSourc
 
 void CRemoteControl::sendCommand(const QString& sCommand, bool bDetached, bool bRightNow)
 {
-    if (bRightNow)
+    if (m_pClient != nullptr)
     {
-        // Just add command to command list, sent later
-        if (m_pClient != nullptr)
+        if (bRightNow)
         {
+            doSendCommand(sCommand, bDetached);
+        }
+        else
+        {
+            // Just add command to command list, sent later
             m_vCommands.append(CProcessInfo(sCommand, bDetached));
         }
-    }
-    else
-    {
-        doSendCommand(sCommand, bDetached);
     }
 }
 
@@ -576,6 +576,60 @@ void CRemoteControl::doSendCommand(const QString& sCommand, bool bDetached)
     strcpy(tExec.cText, sCommand.toLatin1().data());
 #endif
     sendMessage(m_pClient, pRMC_Header(&tExec));
+}
+
+//-------------------------------------------------------------------------------------------------
+
+bool CRemoteControl::sendShutdown()
+{
+    LOG_DEBUG(QString("CRemoteControl::sendShutdown()"));
+
+    // Are we in client mode?
+    if (m_pClient != nullptr && m_bConnectedToServer)
+    {
+        sendRequest(m_pClient, RMC_REQUEST_SHUTDOWN, "");
+    }
+
+    return true;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+bool CRemoteControl::getRemoteFileCRC(const QString& sTargetName)
+{
+    LOG_DEBUG(QString("CRemoteControl::getRemoteFileCRC(%1)").arg(sTargetName));
+
+    // Are we in client mode?
+    if (m_pClient != nullptr && m_bConnectedToServer)
+    {
+        // Create a new file transfer object
+        CFileTransferData* pTransfer = new CFileTransferData(m_pClient, sTargetName, sTargetName, 0, false);
+
+        pTransfer->setEchoFileCRC(true);
+
+        // Add the file transfer object to list of transfers
+        m_vFileTransfers.append(pTransfer);
+
+        sendRequest(m_pClient, RMC_REQUEST_FILEINFO, sTargetName);
+    }
+
+    return true;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+bool CRemoteControl::getRights()
+{
+    LOG_DEBUG(QString("CRemoteControl::getRights()"));
+
+    if (m_pClient != nullptr && m_bConnectedToServer)
+    {
+        LOG_DEBUG(QString("... sendRequest(RMC_REQUEST_GETRIGHTS)"));
+
+        sendRequest(m_pClient, RMC_REQUEST_GETRIGHTS, "");
+    }
+
+    return true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -729,56 +783,12 @@ bool CRemoteControl::mergeFile(const QString& sSourceName, const QString& sTarge
 
 //-------------------------------------------------------------------------------------------------
 
-bool CRemoteControl::getRemoteFileCRC(const QString& sTargetName)
+void CRemoteControl::waitForResponse()
 {
-    LOG_DEBUG(QString("CRemoteControl::getRemoteFileCRC(%1)").arg(sTargetName));
-
-    // Are we in client mode?
-    if (m_pClient != nullptr && m_bConnectedToServer)
+    if (m_pClient != nullptr)
     {
-        // Create a new file transfer object
-        CFileTransferData* pTransfer = new CFileTransferData(m_pClient, sTargetName, sTargetName, 0, false);
-
-        pTransfer->setEchoFileCRC(true);
-
-        // Add the file transfer object to list of transfers
-        m_vFileTransfers.append(pTransfer);
-
-        sendRequest(m_pClient, RMC_REQUEST_FILEINFO, sTargetName);
+        // TODO
     }
-
-    return true;
-}
-
-//-------------------------------------------------------------------------------------------------
-
-bool CRemoteControl::getRights()
-{
-    LOG_DEBUG(QString("CRemoteControl::getRights()"));
-
-    if (m_pClient != nullptr && m_bConnectedToServer)
-    {
-        LOG_DEBUG(QString("... sendRequest(RMC_REQUEST_GETRIGHTS)"));
-
-        sendRequest(m_pClient, RMC_REQUEST_GETRIGHTS, "");
-    }
-
-    return true;
-}
-
-//-------------------------------------------------------------------------------------------------
-
-bool CRemoteControl::sendShutdown()
-{
-    LOG_DEBUG(QString("CRemoteControl::sendShutdown()"));
-
-    // Are we in client mode?
-    if (m_pClient != nullptr && m_bConnectedToServer)
-    {
-        sendRequest(m_pClient, RMC_REQUEST_SHUTDOWN, "");
-    }
-
-    return true;
 }
 
 //-------------------------------------------------------------------------------------------------
