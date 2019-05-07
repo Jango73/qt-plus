@@ -1277,8 +1277,9 @@ void CRemoteControl::onTimer()
         if (m_eEncryption != RMC_ENCRYPTION_UNDEF)
         {
             // Loop through one command
-            qint32 Index = 0;
             // for (qint32 Index = 0; Index < m_vCommands.count(); Index++)
+            qint32 Index = 0;
+            if (m_vCommands.count() > 0)
             {
                 LOG_DEBUG(QString("CRemoteControl::onTimer() : sending RMC_EXECUTE"));
 
