@@ -112,7 +112,7 @@ CWebFactory* CDynamicHTTPServer::factory() const
     \a sBody can be filled with the HTML page body. \br
     If \a sCustomResponse is filled, it will override \a sHead and \a sBody and will be sent as is.
 */
-void CDynamicHTTPServer::getContent(const CWebContext& tContext, QString& sHead, QString& sBody, QString& sCustomResponse, QString& sCustomResponseMIME)
+void CDynamicHTTPServer::getContent(CWebContext& tContext, QString& sHead, QString& sBody, QString& sCustomResponse, QString& sCustomResponseMIME)
 {
     if (tContext.m_mArguments.contains(TOKEN_ACTION))
     {

@@ -229,7 +229,7 @@ void CMJPEGServer::flush()
     \a sCustomResponse. \br
     \a sCustomResponseMIME.
 */
-void CMJPEGServer::getContent(const CWebContext& tContext, QString& sHead, QString& sBody, QString& sCustomResponse, QString& sCustomResponseMIME)
+void CMJPEGServer::getContent(CWebContext& tContext, QString& sHead, QString& sBody, QString& sCustomResponse, QString& sCustomResponseMIME)
 {
     Q_UNUSED(sHead);
     Q_UNUSED(sBody);
@@ -242,14 +242,7 @@ void CMJPEGServer::getContent(const CWebContext& tContext, QString& sHead, QStri
         m_vSockets.append(tContext.m_pSocket);
     }
 
-    CClientData* pData = CClientData::getFromSocket(tContext.m_pSocket);
-
-    if (pData != nullptr)
-    {
-        pData->m_vUserData["BytesToWrite"] = QVariant((qlonglong) 0);
-
-        pData->m_vUserData["IsFirstImage"] = QVariant(true);
-    }
+    m_mBytesToWrite[tContext.m_pSocket] = 0;
 
     sCustomResponse = getHeader();
     sCustomResponseMIME = MIME_Content_Custom;
@@ -260,14 +253,14 @@ void CMJPEGServer::getContent(const CWebContext& tContext, QString& sHead, QStri
 /*!
     \a pSocket.
 */
-void CMJPEGServer::handleSocketDisconnection(QTcpSocket* pSocket)
+void CMJPEGServer::handleSocketDisconnection(CWebContext& tContext)
 {
     // Retrait de la socket du vecteur
     QMutexLocker locker(&m_tMutex);
 
-    if (m_vSockets.contains(pSocket))
+    if (m_vSockets.contains(tContext.m_pSocket))
     {
-        m_vSockets.remove(m_vSockets.indexOf(pSocket));
+        m_vSockets.remove(m_vSockets.indexOf(tContext.m_pSocket));
     }
 }
 
@@ -277,23 +270,18 @@ void CMJPEGServer::handleSocketDisconnection(QTcpSocket* pSocket)
     \a pSocket. \br
     \a iBytes.
 */
-void CMJPEGServer::handleSocketBytesWritten(QTcpSocket* pSocket, qint64 iBytes)
+void CMJPEGServer::handleSocketBytesWritten(CWebContext& tContext, qint64 iBytes)
 {
-    CClientData* pData = CClientData::getFromSocket(pSocket);
+    qlonglong iBytesToWrite = m_mBytesToWrite[tContext.m_pSocket];
 
-    if (pData != nullptr)
+    iBytesToWrite -= qlonglong(iBytes);
+
+    if (iBytesToWrite < 0)
     {
-        qlonglong iBytesToWrite = pData->m_vUserData["BytesToWrite"].toLongLong();
-
-        iBytesToWrite -= (qlonglong) iBytes;
-
-        if (iBytesToWrite < 0)
-        {
-            iBytesToWrite = 0;
-        }
-
-        pData->m_vUserData["BytesToWrite"] = QVariant(iBytesToWrite);
+        iBytesToWrite = 0;
     }
+
+    m_mBytesToWrite[tContext.m_pSocket] = iBytesToWrite;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -345,38 +333,33 @@ void CMJPEGServer::onTimeout()
             // Iterate through each connected client
             foreach (QTcpSocket* pSocket, m_vSockets)
             {
-                CClientData* pData = CClientData::getFromSocket(pSocket);
-
-                if (pData != nullptr)
+                // Is the socket ready?
+                if (pSocket->state() == QTcpSocket::ConnectedState)
                 {
-                    // Is the socket ready?
-                    if (pSocket->state() == QTcpSocket::ConnectedState)
+                    foreach (const QByteArray& baOutput, m_vOutput)
                     {
-                        foreach (const QByteArray& baOutput, m_vOutput)
+                        qlonglong iBytesToWrite = m_mBytesToWrite[pSocket];
+
+                        // Si la socket a un buffer de sortie suffisament petit
+                        if (iBytesToWrite < baOutput.count() * 4)
                         {
-                            qlonglong iBytesToWrite = pData->m_vUserData["BytesToWrite"].toULongLong();
+                            // Compose the outgoing message :
+                            // - Boundary marker
+                            // - HTML header
+                            // - Image
+                            QByteArray sMessage = getImageDescriptor(baOutput.count()).toLatin1();
 
-                            // Si la socket a un buffer de sortie suffisament petit
-                            if (iBytesToWrite < baOutput.count() * 4)
-                            {
-                                // Compose the outgoing message :
-                                // - Boundary marker
-                                // - HTML header
-                                // - Image
-                                QByteArray sMessage = getImageDescriptor(baOutput.count()).toLatin1();
+                            // Write data
+                            pSocket->write(sMessage);
+                            pSocket->write(baOutput);
 
-                                // Write data
-                                pSocket->write(sMessage);
-                                pSocket->write(baOutput);
+                            m_mBytesToWrite[pSocket] = iBytesToWrite + (qlonglong) (sMessage.count() + baOutput.count());
+                        }
 
-                                pData->m_vUserData["BytesToWrite"] = iBytesToWrite + (qlonglong) (sMessage.count() + baOutput.count());
-                            }
-
-                            if (pSocket->state() == QTcpSocket::ConnectedState)
-                            {
-                                // Flush output
-                                pSocket->flush();
-                            }
+                        if (pSocket->state() == QTcpSocket::ConnectedState)
+                        {
+                            // Flush output
+                            pSocket->flush();
                         }
                     }
                 }
