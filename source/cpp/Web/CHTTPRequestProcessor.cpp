@@ -53,8 +53,6 @@ void CHTTPRequestProcessor::run()
     {
         QString sIPAddress = CHTTPServer::cleanIP(m_pSocket->peerAddress().toString());
 
-        qDebug() << "CHTTPRequestProcessor::run() start : " << sIPAddress;
-
         m_pSocket->setReadBufferSize(1024 * 20);
 
         // Connect signals
@@ -67,8 +65,6 @@ void CHTTPRequestProcessor::run()
             msleep(10);
             QCoreApplication::processEvents();
         }
-
-        qDebug() << "CHTTPRequestProcessor::run() end : " << sIPAddress;
 
         m_pSocket->disconnect();
     }

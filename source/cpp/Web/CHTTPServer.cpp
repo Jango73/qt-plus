@@ -100,8 +100,6 @@ CHTTPServer::CHTTPServer(quint16 uiPort, QObject* parent)
 */
 CHTTPServer::~CHTTPServer()
 {
-    qDebug() << "CHTTPServer::~CHTTPServer()";
-
     // Kill threads
     foreach (CHTTPRequestProcessor* pProcessor, m_vProcessors)
     {
@@ -111,8 +109,6 @@ CHTTPServer::~CHTTPServer()
 
     // Close the server
     close();
-
-    qDebug() << "... Done";
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -226,7 +222,7 @@ bool CHTTPServer::passBlackListing(QString sIPAddress)
     // Check monitors
     else if (m_mMonitors[sIPAddress].shouldBeBlocked())
     {
-        qDebug() << QString("Blacklisting %1").arg(sIPAddress);
+        qWarning() << QString("Blacklisting %1").arg(sIPAddress);
 
         // Blacklist and reject this connection
         m_lDynamicIPBlackList << sIPAddress;
@@ -468,13 +464,14 @@ void CHTTPServer::incomingConnection(qintptr socketDescriptor)
     }
 }
 
+//-------------------------------------------------------------------------------------------------
+
 void CHTTPServer::onThreadFinished()
 {
     CHTTPRequestProcessor* pSender = dynamic_cast<CHTTPRequestProcessor*>(sender());
 
     if (pSender != nullptr)
     {
-        qDebug() << QString("Removing thread %1").arg(qulonglong(pSender));
         m_vProcessors.removeAll(pSender);
         pSender->deleteLater();
     }
