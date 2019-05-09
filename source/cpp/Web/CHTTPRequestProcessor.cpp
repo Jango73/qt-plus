@@ -105,7 +105,7 @@ void CHTTPRequestProcessor::onSocketReadyRead()
 {
     QString sIPAddress = CHTTPServer::cleanIP(m_pSocket->peerAddress().toString());
 
-    // If the connection is rejected, free socket and its client data
+    // If the connection is rejected, free socket
     if (m_pServer->monitors()[sIPAddress].shouldBeBlocked())
     {
         stopMe();
@@ -138,7 +138,7 @@ void CHTTPRequestProcessor::onSocketReadyRead()
                 QStringList lTokens = getHeaderTokens(baData);
 
                 m_bHeaderRead = true;
-                m_iExpectedBytes = getExpectedBytes(lTokens);
+                m_iExpectedBytes = getHeaderLength(baData) + getExpectedBytes(lTokens);
 
                 // Get the content type
                 QString sContentType = getTokenValue(lTokens, Token_ContentType);
@@ -211,6 +211,23 @@ void CHTTPRequestProcessor::onSocketBytesWritten(qint64 iBytes)
 
     // Get back user data in case it was modified
     m_mUserData = tContext.m_mUserData;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns the length of a HTTP header. \br\br
+    \a baData contains the header.
+*/
+int CHTTPRequestProcessor::getHeaderLength(QByteArray baData)
+{
+    QStringList lReturnValue;
+    QString sText(baData);
+
+    // Get the header
+    QString sHeader = getRequestHeader(sText);
+
+    return sHeader.count();
 }
 
 //-------------------------------------------------------------------------------------------------

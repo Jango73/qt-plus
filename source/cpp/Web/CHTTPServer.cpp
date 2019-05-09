@@ -300,12 +300,13 @@ void CHTTPServer::LogRequest(QString sIP, QString sText)
         // Read tokens
         QStringList lTokens = sText.split(QRegExp("[ \n][ \n]*"));
 
-        if (lTokens.count() > 1)
+        if (lTokens.count() > 2)
         {
-            qDebug() << QString("%1 : %2 : %3")
+            qDebug() << QString("%1 : %2 : %3 : %4")
                         .arg(sIP)
                         .arg(lTokens[0])
-                    .arg(lTokens[1]);
+                    .arg(lTokens[1])
+                    .arg(lTokens[2]);
         }
 
         unlock();

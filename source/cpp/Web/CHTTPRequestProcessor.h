@@ -139,6 +139,9 @@ public:
 protected:
 
     //!
+    int getHeaderLength(QByteArray baData);
+
+    //!
     QStringList getHeaderTokens(QByteArray baData);
 
     //! Returns the request's excpected byte count
