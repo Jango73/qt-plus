@@ -55,8 +55,8 @@ void CMJPEGThread::run()
 /*!
     Constructs a CMJPEGServer with \a iPort as binding port (passed to CHTTPServer).
 */
-CMJPEGServer::CMJPEGServer(int iPort)
-    : CHTTPServer(iPort)
+CMJPEGServer::CMJPEGServer(quint16 uiPort)
+    : CHTTPServer(uiPort)
     , m_tTimer(this)
     , m_tMutex(QMutex::Recursive)
     , m_pOutputFile(nullptr)

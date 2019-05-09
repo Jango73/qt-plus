@@ -36,7 +36,7 @@ public:
     CSocketStream(const QString& sName, const QMap<QString, QString>& sParameters);
 
 	//! Destructeur
-	virtual ~CSocketStream();
+    virtual ~CSocketStream() Q_DECL_OVERRIDE;
 
 	//-------------------------------------------------------------------------------------------------
 	// Getters
@@ -101,13 +101,13 @@ protected:
 		CClientData(QTcpSocket* pSocket)
 			: m_iBytesToWrite(0)
 		{
-			pSocket->setProperty(PROP_DATA, (qulonglong) this);
+            pSocket->setProperty(PROP_DATA, qulonglong(this));
 		}
 
 		//!
 		static CClientData* getFromSocket(QTcpSocket* pSocket)
 		{
-			return (CClientData*) pSocket->property(PROP_DATA).toULongLong();
+            return reinterpret_cast<CClientData*>(pSocket->property(PROP_DATA).toULongLong());
 		}
 
 		//!
@@ -120,7 +120,7 @@ protected:
 				delete pData;
 			}
 
-			pSocket->setProperty(PROP_DATA, (qulonglong) 0);
+            pSocket->setProperty(PROP_DATA, qulonglong(0));
 		}
 
 		QByteArray	m_baOutput;
@@ -134,7 +134,6 @@ protected:
 protected:
 
 	QMutex					m_tMutex;
-	QString					m_sName;
 	QTimer					m_tSendTimer;
 	QString					m_sHost;
 	int						m_iPort;

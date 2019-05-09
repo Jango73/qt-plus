@@ -112,7 +112,7 @@ private:
     CWebComposer();
 
     //! Destructor
-    virtual ~CWebComposer();
+    virtual ~CWebComposer() Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Properties

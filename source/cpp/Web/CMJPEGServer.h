@@ -3,6 +3,8 @@
 
 #include "../qtplus_global.h"
 
+//-------------------------------------------------------------------------------------------------
+
 // Qt
 #include <QObject>
 #include <QMutex>
@@ -32,9 +34,9 @@ public:
     CMJPEGThread(CMJPEGServer* pParent);
 
     //! Destructeur
-    virtual ~CMJPEGThread();
+    virtual ~CMJPEGThread() Q_DECL_OVERRIDE;
 
-    virtual void run();
+    virtual void run() Q_DECL_OVERRIDE;
 
 protected:
 
@@ -56,7 +58,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Default constructor
-    CMJPEGServer(int iPort);
+    CMJPEGServer(quint16 uiPort);
 
     //! File output constructor
     CMJPEGServer(QString sFileName);

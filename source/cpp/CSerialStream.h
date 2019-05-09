@@ -33,7 +33,7 @@ public:
     CSerialStream(const QString& sName, const QMap<QString, QString>& sParameters);
 
     //! Destructor
-    virtual ~CSerialStream();
+    virtual ~CSerialStream() Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // QIODevice methods

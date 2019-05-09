@@ -3,12 +3,16 @@
 
 #include "../qtplus_global.h"
 
+//-------------------------------------------------------------------------------------------------
+
 // Qt
 #include <QObject>
 #include <QTimer>
 #include <QTcpSocket>
 #include <QHostAddress>
 #include <QImage>
+
+//-------------------------------------------------------------------------------------------------
 
 //! Defines a MJPEG client
 class QTPLUSSHARED_EXPORT CMJPEGClient : public QObject

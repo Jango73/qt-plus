@@ -36,7 +36,7 @@ public:
     CTimeSampler(CLogger* pLogger);
 
     //! Destructor
-    virtual ~CTimeSampler();
+    virtual ~CTimeSampler() Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Control methods

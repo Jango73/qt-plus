@@ -30,7 +30,7 @@ public:
     CTracableMutex(const CTracableMutex&);
 
     //! Destructor
-    ~CTracableMutex();
+    virtual ~CTracableMutex();
 
     //-------------------------------------------------------------------------------------------------
     // Operators

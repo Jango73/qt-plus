@@ -114,7 +114,7 @@ public:
     CLogger(QString sPath, QString sFileName);
 
     //! Destructor
-    virtual ~CLogger();
+    virtual ~CLogger() Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Setters

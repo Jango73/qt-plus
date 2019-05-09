@@ -46,7 +46,7 @@ protected:
     CMemoryMonitor();
 
     //! Destructor
-    virtual ~CMemoryMonitor();
+    virtual ~CMemoryMonitor() Q_DECL_OVERRIDE;
 
 public:
 

@@ -35,7 +35,7 @@ public:
     CTDMADevice(QIODevice* pDevice, PTDMASerial tSeriaNumber, int iMaxBytesPerSecond = 0, bool bIsMaster = false);
 
     //! Destructor
-    virtual ~CTDMADevice();
+    virtual ~CTDMADevice() Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Setters

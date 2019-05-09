@@ -80,7 +80,7 @@ public:
     {
         Q_UNUSED(pTracker);
 
-        stream << (qlonglong)m_pObject;
+        stream << qlonglong(m_pObject);
     }
 
     //! Deserializes the object
@@ -93,7 +93,7 @@ public:
 
         if (lPointer)
         {
-            T* pObject = (T*)lPointer;
+            T* pObject = reinterpret_cast<T*>(lPointer);
 
             if (pTracker != nullptr && pTracker->exists(reinterpret_cast<QObject*>(pObject)))
             {

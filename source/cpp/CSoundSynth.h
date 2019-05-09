@@ -34,7 +34,7 @@ public:
     CSoundSynth();
 
     //! Destructor
-    virtual ~CSoundSynth();
+    virtual ~CSoundSynth() Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Control methods
@@ -74,7 +74,7 @@ protected:
 
         CSoundSynthGenerator(CSoundSynth* pSynth);
 
-        virtual ~CSoundSynthGenerator();
+        virtual ~CSoundSynthGenerator() Q_DECL_OVERRIDE;
 
         //-------------------------------------------------------------------------------------------------
         // Getters

@@ -37,5 +37,5 @@ protected:
     CStreamFactory();
 
 	//! Destructeur
-    virtual ~CStreamFactory();
+    virtual ~CStreamFactory() Q_DECL_OVERRIDE;
 };

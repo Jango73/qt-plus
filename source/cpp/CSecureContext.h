@@ -28,7 +28,7 @@ public:
     CSecureContext(bool bIsServer);
 
     //! Destructor
-    virtual ~CSecureContext();
+    virtual ~CSecureContext() Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Setters

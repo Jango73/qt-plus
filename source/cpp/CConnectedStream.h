@@ -48,7 +48,7 @@ public:
     CConnectedStream(const QString& name);
 
     //! Destructor
-    virtual ~CConnectedStream();
+    virtual ~CConnectedStream() Q_DECL_OVERRIDE;
 
     //-------------------------------------------------------------------------------------------------
     // Setters
