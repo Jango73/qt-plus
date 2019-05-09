@@ -100,7 +100,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor
-    CHTTPServer(quint16 port, QObject* parent = nullptr);
+    CHTTPServer(quint16 uiPort, QObject* parent = nullptr);
 
     //! Destructor
     virtual ~CHTTPServer() Q_DECL_OVERRIDE;
@@ -144,6 +144,9 @@ public:
     //! Unlocks access to data
     void unlock();
 
+    //! Checks if an IP is blacklisted
+    bool passBlackListing(QString sIPAddress);
+
     //!
     void requestStart(QString sIPAddress);
 
@@ -182,12 +185,20 @@ public:
     static QString cleanIP(const QString& sText);
 
     //-------------------------------------------------------------------------------------------------
+    // Protected methods
+    //-------------------------------------------------------------------------------------------------
+
+protected:
+
+    //!
+    virtual void incomingConnection(qintptr iSocketDescriptor) Q_DECL_OVERRIDE;
+
+    //-------------------------------------------------------------------------------------------------
     // Protected slots
     //-------------------------------------------------------------------------------------------------
 
 protected slots:
 
-    void onNewConnection();
     void onThreadFinished();
 
     //-------------------------------------------------------------------------------------------------
@@ -203,7 +214,7 @@ protected:
     bool                            m_bUseFloodProtection;
     QVector<QString>                m_vAuthorizedFolders;       // Tells which folders users can access
     QMap<QString, QString>          m_vExtensionToContentType;  // Used to convert a file extension to a MIME type
-    QVector<QThread*>               m_vProcessors;
+    QVector<CHTTPRequestProcessor*> m_vProcessors;
     QMap<QString, CRequestMonitor>  m_mMonitors;                // Anti-flooding monitor
     QStringList                     m_lStaticIPBlackList;
     QStringList                     m_lDynamicIPBlackList;

@@ -16,13 +16,14 @@
 /*!
     Constructs a CHTTPRequestProcessor
 */
-CHTTPRequestProcessor::CHTTPRequestProcessor(CHTTPServer* pServer, QTcpSocket* pSocket)
+CHTTPRequestProcessor::CHTTPRequestProcessor(CHTTPServer* pServer, qintptr iSocketDescriptor)
     : m_bStop(false)
     , m_bHeaderRead(false)
     , m_iExpectedBytes(0)
+    , m_iSocketDescriptor(iSocketDescriptor)
     , m_mMutex(QMutex::Recursive)
     , m_pServer(pServer)
-    , m_pSocket(pSocket)
+    , m_pSocket(nullptr)
 {
 }
 
@@ -46,29 +47,33 @@ QMap<QString, QVariant>& CHTTPRequestProcessor::userData()
 
 void CHTTPRequestProcessor::run()
 {
-    if (m_pSocket != nullptr)
+    m_pSocket = new QTcpSocket();
+
+    if (m_pSocket->setSocketDescriptor(m_iSocketDescriptor))
     {
-        QString sIPAddress = m_pServer->cleanIP(m_pSocket->peerAddress().toString());
+        QString sIPAddress = CHTTPServer::cleanIP(m_pSocket->peerAddress().toString());
+
+        qDebug() << "CHTTPRequestProcessor::run() start : " << sIPAddress;
 
         m_pSocket->setReadBufferSize(1024 * 20);
 
-        // Connexion des signaux
-        connect(m_pSocket, &QTcpSocket::readyRead, this, &CHTTPRequestProcessor::onSocketReadyRead);
+        // Connect signals
+        connect(m_pSocket, &QTcpSocket::readyRead, this, &CHTTPRequestProcessor::onSocketReadyRead, Qt::DirectConnection);
         connect(m_pSocket, &QTcpSocket::bytesWritten, this, &CHTTPRequestProcessor::onSocketBytesWritten);
         connect(m_pSocket, &QTcpSocket::disconnected, this, &CHTTPRequestProcessor::onSocketDisconnected);
 
         while (m_bStop == false)
         {
-            msleep(100);
+            msleep(10);
+            QCoreApplication::processEvents();
         }
 
+        qDebug() << "CHTTPRequestProcessor::run() end : " << sIPAddress;
+
         m_pSocket->disconnect();
-        m_pSocket->deleteLater();
     }
-    else
-    {
-        qDebug() << "CHTTPRequestProcessor::run() called with null socket";
-    }
+
+    m_pSocket->deleteLater();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -102,7 +107,7 @@ void CHTTPRequestProcessor::onSocketDisconnected()
 */
 void CHTTPRequestProcessor::onSocketReadyRead()
 {
-    QString sIPAddress = m_pServer->cleanIP(m_pSocket->peerAddress().toString());
+    QString sIPAddress = CHTTPServer::cleanIP(m_pSocket->peerAddress().toString());
 
     // If the connection is rejected, free socket and its client data
     if (m_pServer->monitors()[sIPAddress].shouldBeBlocked())
@@ -269,7 +274,7 @@ int CHTTPRequestProcessor::getExpectedBytes(QStringList lTokens)
 */
 void CHTTPRequestProcessor::processRequest()
 {
-    QString sIPAddress = m_pServer->cleanIP(m_pSocket->peerAddress().toString());
+    QString sIPAddress = CHTTPServer::cleanIP(m_pSocket->peerAddress().toString());
 
     // Log the request
     m_pServer->LogRequest(sIPAddress, QString(m_baBuffer));

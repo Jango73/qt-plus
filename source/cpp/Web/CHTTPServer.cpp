@@ -46,7 +46,7 @@
     Constructs a CHTTPServer with a binding port equal to \a port. \br\br
     \a parent is the owner of this object.
 */
-CHTTPServer::CHTTPServer(quint16 port, QObject* parent)
+CHTTPServer::CHTTPServer(quint16 uiPort, QObject* parent)
     : QTcpServer(parent)
     , m_mMutex(QMutex::Recursive)
     , m_iRequestCount(0)
@@ -84,16 +84,11 @@ CHTTPServer::CHTTPServer(quint16 port, QObject* parent)
     m_lStaticIPBlackList << "192.168.0.0";
 
     // Listen
-
-    if (port > 0)
+    if (uiPort > 0)
     {
-        if (listen(QHostAddress::Any, port))
+        if (!listen(QHostAddress::Any, uiPort))
         {
-            connect(this, &QTcpServer::newConnection, this, &CHTTPServer::onNewConnection);
-        }
-        else
-        {
-            qWarning() << QString("CHTTPServer::CHTTPServer() : bind to %1 failed").arg(port);
+            qWarning() << QString("CHTTPServer::CHTTPServer() : bind to %1 failed").arg(uiPort);
         }
     }
 }
@@ -105,8 +100,19 @@ CHTTPServer::CHTTPServer(quint16 port, QObject* parent)
 */
 CHTTPServer::~CHTTPServer()
 {
-    // Fermeture du serveur
+    qDebug() << "CHTTPServer::~CHTTPServer()";
+
+    // Kill threads
+    foreach (CHTTPRequestProcessor* pProcessor, m_vProcessors)
+    {
+        pProcessor->stopMe();
+        pProcessor->deleteLater();
+    }
+
+    // Close the server
     close();
+
+    qDebug() << "... Done";
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -199,6 +205,36 @@ bool CHTTPServer::lock()
 void CHTTPServer::unlock()
 {
     m_mMutex.unlock();
+}
+
+//-------------------------------------------------------------------------------------------------
+
+bool CHTTPServer::passBlackListing(QString sIPAddress)
+{
+    bool bRejected = false;
+
+    // Check static black list
+    if (m_lStaticIPBlackList.contains(sIPAddress))
+    {
+        bRejected = true;
+    }
+    // Check dynamic black list
+    else if (m_lDynamicIPBlackList.contains(sIPAddress))
+    {
+        bRejected = true;
+    }
+    // Check monitors
+    else if (m_mMonitors[sIPAddress].shouldBeBlocked())
+    {
+        qDebug() << QString("Blacklisting %1").arg(sIPAddress);
+
+        // Blacklist and reject this connection
+        m_lDynamicIPBlackList << sIPAddress;
+
+        bRejected = true;
+    }
+
+    return !bRejected;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -416,54 +452,25 @@ QString CHTTPServer::cleanIP(const QString& sText)
 /*!
     Handles incoming connections.
 */
-void CHTTPServer::onNewConnection()
+void CHTTPServer::incomingConnection(qintptr socketDescriptor)
 {
-    // Récupération socket entrante
-    QTcpSocket* pSocket = nextPendingConnection();
+//    bool bPassBlacklisting = true;
 
-    QString sIPAddress = cleanIP(pSocket->peerAddress().toString());
-    bool bRejected = false;
+//    QString sIPAddress = cleanIP(pSocket->peerAddress().toString());
+//    bPassBlacklisting = passBlackListing(sIPAddress);
 
-    // Check static black list
-    if (m_lStaticIPBlackList.contains(sIPAddress))
+//    if (bPassBlacklisting)
     {
-        bRejected = true;
-    }
-    // Check dynamic black list
-    else if (m_lDynamicIPBlackList.contains(sIPAddress))
-    {
-        bRejected = true;
-    }
-    // Check monitors
-    else if (m_mMonitors[sIPAddress].shouldBeBlocked())
-    {
-        qDebug() << QString("Blacklisting %1").arg(sIPAddress);
-
-        // Blacklist and reject this connection
-        m_lDynamicIPBlackList << sIPAddress;
-
-        bRejected = true;
-    }
-
-    if (bRejected)
-    {
-        // Reject this connection
-        pSocket->disconnect();
-        pSocket->deleteLater();
-    }
-    else
-    {
-        CHTTPRequestProcessor* pProcessor = new CHTTPRequestProcessor(this, pSocket);
+        CHTTPRequestProcessor* pProcessor = new CHTTPRequestProcessor(this, socketDescriptor);
         m_vProcessors << pProcessor;
         connect(pProcessor, &QThread::finished, this, &CHTTPServer::onThreadFinished);
-        pSocket->moveToThread(pProcessor);
         pProcessor->start();
     }
 }
 
 void CHTTPServer::onThreadFinished()
 {
-    QThread* pSender = dynamic_cast<QThread*>(sender());
+    CHTTPRequestProcessor* pSender = dynamic_cast<CHTTPRequestProcessor*>(sender());
 
     if (pSender != nullptr)
     {

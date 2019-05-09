@@ -104,7 +104,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor
-    CHTTPRequestProcessor(CHTTPServer* pServer, QTcpSocket* pSocket);
+    CHTTPRequestProcessor(CHTTPServer* pServer, qintptr iSocketDescriptor);
 
     //! Destructor
     virtual ~CHTTPRequestProcessor() override;
@@ -190,6 +190,7 @@ protected:
     bool                    m_bStop;                    // When true, thread must stop
     bool                    m_bHeaderRead;              // When true, we have HTTP header data
     int                     m_iExpectedBytes;           // Number of bytes we are expecting
+    qintptr                 m_iSocketDescriptor;
     QMutex                  m_mMutex;                   // Data protection
     CHTTPServer*            m_pServer;                  // The parent server
     QTcpSocket*             m_pSocket;                  // The socket we're serving
