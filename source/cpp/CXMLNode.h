@@ -7,6 +7,7 @@
 // Includes
 
 // Qt
+#include <QMetaType>
 #include <QString>
 #include <QMap>
 #include <QVector>
@@ -174,3 +175,5 @@ protected:
     QMap<QString, QString>  m_vAttributes;  // Node's attributes
     QVector<CXMLNode>       m_vNodes;       // Child nodes
 };
+
+Q_DECLARE_METATYPE(CXMLNode);
