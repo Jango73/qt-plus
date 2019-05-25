@@ -67,7 +67,7 @@ void CWebButton::addHTML(QString& sHead, QString& sBody)
 {
     QString sFunction = addHTMLEvent(sHead, EVENT_CLICKED, m_sEventParameter);
 
-    sBody.append(QString("<input type='button' id='%1' class='%2' style.visibility='%3' value='%4' onClick='%5'/>"HTML_NL)
+    sBody.append(QString("<input type='button' id='%1' class='%2' style.visibility='%3' value='%4' onClick='%5'/>" HTML_NL)
                  .arg(getCodeName())
                  .arg(m_sStyleClass)
                  .arg(m_bVisible ? "visible" : "hidden")

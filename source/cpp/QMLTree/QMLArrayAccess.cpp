@@ -53,7 +53,7 @@ void QMLArrayAccess::toQML(QTextStream& stream, QMLFormatter& formatter, const Q
         formatter.decIndentation();
     }
 
-    foreach (QMLEntity* pEntity, m_vContents)
+    for (QMLEntity* pEntity : m_vContents)
     {
         stream << " [ ";
 

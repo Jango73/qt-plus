@@ -71,7 +71,7 @@ CWebControl::CWebControl(const QString& sName, const QString& sCaption, const QS
 */
 CWebControl::~CWebControl()
 {
-    foreach (CWebControl* control, m_vControls)
+    for (CWebControl* control : m_vControls)
     {
         delete control;
     }
@@ -311,7 +311,7 @@ CWebControl* CWebControl::findControl(qint32 iID)
         return this;
     }
 
-    foreach (CWebControl* pControl, m_vControls)
+    for (CWebControl* pControl : m_vControls)
     {
         CWebControl* pTarget = pControl->findControl(iID);
 
@@ -337,7 +337,7 @@ CWebControl* CWebControl::findControlByCodeName(QString sCodeName)
         return this;
     }
 
-    foreach (CWebControl* pControl, m_vControls)
+    for (CWebControl* pControl : m_vControls)
     {
         CWebControl* pTarget = pControl->findControlByCodeName(sCodeName);
 
@@ -363,7 +363,7 @@ CWebControl* CWebControl::findControlByName(QString sName)
         return this;
     }
 
-    foreach (CWebControl* pControl, m_vControls)
+    for (CWebControl* pControl : m_vControls)
     {
         CWebControl* pTarget = pControl->findControlByName(sName);
 
@@ -486,7 +486,7 @@ CWebControl* CWebControl::addObserver(IWebControlObserver* pObserver)
 void CWebControl::addHTML(QString& sHead, QString& sBody)
 {
     sBody.append(
-                QString("<div id='%1' class='%2' style='%3' style.visibility='%4'>"HTML_NL)
+                QString("<div id='%1' class='%2' style='%3' style.visibility='%4'>" HTML_NL)
                 .arg(getCodeName())
                 .arg(m_sStyleClass)
                 .arg(m_sStyle)
@@ -495,12 +495,12 @@ void CWebControl::addHTML(QString& sHead, QString& sBody)
 
     sBody.append(m_sCaption);
 
-    foreach(CWebControl* pControl, m_vControls)
+    for (CWebControl* pControl : m_vControls)
     {
         pControl->addHTML(sHead, sBody);
     }
 
-    sBody.append(QString("</div>"HTML_NL));
+    sBody.append(QString("</div>" HTML_NL));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -546,12 +546,12 @@ QString CWebControl::addCustomHTMLEvent(QString& sHead, QString sEvent, QString 
             .arg(sEvent);
 
     sHead += QString(
-                "<script type='text/javascript' language='javascript'>"HTML_NL
-                "function %1()"HTML_NL
-                "{"HTML_NL
-                "  %4"HTML_NL
-                "}"HTML_NL
-                "</script>"HTML_NL
+                "<script type='text/javascript' language='javascript'>" HTML_NL
+                "function %1()" HTML_NL
+                "{" HTML_NL
+                "  %4" HTML_NL
+                "}" HTML_NL
+                "</script>" HTML_NL
                 )
             .arg(sFunction)
             .arg(sFunctionBody);
@@ -684,7 +684,7 @@ void CWebControl::handleEvent(QString sControl, QString sEvent, QString sParam)
             pTargetControl->handleEvent(sControl, sEvent, sParam);
         }
 
-        foreach (IWebControlObserver* pObserver, pTargetControl->m_vObservers)
+        for (IWebControlObserver* pObserver : pTargetControl->m_vObservers)
         {
             pObserver->controlEvent(pTargetControl, sEvent, sParam);
         }
@@ -706,9 +706,9 @@ void CWebControl::addScriptFromResources(QString& sHead, const QString& sFileNam
         in.close();
 
         sHead += QString(
-                    "<script type='text/javascript' language='javascript'>"HTML_NL
+                    "<script type='text/javascript' language='javascript'>" HTML_NL
                     "%1"
-                    "</script>"HTML_NL
+                    "</script>" HTML_NL
                     ).arg(QString(baData));
     }
 }
@@ -732,13 +732,13 @@ void CWebControl::serialize(QDataStream& stream, CObjectTracker *pTracker) const
     stream << m_bReadOnly;
 
     stream << (qint32)m_vObservers.count();
-    foreach (IWebControlObserver* observer, m_vObservers)
+    for (IWebControlObserver* observer : m_vObservers)
     {
         stream << observer->getObserverID();
     }
 
     stream << (qint32)m_vControls.count();
-    foreach (CWebControl* control, m_vControls)
+    for (CWebControl* control : m_vControls)
     {
         control->serialize(stream, pTracker);
     }
@@ -802,13 +802,13 @@ void CWebControl::deserialize(QDataStream& stream, CObjectTracker *pTracker, QOb
 
         // Resolve observers
 
-        foreach (qint32 iObservedID, m_mObservers.keys())
+        for (qint32 iObservedID : m_mObservers.keys())
         {
             CWebControl* pObservedControl = pRootControl->findControl(iObservedID);
 
             if (pObservedControl != nullptr)
             {
-                foreach(qint32 iObserverID, m_mObservers[iObservedID])
+                for (qint32 iObserverID : m_mObservers[iObservedID])
                 {
                     CWebControl* pObserverControl = pRootControl->findControl(iObserverID);
 

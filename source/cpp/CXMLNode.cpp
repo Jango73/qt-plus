@@ -309,7 +309,7 @@ CXMLNode CXMLNode::parseJSONNode(QJsonObject jObject, QString sTagName)
         tNode.m_sTag = QString("NOTAG");
     }
 
-    foreach(QString sKey, jObject.keys())
+    for(QString sKey : jObject.keys())
     {
         if (jObject[sKey].isObject())
         {
@@ -319,7 +319,7 @@ CXMLNode CXMLNode::parseJSONNode(QJsonObject jObject, QString sTagName)
         {
             QVector<CXMLNode> vNodes = parseJSONArray(jObject[sKey].toArray(), sKey);
 
-            foreach(CXMLNode xNode, vNodes)
+            for(CXMLNode xNode : vNodes)
             {
                 tNode.m_vNodes.append(xNode);
             }
@@ -412,7 +412,7 @@ QDomElement CXMLNode::toQDomElement(QDomDocument& xDocument) const
 
     if (!thisElement.isNull())
     {
-        foreach(QString sAttributeName, m_vAttributes.keys())
+        for (QString sAttributeName : m_vAttributes.keys())
         {
             thisElement.setAttribute(sAttributeName, m_vAttributes[sAttributeName]);
         }
@@ -423,7 +423,7 @@ QDomElement CXMLNode::toQDomElement(QDomDocument& xDocument) const
             thisElement.appendChild(textElement);
         }
 
-        foreach(CXMLNode xChild, m_vNodes)
+        for (CXMLNode xChild : m_vNodes)
         {
             thisElement.appendChild(xChild.toQDomElement(xDocument));
         }
@@ -469,7 +469,7 @@ QJsonObject CXMLNode::toJsonObject() const
 {
     QJsonObject object;
 
-    foreach (QString sKey, m_vAttributes.keys())
+    for (QString sKey : m_vAttributes.keys())
     {
         object[sKey] = m_vAttributes[sKey];
     }
@@ -484,7 +484,7 @@ QJsonObject CXMLNode::toJsonObject() const
         }
     }
 
-    foreach (QString sTag, sTagList)
+    for (QString sTag : sTagList)
     {
         QVector<CXMLNode> vNodes = getNodesByTagName(sTag);
 
@@ -492,7 +492,7 @@ QJsonObject CXMLNode::toJsonObject() const
         {
             QJsonArray array;
 
-            foreach (CXMLNode xNode, vNodes)
+            for (CXMLNode xNode : vNodes)
             {
                 array << xNode.toJsonObject();
             }
@@ -569,7 +569,7 @@ CXMLNode& CXMLNode::operator << (CXMLNode value)
 */
 CXMLNode CXMLNode::getNodeByTagName(const QString& sTagName)
 {
-    foreach (CXMLNode tNode, m_vNodes)
+    for (CXMLNode tNode : m_vNodes)
     {
         if (tNode.m_sTag == sTagName) return tNode;
     }
@@ -584,7 +584,7 @@ CXMLNode CXMLNode::getNodeByTagName(const QString& sTagName)
 */
 CXMLNode CXMLNode::getNodeByTagName(const QString& sTagName) const
 {
-    foreach (CXMLNode tNode, m_vNodes)
+    for (CXMLNode tNode : m_vNodes)
     {
         if (tNode.m_sTag == sTagName) return tNode;
     }
@@ -601,7 +601,7 @@ QVector<CXMLNode> CXMLNode::getNodesByTagName(const QString& sTagName) const
 {
     QVector<CXMLNode> vNodes;
 
-    foreach (const CXMLNode& tNode, m_vNodes)
+    for (const CXMLNode& tNode : m_vNodes)
     {
         if (tNode.m_sTag == sTagName)
         {
@@ -646,7 +646,7 @@ void CXMLNode::removeNodesByTagName(QString sTagName)
 */
 void CXMLNode::merge(const CXMLNode& xTarget)
 {
-    foreach (CXMLNode node, xTarget.m_vNodes)
+    for (CXMLNode node : xTarget.m_vNodes)
     {
         m_vNodes.append(node);
     }
@@ -661,7 +661,7 @@ QString CXMLNode::stringifyOneLevel()
 {
     QStringList lChildren;
 
-    foreach (CXMLNode xNode, m_vNodes)
+    for (CXMLNode xNode : m_vNodes)
     {
         lChildren << xNode.toJsonString();
     }

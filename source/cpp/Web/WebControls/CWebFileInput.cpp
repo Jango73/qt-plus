@@ -68,7 +68,7 @@ void CWebFileInput::addHTML(QString& sHead, QString& sBody)
                 QString("httpUpload('%1');").arg(getCodeName())
                 );
 
-    sBody.append(QString("<input type='file' id='%1' class='%2' style='%3' style.visibility='%4' onChange='%5()'/>"HTML_NL)
+    sBody.append(QString("<input type='file' id='%1' class='%2' style='%3' style.visibility='%4' onChange='%5()'/>" HTML_NL)
                  .arg(getCodeName())
                  .arg(m_sStyleClass)
                  .arg(m_sStyle)

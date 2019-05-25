@@ -71,7 +71,7 @@ QMap<QString, QMLEntity*> QMLFunction::unusedParameters()
 {
     QMap<QString, QMLEntity*> mReturnValue;
 
-    foreach (QString sKey, m_mParameterList.keys())
+    for (QString sKey : m_mParameterList.keys())
     {
         if (m_mParameterList[sKey]->usageCount() == 0)
         {
@@ -88,7 +88,7 @@ QMap<QString, QMLEntity*> QMLFunction::unusedVariables()
 {
     QMap<QString, QMLEntity*> mReturnValue;
 
-    foreach (QString sKey, m_mVariableList.keys())
+    for (QString sKey : m_mVariableList.keys())
     {
         if (m_mVariableList[sKey]->usageCount() == 0)
         {
@@ -267,14 +267,14 @@ CXMLNode QMLFunction::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pPare
     if (m_pContent != nullptr)
         xContent.nodes() << m_pContent->toXMLNode(pContext, this);
 
-    foreach (QString sKey, m_mParameterList.keys())
+    for (QString sKey : m_mParameterList.keys())
     {
         CXMLNode xParameter("Parameter");
         xParameter.attributes()["Name"] = sKey;
         xParameterList << xParameter;
     }
 
-    foreach (QString sKey, m_mVariableList.keys())
+    for (QString sKey : m_mVariableList.keys())
     {
         CXMLNode xVariable("Variable");
         xVariable.attributes()["Name"] = sKey;

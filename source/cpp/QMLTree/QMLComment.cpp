@@ -59,7 +59,7 @@ void QMLComment::writeMultiLineComment(QTextStream& stream, QMLFormatter& format
 {
     QStringList lLines = sText.split("\n");
 
-    foreach (QString sLine, lLines)
+    for (QString sLine : lLines)
     {
         formatter.writeNewLine(stream);
         stream << sLine.trimmed();
@@ -74,7 +74,7 @@ void QMLComment::checkForCode()
 
     QString sToken = m_vValue.toString().trimmed();
 
-    foreach (QString sKeyword, QMLTreeContext::operators())
+    for (QString sKeyword : QMLTreeContext::operators())
     {
         if (sToken.contains(sKeyword))
         {
@@ -146,7 +146,7 @@ CXMLNode QMLComment::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParen
 {
     CXMLNode xNode = QMLEntity::toXMLNode(pContext, pParent);
 
-    xNode.attributes()["Type"] = QString::number((int) m_eType);
+    xNode.attributes()["Type"] = QString::number(int(m_eType));
 
     return xNode;
 }

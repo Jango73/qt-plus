@@ -137,7 +137,7 @@ bool CSocketStream::connectTo(QString sURL)
 CSocketStream::~CSocketStream()
 {
 	// Destruction de tous les clients actifs
-	foreach (QTcpSocket* pClient, m_vClients)
+    for (QTcpSocket* pClient : m_vClients)
 	{
 		CClientData::deleteFromSocket(pClient);
 		pClient->close();
@@ -329,7 +329,7 @@ void CSocketStream::onSendOutput()
 {
 	QMutexLocker locker(&m_tMutex);
 
-	foreach (QTcpSocket* pClient, m_vClients)
+    for (QTcpSocket* pClient : m_vClients)
 	{
 		sendOutputForSocket(pClient);
 	}
@@ -444,7 +444,7 @@ qint64 CSocketStream::writeData(const char* data, qint64 maxSize)
 	{
 		if (hasConnections())
 		{
-			foreach (QTcpSocket* pClient, m_vClients)
+            for (QTcpSocket* pClient : m_vClients)
 			{
 				if (pClient->state() == QAbstractSocket::ConnectedState)
 				{

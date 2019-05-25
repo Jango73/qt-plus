@@ -47,7 +47,7 @@ QMap<QString, QMLEntity*> QMLItem::unusedProperties()
 
     if (m_bIsSingleton == false)
     {
-        foreach (QString sKey, m_mPropertyList.keys())
+        for (QString sKey : m_mPropertyList.keys())
         {
             if (m_mPropertyList[sKey]->usageCount() == 0)
             {
@@ -76,7 +76,7 @@ void QMLItem::solveSymbols(QMLTreeContext* pContext)
 {
     QMLComplexEntity::solveSymbols(pContext);
 
-    foreach (QMLEntity* pEntity, m_vContents)
+    for (QMLEntity* pEntity : m_vContents)
     {
         QMLPropertyDeclaration* pDeclaration = dynamic_cast<QMLPropertyDeclaration*>(pEntity);
         QMLPropertyAssignment* pAssignment = dynamic_cast<QMLPropertyAssignment*>(pEntity);
@@ -98,7 +98,7 @@ void QMLItem::solveSymbols(QMLTreeContext* pContext)
 
     m_mPropertyList["id"] = this;
 
-    foreach (QMLEntity* pEntity, m_vContents)
+    for (QMLEntity* pEntity : m_vContents)
     {
         QMLPropertyAssignment* pAssignment = dynamic_cast<QMLPropertyAssignment*>(pEntity);
 
@@ -129,7 +129,7 @@ void QMLItem::solveReferences(QMLTreeContext* pContext)
 {
     QMLComplexEntity::solveReferences(pContext);
 
-    foreach (QMLEntity* pEntity, m_vContents)
+    for (QMLEntity* pEntity : m_vContents)
     {
         pEntity->solveReferences(pContext);
     }
@@ -234,7 +234,7 @@ CXMLNode QMLItem::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
     CXMLNode xNode = QMLComplexEntity::toXMLNode(pContext, pParent);
     CXMLNode xPropertyList("PropertyList");
 
-    foreach (QString sKey, m_mPropertyList.keys())
+    for (QString sKey : m_mPropertyList.keys())
     {
         CXMLNode xProperty("Property");
         xProperty.attributes()["Name"] = sKey;

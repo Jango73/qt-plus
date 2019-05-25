@@ -65,7 +65,7 @@ void QMLFormatter::processFragment(QTextStream& stream, EQMLFormatterFragment fr
 
     QVector<CXMLNode> vFragments = m_xGrammar.getNodesByTagName(FORMATTER_TOKEN_FRAGMENT);
 
-    foreach (CXMLNode xFragment, vFragments)
+    for (CXMLNode xFragment : vFragments)
     {
         QString sNames = processMacros(xFragment.attributes()[FORMATTER_TOKEN_NAMES]);
         QStringList lNames = sNames.split(",");
@@ -74,7 +74,7 @@ void QMLFormatter::processFragment(QTextStream& stream, EQMLFormatterFragment fr
         {
             QVector<CXMLNode> vActions = xFragment.getNodesByTagName(FORMATTER_TOKEN_ACTION);
 
-            foreach (CXMLNode xAction, vActions)
+            for (CXMLNode xAction : vActions)
             {
                 QString sType = processMacros(xAction.attributes()[FORMATTER_TOKEN_TYPE]);
 

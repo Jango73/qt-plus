@@ -101,7 +101,7 @@ CHTTPServer::CHTTPServer(quint16 uiPort, QObject* parent)
 CHTTPServer::~CHTTPServer()
 {
     // Kill threads
-    foreach (CHTTPRequestProcessor* pProcessor, m_vProcessors)
+    for (CHTTPRequestProcessor* pProcessor : m_vProcessors)
     {
         pProcessor->stopMe();
         pProcessor->deleteLater();
@@ -430,7 +430,7 @@ QString CHTTPServer::cleanIP(const QString& sText)
 {
     QString sReturnValue = sText;
     QRegExp tRegExp_ipv6("([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}");
-    QRegExp tRegExp_ipv4(".*([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}).*");
+    QRegExp tRegExp_ipv4(".*([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}).*");
 
     if (tRegExp_ipv6.indexIn(sText) != -1)
     {

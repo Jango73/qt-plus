@@ -43,7 +43,7 @@ QMap<QString, QMLEntity*> QMLVariableDeclaration::getDeclaredSymbols()
 {
     QMap<QString, QMLEntity*> mReturnValue;
 
-    foreach (QMLEntity* pVariable, m_vContents)
+    for (QMLEntity* pVariable : m_vContents)
     {
         QMLIdentifier* pIdentifier = dynamic_cast<QMLIdentifier*>(pVariable);
 
@@ -59,7 +59,7 @@ QMap<QString, QMLEntity*> QMLVariableDeclaration::getDeclaredSymbols()
                 {
                     QMap<QString, QMLEntity*> rightVariables = pBynaryOp->right()->getDeclaredSymbols();
 
-                    foreach (QString sKey, rightVariables.keys())
+                    for (QString sKey : rightVariables.keys())
                     {
                         if (mReturnValue.contains(sKey) == false)
                         {

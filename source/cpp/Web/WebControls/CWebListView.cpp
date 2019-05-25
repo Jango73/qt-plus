@@ -132,7 +132,7 @@ void CWebListView::setModel()
     QStringList lPropertyNames;
     QStringList lPropertyTypes;
 
-    foreach (CXMLNode xProperty, xProperties)
+    for (CXMLNode xProperty : xProperties)
     {
         QString sType = xProperty.attributes()["type"];
         QString sText = xProperty.attributes()["name"];
@@ -144,7 +144,7 @@ void CWebListView::setModel()
     {
         CWebControl* pLineDiv = pContentDiv->addControl(new CWebDiv("", ""))->setStyleClass("listview-header-line");
 
-        foreach (QString sProperty, lPropertyNames)
+        for (QString sProperty : lPropertyNames)
         {
             pLineDiv->addControl(new CWebLabel("", sProperty));
         }
@@ -153,7 +153,7 @@ void CWebListView::setModel()
     CXMLNode xData = xModel.getNodeByTagName("data");
     QVector<CXMLNode> xItems = xData.getNodesByTagName("item");
 
-    foreach (CXMLNode xItem, xItems)
+    for (CXMLNode xItem : xItems)
     {
         CWebControl* pLineDiv = pContentDiv->addControl(new CWebDiv("", ""))->setStyleClass("listview-data-line");
 

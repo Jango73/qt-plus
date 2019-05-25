@@ -29,6 +29,7 @@ QMLFile::QMLFile(const QPoint& pPosition, QMLTreeContext* pContext, const QStrin
     , m_bParsed(false)
     , m_bIsSingleton(false)
 {
+    Q_UNUSED(pContext);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -50,7 +51,7 @@ QMLFile::QMLFile(const QMLFile& target)
 */
 QMLFile::~QMLFile()
 {
-    foreach (QMLComment* pComment, m_vComments)
+    for (QMLComment* pComment : m_vComments)
     {
         delete pComment;
     }
@@ -251,7 +252,7 @@ QMLEntity* QMLFile::locateEntityAtOrAfterLine_Recurse(QMLEntity* pEntity, const 
         // Look in the members of the current entity, if any
         QMap<QString, QMLEntity*> mMembers = pEntity->members();
 
-        foreach (QString sMemberKey, mMembers.keys())
+        for (QString sMemberKey : mMembers.keys())
         {
             QMLEntity* pChildEntity = mMembers[sMemberKey];
 
@@ -269,7 +270,7 @@ QMLEntity* QMLFile::locateEntityAtOrAfterLine_Recurse(QMLEntity* pEntity, const 
 
         if (pComplex != nullptr)
         {
-            foreach (QMLEntity* pChildEntity, pComplex->contents())
+            for (QMLEntity* pChildEntity : pComplex->contents())
             {
                 QMLEntity* pFoundEntity = locateEntityAtOrAfterLine_Recurse(pChildEntity, pPosition);
 
@@ -292,7 +293,7 @@ void QMLFile::solveReferences(QMLTreeContext* pContext)
 {
     QMLComplexEntity::solveReferences(pContext);
 
-    foreach (QMLEntity* pEntity, m_vContents)
+    for (QMLEntity* pEntity : m_vContents)
     {
         QMLPragma* pPragma = dynamic_cast<QMLPragma*>(pEntity);
 
@@ -329,7 +330,7 @@ QMLEntity* QMLFile::findSymbolDeclaration(const QString& sName)
 {
     QStringList sQualified = QMLEntity::qualifiedNameAsList(sName);
 
-    foreach (QMLEntity* pEntity, m_vContents)
+    for (QMLEntity* pEntity : m_vContents)
     {
         if (pEntity != nullptr)
         {
@@ -355,7 +356,7 @@ void QMLFile::toQML(QTextStream& stream, QMLFormatter& formatter, const QMLEntit
 {
     QMLComplexEntity::toQML(stream, formatter, pParent);
 
-    //    foreach (QMLComment* pComment, m_vComments)
+    //    for (QMLComment* pComment : m_vComments)
     //        pComment->toQML(stream, formatter, this);
 
     formatter.writeNewLine(stream);
@@ -378,7 +379,7 @@ CXMLNode QMLFile::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
     if (m_bIsSingleton)
         xNode.attributes()["Singleton"] = "true";
 
-    foreach (QMLComment* pComment, m_vComments)
+    for (QMLComment* pComment : m_vComments)
         xNode << pComment->toXMLNode(pContext, this);
 
     return xNode;

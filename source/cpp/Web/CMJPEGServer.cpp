@@ -302,7 +302,7 @@ void CMJPEGServer::onTimeout()
 
                 // Iterate through each output buffer
 
-                foreach (const QByteArray& baOutput, m_vOutput)
+                for (const QByteArray& baOutput : m_vOutput)
                 {
                     // Compose the outgoing message :
                     // - Boundary marker
@@ -331,12 +331,12 @@ void CMJPEGServer::onTimeout()
             QMutexLocker locker(&m_tMutex);
 
             // Iterate through each connected client
-            foreach (QTcpSocket* pSocket, m_vSockets)
+            for (QTcpSocket* pSocket : m_vSockets)
             {
                 // Is the socket ready?
                 if (pSocket->state() == QTcpSocket::ConnectedState)
                 {
-                    foreach (const QByteArray& baOutput, m_vOutput)
+                    for (const QByteArray& baOutput : m_vOutput)
                     {
                         qlonglong iBytesToWrite = m_mBytesToWrite[pSocket];
 
@@ -381,7 +381,7 @@ void CMJPEGServer::processOutputImages()
     // Lock the buffer mutex
     QMutexLocker locker(&m_tMutex);
 
-    foreach (const QImage& image, m_vOutputImages)
+    for (const QImage& image : m_vOutputImages)
     {
         if (image.width() > 0 && image.height() > 0)
         {
@@ -445,7 +445,7 @@ void CMJPEGServer::saveMJPEG(const QVector<QImage>& vImages, QString sFileName)
             QString sMessage = getHeader();
             file.write(sMessage.toLatin1());
 
-            foreach (QImage image, vImages)
+            for (QImage image : vImages)
             {
                 QByteArray baImage;
                 QBuffer buffer(&baImage);

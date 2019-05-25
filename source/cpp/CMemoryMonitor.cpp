@@ -20,7 +20,7 @@ qint64 CMemoryMonitor::allocatedBytes() const
 {
     qint64 iReturnValue = 0;
 
-    foreach (QString sKey, m_mAllocatedBytes.keys())
+    for (QString sKey : m_mAllocatedBytes.keys())
     {
         iReturnValue += m_mAllocatedBytes[sKey];
     }

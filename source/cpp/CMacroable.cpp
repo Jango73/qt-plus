@@ -55,7 +55,7 @@ void CMacroable::parseMacros()
 
     m_mMacros.clear();
 
-    foreach (CXMLNode xMacro, vMacros)
+    for (CXMLNode xMacro : vMacros)
     {
         QString sName = xMacro.attributes()[TOKEN_NAME];
         QString sValue = xMacro.attributes()[TOKEN_VALUE];
@@ -73,7 +73,7 @@ QString CMacroable::processMacros(const QString& sText)
 {
     QString sResult = sText;
 
-    foreach (QString sMacro, m_mMacros.keys())
+    for (QString sMacro : m_mMacros.keys())
     {
         QString sFullMacroName = QString("$%1$").arg(sMacro);
 

@@ -222,7 +222,7 @@ QVector<PTDMASerial> CTDMADevice::getAllUserSerialNumbers() const
 {
     QVector<PTDMASerial> vSerials;
 
-    foreach (const CClient& client, m_mRegisteredUsers)
+    for (const CClient& client : m_mRegisteredUsers)
     {
         vSerials.append(client.m_tSerialNumber);
     }
@@ -249,7 +249,7 @@ qint64 CTDMADevice::bytesAvailable() const
 {
     if (m_baInput.count() > 0) return m_baInput.count();
 
-    foreach (PTDMASlot ucSlot, m_mRegisteredUsers.keys())
+    for (PTDMASlot ucSlot : m_mRegisteredUsers.keys())
     {
         if (m_mRegisteredUsers[ucSlot].m_baData.count() > 0)
         {
@@ -287,7 +287,7 @@ QDateTime CTDMADevice::now() const
 */
 qint64 CTDMADevice::bytesAvailableFromSerial(quint16 uiSerialNumber)
 {
-    foreach (PTDMASlot ucSlot, m_mRegisteredUsers.keys())
+    for (PTDMASlot ucSlot : m_mRegisteredUsers.keys())
     {
         if (m_mRegisteredUsers[ucSlot].m_tSerialNumber == uiSerialNumber)
         {
@@ -305,7 +305,7 @@ qint64 CTDMADevice::bytesAvailableFromSerial(quint16 uiSerialNumber)
 */
 QByteArray CTDMADevice::readFromSerial(quint16 uiSerialNumber)
 {
-    foreach (PTDMASlot ucSlot, m_mRegisteredUsers.keys())
+    for (PTDMASlot ucSlot : m_mRegisteredUsers.keys())
     {
         if (m_mRegisteredUsers[ucSlot].m_tSerialNumber == uiSerialNumber)
         {
@@ -381,9 +381,9 @@ void CTDMADevice::onMaintenanceTimeout()
 {
     if (m_bIsMaster)
     {
-        foreach (PTDMASlot slot, m_mRegisteredUsers.keys())
+        for (PTDMASlot slot : m_mRegisteredUsers.keys())
         {
-            int iSeconds = m_mRegisteredUsers[slot].m_tLastSpeakTime.secsTo(now());
+            qint64 iSeconds = m_mRegisteredUsers[slot].m_tLastSpeakTime.secsTo(now());
 
             if (iSeconds > 10)
             {
@@ -436,8 +436,6 @@ int CTDMADevice::processInput(const QByteArray& baData)
     {
         return processInput_Slave(baData);
     }
-
-    return 0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -447,23 +445,22 @@ int CTDMADevice::processInput(const QByteArray& baData)
 */
 int CTDMADevice::processInput_Master(const QByteArray& baData)
 {
-    PTDMAAction ucAction = baData[0];
+    PTDMAAction ucAction = PTDMAAction(baData[0]);
 
     switch (ucAction)
     {
         case aSlaveSpeakResponse:
         {
-            const TSlaveData_SlaveSpeak* pSpeak = (const TSlaveData_SlaveSpeak*) baData.constData();
+            const TSlaveData_SlaveSpeak* pSpeak = reinterpret_cast<const TSlaveData_SlaveSpeak*>(baData.constData());
 
             handleSlaveSpeak_Master(pSpeak, baData.mid(sizeof(TSlaveData_SlaveSpeak)));
 
             return sizeof(TSlaveData_SlaveSpeak) + pSpeak->ucNumBytes;
         }
-            break;
 
         case aSetSlotResponse:
         {
-            const TSlaveData_SetSlot* pSetSlot = (const TSlaveData_SetSlot*) baData.constData();
+            const TSlaveData_SetSlot* pSetSlot = reinterpret_cast<const TSlaveData_SetSlot*>(baData.constData());
 
             // Message sanity check and processing
             if (pSetSlot->ucAction == pSetSlot->ucActionEcho)
@@ -480,11 +477,10 @@ int CTDMADevice::processInput_Master(const QByteArray& baData)
                 return -1;
             }
         }
-            break;
 
         case aAnyoneResponse:
         {
-            const TSlaveData_Anyone* pAnyone = (const TSlaveData_Anyone*) baData.constData();
+            const TSlaveData_Anyone* pAnyone = reinterpret_cast<const TSlaveData_Anyone*>(baData.constData());
 
             // Message sanity check and processing
             if (pAnyone->ucAction == pAnyone->ucActionEcho)
@@ -501,7 +497,6 @@ int CTDMADevice::processInput_Master(const QByteArray& baData)
                 return -1;
             }
         }
-            break;
     }
 
     return -1;
@@ -514,45 +509,42 @@ int CTDMADevice::processInput_Master(const QByteArray& baData)
 */
 int CTDMADevice::processInput_Slave(const QByteArray& baData)
 {
-    PTDMAAction ucAction = baData[0];
+    PTDMAAction ucAction = PTDMAAction(baData[0]);
 
     switch (ucAction)
     {
         // Raw incoming data
         case aMasterSpeak:
         {
-            const TMasterData_MasterSpeak* pSpeak = (const TMasterData_MasterSpeak*) baData.constData();
+            const TMasterData_MasterSpeak* pSpeak = reinterpret_cast<const TMasterData_MasterSpeak*>(baData.constData());
 
             handleMasterSpeak_Slave(pSpeak, baData.mid(sizeof(TMasterData_MasterSpeak)));
 
             return sizeof(TMasterData_MasterSpeak) + pSpeak->ucNumBytes;
         }
-            break;
 
         // Raw outgoing data
         case aSlaveSpeak:
         {
-            const TMasterData_SlaveSpeak* pSpeak = (const TMasterData_SlaveSpeak*) baData.constData();
+            const TMasterData_SlaveSpeak* pSpeak = reinterpret_cast<const TMasterData_SlaveSpeak*>(baData.constData());
 
             handleSpeak_Slave(pSpeak);
 
             return sizeof(TMasterData_SlaveSpeak);
         }
-            break;
 
         // Raw data form a slave
         case aSlaveSpeakResponse:
         {
-            const TSlaveData_SlaveSpeak* pSpeak = (const TSlaveData_SlaveSpeak*) baData.constData();
+            const TSlaveData_SlaveSpeak* pSpeak = reinterpret_cast<const TSlaveData_SlaveSpeak*>(baData.constData());
 
             return sizeof(TSlaveData_SlaveSpeak) + pSpeak->ucNumBytes;
         }
-            break;
 
         // Slot assignment
         case aSetSlot:
         {
-            const TMasterData_SetSlot* pSetSlot = (const TMasterData_SetSlot*) baData.constData();
+            const TMasterData_SetSlot* pSetSlot = reinterpret_cast<const TMasterData_SetSlot*>(baData.constData());
 
             if (pSetSlot->ucAction == pSetSlot->ucActionEcho)
             {
@@ -565,16 +557,14 @@ int CTDMADevice::processInput_Slave(const QByteArray& baData)
                 return -1;
             }
         }
-            break;
 
         // A slave acknowledging a slot
         case aSetSlotResponse:
         {
-            const TSlaveData_SetSlot* pSetSlot = (const TSlaveData_SetSlot*) baData.constData();
+            const TSlaveData_SetSlot* pSetSlot = reinterpret_cast<const TSlaveData_SetSlot*>(baData.constData());
 
             return sizeof(TSlaveData_SetSlot);
         }
-            break;
 
         // Anyone here?
         case aAnyone:
@@ -583,16 +573,14 @@ int CTDMADevice::processInput_Slave(const QByteArray& baData)
 
             return 1;
         }
-            break;
 
         // Response to "anyone here?"
         case aAnyoneResponse:
         {
-            const TSlaveData_Anyone* pAnyone = (const TSlaveData_Anyone*) baData.constData();
+            const TSlaveData_Anyone* pAnyone = reinterpret_cast<const TSlaveData_Anyone*>(baData.constData());
 
             return sizeof(TSlaveData_Anyone);
         }
-            break;
 
         // Everyone will talk in turn...
         case aReset:
@@ -601,7 +589,6 @@ int CTDMADevice::processInput_Slave(const QByteArray& baData)
 
             return 1;
         }
-            break;
     }
 
     return -1;
@@ -616,6 +603,8 @@ int CTDMADevice::processInput_Slave(const QByteArray& baData)
 */
 void CTDMADevice::handleSlaveSpeak_Master(const TSlaveData_SlaveSpeak* pSpeak, const QByteArray& baData)
 {
+    Q_UNUSED(pSpeak);
+
     CONSOLE_DEBUG(QString("Master receiving data from slot %1").arg(m_tSlot));
     CONSOLE_DEBUG("... " << baData);
 
@@ -642,6 +631,8 @@ void CTDMADevice::handleSlaveSpeak_Master(const TSlaveData_SlaveSpeak* pSpeak, c
 */
 void CTDMADevice::handleMasterSpeak_Slave(const TMasterData_MasterSpeak* pSpeak, const QByteArray& baData)
 {
+    Q_UNUSED(pSpeak);
+
     CONSOLE_DEBUG(QString("Slave receiving data from slot %1").arg(m_tSlot));
     CONSOLE_DEBUG("... " << baData);
 
@@ -720,7 +711,7 @@ void CTDMADevice::handleSpeak_Master()
         tSpeak.ucAction = aMasterSpeak;
         tSpeak.ucNumBytes = baOut.count();
 
-        m_pDevice->write((const char*) &tSpeak, sizeof(TMasterData_MasterSpeak));
+        m_pDevice->write(reinterpret_cast<const char*>(&tSpeak), sizeof(TMasterData_MasterSpeak));
         m_pDevice->write(baOut);
 
         m_tLastSpeakTime = now();
@@ -747,7 +738,7 @@ void CTDMADevice::handleSpeak_Slave(const TMasterData_SlaveSpeak* pSpeak)
             tSpeak.ucAction = aSlaveSpeakResponse;
             tSpeak.ucNumBytes = baOut.count();
 
-            m_pDevice->write((const char*) &tSpeak, sizeof(TSlaveData_SlaveSpeak));
+            m_pDevice->write(reinterpret_cast<const char*>(&tSpeak), sizeof(TSlaveData_SlaveSpeak));
             m_pDevice->write(baOut);
 
             m_tLastSpeakTime = now();
@@ -779,7 +770,7 @@ void CTDMADevice::handleSetSlot_Slave(const TMasterData_SetSlot* pSetSlot)
 
         CONSOLE_DEBUG("Slave sending aSetSlotResponse for " << QString::number((int) m_tSeriaNumber) << " : " << QString::number((int) m_tSlot));
 
-        m_pDevice->write((const char*) &tAnswer, sizeof(TSlaveData_SetSlot));
+        m_pDevice->write(reinterpret_cast<const char*>(&tAnswer), sizeof(TSlaveData_SetSlot));
 
         m_tLastSpeakTime = now();
     }
@@ -802,7 +793,7 @@ void CTDMADevice::handleAnyone_Slave()
             tAnswer.uiSerialNumber = m_tSeriaNumber;
             tAnswer.ucActionEcho = aAnyoneResponse;
 
-            m_pDevice->write((const char*) &tAnswer, sizeof(TSlaveData_Anyone));
+            m_pDevice->write(reinterpret_cast<const char*>(&tAnswer), sizeof(TSlaveData_Anyone));
 
             m_tLastSpeakTime = now();
         }
@@ -851,7 +842,7 @@ void CTDMADevice::sendSpeak()
         {
             if (m_mRegisteredUsers.contains(m_tSlot))
             {
-                int iDifference = m_mRegisteredUsers[m_tSlot].m_tLastOrderSpeakTime.msecsTo(now());
+                qint64 iDifference = m_mRegisteredUsers[m_tSlot].m_tLastOrderSpeakTime.msecsTo(now());
 
                 if (m_mRegisteredUsers[m_tSlot].m_iScore > 0 || iDifference > 1000)
                 {
@@ -863,7 +854,7 @@ void CTDMADevice::sendSpeak()
 
                     m_mRegisteredUsers[m_tSlot].decScore();
                     m_mRegisteredUsers[m_tSlot].m_tLastOrderSpeakTime = now();
-                    m_pDevice->write((const char *) &tSpeak, sizeof(TMasterData_SlaveSpeak));
+                    m_pDevice->write(reinterpret_cast<const char *>(&tSpeak), sizeof(TMasterData_SlaveSpeak));
                 }
             }
         }
@@ -903,7 +894,7 @@ void CTDMADevice::sendSetSlot()
             tSetSlot.ucMaxBytesPerSlot = m_iMaxBytesPerSlot;
             tSetSlot.ucActionEcho = aSetSlot;
 
-            m_pDevice->write((const char *) &tSetSlot, sizeof(TMasterData_SetSlot));
+            m_pDevice->write(reinterpret_cast<const char*>(&tSetSlot), sizeof(TMasterData_SetSlot));
         }
         else
         {
@@ -947,7 +938,7 @@ PTDMASlot CTDMADevice::getFreeSlot() const
     {
         bool bUsed = false;
 
-        foreach (const CClient& tClient, m_vNewUsers)
+        for (const CClient& tClient : m_vNewUsers)
         {
             if (tClient.m_tSlot == ucIndex)
             {
@@ -958,7 +949,7 @@ PTDMASlot CTDMADevice::getFreeSlot() const
 
         if (bUsed == false)
         {
-            foreach (PTDMASlot ucSlot, m_mRegisteredUsers.keys())
+            for (PTDMASlot ucSlot : m_mRegisteredUsers.keys())
             {
                 if (ucSlot == ucIndex)
                 {

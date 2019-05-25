@@ -362,7 +362,7 @@ void CHTTPRequestProcessor::processRequest()
             {
                 QStringList lArgs = QString(baPostContent).split("&");
 
-                foreach(QString sArg, lArgs)
+                for (QString sArg : lArgs)
                 {
                     QStringList lCurrentArg = sArg.split("=");
 
@@ -384,7 +384,7 @@ void CHTTPRequestProcessor::processRequest()
                     {
                         int iIndex = 0;
 
-                        foreach (QString sPart, lParts)
+                        for (QString sPart : lParts)
                         {
                             if (sPart.startsWith("--") == false)
                             {
@@ -547,7 +547,7 @@ void CHTTPRequestProcessor::getRequestPathAndArgs(const QStringList& lTokens, QS
 
                 QStringList lArgs = lPathAndArgs[1].split("&");
 
-                foreach(QString sArg, lArgs)
+                for (QString sArg : lArgs)
                 {
                     QStringList lCurrentArg = sArg.split("=");
 
@@ -609,7 +609,7 @@ QString CHTTPRequestProcessor::getTokenValue(const QStringList& lTokens, QString
 {
     QString sReturnValue;
 
-    foreach (QString sToken, lTokens)
+    for (QString sToken : lTokens)
     {
         if (sToken.startsWith(sTokenName))
         {
@@ -637,7 +637,7 @@ QString CHTTPRequestProcessor::getSubTokenValue(const QStringList& lTokens, QStr
 {
     QString sReturnValue;
 
-    foreach (QString sToken, lTokens)
+    for (QString sToken : lTokens)
     {
         if (sToken.startsWith(sTokenName))
         {
@@ -655,7 +655,7 @@ QString CHTTPRequestProcessor::getSubTokenValue(const QStringList& lTokens, QStr
     {
         QStringList lSubTokens = sReturnValue.split(";", QString::SkipEmptyParts);
 
-        foreach (QString sSubToken, lSubTokens)
+        for (QString sSubToken : lSubTokens)
         {
             sSubToken = sSubToken.trimmed();
 
@@ -723,7 +723,7 @@ bool CHTTPRequestProcessor::getResponseFile(CWebContext& tContext, QTcpSocket* p
             bool bAuthorized = false;
 
             // Check access right to the directory
-            foreach (QString sAuthorizedFolder, m_pServer->authorizedFolders())
+            for (QString sAuthorizedFolder : m_pServer->authorizedFolders())
             {
                 if (sAuthorizedFolder == tContext.m_lPath[0])
                 {
@@ -735,7 +735,7 @@ bool CHTTPRequestProcessor::getResponseFile(CWebContext& tContext, QTcpSocket* p
             // Create the file name on disk
             QString sFileName = QCoreApplication::applicationDirPath();
 
-            foreach (QString sPathName, tContext.m_lPath)
+            for (QString sPathName : tContext.m_lPath)
             {
                 sFileName += "/" + sPathName;
             }
@@ -783,11 +783,11 @@ bool CHTTPRequestProcessor::getResponseFile(CWebContext& tContext, QTcpSocket* p
                     QByteArray baData;
 
                     baHTML.append("<!doctype html>\r\n");
-                    baHTML.append("<html>"HTML_NL);
-                    baHTML.append("<body>"HTML_NL);
+                    baHTML.append("<html>" HTML_NL);
+                    baHTML.append("<body>" HTML_NL);
                     baHTML.append(QString("%1").arg(HTTP_403_FORBIDDEN));
-                    baHTML.append("</body>"HTML_NL);
-                    baHTML.append("</html>"HTML_NL);
+                    baHTML.append("</body>" HTML_NL);
+                    baHTML.append("</html>" HTML_NL);
 
                     baData.append(HTTP_HEADER);
                     baData.append(HTTP_403_FORBIDDEN);
@@ -872,15 +872,15 @@ bool CHTTPRequestProcessor::getResponseDynamicContent(CWebContext& tContext, QTc
             QByteArray baHTML;
             QByteArray baData;
 
-            baHTML.append("<!doctype html>"HTML_NL);
-            baHTML.append("<html>"HTML_NL);
-            baHTML.append("<head>"HTML_NL);
+            baHTML.append("<!doctype html>" HTML_NL);
+            baHTML.append("<html>" HTML_NL);
+            baHTML.append("<head>" HTML_NL);
             baHTML.append(sHead);
-            baHTML.append("</head>"HTML_NL);
-            baHTML.append("<body>"HTML_NL);
+            baHTML.append("</head>" HTML_NL);
+            baHTML.append("<body>" HTML_NL);
             baHTML.append(sBody);
-            baHTML.append("</body>"HTML_NL);
-            baHTML.append("</html>"HTML_NL);
+            baHTML.append("</body>" HTML_NL);
+            baHTML.append("</html>" HTML_NL);
 
             baData.append(HTTP_HEADER);
             baData.append(HTTP_200_OK);

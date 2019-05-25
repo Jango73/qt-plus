@@ -105,7 +105,7 @@ void CWebComposer::addCSSFile(QString sFileName)
 void CWebComposer::addJSFileStatement(QString& sHead, QString sFileName)
 {
     sHead.append(
-                QString("<script type='text/javascript' src='%1'></script>"HTML_NL)
+                QString("<script type='text/javascript' src='%1'></script>" HTML_NL)
                 .arg(sFileName)
                 );
 }
@@ -118,7 +118,7 @@ void CWebComposer::addJSFileStatement(QString& sHead, QString sFileName)
 void CWebComposer::addCSSFileStatement(QString& sHead, QString sFileName)
 {
     sHead.append(
-                QString("<link rel='stylesheet' href='%1' type='text/css'/>"HTML_NL)
+                QString("<link rel='stylesheet' href='%1' type='text/css'/>" HTML_NL)
                 .arg(sFileName)
                 );
 }
@@ -280,7 +280,7 @@ void CWebComposer::addSelector(QString& sPage, QString sID, QStringList lValues,
                  .arg(sOnChanged)
                  );
 
-    foreach (QString sValue, lValues)
+    for (QString sValue : lValues)
     {
         sPage.append(QString("<option %1>%2</option>")
                      .arg(sValue == sSelected? "selected" : "")

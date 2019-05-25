@@ -74,7 +74,7 @@ void QMLQualifiedExpression::toQML(QTextStream& stream, QMLFormatter& formatter,
 
     bool putDot = false;
 
-    foreach (QMLEntity* pItem, m_vContents)
+    for (QMLEntity* pItem : m_vContents)
     {
         if (putDot == true)
         {

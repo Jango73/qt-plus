@@ -69,7 +69,7 @@
     if (context.files().count() > 0 && context.files().first()->parsed())
     {
         // Iterate through the contents of the first parsed file
-        foreach (QMLEntity* pEntity, context.files().first()->contents())
+        for (QMLEntity* pEntity : context.files().first()->contents())
         {
             QMLImport* pImport = dynamic_cast<QMLImport*>(pEntity);
 
@@ -474,12 +474,12 @@ QMLTreeContext::QMLTreeContext()
 */
 QMLTreeContext::~QMLTreeContext()
 {
-    foreach (QMLScope* pScope, m_sScopes)
+    for (QMLScope* pScope : m_sScopes)
     {
         delete pScope;
     }
 
-    foreach (QMLFile* pFile, m_vFiles)
+    for (QMLFile* pFile : m_vFiles)
     {
         delete pFile;
     }
@@ -494,7 +494,7 @@ QMLTreeContext::~QMLTreeContext()
         qWarning() << QString("Created entities : %1").arg(QMLEntity::createdEntities());
         qWarning() << QString("Deleted entities : %1").arg(QMLEntity::deletedEntities());
 
-        foreach (QMLEntity* pEntity, QMLEntity::entities())
+        for (QMLEntity* pEntity : QMLEntity::entities())
         {
             qWarning() << QString("Leaked entity : ") + QString::number((qint64)pEntity) + " < " + pEntity->metaObject()->className() + " > " + " ( " + pEntity->toString() + " )";
         }
@@ -519,7 +519,7 @@ void QMLTreeContext::setIncludeImports(bool bValue)
 */
 void QMLTreeContext::setFileParsed(const QString& sFileName, bool bValue)
 {
-    foreach (QMLFile* pFile, m_vFiles)
+    for (QMLFile* pFile : m_vFiles)
     {
         if (pFile->fileName() == sFileName)
         {
@@ -604,7 +604,7 @@ QVector<QMLFile*>& QMLTreeContext::files()
 */
 QMLFile* QMLTreeContext::fileByFileName(const QString& sFileName)
 {
-    foreach (QMLFile* pFile, m_vFiles)
+    for (QMLFile* pFile : m_vFiles)
     {
         if (pFile->fileName() == sFileName)
         {
@@ -626,7 +626,7 @@ QMLFile* QMLTreeContext::fileByFileName(const QString& sFileName)
 */
 bool QMLTreeContext::fileParsed(const QString& sFileName)
 {
-    foreach (QMLFile* pFile, m_vFiles)
+    for (QMLFile* pFile : m_vFiles)
     {
         if (pFile->fileName() == sFileName && pFile->parsed())
         {
@@ -674,7 +674,7 @@ QMLTreeContext::EParseError QMLTreeContext::parse()
     m_eError = peSuccess;
     m_tErrorObject.clear();
 
-    foreach (QMLFile* pFile, m_vFiles)
+    for (QMLFile* pFile : m_vFiles)
     {
         if (pFile->parsed() == false)
         {
@@ -690,7 +690,7 @@ QMLTreeContext::EParseError QMLTreeContext::parse()
             m_eError = parse_Internal();
 
             // Delete all scopes
-            foreach (QMLScope* pScope, m_sScopes)
+            for (QMLScope* pScope : m_sScopes)
             {
                 delete pScope;
             }
@@ -737,7 +737,7 @@ QMLTreeContext::EParseError QMLTreeContext::parseString(const QString& sText)
     m_eError = parse_Internal();
 
     // Delete all scopes
-    foreach (QMLScope* pScope, m_sScopes)
+    for (QMLScope* pScope : m_sScopes)
     {
         delete pScope;
     }
@@ -817,7 +817,7 @@ QMLTreeContext::EParseError QMLTreeContext::parseImportFile(const QString& sFile
 */
 int QMLTreeContext::nextToken(void* LVAL)
 {
-    return parseNextToken((UParserValue*) LVAL);
+    return parseNextToken(reinterpret_cast<UParserValue*>(LVAL));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1233,10 +1233,10 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
         return parseNumber(LVAL);
     }
 
-    if (isalpha(c) | c == '_' | c == '$')
+    if (isalpha(c) || c == '_' || c == '$')
     {
         do { STORE(c); GET(c); }
-        while (c != EOF && (isalnum(c) || c == '_' | c == '$'));
+        while (c != EOF && (isalnum(c) || c == '_' || c == '$'));
 
         UNGET(c);
 
@@ -1271,7 +1271,7 @@ int QMLTreeContext::parseNextToken(UParserValue* LVAL)
 
 int QMLTreeContext::parseNumber(UParserValue* LVAL)
 {
-    int c, d;
+    int c;
     bool Done = false;
 
     while (Done == false)

@@ -24,7 +24,7 @@ QMLImport::QMLImport(const QPoint& pPosition, QMLTreeContext* pContext, QMLEntit
         QDir dDirectory(sDirectory);
         QStringList lFiles = dDirectory.entryList(slNameFilter);
 
-        foreach (QString sFile, lFiles)
+        for (QString sFile : lFiles)
         {
             QString sQualifiedName = sDirectory + "/" + sFile;
 

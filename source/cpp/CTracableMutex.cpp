@@ -72,7 +72,7 @@ bool CTracableMutex::lock(QString sName)
         LOG_CRITICAL(QString("Mutex %1 lock timeout ! in thread %2").arg(m_sName).arg(sThread));
 
 #ifdef FULL_MUTEX_TRACE
-        foreach (QString sLockName, m_sLockNames)
+        for (QString sLockName : m_sLockNames)
         {
             LOG_CRITICAL(QString("... locked by %1").arg(sLockName));
         }
@@ -99,7 +99,7 @@ bool CTracableMutex::lock(QString sName)
         LOG_WARNING(QString("Mutex %1 lock time > 1 second in thread %2").arg(m_sName).arg(sThread));
 
 #ifdef FULL_MUTEX_TRACE
-        foreach (QString sLockName, m_sLockNames)
+        for (QString sLockName : m_sLockNames)
         {
             LOG_WARNING(QString("... locked by %1").arg(sLockName));
         }

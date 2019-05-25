@@ -77,7 +77,7 @@ void QMLFunctionCall::toQML(QTextStream& stream, QMLFormatter& formatter, const 
     {
         bool putDot = false;
 
-        foreach (QMLEntity* pEntity, m_pArguments->contents())
+        for (QMLEntity* pEntity : m_pArguments->contents())
         {
             if (putDot == true)
             {

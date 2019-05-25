@@ -235,7 +235,7 @@ public:
     //! Returns true if this node's chlidren contain the specified value
     bool contains(T value) const
     {
-        foreach (QTree<T> node, m_vChildren)
+        for (QTree<T> node : m_vChildren)
         {
             bool bContains = node.contains(value);
 

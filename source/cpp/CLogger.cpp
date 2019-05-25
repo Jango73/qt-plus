@@ -265,7 +265,7 @@ bool CLogger::filterToken(QString sToken)
     {
         bool bFound = false;
 
-        foreach (QString sDisplay, m_sDisplayTokens)
+        for (QString sDisplay : m_sDisplayTokens)
         {
             if (sToken.contains(sDisplay, Qt::CaseInsensitive))
             {
@@ -281,7 +281,7 @@ bool CLogger::filterToken(QString sToken)
     {
         bool bFound = false;
 
-        foreach (QString sDisplay, m_sIgnoreTokens)
+        for (QString sDisplay : m_sIgnoreTokens)
         {
             if (sToken.contains(sDisplay, Qt::CaseInsensitive))
             {
@@ -348,7 +348,7 @@ void CLogger::log(ELogLevel eLevel, const QString& sText, const QString& sToken)
                 {
                     m_iFileSize += m_pFile->write(getFinalStringForLevel(llWarning, sFinalText).toLatin1().constData());
 
-                    foreach (CLogger* pLogger, m_vChainedLoggers) { pLogger->log(eLevel, sFinalText, sToken); }
+                    for (CLogger* pLogger : m_vChainedLoggers) { pLogger->log(eLevel, sFinalText, sToken); }
                 }
                 break;
             }
@@ -359,7 +359,7 @@ void CLogger::log(ELogLevel eLevel, const QString& sText, const QString& sToken)
                 {
                     m_iFileSize += m_pFile->write(getFinalStringForLevel(llError, sFinalText).toLatin1().constData());
 
-                    foreach (CLogger* pLogger, m_vChainedLoggers) { pLogger->log(eLevel, sFinalText, sToken); }
+                    for (CLogger* pLogger : m_vChainedLoggers) { pLogger->log(eLevel, sFinalText, sToken); }
                 }
                 break;
             }
@@ -370,7 +370,7 @@ void CLogger::log(ELogLevel eLevel, const QString& sText, const QString& sToken)
                 {
                     m_iFileSize += m_pFile->write(getFinalStringForLevel(llCritical, sFinalText).toLatin1().constData());
 
-                    foreach (CLogger* pLogger, m_vChainedLoggers) { pLogger->log(eLevel, sFinalText, sToken); }
+                    for (CLogger* pLogger : m_vChainedLoggers) { pLogger->log(eLevel, sFinalText, sToken); }
                 }
                 break;
             }
@@ -381,7 +381,7 @@ void CLogger::log(ELogLevel eLevel, const QString& sText, const QString& sToken)
                 {
                     m_iFileSize += m_pFile->write(getFinalStringForLevel(llAlways, sFinalText).toLatin1().constData());
 
-                    foreach (CLogger* pLogger, m_vChainedLoggers) { pLogger->log(eLevel, sFinalText, sToken); }
+                    for (CLogger* pLogger : m_vChainedLoggers) { pLogger->log(eLevel, sFinalText, sToken); }
                 }
                 break;
             }

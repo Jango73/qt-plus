@@ -46,7 +46,7 @@ QMLComplexEntity::~QMLComplexEntity()
         delete m_pName;
     }
 
-    foreach (QMLEntity* pEntity, m_vContents)
+    for (QMLEntity* pEntity : m_vContents)
     {
         if (pEntity != nullptr)
         {
@@ -210,7 +210,7 @@ QMap<QString, QMLEntity*> QMLComplexEntity::members()
 QVector<QMLEntity*> QMLComplexEntity::grabContents()
 {
     QVector<QMLEntity*> vReturnValue;
-    foreach (QMLEntity* pEntity, m_vContents)
+    for (QMLEntity* pEntity : m_vContents)
     {
         vReturnValue << pEntity;
     }
@@ -319,7 +319,7 @@ void QMLComplexEntity::sortContents()
     {
         QVector<QMLEntity*> vContentsCopy;
 
-        foreach (QMLEntity* pEntity, m_vContents)
+        for (QMLEntity* pEntity : m_vContents)
             vContentsCopy << pEntity;
 
         qSort(m_vContents.begin(), m_vContents.end(), compareEntities);
@@ -340,7 +340,7 @@ void QMLComplexEntity::sortContents()
         }
     }
 
-    foreach (QMLEntity* pChild, m_vContents)
+    for (QMLEntity* pChild : m_vContents)
     {
         pChild->sortContents();
     }
@@ -357,7 +357,7 @@ void QMLComplexEntity::solveSymbols(QMLTreeContext* pContext)
 {
     QMLEntity::solveSymbols(pContext);
 
-    foreach (QMLEntity* pEntity, m_vContents)
+    for (QMLEntity* pEntity : m_vContents)
     {
         pEntity->setParent(this);
         pEntity->solveSymbols(pContext);
@@ -374,7 +374,7 @@ void QMLComplexEntity::solveReferences(QMLTreeContext* pContext)
 {
     QMLEntity::solveReferences(pContext);
 
-    foreach (QMLEntity* pEntity, m_vContents)
+    for (QMLEntity* pEntity : m_vContents)
     {
         pEntity->solveReferences(pContext);
     }
@@ -386,7 +386,7 @@ void QMLComplexEntity::solveSymbolUsages(QMLTreeContext* pContext)
 {
     QMLEntity::solveSymbolUsages(pContext);
 
-    foreach (QMLEntity* pEntity, m_vContents)
+    for (QMLEntity* pEntity : m_vContents)
     {
         if (pEntity != nullptr)
         {
@@ -404,13 +404,13 @@ QMap<QString, QMLEntity*> QMLComplexEntity::getDeclaredSymbols()
 {
     QMap<QString, QMLEntity*> mReturnValue = QMLEntity::getDeclaredSymbols();
 
-    foreach (QMLEntity* pEntity, m_vContents)
+    for (QMLEntity* pEntity : m_vContents)
     {
         if (pEntity != nullptr)
         {
             QMap<QString, QMLEntity*> itemSymbols = pEntity->getDeclaredSymbols();
 
-            foreach (QString sKey, itemSymbols.keys())
+            for (QString sKey : itemSymbols.keys())
             {
                 if (mReturnValue.contains(sKey) == false)
                 {
@@ -430,7 +430,7 @@ QMap<QString, QMLEntity*> QMLComplexEntity::getDeclaredSymbols()
 */
 QMLEntity* QMLComplexEntity::findSymbolDeclarationDescending(QStringList& lQualifiedName)
 {
-    foreach (QMLEntity* pEntity, m_vContents)
+    for (QMLEntity* pEntity : m_vContents)
     {
         if (pEntity != nullptr)
         {
@@ -456,7 +456,7 @@ void QMLComplexEntity::removeUnreferencedSymbols(QMLTreeContext* pContext)
 {
     QMLEntity::removeUnreferencedSymbols(pContext);
 
-    foreach (QMLEntity* pEntity, m_vContents)
+    for (QMLEntity* pEntity : m_vContents)
     {
         if (pEntity != nullptr)
         {
@@ -508,7 +508,7 @@ void QMLComplexEntity::toQML(QTextStream& stream, QMLFormatter& formatter, const
 
         int iCount = 0;
 
-        foreach (QMLEntity* pEntity, m_vContents)
+        for (QMLEntity* pEntity : m_vContents)
         {
             if (pEntity != nullptr)
             {
@@ -572,7 +572,7 @@ CXMLNode QMLComplexEntity::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* 
     if (m_bIsArgumentList)
         xNode.attributes()["IsArgumentList"] = "true";
 
-    foreach (QMLEntity* pEntity, m_vContents)
+    for (QMLEntity* pEntity : m_vContents)
     {
         if (pEntity != nullptr)
         {

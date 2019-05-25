@@ -56,7 +56,7 @@ public:
 
         T returnValue = T(0);
 
-        foreach (T iterValue, m_mValues)
+        for (T iterValue : m_mValues)
         {
             returnValue += iterValue;
         }

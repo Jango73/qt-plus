@@ -193,7 +193,7 @@ void CRemoteControl::initSecurity()
 
     QVector<CXMLNode> vFiles = tFilesNode.getNodesByTagName("ProhibitedFile");
 
-    foreach (CXMLNode tFile, vFiles)
+    for (CXMLNode tFile : vFiles)
     {
         QString sPath = tFile.attributes()["path"];
 
@@ -213,7 +213,7 @@ void CRemoteControl::initUsers(bool bSilent)
 
     QVector<CXMLNode> vUsers = tUsersNode.getNodesByTagName("User");
 
-    foreach (CXMLNode tNode, vUsers)
+    for (CXMLNode tNode : vUsers)
     {
         QString sLogin = tNode.attributes()["login"];
         QString sPassword = tNode.attributes()["password"];
@@ -525,7 +525,7 @@ QVector<QString> CRemoteControl::getFileListFromSourceName(const QString& sSourc
         // List all files matching the wildcard expression
         QStringList sFiles = tDirectory.entryList(sFilters);
 
-        foreach (QString sFile, sFiles)
+        for (QString sFile : sFiles)
         {
             if (sFile != "." && sFile != "..")
             {
@@ -695,7 +695,7 @@ bool CRemoteControl::putFile(const QString& sSourceName, const QString& sTargetN
         if (vSourceFiles.count() > 0)
         {
             // Loop through each file name
-            foreach (QString sFullSourceName, vSourceFiles)
+            for (QString sFullSourceName : vSourceFiles)
             {
                 QFile tFile(sFullSourceName);
 
@@ -1296,7 +1296,7 @@ void CRemoteControl::onTimer()
     }
 
     // Read incoming messages for each socket
-    foreach (QTcpSocket* pSocket, m_vSockets)
+    for (QTcpSocket* pSocket : m_vSockets)
         while (readMessage(pSocket)) {}
 
     // Read incoming messages for the client socket if any
@@ -1751,7 +1751,7 @@ void CRemoteControl::handleGetFile(QTcpSocket* pSocket, RMC_Header* pHeader)
     int iFileCount = 0;
 
     // Loop through each file name
-    foreach (QString sFileName, vFiles)
+    for (QString sFileName : vFiles)
     {
         QFile tFile(sFileName);
 
@@ -2220,7 +2220,7 @@ void CRemoteControl::handleMergeFile(QTcpSocket* pSocket, RMC_Header* pHeader)
         QSettings tSettings1(sSourceName, QSettings::IniFormat);
         QSettings tSettings2(sTargetName, QSettings::IniFormat);
 
-        foreach (QString sKey1, tSettings1.allKeys())
+        for (QString sKey1 : tSettings1.allKeys())
         {
             if (tSettings2.allKeys().contains(sKey1) == false)
             {
@@ -2300,7 +2300,7 @@ int CRemoteControl::getPrivilegesForSocket(QTcpSocket* pSocket)
 
 bool CRemoteControl::fileAccessOK(QString sFileName)
 {
-    foreach (QString sName, m_vProhibitedFiles)
+    for (QString sName : m_vProhibitedFiles)
     {
         if (sFileName.toLower().contains(sName.toLower())) return false;
     }

@@ -99,7 +99,7 @@ void CTimeSampler::dumpAccumulatedTimes()
     m_pLogger->log(llDebug, "------------------------------------------------------------", "TimeSample");
     m_pLogger->log(llDebug, "Total accumulated times", "TimeSample");
 
-    foreach (QString sName, m_mStartTimes.keys())
+    for (QString sName : m_mStartTimes.keys())
     {
         double dMillisecs = (double) m_mAccumTimes[sName] / 1000.0;
         double dAverageMsecs = (double) dMillisecs / (double) m_mNumCalls[sName];
