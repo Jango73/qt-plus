@@ -3,28 +3,30 @@
 
 // Declares a Qt property with setter and getter
 // Automatically adds the member variable
-// Parameters: Type, type symbol for member name, set name, get name
-#define Q_FAST_PROPERTY(t, i, g, s)                                 \
+// Names the member variable as m_<prefix><set name> (for instance: m_iCount)
+// Parameters: Type, prefix for type, get name, set name
+#define Q_FAST_PROPERTY(t, p, g, s)                                 \
 public:                                                             \
     Q_PROPERTY(t g READ g WRITE set##s NOTIFY g##Changed)           \
 public:                                                             \
-    t g () const { return m_##i##s; }                               \
+    t g () const { return m_##p##s; }                               \
     void set##s (t value) {                                         \
-        if (m_##i##s == value) return;                              \
-        m_##i##s = value;                                           \
+        if (m_##p##s == value) return;                              \
+        m_##p##s = value;                                           \
         emit g##Changed();                                          \
     }                                                               \
     Q_SIGNAL void g##Changed();                                     \
 protected:                                                          \
-    t m_##i##s;
+    t m_##p##s;
 
 // Declares a Qt property with getter only
 // Automatically adds the member variable
-// Parameters: Type, type symbol for member name, set name, get name
-#define Q_FAST_PROPERTY_READ_ONLY(t, i, g, s)                       \
+// Names the member variable as m_<prefix><set name> (for instance: m_iCount)
+// Parameters: Type, prefix for type, get name, set name
+#define Q_FAST_PROPERTY_READ_ONLY(t, p, g, s)                       \
 public:                                                             \
     Q_PROPERTY(t g READ g)                                          \
 public:                                                             \
-    t g () const { return m_##i##s; }                               \
+    t g () const { return m_##p##s; }                               \
 protected:                                                          \
-    t m_##i##s;
+    t m_##p##s;
