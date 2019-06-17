@@ -1,6 +1,7 @@
 
 HEADERS += \
     source/cpp/qtplus_global.h \
+    source/cpp/Macros.h \
     source/cpp/CFactory.h \
     source/cpp/CSingleton.h \
     source/cpp/CSingletonPool.h \
