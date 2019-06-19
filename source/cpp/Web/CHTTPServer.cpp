@@ -329,11 +329,6 @@ void CHTTPServer::getContent(CWebContext& tContext, QString& sHead, QString& sBo
     Q_UNUSED(sBody);
     Q_UNUSED(sCustomResponse);
     Q_UNUSED(sCustomResponseMIME);
-
-    // Cette méthode est à implémenter par une sous-classe pour générer du contenu dynamique
-    // Soit en remplissant sCustomResponse par du texte quelconque
-    // Soit en en remplissant xmlResponse par du contenu XML
-    // Soit en remplissant sHead et sBody par du contenu HTML
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -346,9 +341,6 @@ void CHTTPServer::getContent(CWebContext& tContext, QString& sHead, QString& sBo
 void CHTTPServer::handleSocketDisconnection(CWebContext& tContext)
 {
     Q_UNUSED(tContext);
-
-    // Cette méthode peut être implémentée par une sous-classe pour réagir
-    // lors de la déconnexion d'un client
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -363,9 +355,6 @@ void CHTTPServer::handleSocketBytesWritten(CWebContext& tContext, qint64 iBytes)
 {
     Q_UNUSED(tContext);
     Q_UNUSED(iBytes);
-
-    // Cette méthode peut être implémentée par une sous-classe pour réagir
-    // lorsque des octets sont envoyés à un client
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -380,9 +369,6 @@ void CHTTPServer::handleSocketBytesRead(CWebContext& tContext, qint64 iBytes)
 {
     Q_UNUSED(tContext);
     Q_UNUSED(iBytes);
-
-    // Cette méthode peut être implémentée par une sous-classe pour réagir
-    // lorsque des octets sont envoyés à un client
 }
 
 //-------------------------------------------------------------------------------------------------

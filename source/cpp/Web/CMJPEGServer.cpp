@@ -132,16 +132,15 @@ CMJPEGServer::~CMJPEGServer()
 */
 void CMJPEGServer::send(const QByteArray& baData)
 {
-    // Si on écrit dans un fichier ou qu'on a des connections actives
+    // If writing in a file or any active connection
     if (m_pOutputFile != nullptr || hasConnections())
     {
-        // Si les données entrantes existent
+        // If there is any incoming data
         if (baData.count() > 0)
         {
-            // Verrouillage du mutex de buffer
             QMutexLocker locker(&m_tMutex);
 
-            // On ajoute les données dans notre buffer de sortie
+            // Add data to output buffer
             if (m_vOutput.count() < 10)
             {
                 m_vOutput.append(baData);
@@ -159,16 +158,13 @@ void CMJPEGServer::send(const QByteArray& baData)
 */
 void CMJPEGServer::sendRaw(const QByteArray& baData, int iWidth, int iHeight)
 {
-    // Si on écrit dans un fichier ou qu'on a des connections actives
+    // If writing in a file or any active connection
     if (m_pOutputFile != nullptr || hasConnections())
     {
-        // Création d'une image à la taille spécifiée
         QImage image(QSize(iWidth, iHeight), QImage::Format_RGB888);
 
-        // Recopie des données brutes d'image dans la QImage
         memcpy(image.bits(), baData.constData(), baData.count());
 
-        // Verrouillage du mutex de buffer
         QMutexLocker locker(&m_tMutex);
 
         if (m_vOutputImages.count() < 10)
@@ -234,7 +230,6 @@ void CMJPEGServer::getContent(CWebContext& tContext, QString& sHead, QString& sB
     Q_UNUSED(sHead);
     Q_UNUSED(sBody);
 
-    // Ajout de la socket au vecteur
     QMutexLocker locker(&m_tMutex);
 
     if (m_vSockets.contains(tContext.m_pSocket) == false)
@@ -255,7 +250,6 @@ void CMJPEGServer::getContent(CWebContext& tContext, QString& sHead, QString& sB
 */
 void CMJPEGServer::handleSocketDisconnection(CWebContext& tContext)
 {
-    // Retrait de la socket du vecteur
     QMutexLocker locker(&m_tMutex);
 
     if (m_vSockets.contains(tContext.m_pSocket))

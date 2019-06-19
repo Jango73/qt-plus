@@ -830,23 +830,23 @@ bool CHTTPRequestProcessor::getResponseDynamicContent(CWebContext& tContext, QTc
     // Call the getContent method of the server
     m_pServer->getContent(tContext, sHead, sBody, sCustomResponse, sCustomResponseMIME);
 
-    // On ne traite que si la socket est en état connecté
+    // Process only if the socket is in connected state
     if (pSocket->state() == QAbstractSocket::ConnectedState)
     {
-        // Au cas où la réponse customisée est non-vide, on l'envoie tel quel au client
+        // In case the custom response is not empty, send it as-is to the client
         if (sCustomResponse.isEmpty() == false && sCustomResponseMIME == MIME_Content_Custom)
         {
             QByteArray baData;
 
             baData.append(HTTP_HEADER);
             baData.append(HTTP_200_OK);
-            baData.append(sCustomResponse);
+            baData.append(sCustomResponse.toUtf8());
 
             pSocket->write(baData);
 
             return true;
         }
-        // Sinon, si la réponse au format XML est non-vide, c'est elle qu'on envoie au client
+        // Else if the xml response is not empty, send it to the client
         else if (sCustomResponse.isEmpty() == false)
         {
             QByteArray baData;
@@ -864,7 +864,7 @@ bool CHTTPRequestProcessor::getResponseDynamicContent(CWebContext& tContext, QTc
 
             pSocket->write(baData);
         }
-        // Sinon, les contenus HTML de sHead et sBody sont retournés au client
+        // Else the HTML content of sHead and sBody are returned to the client
         else
         {
             // Streaming de la page
@@ -875,10 +875,10 @@ bool CHTTPRequestProcessor::getResponseDynamicContent(CWebContext& tContext, QTc
             baHTML.append("<!doctype html>" HTML_NL);
             baHTML.append("<html>" HTML_NL);
             baHTML.append("<head>" HTML_NL);
-            baHTML.append(sHead);
+            baHTML.append(sHead.toUtf8());
             baHTML.append("</head>" HTML_NL);
             baHTML.append("<body>" HTML_NL);
-            baHTML.append(sBody);
+            baHTML.append(sBody.toUtf8());
             baHTML.append("</body>" HTML_NL);
             baHTML.append("</html>" HTML_NL);
 
