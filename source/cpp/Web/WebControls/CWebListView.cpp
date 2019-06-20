@@ -95,8 +95,9 @@ CWebListView::CWebListView(const QString& sName, const QString& sCaption, IJSONM
 
     // Set paging data
     int iTotalCount = m_pModelProvider.get()->modelItemCount();
+    int iTotalPages = iTotalCount % m_iItemsPerPage == 0 ? iTotalCount / m_iItemsPerPage : (iTotalCount / m_iItemsPerPage) + 1;
     pCurrentPageLabel->setCaption(QString::number(m_iCurrentPage + 1));
-    pTotalPageLabel->setCaption(QString::number(iTotalCount / m_iItemsPerPage));
+    pTotalPageLabel->setCaption(QString::number(iTotalPages));
 
     setModel();
 }
