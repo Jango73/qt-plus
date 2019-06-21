@@ -88,6 +88,9 @@
 #define MIME_Content_MultiPart_FormData "multipart/form-data"
 #define MIME_Content_Custom             "custom"
 
+// Internal values
+#define INVALID_RESPONSE_STRING         "VOID"
+
 class CHTTPServer;
 
 //-------------------------------------------------------------------------------------------------

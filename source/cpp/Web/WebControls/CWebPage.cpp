@@ -365,7 +365,8 @@ void CWebPage::addHTML(QString& sHead, QString& sBody)
                 "function processRequestReturnValue(value)%1"
                 "{%1"
                 "  debugOut(value);%1"
-                "  if (value != 'VOID') eval(value);%1"
+                "  if (value != '%10')%1"
+                "    eval(value);%1"
                 "}%1"
                 "function debugOut(text)%1"
                 "{%1"
@@ -381,7 +382,8 @@ void CWebPage::addHTML(QString& sHead, QString& sBody)
             .arg(TOKEN_VIEWSTATE)
             .arg(TOKEN_UPLOAD)
             .arg(HTTP_GET)
-            .arg(HTTP_POST);
+            .arg(HTTP_POST)
+            .arg(INVALID_RESPONSE_STRING);
 
     // Debug out
     // sBody.append(QString("<div width='100%' style='div1'><textarea id='DebugOut'></textarea></div>"HTML_NL));

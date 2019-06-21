@@ -152,7 +152,7 @@ void CDynamicHTTPServer::getContent(CWebContext& tContext, QString& sHead, QStri
 
                 if (sCustomResponse.isEmpty())
                 {
-                    sCustomResponse = "VOID";
+                    sCustomResponse = INVALID_RESPONSE_STRING;
                     sCustomResponseMIME = MIME_Content_XML;
                 }
 
