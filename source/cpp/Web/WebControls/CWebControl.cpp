@@ -485,11 +485,14 @@ CWebControl* CWebControl::addObserver(IWebControlObserver* pObserver)
 */
 void CWebControl::addHTML(QString& sHead, QString& sBody)
 {
+    QString sClassDeclaration = m_sStyleClass.isEmpty() ? "" : QString("class='%1'").arg(m_sStyleClass);
+    QString sStyleDeclaration = m_sStyle.isEmpty() ? "" : QString("style='%1'").arg(m_sStyle);
+
     sBody.append(
-                QString("<div id='%1' class='%2' style='%3' style.visibility='%4'>" HTML_NL)
+                QString("<div id='%1' %2 %3 style.visibility='%4'>")
                 .arg(getCodeName())
-                .arg(m_sStyleClass)
-                .arg(m_sStyle)
+                .arg(sClassDeclaration)
+                .arg(sStyleDeclaration)
                 .arg(m_bVisible ? "visible" : "hidden")
                 );
 
@@ -731,13 +734,13 @@ void CWebControl::serialize(QDataStream& stream, CObjectTracker *pTracker) const
     stream << m_bVisible;
     stream << m_bReadOnly;
 
-    stream << (qint32)m_vObservers.count();
+    stream << qint32(m_vObservers.count());
     for (IWebControlObserver* observer : m_vObservers)
     {
         stream << observer->getObserverID();
     }
 
-    stream << (qint32)m_vControls.count();
+    stream << qint32(m_vControls.count());
     for (CWebControl* control : m_vControls)
     {
         control->serialize(stream, pTracker);

@@ -160,10 +160,12 @@ void CWebComposer::addNewLine(QString& sPage)
 */
 void CWebComposer::beginDiv(QString& sPage, QString sID, QString sClass)
 {
+    QString sClassDeclaration = sClass.isEmpty() ? "" : QString("class='%1'").arg(sClass);
+
     sPage.append(
-                QString("<div id='%1' class='%2'>")
+                QString("<div id='%1' %2>")
                 .arg(sID)
-                .arg(sClass)
+                .arg(sClassDeclaration)
                 );
 }
 

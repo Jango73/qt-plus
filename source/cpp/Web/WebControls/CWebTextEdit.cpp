@@ -62,11 +62,12 @@ CWebTextEdit::~CWebTextEdit()
 */
 void CWebTextEdit::addHTML(QString& sHead, QString& sBody)
 {
+    QString sClassDeclaration = m_sStyleClass.isEmpty() ? "" : QString("class='%1'").arg(m_sStyleClass);
     QString sFunction = addHTMLEventWithControlValue(sHead, EVENT_CHANGED);
 
-    sBody.append(QString("<textarea id='%1' class='%2' onChange='%3'>" HTML_NL)
+    sBody.append(QString("<textarea id='%1' %2 onChange='%3'>" HTML_NL)
                  .arg(getCodeName())
-                 .arg(m_sStyleClass)
+                 .arg(sClassDeclaration)
                  .arg(sFunction)
                  );
 

@@ -299,9 +299,9 @@ void CWebPage::addHTML(QString& sHead, QString& sBody)
                 "<script type='text/javascript' language='javascript'>%1"
                 "function htmlToElement(html)%1"
                 "{%1"
-                "   var template = document.createElement('template');%1"
-                "   template.innerHTML = html;%1"
-                "   return template.content.firstChild;%1"
+                "  var template = document.createElement('template');%1"
+                "  template.innerHTML = html;%1"
+                "  return template.content.firstChild;%1"
                 "}%1"
                 "function httpWebEvent(theUrl)%1"
                 "{%1"
@@ -386,7 +386,7 @@ void CWebPage::addHTML(QString& sHead, QString& sBody)
             .arg(INVALID_RESPONSE_STRING);
 
     // Debug out
-    // sBody.append(QString("<div width='100%' style='div1'><textarea id='DebugOut'></textarea></div>"HTML_NL));
+    // sBody.append(QString("<div width='100%' style='div1'><textarea id='DebugOut'></textarea></div>" HTML_NL));
 
     for (CWebControl* pControl : m_vControls)
     {

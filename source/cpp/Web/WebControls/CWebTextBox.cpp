@@ -62,11 +62,12 @@ CWebTextBox::~CWebTextBox()
 */
 void CWebTextBox::addHTML(QString& sHead, QString& sBody)
 {
+    QString sClassDeclaration = m_sStyleClass.isEmpty() ? "" : QString("class='%1'").arg(m_sStyleClass);
     QString sFunction = addHTMLEventWithControlValue(sHead, EVENT_CHANGED);
 
-    sBody.append(QString("<input type='text' id='%1' class='%2' value='%3' onChange='%4' %5/>" HTML_NL)
+    sBody.append(QString("<input type='text' id='%1' %2 value='%3' onChange='%4' %5/>" HTML_NL)
                  .arg(getCodeName())
-                 .arg(m_sStyleClass)
+                 .arg(sClassDeclaration)
                  .arg(m_sCaption)
                  .arg(sFunction)
                  .arg(m_bReadOnly ? "readonly" : "")
