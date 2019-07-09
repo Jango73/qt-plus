@@ -104,6 +104,11 @@ A template used to average values.
 ### CGeoUtilities
 Contains methods to convert from geo coordinates (latitude, longitude, altitude) to cartesian coordinates (x, y, z) and back.
 
+## QML files
+
+### ScatteredItemView.qml
+This view shows a wireframe of a QML scene. It can be rotated and zoomed. Elements can be isolated.
+
 # Third party files
 
 ## beautify.js
