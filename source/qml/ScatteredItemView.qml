@@ -305,7 +305,7 @@ Item {
     }
 
     Rectangle {
-        width: parent.width * 0.5
+        width: parent.width
         height: parent.height * 0.3
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
@@ -445,13 +445,24 @@ Item {
             {
                 if (event.modifiers & Qt.ControlModifier)
                 {
-                    root.flatView = true;
-                    root.showItems = false;
-                    root.showMargins = true;
-                    root.showMouseAreas = false;
-                    root.seeThrough = true;
-                    root.maxVisibleLevel = 999999;
-                    root.exploded = !root.exploded;
+                    if (root.flatView)
+                    {
+                        root.flatView = false;
+                        root.showItems = true;
+                        root.showMargins = false;
+                        root.showMouseAreas = true;
+                        root.seeThrough = false;
+                        root.maxVisibleLevel = 999999;
+                    }
+                    else
+                    {
+                        root.flatView = true;
+                        root.showItems = false;
+                        root.showMargins = true;
+                        root.showMouseAreas = false;
+                        root.seeThrough = true;
+                        root.maxVisibleLevel = 999999;
+                    }
                 }
             }
             else if (event.key === Qt.Key_Right)
@@ -756,7 +767,8 @@ Item {
         {
             var depth;
 
-            if (root.selectedItem === null)
+            // if (root.selectedItem === null)
+            if (true)
             {
                 depth = root.targetItem.width > root.targetItem.height ? root.targetItem.width : root.targetItem.height;
             }
@@ -768,7 +780,8 @@ Item {
             root.cameraDistance = depth + root.additionalCameraDistance;
             root.cameraPosition = applyRotation({ x: 0.0, y: 0.0, z: -root.cameraDistance }, root.cameraRotation);
 
-            if (root.selectedItem === null)
+            // if (root.selectedItem === null)
+            if (true)
             {
                 // root.cameraPosition.x += ((root.extentsMinimum.x + root.extentsMaximum.x) * 0.5);
                 // root.cameraPosition.y += ((root.extentsMinimum.y + root.extentsMaximum.y) * 0.5);
