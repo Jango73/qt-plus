@@ -1,5 +1,4 @@
 import QtQuick 2.12
-import "../generalUtils.js" as Utils
 
 Rectangle {
     id: root
@@ -31,8 +30,13 @@ Rectangle {
             anchors.fill: parent
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
-            text: "" + Utils.toFixed(root.width, 2) + " x " + Utils.toFixed(root.height, 2)
+            text: "" + toFixed(root.width, 2) + " x " + toFixed(root.height, 2)
             font.pixelSize: root.fontSize
         }
+    }
+
+    function toFixed(value, digits) {
+        var power = Math.pow(10, digits || 0)
+        return Math.round(value * power) / power
     }
 }
