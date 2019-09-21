@@ -33,7 +33,7 @@ PTDMASlot CTDMADevice::s_ucLastSlot		= 250;
     \section1 Introduction
     This class is a form of Time Division for Multiple Access implementation. \br
     It assumes that many devices will share the same communication channel to exchange data. \br
-    It standard TDMA, each device knows when it can send data. The master device synchronizes all
+    In standard TDMA, each device knows when it can send data. The master device synchronizes all
     clocks. \br
     This class does not function with a clock synchronization but with sync messages coming from the
     master device. There is of course more overhead and thus lag than in a clock synchronized system,
@@ -616,7 +616,6 @@ void CTDMADevice::handleSlaveSpeak_Master(const TSlaveData_SlaveSpeak* pSpeak, c
         m_mRegisteredUsers[m_tSlot].incScore();
     }
 
-    // On envoie le signal de données arrivées
     emit readyRead();
 
     sendSpeak();
@@ -639,7 +638,6 @@ void CTDMADevice::handleMasterSpeak_Slave(const TMasterData_MasterSpeak* pSpeak,
     m_baInput.append(baData);
     m_tLastSpeakTime = now();
 
-    // On envoie le signal de données arrivées
     emit readyRead();
 }
 
