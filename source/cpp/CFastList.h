@@ -32,8 +32,11 @@ public:
 
     void removeItem(K key)
     {
-        QList<T>::removeAll(m_hLookup[key]);
-        m_hLookup.remove(key);
+        if (m_hLookup.contains(key))
+        {
+            QList<T>::removeAll(m_hLookup[key]);
+            m_hLookup.remove(key);
+        }
     }
 
     void removeItem(K key, const T& item)
@@ -50,6 +53,12 @@ public:
     T itemByKey(K key)
     {
         return m_hLookup[key];
+    }
+
+    void deleteAll()
+    {
+        qDeleteAll(*this);
+        qDeleteAll(m_hLookup);
     }
 
 protected:
