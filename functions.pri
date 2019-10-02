@@ -5,6 +5,7 @@ unix {
     QMAKE_MKPATH = mkdir
 }
 
+# Creates a path if it does not exist
 defineReplace(makePath) {
     path = $$shell_quote($$system_path($$1))
     test = $$sprintf($$QMAKE_CHK_EXISTS, $$path)
@@ -12,6 +13,7 @@ defineReplace(makePath) {
     return($$retVal)
 }
 
+# Returns the path to Qt
 defineReplace(getQtPath) {
     TEMP_NAME = $${QMAKE_QMAKE}
     QT_PATH = $$dirname(TEMP_NAME)
@@ -20,6 +22,7 @@ defineReplace(getQtPath) {
     return($$QT_BASE_PATH)
 }
 
+# Returns the path to Qt binaries
 defineReplace(getQtBinPath) {
     TEMP_NAME = $${QMAKE_QMAKE}
     QT_BIN_PATH = $$dirname(TEMP_NAME)
@@ -27,6 +30,7 @@ defineReplace(getQtBinPath) {
     return($$QT_BIN_PATH)
 }
 
+# Returns the path to Qt libraries
 defineReplace(getQtLibPath) {
     unix {
         return($$getQtPath()/lib)
@@ -35,6 +39,7 @@ defineReplace(getQtLibPath) {
     }
 }
 
+# Makes a file executable on Unix-like systems
 defineReplace(makeExecutable) {
     # Collect arguments
     files = $$1
@@ -54,6 +59,8 @@ defineReplace(makeExecutable) {
     return($$returnValue)
 }
 
+# Copies a list of directories with relative paths (all content, recursively) to a target directory
+# Arguments: source directory, list of relative directory names, target directory
 defineReplace(copyDirsToDir) {
     # Collect arguments
     sourceDir = $$1
@@ -86,6 +93,8 @@ defineReplace(copyDirsToDir) {
     return($$returnValue)
 }
 
+# Copies a list of files to a target directory
+# Arguments: source directory, list of relative file names, target directory
 defineReplace(copyFilesToDir) {
     # Collect arguments
     sourceDir = $$1
@@ -110,6 +119,9 @@ defineReplace(copyFilesToDir) {
     return($$returnValue)
 }
 
+# Copies a list of files with relative paths to a target directory
+# Unlike copyFilesToDir, the relative path of files is added to the target path
+# Arguments: source directory, list of relative file names, target directory
 defineReplace(copyFilesWithPathToDir) {
     # Collect arguments
     sourceDir = $$1
