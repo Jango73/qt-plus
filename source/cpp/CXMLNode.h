@@ -114,6 +114,9 @@ public:
     //! Appends a node to the child nodes of this node
     CXMLNode& operator << (CXMLNode value);
 
+    //! Tests if a node is equal to another node
+    bool operator == (const CXMLNode& value) const;
+
     //-------------------------------------------------------------------------------------------------
     // Low level control methods
     //-------------------------------------------------------------------------------------------------

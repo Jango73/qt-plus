@@ -562,6 +562,21 @@ CXMLNode& CXMLNode::operator << (CXMLNode value)
     return *this;
 }
 
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns \c true if this node is equal to \a value.
+*/
+bool CXMLNode::operator == (const CXMLNode& value) const
+{
+    return
+            m_sTag == value.m_sTag &&
+            m_sValue == value.m_sValue &&
+            m_vAttributes == value.m_vAttributes &&
+            m_vNodes == value.m_vNodes;
+}
+
 //-------------------------------------------------------------------------------------------------
 
 /*!
