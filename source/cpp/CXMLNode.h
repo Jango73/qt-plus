@@ -99,6 +99,9 @@ public:
     //! Reads a XML file given a file name
     static CXMLNode loadXMLFromFile(const QString& sFileName);
 
+    //! Reads a compressed XML file given a file name
+    static CXMLNode loadXMLCFromFile(const QString& sFileName);
+
     //! Reads a JSON file given a file name
     static CXMLNode loadJSONFromFile(const QString& sFileName);
 
@@ -108,7 +111,10 @@ public:
     //! Saves a XML file
     bool saveXMLToFile(const QString& sFileName, bool bXMLHeader = true);
 
-    //! Saves a XML file
+    //! Saves a compressed XML file
+    bool saveXMLCToFile(const QString& sFileName, bool bXMLHeader = true);
+
+    //! Saves a JSON file
     bool saveJSONToFile(const QString& sFileName);
 
     //! Appends a node to the child nodes of this node
@@ -164,6 +170,7 @@ public:
 public:
 
     static const QString sExtension_XML;
+    static const QString sExtension_XMLC;
     static const QString sExtension_QRC;
     static const QString sExtension_JSON;
 
