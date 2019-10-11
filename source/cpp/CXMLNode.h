@@ -11,12 +11,21 @@
 #include <QString>
 #include <QMap>
 #include <QVector>
+#include <QList>
 #include <QDomDocument>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 
 //-------------------------------------------------------------------------------------------------
+
+class CXMLNode;
+
+#ifdef CXMLNODE_USE_LIST
+    typedef QList<CXMLNode> CXMLNodeList;
+#else
+    typedef QVector<CXMLNode> CXMLNodeList;
+#endif
 
 //! Defines a XML node
 class QTPLUSSHARED_EXPORT CXMLNode
@@ -32,9 +41,6 @@ public:
 
     //! Constructor with tag name
     CXMLNode(const QString& sTagName);
-
-    //! Destructor
-    virtual ~CXMLNode();
 
     //-------------------------------------------------------------------------------------------------
     // Setters
@@ -66,10 +72,10 @@ public:
     QMap<QString, QString>& attributes();
 
     //! Returns the children vector
-    const QVector<CXMLNode>& nodes() const;
+    const CXMLNodeList& nodes() const;
 
     //! Returns the children vector
-    QVector<CXMLNode>& nodes();
+    CXMLNodeList& nodes();
 
     //! Returns a child node by tag
     CXMLNode getNodeByTagName(const QString& sTagName);
@@ -78,7 +84,7 @@ public:
     CXMLNode getNodeByTagName(const QString& sTagName) const;
 
     //! Returns a child node vector by tag
-    QVector<CXMLNode> getNodesByTagName(const QString& sTagName) const;
+    CXMLNodeList getNodesByTagName(const QString& sTagName) const;
 
     //! Returns true if the node has the given attribute
     bool hasAttribute(const QString& sAttribute) const;
@@ -137,7 +143,7 @@ public:
     static CXMLNode parseJSONNode(QJsonObject jObject, QString sTagName);
 
     //! Converts a JSON array object to a vector of CXMLNode
-    static QVector<CXMLNode> parseJSONArray(QJsonArray jArray, QString sTagName);
+    static CXMLNodeList parseJSONArray(QJsonArray jArray, QString sTagName);
 
     //! Converts a JSON formatted string to a CXMLNode
     static CXMLNode parseJSON(QString sText);
@@ -183,7 +189,7 @@ protected:
     QString                 m_sTag;         // Node's tag
     QString                 m_sValue;       // Node's value
     QMap<QString, QString>  m_vAttributes;  // Node's attributes
-    QVector<CXMLNode>       m_vNodes;       // Child nodes
+    CXMLNodeList            m_vNodes;       // Child nodes
 };
 
 Q_DECLARE_METATYPE(CXMLNode);

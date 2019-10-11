@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <QDebug>
+
 // Declares a Qt property with setter and getter
 // Automatically adds the member variable
 // Names the member variable as m_<prefix><set name> (for instance: m_iCount)
@@ -45,3 +47,16 @@ public:                                                             \
     Q_SIGNAL void g##Changed();                                     \
 protected:                                                          \
     t m_##p##s;
+
+
+// Checks nullity of a pointer
+#define IS_NULL(p) ((p) == nullptr)
+
+// Gets the current source file name
+#define __FILENAME__ (__builtin_strrchr(__FILE__, '/') ? __builtin_strrchr(__FILE__, '/') + 1 : __FILE__)
+
+// Outputs a debug string
+#define OUT_DEBUG(a)    qDebug() << QString("%1::%2() : %3").arg(__FILENAME__).arg(__FUNCTION__).arg(a)
+
+// Outputs an error string
+#define OUT_ERROR(a)    qCritical() << a

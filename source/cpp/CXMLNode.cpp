@@ -43,15 +43,6 @@ CXMLNode::CXMLNode(const QString& sTagName)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Destroys a CXMLNode.
-*/
-CXMLNode::~CXMLNode()
-{
-}
-
-//-------------------------------------------------------------------------------------------------
-
-/*!
     Sets the tag of this node to \a value.
 */
 void CXMLNode::setTag(const QString& value)
@@ -124,7 +115,7 @@ QMap<QString, QString>& CXMLNode::attributes()
 /*!
     Returns a constant vector of this node's children.
 */
-const QVector<CXMLNode>& CXMLNode::nodes() const
+const CXMLNodeList &CXMLNode::nodes() const
 {
     return m_vNodes;
 }
@@ -134,7 +125,7 @@ const QVector<CXMLNode>& CXMLNode::nodes() const
 /*!
     Returns a vector of this node's children.
 */
-QVector<CXMLNode>& CXMLNode::nodes()
+CXMLNodeList& CXMLNode::nodes()
 {
     return m_vNodes;
 }
@@ -351,7 +342,7 @@ CXMLNode CXMLNode::parseJSONNode(QJsonObject jObject, QString sTagName)
         }
         else if (jObject[sKey].isArray())
         {
-            QVector<CXMLNode> vNodes = parseJSONArray(jObject[sKey].toArray(), sKey);
+            CXMLNodeList vNodes = parseJSONArray(jObject[sKey].toArray(), sKey);
 
             for(CXMLNode xNode : vNodes)
             {
@@ -372,9 +363,9 @@ CXMLNode CXMLNode::parseJSONNode(QJsonObject jObject, QString sTagName)
 /*!
     Returns a list of CXMLNode that is parsed from \a jArray, using \a sTagName as a tag name.
 */
-QVector<CXMLNode> CXMLNode::parseJSONArray(QJsonArray jArray, QString sTagName)
+CXMLNodeList CXMLNode::parseJSONArray(QJsonArray jArray, QString sTagName)
 {
-    QVector<CXMLNode> vNodes;
+    CXMLNodeList vNodes;
 
     for (int iIndex = 0; iIndex < jArray.count(); iIndex++)
     {
@@ -520,7 +511,7 @@ QJsonObject CXMLNode::toJsonObject() const
 
     for (QString sTag : sTagList)
     {
-        QVector<CXMLNode> vNodes = getNodesByTagName(sTag);
+        CXMLNodeList vNodes = getNodesByTagName(sTag);
 
         if (vNodes.count() > 1)
         {
@@ -669,9 +660,9 @@ CXMLNode CXMLNode::getNodeByTagName(const QString& sTagName) const
 /*!
     Returns a list of child nodes whose tag is \a sTagName.
 */
-QVector<CXMLNode> CXMLNode::getNodesByTagName(const QString& sTagName) const
+CXMLNodeList CXMLNode::getNodesByTagName(const QString& sTagName) const
 {
-    QVector<CXMLNode> vNodes;
+    CXMLNodeList vNodes;
 
     for (const CXMLNode& tNode : m_vNodes)
     {
