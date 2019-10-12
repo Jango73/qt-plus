@@ -1,7 +1,11 @@
 
 #pragma once
 
+// Qt
 #include <QDebug>
+
+//-------------------------------------------------------------------------------------------------
+// Properties
 
 // Declares a Qt property with setter and getter
 // Automatically adds the member variable
@@ -48,12 +52,20 @@ public:                                                             \
 protected:                                                          \
     t m_##p##s;
 
+//-------------------------------------------------------------------------------------------------
+// Pointers
 
 // Checks nullity of a pointer
-#define IS_NULL(p) ((p) == nullptr)
+#define IS_NULL(p)      ((p) == nullptr)
+
+// Delete a pointer if it is not null
+#define SAFE_DELETE(p)  if ((p) != nullptr) delete (p); (p) = nullptr
+
+//-------------------------------------------------------------------------------------------------
+// Console
 
 // Gets the current source file name
-#define __FILENAME__ (__builtin_strrchr(__FILE__, '/') ? __builtin_strrchr(__FILE__, '/') + 1 : __FILE__)
+#define __FILENAME__    (__builtin_strrchr(__FILE__, '/') ? __builtin_strrchr(__FILE__, '/') + 1 : __FILE__)
 
 // Outputs a debug string
 #define OUT_DEBUG(a)    qDebug() << QString("%1::%2() : %3").arg(__FILENAME__).arg(__FUNCTION__).arg(a)
