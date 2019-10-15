@@ -21,11 +21,14 @@
 
 class CXMLNode;
 
+//! Define CXMLNODE_USE_LIST if you wish to use QList instead of QVector for node list storage.
 #ifdef CXMLNODE_USE_LIST
     typedef QList<CXMLNode> CXMLNodeList;
 #else
     typedef QVector<CXMLNode> CXMLNodeList;
 #endif
+
+//-------------------------------------------------------------------------------------------------
 
 //! Defines a XML node
 class QTPLUSSHARED_EXPORT CXMLNode
