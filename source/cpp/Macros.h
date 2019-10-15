@@ -72,3 +72,18 @@ protected:                                                          \
 
 // Outputs an error string
 #define OUT_ERROR(a)    qCritical() << a
+
+//-------------------------------------------------------------------------------------------------
+// Container functions
+
+template <typename keyType, typename valueType>
+keyType mapKeyForValue(QMap<keyType, valueType> map, valueType v)
+{
+    keyType sExistingId;
+    QList<keyType> lKeys = map.keys(v);
+
+    if (lKeys.count() > 0)
+        return lKeys[0];
+
+    return keyType();
+}
