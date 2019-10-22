@@ -74,6 +74,25 @@ protected:                                                          \
 #define OUT_ERROR(a)    qCritical() << a
 
 //-------------------------------------------------------------------------------------------------
+// From http://blubbqt.blogspot.com
+
+// c = class name; e = enum name; v = enum value
+#define enumToQString(c, e, v) \
+    (c::staticMetaObject.enumerator(c::staticMetaObject.indexOfEnumerator(#e)).valueToKey(v))
+
+// c = class name; e = enum name; s = string value
+#define qStringToEnum(c, e, s) \
+    c::e(c::staticMetaObject.enumerator(c::staticMetaObject.indexOfEnumerator(#e)).keyToValue(s.toUtf8()))
+
+// c = class name; f = flag name, v = flag value
+#define flagToQString(c, f, v) \
+    (c::staticMetaObject.enumerator(c::staticMetaObject.indexOfEnumerator(#f)).valueToKeys(v))
+
+// c = class name; f = flag name; s = string value
+#define qStringToFlag(c, f, s) \
+    c::f(c::staticMetaObject.enumerator(c::staticMetaObject.indexOfEnumerator(#f)).keysToValue(s.toUtf8()))
+
+//-------------------------------------------------------------------------------------------------
 // Container functions
 
 template <typename keyType, typename valueType>
