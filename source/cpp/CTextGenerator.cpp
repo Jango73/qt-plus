@@ -24,7 +24,7 @@ QString CTextGenerator::word()
 QString CTextGenerator::sentence(int length)
 {
     if (!length)
-        length = 4 + int(floor(randomDouble() * 8));
+        length = 4 + int(std::floor(randomDouble() * 8));
 
     QString ending = (randomDouble() < 0.95) ? "." : (randomDouble() < 0.5) ? "!" : "?";
     QString result = capitalize(getWord());
@@ -42,7 +42,7 @@ QString CTextGenerator::sentence(int length)
 QString CTextGenerator::paragraph(int length)
 {
     if (!length)
-        length = 6 + int(floor(randomDouble() * 8));
+        length = 6 + int(std::floor(randomDouble() * 8));
 
     QString result = sentence();
 
@@ -59,7 +59,7 @@ QString CTextGenerator::paragraph(int length)
 QString CTextGenerator::text(int length)
 {
     if (!length)
-        length = 5 + int(floor(randomDouble() * 10));
+        length = 5 + int(std::floor(randomDouble() * 10));
 
     QString result = paragraph();
 
@@ -108,7 +108,7 @@ void CTextGenerator::init()
 
 double CTextGenerator::randomDouble()
 {
-    return double(rand()) / double(RAND_MAX);
+    return (double(std::rand()) / double(RAND_MAX));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -124,14 +124,14 @@ QString CTextGenerator::capitalize(const QString& sText)
 
 QString CTextGenerator::getWord()
 {
-    int length = m_vWordLengths[int(floor(randomDouble() * 16))];
+    int length = m_vWordLengths[int(std::floor(randomDouble() * m_vWordLengths.count())) - 1];
 
     QString word;
 
     for (int i = 0; i < length; ++i)
     {
-        int count = m_vSyllableCounts[int(floor(randomDouble() * 16))];
-        word += m_lSyllables[int(floor(randomDouble() * count))];
+        int iCount = m_vSyllableCounts[int(std::floor(randomDouble() * m_vSyllableCounts.count())) - 1];
+        word += m_lSyllables[int(std::floor(randomDouble() * iCount)) - 1];
     }
 
     return word;
