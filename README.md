@@ -47,6 +47,11 @@ A class that contains the histogram of a *QImage*.
 ### CLargeMatrix
 A class that can hold an NxN matrix. Used, among other things, for image filtering.
 
+### CTextGenerator
+A class that generates random words, sentences, paragraphs, pages using random syllables.
+Translated to C++ from the Javascript class 'fake-words'.
+Original work is Copyright (c) anticoders: https://github.com/anticoders/fake-words
+
 ### QMLTreeContext
 A full *QML* parser. <br>
 Holds the contents of a *QML* file in the form of a tree, made of specialized classes for each kind of *QML* and JS declarations. <br>
