@@ -68,6 +68,6 @@ protected:
 protected:
 
     QVector<int>    m_vWordLengths;
-    QVector<int>    m_vSyllabeCounts;
-    QStringList     m_lSyllabes;
+    QVector<int>    m_vSyllableCounts;
+    QStringList     m_lSyllables;
 };

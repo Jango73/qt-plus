@@ -84,7 +84,7 @@ void CTextGenerator::init()
                  5
              });
 
-    m_vSyllabeCounts = QVector<int>
+    m_vSyllableCounts = QVector<int>
             ({
                  10, 15, 20, 25,
                  30, 35, 40, 45,
@@ -92,7 +92,7 @@ void CTextGenerator::init()
                  150, 175, 175, 175
              });
 
-    m_lSyllabes = QStringList
+    m_lSyllables = QStringList
             ({
                  "the","ing","er","a","ly","ed","i","es","re","tion","in","e","con","y","ter","ex","al","de","com","o","di","en","an","ty","ry","u",
                  "ti","ri","be","per","to","pro","ac","ad","ar","ers","ment","or","tions","ble","der","ma","na","si","un","at","dis","ca","cal","man","ap",
@@ -130,8 +130,8 @@ QString CTextGenerator::getWord()
 
     for (int i = 0; i < length; ++i)
     {
-        int count = m_vSyllabeCounts[int(floor(randomDouble() * 16))];
-        word += m_lSyllabes[int(floor(randomDouble() * count))];
+        int count = m_vSyllableCounts[int(floor(randomDouble() * 16))];
+        word += m_lSyllables[int(floor(randomDouble() * count))];
     }
 
     return word;
