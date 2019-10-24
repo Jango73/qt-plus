@@ -20,6 +20,7 @@ HEADERS += \
     source/cpp/Image/CImageHistogram.h \
     source/cpp/Image/CImageUtilities.h \
     source/cpp/CSoundSynth.h \
+    source/cpp/CTextGenerator.h \
     source/cpp/CSecureContext.h \
     source/cpp/CTDMADevice.h \
     source/cpp/CStreamFactory.h \
@@ -115,6 +116,7 @@ SOURCES += \
     source/cpp/Image/CImageHistogram.cpp \
     source/cpp/Image/CImageUtilities.cpp \
     source/cpp/CSoundSynth.cpp \
+    source/cpp/CTextGenerator.cpp \
     source/cpp/CSecureContext.cpp \
     source/cpp/CTDMADevice.cpp \
     source/cpp/CStreamFactory.cpp \
