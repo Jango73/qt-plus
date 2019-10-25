@@ -62,6 +62,11 @@ protected:                                                          \
 #define SAFE_DELETE(p)  if ((p) != nullptr) delete (p); (p) = nullptr
 
 //-------------------------------------------------------------------------------------------------
+// Math
+
+#define CLIPPED(a,n,x)  (std::min(std::max(a, n), x))
+
+//-------------------------------------------------------------------------------------------------
 // Console
 
 // Gets the current source file name

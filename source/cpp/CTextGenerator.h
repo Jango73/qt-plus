@@ -50,9 +50,6 @@ public:
 protected:
 
     //!
-    void init();
-
-    //!
     double randomDouble();
 
     //!
