@@ -34,7 +34,7 @@ public:
             (*CSingletonPool::s_pSingletons)[sClassName] = new T();
         }
 
-        return (T*) (*CSingletonPool::s_pSingletons)[sClassName];
+        return static_cast<T*>((*CSingletonPool::s_pSingletons)[sClassName]);
     }
 
     //! Destroys the unique instance of the class
@@ -44,7 +44,7 @@ public:
 
         if (CSingletonPool::s_pSingletons->contains(sClassName))
         {
-            delete (T*) (*CSingletonPool::s_pSingletons)[sClassName];
+            delete static_cast<T*>((*CSingletonPool::s_pSingletons)[sClassName]);
             CSingletonPool::s_pSingletons->remove(sClassName);
         }
     }
