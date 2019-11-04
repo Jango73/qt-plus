@@ -58,6 +58,9 @@ protected:                                                          \
 // Checks nullity of a pointer
 #define IS_NULL(p)      ((p) == nullptr)
 
+// Checks non nullity of a pointer
+#define IS_NOT_NULL(p)  ((p) != nullptr)
+
 // Delete a pointer if it is not null
 #define SAFE_DELETE(p)  if ((p) != nullptr) delete (p); (p) = nullptr
 
