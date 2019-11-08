@@ -123,6 +123,10 @@ keyType mapKeyForValue(QMap<keyType, valueType> map, valueType v)
 }
 
 // Reverses a list
+#if QT_VERSION < QT_VERSION_CHECK(5, 13, 0)
+#define REVERSE_LIST(a)     for(int k = 0, s = (a).size(), max = (s / 2); k < max; k++) (a).move(k, s - (1 + k))
+#else
 #define REVERSE_LIST(a)     for(int k = 0, s = (a).size(), max = (s / 2); k < max; k++) (a).swapItemsAt(k, s - (1 + k))
+#endif
 
 //-------------------------------------------------------------------------------------------------
