@@ -178,10 +178,10 @@ public:
 
 public:
 
-    static const QString sExtension_XML;
-    static const QString sExtension_XMLC;
-    static const QString sExtension_QRC;
-    static const QString sExtension_JSON;
+    static const char* sExtension_XML;
+    static const char* sExtension_XMLC;
+    static const char* sExtension_QRC;
+    static const char* sExtension_JSON;
 
     //-------------------------------------------------------------------------------------------------
     // Properties

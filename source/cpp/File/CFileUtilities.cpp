@@ -23,7 +23,7 @@ QStringList CFileUtilities::concernedFiles(const QString& sBaseDirecory, const Q
                 .arg(sBaseDirecory)
                 .arg(sName);
 
-        if (QFile(sFullName).exists() && not QDir(sFullName).exists())
+        if (not sFullName.contains("*") && not QDir(sFullName).exists())
         {
             lResult << sName;
         }
@@ -47,7 +47,7 @@ QStringList CFileUtilities::concernedFiles(const QString& sBaseDirecory, const Q
 
 //-------------------------------------------------------------------------------------------------
 
-void CFileUtilities::concernedFilesRecurse(QStringList& lResut, const QString& sCurrentDirectory, const QString& sWildCard)
+void CFileUtilities::concernedFilesRecurse(QStringList& lResult, const QString& sCurrentDirectory, const QString& sWildCard)
 {
     QStringList lFilter;
     lFilter << sWildCard;
@@ -58,7 +58,7 @@ void CFileUtilities::concernedFilesRecurse(QStringList& lResut, const QString& s
     for (QFileInfo iFile : lFiles)
     {
         QString sFile = QString("%1/%2").arg(iFile.absolutePath()).arg(iFile.fileName());
-        lResut << sFile;
+        lResult << sFile;
     }
 
     lFilter.clear();
@@ -69,6 +69,6 @@ void CFileUtilities::concernedFilesRecurse(QStringList& lResut, const QString& s
     for (QFileInfo iFile : lFiles)
     {
         QString sTargetDirectory = QString("%1/%2").arg(sCurrentDirectory).arg(iFile.fileName());
-        concernedFilesRecurse(lResut, sTargetDirectory, sWildCard);
+        concernedFilesRecurse(lResult, sTargetDirectory, sWildCard);
     }
 }

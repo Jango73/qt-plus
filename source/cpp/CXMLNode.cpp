@@ -16,10 +16,10 @@
 
 //-------------------------------------------------------------------------------------------------
 
-QString const CXMLNode::sExtension_XML = ".xml";
-QString const CXMLNode::sExtension_XMLC = ".xmlc";
-QString const CXMLNode::sExtension_QRC = ".qrc";
-QString const CXMLNode::sExtension_JSON = ".json";
+const char* CXMLNode::sExtension_XML    = ".xml";
+const char* CXMLNode::sExtension_XMLC   = ".xmlc";
+const char* CXMLNode::sExtension_QRC    = ".qrc";
+const char* CXMLNode::sExtension_JSON   = ".json";
 
 //-------------------------------------------------------------------------------------------------
 

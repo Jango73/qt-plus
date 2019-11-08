@@ -78,6 +78,12 @@ protected:                                                          \
 // Outputs a debug string
 #define OUT_DEBUG(a)    qDebug() << QString("%1::%2() : %3").arg(__FILENAME__).arg(__FUNCTION__).arg(a)
 
+// Outputs a debug string list
+#define OUT_DEBUG_LIST(l)   { for (auto s : l) OUT_DEBUG(s); }
+
+// Outputs an information string
+#define OUT_INFO(a)     qInfo() << a
+
 // Outputs an error string
 #define OUT_ERROR(a)    qCritical() << a
 
@@ -103,6 +109,7 @@ protected:                                                          \
 //-------------------------------------------------------------------------------------------------
 // Container functions
 
+// Returns the key for a given value in a map
 template <typename keyType, typename valueType>
 keyType mapKeyForValue(QMap<keyType, valueType> map, valueType v)
 {
@@ -114,3 +121,8 @@ keyType mapKeyForValue(QMap<keyType, valueType> map, valueType v)
 
     return keyType();
 }
+
+// Reverses a list
+#define REVERSE_LIST(a)     for(int k = 0, s = (a).size(), max = (s / 2); k < max; k++) (a).swapItemsAt(k, s - (1 + k))
+
+//-------------------------------------------------------------------------------------------------

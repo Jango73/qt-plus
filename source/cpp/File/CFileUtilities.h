@@ -45,7 +45,7 @@ public:
 
 protected:
 
-    void concernedFilesRecurse(QStringList& lResut, const QString& sCurrentDirectory, const QString& sWildCard);
+    void concernedFilesRecurse(QStringList& lResult, const QString& sCurrentDirectory, const QString& sWildCard);
 
     //-------------------------------------------------------------------------------------------------
     // Properties
