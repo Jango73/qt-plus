@@ -28,7 +28,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor
-    CDynamicHTTPServer(quint16 port, QObject* parent = nullptr);
+    CDynamicHTTPServer(quint16 port = DEFAULT_HTTP_PORT, QObject* parent = nullptr);
 
     //! Destructor
     virtual ~CDynamicHTTPServer() Q_DECL_OVERRIDE;

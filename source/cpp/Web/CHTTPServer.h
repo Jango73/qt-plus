@@ -17,6 +17,11 @@
 
 //-------------------------------------------------------------------------------------------------
 
+#define DEFAULT_HTTP_PORT   80
+#define DEFAULT_HTTPS_PORT  443
+
+//-------------------------------------------------------------------------------------------------
+
 //! Defines a HTTP server
 class QTPLUSSHARED_EXPORT CHTTPServer : public QTcpServer
 {
@@ -100,7 +105,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor
-    CHTTPServer(quint16 uiPort, QObject* parent = nullptr);
+    CHTTPServer(quint16 uiPort = DEFAULT_HTTP_PORT, QObject* parent = nullptr);
 
     //! Destructor
     virtual ~CHTTPServer() Q_DECL_OVERRIDE;
