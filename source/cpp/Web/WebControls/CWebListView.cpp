@@ -128,7 +128,7 @@ void CWebListView::setModel()
     CWebControl* pContentDiv = addControl(new CWebDiv(CONTROLNAME_CONTENT, ""));
 
     CXMLNode xHeader = xModel.getNodeByTagName("header");
-    QVector<CXMLNode> xProperties = xHeader.getNodesByTagName("property");
+    CXMLNodeList xProperties = xHeader.getNodesByTagName("property");
 
     QStringList lPropertyNames;
     QStringList lPropertyTypes;
@@ -152,7 +152,7 @@ void CWebListView::setModel()
     }
 
     CXMLNode xData = xModel.getNodeByTagName("data");
-    QVector<CXMLNode> xItems = xData.getNodesByTagName("item");
+    CXMLNodeList xItems = xData.getNodesByTagName("item");
 
     for (CXMLNode xItem : xItems)
     {

@@ -309,11 +309,10 @@ void CHTTPRequestProcessor::processRequest()
     QString sText(m_baBuffer);
     QStringList lTokens = getHeaderTokens(m_baBuffer);
 
-    QStringList lPath;						// Client requested path (route)
-    QMap<QString, QString> mArguments;		// Arguments coming from the URI
-    QString sHost;							// Host name (ie this server)
-    QString sContentType;					// Content type in case of a POST
-    QByteArray baPostContent;				// Content in case of a POST
+    // Create a web context in order for subclasses to generate content
+    CWebContext tContext;
+    tContext.m_mUserData = m_mUserData;
+
     bool bForceKeepAlive = false;
 
     // Process if we get at least one token
@@ -322,14 +321,15 @@ void CHTTPRequestProcessor::processRequest()
         // For now, only GET and POST are processed
         if (lTokens[0].startsWith(HTTP_GET) || lTokens[0].startsWith(HTTP_POST))
         {
+
             // Do we have more than one token?
             if (lTokens.count() > 1)
             {
                 // Get the request path (route) and arguments
-                getRequestPathAndArgs(lTokens, lPath, mArguments);
+                getRequestPathAndArgs(lTokens, tContext.m_lPath, tContext.m_mArguments, tContext.m_mArgumentMIMEs);
 
                 // Get the host name
-                sHost = getTokenValue(lTokens, Token_Host);
+                tContext.m_sHost = getTokenValue(lTokens, Token_Host);
 
                 // Check if client request a keep-alive connection
                 QString sKeepAlive = getTokenValue(lTokens, Token_Connection);
@@ -340,27 +340,17 @@ void CHTTPRequestProcessor::processRequest()
                 }
 
                 // Get the content type and content
-                sContentType = getTokenValue(lTokens, Token_ContentType);
+                tContext.m_sContentType = getTokenValue(lTokens, Token_ContentType);
 
-                if (sContentType.isEmpty() == false)
+                if (tContext.m_sContentType.isEmpty() == false)
                 {
-                    getRequestPostContent(sText, baPostContent);
+                    getRequestPostContent(sText, tContext.m_baPostContent);
                 }
             }
 
-            // Create a web context in order for subclasses to generate content
-            CWebContext tContext(
-                        m_pSocket,
-                        sIPAddress,
-                        sHost,
-                        lPath,
-                        mArguments,
-                        m_mUserData
-                        );
-
-            if (sContentType.startsWith(MIME_Content_URLForm))
+            if (tContext.m_sContentType.startsWith(MIME_Content_URLForm))
             {
-                QStringList lArgs = QString(baPostContent).split("&");
+                QStringList lArgs = QString(tContext.m_baPostContent).split("&");
 
                 for (QString sArg : lArgs)
                 {
@@ -369,15 +359,16 @@ void CHTTPRequestProcessor::processRequest()
                     if (lCurrentArg.count() > 1)
                     {
                         tContext.m_mArguments[lCurrentArg[0]] = lCurrentArg[1];
+                        tContext.m_mArgumentMIMEs[lCurrentArg[0]] = MIME_Content_PlainText;
                     }
                 }
             }
-            else if (sContentType.startsWith(MIME_Content_MultiPart))
+            else if (tContext.m_sContentType.startsWith(MIME_Content_MultiPart))
             {
                 if (m_sMultipartBoundary.isEmpty() == false)
                 {
                     QString sActualBoundary = QString("--%1").arg(m_sMultipartBoundary);
-                    QString sContent = QString(baPostContent);
+                    QString sContent = QString(tContext.m_baPostContent);
                     QStringList lParts = sContent.split(sActualBoundary);
 
                     if (lParts.count() > 0)
@@ -397,7 +388,7 @@ void CHTTPRequestProcessor::processRequest()
                                 }
 #endif
 
-                                if (sContentType.startsWith(MIME_Content_MultiPart_FormData))
+                                if (tContext.m_sContentType.startsWith(MIME_Content_MultiPart_FormData))
                                 {
                                     // Get the part's tokens
                                     QStringList lPartTokens = sPart.split(QRegExp("[\r\n][\r\n]*"));
@@ -421,6 +412,7 @@ void CHTTPRequestProcessor::processRequest()
 #endif
 
                                         tContext.m_mArguments[sName] = QString(baPartData);
+                                        tContext.m_mArgumentMIMEs[sName] = sPartContentType;
                                     }
                                 }
                             }
@@ -430,9 +422,6 @@ void CHTTPRequestProcessor::processRequest()
                     }
                 }
             }
-
-            // Assign the POST content to the context
-            tContext.m_baPostContent = baPostContent;
 
             // If a file exists for the requested path, return it
             // Else return generated content
@@ -520,9 +509,10 @@ QString CHTTPRequestProcessor::getRequestHeader(const QString& sText)
     Parses the requested resource and arguments. \br\br
     \a lTokens contains the request tokens. \br
     \a lPath will be filled the requested resource. \br
-    \a mArguments will be filled with the requested arguments.
+    \a mArguments will be filled with the requested arguments. \br
+    \a mArgumentMIMEs will be filled with the requested arguments types.
 */
-void CHTTPRequestProcessor::getRequestPathAndArgs(const QStringList& lTokens, QStringList& lPath, QMap<QString, QString>& mArguments)
+void CHTTPRequestProcessor::getRequestPathAndArgs(const QStringList& lTokens, QStringList& lPath, QMap<QString, QString>& mArguments, QMap<QString, QString>& mArgumentMIMEs)
 {
     // The path immediately follows the GET or POST token
 
@@ -554,6 +544,7 @@ void CHTTPRequestProcessor::getRequestPathAndArgs(const QStringList& lTokens, QS
                     if (lCurrentArg.count() > 1)
                     {
                         mArguments[lCurrentArg[0]] = lCurrentArg[1];
+                        mArgumentMIMEs[lCurrentArg[0]] = MIME_Content_PlainText;
                     }
                 }
             }

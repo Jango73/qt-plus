@@ -25,7 +25,7 @@ QStringList CFileUtilities::concernedFiles(const QString& sBaseDirecory, const Q
 
         if (not sFullName.contains("*") && not QDir(sFullName).exists())
         {
-            lResult << sName;
+            lResult << sFullName;
         }
         else
         {

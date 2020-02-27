@@ -191,7 +191,7 @@ void CRemoteControl::initSecurity()
 {
     CXMLNode tFilesNode = m_tConfiguration.getNodeByTagName("Files");
 
-    QVector<CXMLNode> vFiles = tFilesNode.getNodesByTagName("ProhibitedFile");
+    CXMLNodeList vFiles = tFilesNode.getNodesByTagName("ProhibitedFile");
 
     for (CXMLNode tFile : vFiles)
     {
@@ -211,7 +211,7 @@ void CRemoteControl::initUsers(bool bSilent)
 
     CXMLNode tUsersNode = m_tConfiguration.getNodeByTagName("Users");
 
-    QVector<CXMLNode> vUsers = tUsersNode.getNodesByTagName("User");
+    CXMLNodeList vUsers = tUsersNode.getNodesByTagName("User");
 
     for (CXMLNode tNode : vUsers)
     {

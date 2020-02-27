@@ -8,6 +8,7 @@ win32 {
 CONFIG += warn_off
 TEMPLATE = lib
 DEFINES += QTPLUS_LIBRARY
+DEFINES += CXMLNODE_USE_LIST
 
 # Dependencies
 INCLUDEPATH += $$PWD/src/cpp/QMLTree

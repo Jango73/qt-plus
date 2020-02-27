@@ -749,7 +749,7 @@ void QMLAnalyzer::runGrammar_Recurse(QMLFile* pFile, QMLEntity* pEntity)
 
         QMap<QString, QMLEntity*> mMembers = pEntity->members();
 
-        QVector<CXMLNode> vChecks = grammar().getNodesByTagName(ANALYZER_TOKEN_CHECK);
+        CXMLNodeList vChecks = grammar().getNodesByTagName(ANALYZER_TOKEN_CHECK);
 
         for (CXMLNode xCheck : vChecks)
         {
@@ -757,8 +757,8 @@ void QMLAnalyzer::runGrammar_Recurse(QMLFile* pFile, QMLEntity* pEntity)
 
             if (pEntity->metaObject()->className() == sClassName)
             {
-                QVector<CXMLNode> vAccepts = xCheck.getNodesByTagName(ANALYZER_TOKEN_ACCEPT);
-                QVector<CXMLNode> vRejects = xCheck.getNodesByTagName(ANALYZER_TOKEN_REJECT);
+                CXMLNodeList vAccepts = xCheck.getNodesByTagName(ANALYZER_TOKEN_ACCEPT);
+                CXMLNodeList vRejects = xCheck.getNodesByTagName(ANALYZER_TOKEN_REJECT);
 
                 for (CXMLNode xReject : vRejects)
                 {
@@ -1040,7 +1040,7 @@ bool QMLAnalyzer::runGrammar_SatisfiesConditions(QMLFile* pFile, const QString& 
 {
     Q_UNUSED(sClassName);
 
-    QVector<CXMLNode> vConditions = xRule.getNodesByTagName(ANALYZER_TOKEN_CONDITION);
+    CXMLNodeList vConditions = xRule.getNodesByTagName(ANALYZER_TOKEN_CONDITION);
 
     QMap<QString, QMLEntity*> mMembers = pEntity->members();
 

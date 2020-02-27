@@ -164,7 +164,7 @@ protected:
     QString getRequestHeader(const QString& sText);
 
     //! Splits up the URL path and arguments
-    void getRequestPathAndArgs(const QStringList& lTokens, QStringList& lPath, QMap<QString, QString>& mArguments);
+    void getRequestPathAndArgs(const QStringList& lTokens, QStringList& lPath, QMap<QString, QString>& mArguments, QMap<QString, QString>& mArgumentMIMEs);
 
     //! Gets the post content from a request header
     void getRequestPostContent(const QString& sText, QByteArray& baContent);

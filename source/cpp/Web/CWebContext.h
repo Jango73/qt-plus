@@ -35,10 +35,7 @@ public:
     CWebContext(
             QTcpSocket* pSocket,
             QString sPeer,
-            QString sHost,
-            QStringList lPath,
-            QMap<QString, QString> mArguments,
-            QMap<QString, QVariant> mUserData
+            QString sHost
             );
 
     //! Copy constructor
@@ -48,16 +45,24 @@ public:
     virtual ~CWebContext();
 
     //-------------------------------------------------------------------------------------------------
+    // Getters
+    //-------------------------------------------------------------------------------------------------
+
+    bool pathValid() const { return not (m_lPath.count() == 0 || m_lPath[0].isEmpty()); }
+
+    //-------------------------------------------------------------------------------------------------
     // Properties
     //-------------------------------------------------------------------------------------------------
 
 public:
 
     QTcpSocket*                 m_pSocket;
-    QString                     m_sPeer;
-    QString                     m_sHost;
-    QStringList                 m_lPath;
-    QMap<QString, QString>      m_mArguments;
+    QString                     m_sPeer;                //! The IP of the client
+    QString                     m_sHost;                //! The IP of the host
+    QStringList                 m_lPath;                //! The path to the required resource
+    QMap<QString, QString>      m_mArguments;           //! The arguments in the URL
+    QMap<QString, QString>      m_mArgumentMIMEs;       //! The MIME type of the arguments in the URL (if any)
     QMap<QString, QVariant>     m_mUserData;
-    QByteArray                  m_baPostContent;
+    QString                     m_sContentType;
+    QByteArray                  m_baPostContent;        //! The contents of the POST data (if any)
 };

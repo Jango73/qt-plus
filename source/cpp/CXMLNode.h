@@ -182,6 +182,7 @@ public:
     static const char* sExtension_XMLC;
     static const char* sExtension_QRC;
     static const char* sExtension_JSON;
+    static const char* sValueAttribute;
 
     //-------------------------------------------------------------------------------------------------
     // Properties

@@ -867,7 +867,9 @@ void CAssemblyMachine::reset()
 
     m_baMemAlloc.clear();
 
-    foreach (QFile* pFile, m_vFiles) delete pFile;
+    for (QFile* pFile : m_vFiles)
+		delete pFile;
+
     m_vFiles.clear();
     m_vFiles << new QFile("dummy");
 }

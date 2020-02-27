@@ -63,7 +63,7 @@ void QMLFormatter::processFragment(QTextStream& stream, EQMLFormatterFragment fr
     QMetaEnum fragmentEnum = QMetaEnum::fromType<EQMLFormatterFragment>();
     QString sFragment = QString(fragmentEnum.valueToKey(fragment)).remove("qff");
 
-    QVector<CXMLNode> vFragments = m_xGrammar.getNodesByTagName(FORMATTER_TOKEN_FRAGMENT);
+    CXMLNodeList vFragments = m_xGrammar.getNodesByTagName(FORMATTER_TOKEN_FRAGMENT);
 
     for (CXMLNode xFragment : vFragments)
     {
@@ -72,7 +72,7 @@ void QMLFormatter::processFragment(QTextStream& stream, EQMLFormatterFragment fr
 
         if (lNames.contains(sFragment))
         {
-            QVector<CXMLNode> vActions = xFragment.getNodesByTagName(FORMATTER_TOKEN_ACTION);
+            CXMLNodeList vActions = xFragment.getNodesByTagName(FORMATTER_TOKEN_ACTION);
 
             for (CXMLNode xAction : vActions)
             {

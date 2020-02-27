@@ -51,7 +51,7 @@ const CXMLNode& CMacroable::grammar() const
 */
 void CMacroable::parseMacros()
 {
-    QVector<CXMLNode> vMacros = m_xGrammar.getNodesByTagName(TOKEN_MACRO);
+    CXMLNodeList vMacros = m_xGrammar.getNodesByTagName(TOKEN_MACRO);
 
     m_mMacros.clear();
 

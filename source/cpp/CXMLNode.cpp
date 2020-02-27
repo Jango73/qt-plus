@@ -20,6 +20,7 @@ const char* CXMLNode::sExtension_XML    = ".xml";
 const char* CXMLNode::sExtension_XMLC   = ".xmlc";
 const char* CXMLNode::sExtension_QRC    = ".qrc";
 const char* CXMLNode::sExtension_JSON   = ".json";
+const char* CXMLNode::sValueAttribute   = "value";
 
 //-------------------------------------------------------------------------------------------------
 
@@ -336,7 +337,11 @@ CXMLNode CXMLNode::parseJSONNode(QJsonObject jObject, QString sTagName)
 
     for(QString sKey : jObject.keys())
     {
-        if (jObject[sKey].isObject())
+        if (sKey == sValueAttribute && jObject[sKey].isString())
+        {
+            tNode.m_sValue = jObject[sKey].toString();
+        }
+        else if (jObject[sKey].isObject())
         {
             tNode.m_vNodes.append(CXMLNode::parseJSONNode(jObject[sKey].toObject(), sKey));
         }
@@ -503,7 +508,7 @@ QJsonObject CXMLNode::toJsonObject() const
 
     for (int iIndex = 0; iIndex < m_vNodes.count(); iIndex++)
     {
-        if (sTagList.contains(m_vNodes[iIndex].tag()) == false)
+        if (not sTagList.contains(m_vNodes[iIndex].tag()))
         {
             sTagList << m_vNodes[iIndex].tag();
         }
@@ -528,6 +533,11 @@ QJsonObject CXMLNode::toJsonObject() const
         {
             object[sTag] = vNodes[0].toJsonObject();
         }
+    }
+
+    if (not m_sValue.isEmpty() && not object.contains(sValueAttribute))
+    {
+        object[sValueAttribute] = m_sValue;
     }
 
     return object;
