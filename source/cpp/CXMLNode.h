@@ -21,7 +21,7 @@
 
 class CXMLNode;
 
-//! Define CXMLNODE_USE_VECTOR if you wish to use QList instead of QVector for node list storage.
+//! Define CXMLNODE_USE_VECTOR if you wish to use QVector instead of QList for node array storage.
 #ifdef CXMLNODE_USE_VECTOR
 typedef QVector<CXMLNode> CXMLNodeList;
 #else
