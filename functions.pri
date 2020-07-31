@@ -111,6 +111,10 @@ defineReplace(copyFilesToDir) {
         # Compose full target file name
         finalTargetFile = $$targetDir/$$fileName
 
+        # Invoke make path command before copying the file
+        cmd = $$makePath($$targetDir) $$escape_expand(\\n\\t)
+        returnValue += $$cmd
+
         # Invoke copy command
         cmd = $$QMAKE_COPY $$shell_quote($$system_path($$finalSource)) $$shell_quote($$system_path($$finalTargetFile)) $$escape_expand(\\n\\t)
         returnValue += $$cmd
