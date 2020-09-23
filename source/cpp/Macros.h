@@ -123,6 +123,19 @@ keyType mapKeyForValue(QMap<keyType, valueType> map, valueType v)
 }
 
 // Reverses a list
+template <typename listType>
+QList<listType>& reverseList(QList<listType>& list)
+{
+    QList<listType> rlist = list;
+    list.clear();
+    QListIterator<listType> it(rlist);
+    while (it.hasNext())
+    {
+        list.prepend(it.next());
+    }
+    return list;
+}
+
 #if QT_VERSION < QT_VERSION_CHECK(5, 13, 0)
 #define REVERSE_LIST(a)     for(int k = 0, s = (a).size(), max = (s / 2); k < max; k++) (a).move(k, s - (1 + k))
 #else
