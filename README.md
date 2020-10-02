@@ -1,6 +1,20 @@
 # qt-plus
 Utility classes extending Qt's functionnality.
 
+## Building
+
+* Open /qt-plus.pro in QtCreator
+* Build
+
+## How to use
+
+* As any other qt library
+or
+* Embed in app by including (in the .pro) one of:
+  * qt-plus-nolib-basic.pri (to use basic functionalities)
+  * qt-plus-nolib-web.pri (to use web classes)
+  * qt-plus-nolib-qml.pri (to use qml parsing and analyzing classes)
+
 ## Classes
 The full documentation for classes is available after project build, in the help directory.
 
