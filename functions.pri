@@ -7,9 +7,9 @@ unix {
 
 # Creates a path if it does not exist
 defineReplace(makePath) {
-    path = $$shell_quote($$system_path($$1))
-    test = $$sprintf($$QMAKE_CHK_EXISTS, $$path)
-    retVal = $$test $$QMAKE_MKPATH $$path $$escape_expand(\\n\\t)
+    path = $$system_path($$1)
+    test = $$sprintf($$QMAKE_CHK_EXISTS, $$shell_quote($$path))
+    retVal = $$test $$QMAKE_MKPATH $$shell_quote($$path) $$escape_expand(\\n\\t)
     return($$retVal)
 }
 
@@ -76,7 +76,7 @@ defineReplace(copyDirsToDir) {
         # Compose full target file name
         finalTargetFile = $$targetDir/$$file
 
-        # Compose full target directory name
+        # Compose full target directory name: the file name may contain a relative path
         finalTargetDir = $$targetDir/$$file
         lastItem = $$section(finalTargetDir, /, -1, -1)
         finalTargetDir ~= s,$$lastItem,,g
@@ -141,13 +141,13 @@ defineReplace(copyFilesWithPathToDir) {
         # Compose full target file name
         finalTargetFile = $$targetDir/$$file
 
-        # Compose full target directory name
+        # Compose full target directory name: the file name may contain a relative path
         finalTargetDir = $$targetDir/$$file
         lastItem = $$section(finalTargetDir, /, -1, -1)
         finalTargetDir ~= s,$$lastItem,,g
 
         # Invoke make path command before copying the file
-        cmd = $$makePath($$finalTargetDir) $$escape_expand(\\n\\t)
+        cmd = $$makePath($$shell_quote($$finalTargetDir)) $$escape_expand(\\n\\t)
         returnValue += $$cmd
 
         # Invoke copy command
