@@ -21,6 +21,7 @@ HEADERS += \
     $$PWD/source/cpp/CInterpolator.h \
     $$PWD/source/cpp/File/CFileUtilities.h \
     $$PWD/source/cpp/File/CRollingFiles.h \
+    $$PWD/source/cpp/File/CDirectoryListing.h \
     $$PWD/source/cpp/QMLTree/QMLFormatter.h \
     $$PWD/source/cpp/QMLTree/QMLEntity.h \
     $$PWD/source/cpp/QMLTree/QMLComplexEntity.h \
@@ -69,6 +70,7 @@ SOURCES += \
     $$PWD/source/cpp/ISerializable.cpp \
     $$PWD/source/cpp/File/CFileUtilities.cpp \
     $$PWD/source/cpp/File/CRollingFiles.cpp \
+    $$PWD/source/cpp/File/CDirectoryListing.cpp \
     $$PWD/source/cpp/QMLTree/QMLFormatter.cpp \
     $$PWD/source/cpp/QMLTree/QMLEntity.cpp \
     $$PWD/source/cpp/QMLTree/QMLComplexEntity.cpp \

@@ -21,6 +21,7 @@ HEADERS += \
     $$PWD/source/cpp/CInterpolator.h \
     $$PWD/source/cpp/File/CFileUtilities.h \
     $$PWD/source/cpp/File/CRollingFiles.h \
+    $$PWD/source/cpp/File/CDirectoryListing.h \
     $$PWD/source/cpp/rsa/source/BigInt.h \
     $$PWD/source/cpp/rsa/source/Key.h \
     $$PWD/source/cpp/rsa/source/KeyPair.h \
@@ -60,6 +61,7 @@ SOURCES += \
     $$PWD/source/cpp/ISerializable.cpp \
     $$PWD/source/cpp/File/CFileUtilities.cpp \
     $$PWD/source/cpp/File/CRollingFiles.cpp \
+    $$PWD/source/cpp/File/CDirectoryListing.cpp \
     $$PWD/source/cpp/rsa/source/BigInt.cpp \
     $$PWD/source/cpp/rsa/source/Key.cpp \
     $$PWD/source/cpp/rsa/source/KeyPair.cpp \
