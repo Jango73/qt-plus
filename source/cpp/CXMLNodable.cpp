@@ -37,5 +37,8 @@ CXMLNodable::~CXMLNodable()
 */
 CXMLNode CXMLNodable::toXMLNode(CXMLNodableContext* pContext, CXMLNodable* pParent)
 {
+    Q_UNUSED(pContext)
+    Q_UNUSED(pParent)
+
     return CXMLNode();
 }

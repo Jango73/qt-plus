@@ -22,6 +22,8 @@ CDumpable::~CDumpable()
 
 void CDumpable::dump(QTextStream& stream, int iIdent)
 {
+    Q_UNUSED(stream)
+    Q_UNUSED(iIdent)
 }
 
 //-------------------------------------------------------------------------------------------------
