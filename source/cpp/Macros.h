@@ -14,8 +14,22 @@
 #define Q_FAST_PROPERTY(t, p, g, s)                                 \
 public:                                                             \
     Q_PROPERTY(t g READ g WRITE set##s NOTIFY g##Changed)           \
-public:                                                             \
     t g () const { return m_##p##s; }                               \
+    void set##s (t value) {                                         \
+        if (m_##p##s == value) return;                              \
+        m_##p##s = value;                                           \
+        emit g##Changed();                                          \
+    }                                                               \
+    Q_SIGNAL void g##Changed();                                     \
+protected:                                                          \
+    t m_##p##s;
+
+// Same as above but returns a reference instead of a value
+#define Q_FAST_REFED_PROPERTY(t, p, g, s)                           \
+public:                                                             \
+    Q_PROPERTY(t g READ g WRITE set##s NOTIFY g##Changed)           \
+    t& g () { return m_##p##s; }                                    \
+    const t& g () const { return m_##p##s; }                        \
     void set##s (t value) {                                         \
         if (m_##p##s == value) return;                              \
         m_##p##s = value;                                           \
@@ -32,7 +46,6 @@ protected:                                                          \
 #define Q_FAST_PROPERTY_READ_ONLY(t, p, g, s)                       \
 public:                                                             \
     Q_PROPERTY(t g READ g)                                          \
-public:                                                             \
     t g () const { return m_##p##s; }                               \
 protected:                                                          \
     t m_##p##s;
@@ -45,7 +58,6 @@ protected:                                                          \
 #define Q_FAST_PROPERTY_NO_SET_IMPL(t, p, g, s)                     \
 public:                                                             \
     Q_PROPERTY(t g READ g WRITE set##s NOTIFY g##Changed)           \
-public:                                                             \
     t g () const { return m_##p##s; }                               \
     void set##s (t value);                                          \
     Q_SIGNAL void g##Changed();                                     \
