@@ -21,21 +21,21 @@ public:
 
     //! Default constructor
     QTree()
-        : m_Parent(nullptr)
+        : m_pParent(nullptr)
     {
     }
 
     //! Constructor using value and parent
     QTree(T value, QTree<T>* parent = nullptr)
         : m_tValue(value)
-        , m_Parent(parent)
+        , m_pParent(parent)
     {
     }
 
     //! Copy constructor
     QTree(const QTree<T>& target)
         : m_tValue(target.m_tValue)
-        , m_Parent(target.m_Parent)
+        , m_pParent(target.m_pParent)
         , m_vChildren(target.m_vChildren)
     {
     }
@@ -92,7 +92,7 @@ public:
     //! Returns this node's parent
     QTree<T>* parent() const
     {
-        return m_Parent;
+        return m_pParent;
     }
 
     //! Returns child nodes
@@ -118,9 +118,9 @@ public:
     {
         const QTree<T>* pReturnValue = this;
 
-        while (pReturnValue->m_Parent != nullptr)
+        while (pReturnValue->m_pParent != nullptr)
         {
-            pReturnValue = pReturnValue->m_Parent;
+            pReturnValue = pReturnValue->m_pParent;
         }
 
         return const_cast<QTree<T>*>(pReturnValue);
@@ -232,7 +232,7 @@ public:
         assignParents(pRoot, nullptr);
     }
 
-    //! Returns true if this node's chlidren contain the specified value
+    //! Returns true if this node's children contain the specified value
     bool contains(T value) const
     {
         for (QTree<T> node : m_vChildren)
@@ -283,7 +283,7 @@ public:
     //! Index of
     int position() const
     {
-        return m_Parent ? m_Parent->getChildren().indexOf(*this) : -1;
+        return m_pParent ? m_pParent->getChildren().indexOf(*this) : -1;
     }
 
     //-------------------------------------------------------------------------------------------------
@@ -326,7 +326,7 @@ private:
 
     static void assignParents(QTree<T>* pNode, QTree<T>* pParentNode)
     {
-        pNode->m_Parent = pParentNode;
+        pNode->m_pParent = pParentNode;
 
         for (int iIndex = 0; iIndex < pNode->m_vChildren.count(); iIndex++)
         {
@@ -351,7 +351,7 @@ private:
 protected:
 
     T                   m_tValue;           // The node's value
-    QTree<T>*           m_Parent;           // The parent of this node
+    QTree<T>*           m_pParent;          // The parent of this node
     QList<QTree<T> >    m_vChildren;        // The children of this node
 };
 
