@@ -5,6 +5,21 @@ unix {
     QMAKE_MKPATH = mkdir
 }
 
+defineReplace(qtInfo) {
+    message(Qt version: $$[QT_VERSION])
+    message(Qt is installed in $$[QT_INSTALL_PREFIX])
+    message(Qt resources can be found in the following locations:)
+    message(Documentation: $$[QT_INSTALL_DOCS])
+    message(Header files: $$[QT_INSTALL_HEADERS])
+    message(Libraries: $$[QT_INSTALL_LIBS])
+    message(Binary files (executables): $$[QT_INSTALL_BINS])
+    message(Plugins: $$[QT_INSTALL_PLUGINS])
+    message(Data files: $$[QT_INSTALL_DATA])
+    message(Translation files: $$[QT_INSTALL_TRANSLATIONS])
+    message(Settings: $$[QT_INSTALL_CONFIGURATION])
+    message(Examples: $$[QT_INSTALL_EXAMPLES])
+}
+
 # Creates a path if it does not exist
 defineReplace(makePath) {
     path = $$system_path($$1)
@@ -15,28 +30,22 @@ defineReplace(makePath) {
 
 # Returns the path to Qt
 defineReplace(getQtPath) {
-    TEMP_NAME = $${QMAKE_QMAKE}
-    QT_PATH = $$dirname(TEMP_NAME)
-    QT_BASE_PATH = $$absolute_path($${QT_PATH}/..)
-
-    return($$QT_BASE_PATH)
+    return($$[QT_INSTALL_PREFIX])
 }
 
 # Returns the path to Qt binaries
 defineReplace(getQtBinPath) {
-    TEMP_NAME = $${QMAKE_QMAKE}
-    QT_BIN_PATH = $$dirname(TEMP_NAME)
-
-    return($$QT_BIN_PATH)
+    return($$[QT_INSTALL_BINS])
 }
 
 # Returns the path to Qt libraries
 defineReplace(getQtLibPath) {
-    unix {
-        return($$getQtPath()/lib)
-    } else {
-        return($$getQtPath()/bin)
-    }
+    return($$[QT_INSTALL_LIBS])
+}
+
+# Returns the path to Qt plugins
+defineReplace(getQtPluginPath) {
+    return($$[QT_INSTALL_PLUGINS])
 }
 
 # Makes a file executable on Unix-like systems
