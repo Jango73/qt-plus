@@ -16,49 +16,49 @@
 
 class QTPLUSSHARED_EXPORT CDirectoryListingItem : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
 
-	//-------------------------------------------------------------------------------------------------
-	// Properties
-	//-------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------
+    // Properties
+    //-------------------------------------------------------------------------------------------------
 
-	Q_FAST_PROPERTY(bool, b, isFolder, IsFolder)
-	Q_FAST_PROPERTY(QString, s, absoluteName, AbsoluteName)
-	Q_FAST_PROPERTY(QString, s, relativeName, RelativeName)
+    Q_FAST_PROPERTY(bool, b, isFolder, IsFolder)
+    Q_FAST_PROPERTY(QString, s, absoluteName, AbsoluteName)
+    Q_FAST_PROPERTY(QString, s, relativeName, RelativeName)
 
-	//-------------------------------------------------------------------------------------------------
-	// Constructors and destructor
-	//-------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------
+    // Constructors and destructor
+    //-------------------------------------------------------------------------------------------------
 
 public:
 
-	//! Default constructor
-	CDirectoryListingItem();
+    //! Default constructor
+    CDirectoryListingItem();
 
-	//! Copy constructor
-	CDirectoryListingItem(const CDirectoryListingItem& target);
+    //! Copy constructor
+    CDirectoryListingItem(const CDirectoryListingItem& target);
 
-	//-------------------------------------------------------------------------------------------------
-	// Control methods
-	//-------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------
+    // Control methods
+    //-------------------------------------------------------------------------------------------------
 
-	//!
-	CDirectoryListingItem& operator = (const CDirectoryListingItem& target);
+    //!
+    CDirectoryListingItem& operator = (const CDirectoryListingItem& target);
 
-	//!
-	bool operator == (const CDirectoryListingItem& target) const;
+    //!
+    bool operator == (const CDirectoryListingItem& target) const;
 
-	//!
-	CXMLNode toNode() const;
+    //!
+    CXMLNode toNode() const;
 
-	//-------------------------------------------------------------------------------------------------
-	// Static control methods
-	//-------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------
+    // Static control methods
+    //-------------------------------------------------------------------------------------------------
 
-	//!
-	static CDirectoryListingItem fromNode(const CXMLNode& xNode);
+    //!
+    static CDirectoryListingItem fromNode(const CXMLNode& xNode);
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -70,13 +70,13 @@ typedef QVector<CDirectoryListingItem> CCachedDirectoryVector;
 //! Defines a cached directory tree
 class QTPLUSSHARED_EXPORT CDirectoryListing : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	//-------------------------------------------------------------------------------------------------
-	// Properties
-	//-------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------
+    // Properties
+    //-------------------------------------------------------------------------------------------------
 
-	Q_FAST_PROPERTY(CCachedDirectoryVector, v, files, Files)
+    Q_FAST_PROPERTY(CCachedDirectoryVector, v, files, Files)
 
 public:
 
@@ -85,48 +85,48 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Default constructor
-	CDirectoryListing();
+    CDirectoryListing();
 
-	//! Constructor with root path
-	CDirectoryListing(const QString& sRootPath);
+    //! Constructor with root path
+    CDirectoryListing(const QString& sRootPath);
 
     //! Destructor
-	virtual ~CDirectoryListing();
+    virtual ~CDirectoryListing();
 
     //-------------------------------------------------------------------------------------------------
     // Setters
     //-------------------------------------------------------------------------------------------------
 
     //! Defines the file name
-	void setRootPath(const QString& sRootPath);
+    void setRootPath(const QString& sRootPath);
 
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
 
     //! Returns the file name
-	QString rootPath() const;
-
-	//-------------------------------------------------------------------------------------------------
-	// Control methods
-	//-------------------------------------------------------------------------------------------------
-
-	void addIgnoreName(const QString& sIgnoreName);
+    QString rootPath() const;
 
     //-------------------------------------------------------------------------------------------------
-	// Protected control methods
+    // Control methods
+    //-------------------------------------------------------------------------------------------------
+
+    void addIgnoreName(const QString& sIgnoreName);
+
+    //-------------------------------------------------------------------------------------------------
+    // Protected control methods
     //-------------------------------------------------------------------------------------------------
 
 protected:
 
-	//!
-	QString relativeFileName(const QString& sRootPath, const QString& sFileName);
+    //!
+    QString relativeFileName(const QString& sRootPath, const QString& sFileName);
 
-	//!
-	void listFiles();
+    //!
+    void listFiles();
 
-	//!
-	void listFilesRecursive(QString sCurrentDirectoryAbsolute);
+    //!
+    void listFilesRecursive(QString sCurrentDirectoryAbsolute);
 
     //-------------------------------------------------------------------------------------------------
     // Properties
@@ -134,6 +134,6 @@ protected:
 
 protected:
 
-	QString			m_sRootPath;            // The base file name
-	QStringList		m_lIgnoreNames;
+    QString     m_sRootPath;            // The base file name
+    QStringList m_lIgnoreNames;
 };

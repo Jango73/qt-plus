@@ -9,78 +9,78 @@
 //-------------------------------------------------------------------------------------------------
 
 /*!
-	\class CDirectoryListing
+    \class CDirectoryListing
     \inmodule qt-plus
-	\brief A cached directory tree.
+    \brief A cached directory tree.
 */
 
 //-------------------------------------------------------------------------------------------------
 
 CDirectoryListingItem::CDirectoryListingItem()
-	: QObject(nullptr)
-	, m_bIsFolder(false)
+    : QObject(nullptr)
+    , m_bIsFolder(false)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 
 CDirectoryListingItem::CDirectoryListingItem(const CDirectoryListingItem& target)
-	: QObject(nullptr)
+    : QObject(nullptr)
 {
-	*this = target;
+    *this = target;
 }
 
 //-------------------------------------------------------------------------------------------------
 
 CDirectoryListingItem& CDirectoryListingItem::operator = (const CDirectoryListingItem& target)
 {
-	m_bIsFolder = target.m_bIsFolder;
-	m_sAbsoluteName = target.m_sAbsoluteName;
-	m_sRelativeName = target.m_sRelativeName;
+    m_bIsFolder = target.m_bIsFolder;
+    m_sAbsoluteName = target.m_sAbsoluteName;
+    m_sRelativeName = target.m_sRelativeName;
 
-	return *this;
+    return *this;
 }
 
 //-------------------------------------------------------------------------------------------------
 
 bool CDirectoryListingItem::operator == (const CDirectoryListingItem& target) const
 {
-	if (m_bIsFolder != target.m_bIsFolder)
-		return false;
-	if (m_sAbsoluteName != target.m_sAbsoluteName)
-		return false;
-	if (m_sRelativeName != target.m_sRelativeName)
-		return false;
+    if (m_bIsFolder != target.m_bIsFolder)
+        return false;
+    if (m_sAbsoluteName != target.m_sAbsoluteName)
+        return false;
+    if (m_sRelativeName != target.m_sRelativeName)
+        return false;
 
-	return true;
+    return true;
 }
 
 //-------------------------------------------------------------------------------------------------
 
 CXMLNode CDirectoryListingItem::toNode() const
 {
-	CXMLNode tReturnValue;
+    CXMLNode tReturnValue;
 
-	return tReturnValue;
+    return tReturnValue;
 }
 
 //-------------------------------------------------------------------------------------------------
 
 CDirectoryListingItem CDirectoryListingItem::fromNode(const CXMLNode& xNode)
 {
-	CDirectoryListingItem tItem;
+    CDirectoryListingItem tItem;
 
-	tItem.setIsFolder(bool(xNode.attributes()["isFolder"].toInt()));
-	tItem.setAbsoluteName(xNode.attributes()["absoluteName"]);
-	tItem.setRelativeName(xNode.attributes()["relativeName"]);
+    tItem.setIsFolder(bool(xNode.attributes()["isFolder"].toInt()));
+    tItem.setAbsoluteName(xNode.attributes()["absoluteName"]);
+    tItem.setRelativeName(xNode.attributes()["relativeName"]);
 
-	return tItem;
+    return tItem;
 }
 
 //-------------------------------------------------------------------------------------------------
 
 /*!
-	Constructs a CDirectoryListing.
+    Constructs a CDirectoryListing.
 */
 CDirectoryListing::CDirectoryListing()
 {
@@ -89,17 +89,17 @@ CDirectoryListing::CDirectoryListing()
 //-------------------------------------------------------------------------------------------------
 
 /*!
-	Constructs a CDirectoryListing using \a sFileName as the root path.
+    Constructs a CDirectoryListing using \a sFileName as the root path.
 */
 CDirectoryListing::CDirectoryListing(const QString& sRootPath)
-	: m_sRootPath(sRootPath)
+    : m_sRootPath(sRootPath)
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 
 /*!
-	Destroys a CDirectoryListing.
+    Destroys a CDirectoryListing.
 */
 CDirectoryListing::~CDirectoryListing()
 {
@@ -112,8 +112,8 @@ CDirectoryListing::~CDirectoryListing()
 */
 void CDirectoryListing::setRootPath(const QString& sRootPath)
 {
-	m_sRootPath = sRootPath;
-	listFiles();
+    m_sRootPath = sRootPath;
+    listFiles();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -123,71 +123,71 @@ void CDirectoryListing::setRootPath(const QString& sRootPath)
 */
 QString CDirectoryListing::rootPath() const
 {
-	return m_sRootPath;
+    return m_sRootPath;
 }
 
 //-------------------------------------------------------------------------------------------------
 
 void CDirectoryListing::addIgnoreName(const QString& sIgnoreName)
 {
-	m_lIgnoreNames << sIgnoreName;
+    m_lIgnoreNames << sIgnoreName;
 }
 
 //-------------------------------------------------------------------------------------------------
 
 QString CDirectoryListing::relativeFileName(const QString& sRootPath, const QString& sFileName)
 {
-	QDir dRoot(sRootPath);
-	return dRoot.relativeFilePath(sFileName);
+    QDir dRoot(sRootPath);
+    return dRoot.relativeFilePath(sFileName);
 }
 
 //-------------------------------------------------------------------------------------------------
 
 void CDirectoryListing::listFiles()
 {
-	m_vFiles.clear();
-	listFilesRecursive(m_sRootPath);
+    m_vFiles.clear();
+    listFilesRecursive(m_sRootPath);
 }
 
 //-------------------------------------------------------------------------------------------------
 
 void CDirectoryListing::listFilesRecursive(QString sCurrentDirectoryAbsolute)
 {
-	QStringList lFilter; lFilter << "*";
+    QStringList lFilter; lFilter << "*";
 
-	QDir dDirectory(sCurrentDirectoryAbsolute);
-	QFileInfoList lFiles = dDirectory.entryInfoList(lFilter, QDir::Files | QDir::NoSymLinks);
+    QDir dDirectory(sCurrentDirectoryAbsolute);
+    QFileInfoList lFiles = dDirectory.entryInfoList(lFilter, QDir::Files | QDir::NoSymLinks);
 
-	CDirectoryListingItem tDirectory;
-	tDirectory.setIsFolder(true);
-	tDirectory.setAbsoluteName(dDirectory.absolutePath());
-	tDirectory.setRelativeName(relativeFileName(m_sRootPath, sCurrentDirectoryAbsolute));
+    CDirectoryListingItem tDirectory;
+    tDirectory.setIsFolder(true);
+    tDirectory.setAbsoluteName(dDirectory.absolutePath());
+    tDirectory.setRelativeName(relativeFileName(m_sRootPath, sCurrentDirectoryAbsolute));
 
-	m_vFiles << tDirectory;
+    m_vFiles << tDirectory;
 
-	for (QFileInfo iFile : lFiles)
-	{
-		QString sFullName = QString("%1/%2").arg(iFile.absolutePath()).arg(iFile.fileName());
+    for (QFileInfo iFile : lFiles)
+    {
+        QString sFullName = QString("%1/%2").arg(iFile.absolutePath()).arg(iFile.fileName());
 
-		CDirectoryListingItem tFile;
-		tFile.setIsFolder(false);
-		tFile.setAbsoluteName(dDirectory.absolutePath());
-		tFile.setRelativeName(relativeFileName(m_sRootPath, sFullName));
+        CDirectoryListingItem tFile;
+        tFile.setIsFolder(false);
+        tFile.setAbsoluteName(dDirectory.absolutePath());
+        tFile.setRelativeName(relativeFileName(m_sRootPath, sFullName));
 
-		m_vFiles << tFile;
-	}
+        m_vFiles << tFile;
+    }
 
-	lFiles = dDirectory.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+    lFiles = dDirectory.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
 
-	for (QFileInfo iFile : lFiles)
-	{
-		QString sDirectoryName = iFile.fileName();
+    for (QFileInfo iFile : lFiles)
+    {
+        QString sDirectoryName = iFile.fileName();
 
-		// Proceed recursively if we are not entering an ignore name
-		if (not m_lIgnoreNames.contains(sDirectoryName))
-		{
-			QString sTargetDirectory = QString("%1/%2").arg(sCurrentDirectoryAbsolute).arg(sDirectoryName);
-			listFilesRecursive(sTargetDirectory);
-		}
-	}
+        // Proceed recursively if we are not entering an ignore name
+        if (not m_lIgnoreNames.contains(sDirectoryName))
+        {
+            QString sTargetDirectory = QString("%1/%2").arg(sCurrentDirectoryAbsolute).arg(sDirectoryName);
+            listFilesRecursive(sTargetDirectory);
+        }
+    }
 }
