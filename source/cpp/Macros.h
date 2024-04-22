@@ -73,8 +73,12 @@ protected:                                                          \
 // Checks non nullity of a pointer
 #define IS_NOT_NULL(p)  ((p) != nullptr)
 
-// Delete a pointer if it is not null
-#define SAFE_DELETE(p)  if ((p) != nullptr) delete (p); (p) = nullptr
+// Macros for safe pointer usage
+#define SAFE_USE(a)                         if ((a) != nullptr)
+#define SAFE_USE_2(a,b)                     if ((a) != nullptr && (b) != nullptr)
+#define SAFE_USE_3(a,b,c)                   if ((a) != nullptr && (b) != nullptr && (c) != nullptr)
+#define SAFE_DELETE(a)                      if ((a) != nullptr) { delete (a); (a) = nullptr; }
+#define SAFE_DELETE_LATER(a)                if ((a) != nullptr) { (a)->deleteLater(); (a) = nullptr; }
 
 //-------------------------------------------------------------------------------------------------
 // Math
