@@ -34,12 +34,12 @@ qml_grammar {
 include(qt-plus.pri)
 
 # Generate help
-helpfile = $$PWD/qt-plus.qdocconf
+#helpfile = $$PWD/qt-plus.qdocconf
 
-QMAKE_POST_LINK += qdoc $$quote($$shell_path($$helpfile)) $$escape_expand(\\n\\t)
+#QMAKE_POST_LINK += qdoc $$quote($$shell_path($$helpfile)) $$escape_expand(\\n\\t)
 
 # Copy the index.html to the help directory
-copyfile = $$PWD/source/misc/index.html
-copydest = $$PWD/help/index.html
+#copyfile = $$PWD/source/misc/index.html
+#copydest = $$PWD/help/index.html
 
-QMAKE_POST_LINK += $$QMAKE_COPY $$quote($$shell_path($$copyfile)) $$quote($$shell_path($$copydest)) $$escape_expand(\\n\\t)
+#QMAKE_POST_LINK += $$QMAKE_COPY $$quote($$shell_path($$copyfile)) $$quote($$shell_path($$copydest)) $$escape_expand(\\n\\t)

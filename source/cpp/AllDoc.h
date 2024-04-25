@@ -1,11 +1,11 @@
 
 #pragma once
 
-// Application
 #include "QTree.h"
 #include "CPIDController.h"
 #include "File/CRollingFiles.h"
 #include "CStreamFactory.h"
+#include "CConnectedStream.h"
 #include "CSerialStream.h"
 #include "CSocketStream.h"
 #include "Image/CImageUtilities.h"

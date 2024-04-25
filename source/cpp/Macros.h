@@ -86,6 +86,12 @@ protected:                                                          \
 #define CLIPPED(a,n,x)  (std::min(std::max(a, n), x))
 
 //-------------------------------------------------------------------------------------------------
+// Time
+
+// Give the elapsed time in seconds since the given DateTime
+#define ELAPSED_SECONDS(a)     (a.secsTo(QDateTime::currentDateTime()))
+
+//-------------------------------------------------------------------------------------------------
 // Console
 
 // Gets the current source file name

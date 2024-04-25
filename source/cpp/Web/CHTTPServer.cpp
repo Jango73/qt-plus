@@ -51,6 +51,8 @@ CHTTPServer::CHTTPServer(quint16 uiPort, QObject* parent)
     , m_mMutex(QMutex::Recursive)
     , m_iRequestCount(0)
     , m_iMaxRequestPerSeconds(15)
+    , m_iMaximumSessionAliveSeconds(15 * 60)
+    , m_iMaintenanceTimerSeconds(60)
     , m_bDisabled(false)
     , m_bUseFloodProtection(true)
 {
@@ -91,6 +93,10 @@ CHTTPServer::CHTTPServer(quint16 uiPort, QObject* parent)
             qWarning() << QString("CHTTPServer::CHTTPServer() : bind to %1 failed").arg(uiPort);
         }
     }
+
+    connect(&m_tMaintenanceTimer, SIGNAL(timeout()), this, SLOT(onMaintenance()));
+    m_tMaintenanceTimer.setInterval(m_iMaintenanceTimerSeconds * 1000);
+    m_tMaintenanceTimer.start();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -130,6 +136,23 @@ const QVector<QString>& CHTTPServer::authorizedFolders() const
 const QMap<QString, CHTTPServer::CRequestMonitor>& CHTTPServer::monitors() const
 {
     return m_mMonitors;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+CWebSession* CHTTPServer::sessionByIP(const QString& sIP)
+{
+    if (m_mSessions.contains(sIP) == false)
+        m_mSessions[sIP] = new CWebSession(this);
+
+    return m_mSessions[sIP];
+}
+
+//-------------------------------------------------------------------------------------------------
+
+CWebSession* CHTTPServer::sessionBySocket(QTcpSocket* pSocket)
+{
+    return sessionByIP(IPFromSocket(pSocket));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -432,6 +455,13 @@ QString CHTTPServer::cleanIP(const QString& sText)
 
 //-------------------------------------------------------------------------------------------------
 
+QString CHTTPServer::IPFromSocket(QTcpSocket* pSocket)
+{
+    return cleanIP(pSocket->peerAddress().toString());
+}
+
+//-------------------------------------------------------------------------------------------------
+
 /*!
     Handles incoming connections.
 */
@@ -461,5 +491,19 @@ void CHTTPServer::onThreadFinished()
     {
         m_vProcessors.removeAll(pSender);
         pSender->deleteLater();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CHTTPServer::onMaintenance()
+{
+    for (QString sKey : m_mSessions.keys())
+    {
+        if (ELAPSED_SECONDS(m_mSessions[sKey]->lastRequestTime()) > m_iMaximumSessionAliveSeconds)
+        {
+            m_mSessions[sKey]->deleteLater();
+            m_mSessions.remove(sKey);
+        }
     }
 }

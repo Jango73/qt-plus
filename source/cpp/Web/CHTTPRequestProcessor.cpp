@@ -87,7 +87,7 @@ void CHTTPRequestProcessor::stopMe()
 */
 void CHTTPRequestProcessor::onSocketDisconnected()
 {
-    CWebContext tContext(m_pSocket, m_mUserData);
+    CWebContext tContext(m_pSocket, m_mUserData, m_pServer->sessionBySocket(m_pSocket));
 
     // Call the socket disconnected handler
     m_pServer->handleSocketDisconnection(tContext);
@@ -184,7 +184,7 @@ void CHTTPRequestProcessor::onSocketReadyRead()
         }
         else
         {
-            CWebContext tContext(m_pSocket, m_mUserData);
+            CWebContext tContext(m_pSocket, m_mUserData, m_pServer->sessionBySocket(m_pSocket));
 
             // Call the bytes read handler
             m_pServer->handleSocketBytesRead(tContext, 0);
@@ -204,7 +204,7 @@ void CHTTPRequestProcessor::onSocketReadyRead()
 */
 void CHTTPRequestProcessor::onSocketBytesWritten(qint64 iBytes)
 {
-    CWebContext tContext(m_pSocket, m_mUserData);
+    CWebContext tContext(m_pSocket, m_mUserData, m_pServer->sessionBySocket(m_pSocket));
 
     // Call the bytes written handler
     m_pServer->handleSocketBytesWritten(tContext, iBytes);
@@ -287,7 +287,7 @@ int CHTTPRequestProcessor::getExpectedBytes(QStringList lTokens)
 */
 void CHTTPRequestProcessor::processRequest()
 {
-    QString sIPAddress = CHTTPServer::cleanIP(m_pSocket->peerAddress().toString());
+    QString sIPAddress = CHTTPServer::IPFromSocket(m_pSocket);
 
     // Log the request
     m_pServer->LogRequest(sIPAddress, QString(m_baBuffer));
@@ -310,8 +310,16 @@ void CHTTPRequestProcessor::processRequest()
     QStringList lTokens = getHeaderTokens(m_baBuffer);
 
     // Create a web context in order for subclasses to generate content
-    CWebContext tContext;
-    tContext.m_mUserData = m_mUserData;
+    CWebContext tContext(m_pSocket, m_mUserData, m_pServer->sessionBySocket(m_pSocket));
+
+    SAFE_USE(tContext.m_pSession)
+    {
+        if (tContext.m_pSession->lock())
+        {
+            tContext.m_pSession->setLastRequestTime(QDateTime::currentDateTime());
+            tContext.m_pSession->unlock();
+        }
+    }
 
     bool bForceKeepAlive = false;
 

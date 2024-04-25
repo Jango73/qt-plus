@@ -40,6 +40,7 @@ HEADERS += \
     source/cpp/Web/CWebContext.h \
     source/cpp/Web/CHTTPServer.h \
     source/cpp/Web/CHTTPRequestProcessor.h \
+    source/cpp/Web/CWebSession.h \
     source/cpp/Web/CDynamicHTTPServer.h \
     source/cpp/Web/WebControls/CWebButton.h \
     source/cpp/Web/WebControls/CWebControl.h \
@@ -140,6 +141,7 @@ SOURCES += \
     source/cpp/Web/CWebContext.cpp \
     source/cpp/Web/CHTTPServer.cpp \
     source/cpp/Web/CHTTPRequestProcessor.cpp \
+    source/cpp/Web/CWebSession.cpp \
     source/cpp/Web/CDynamicHTTPServer.cpp \
     source/cpp/Web/WebControls/CWebButton.cpp \
     source/cpp/Web/WebControls/CWebControl.cpp \

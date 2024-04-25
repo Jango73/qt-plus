@@ -11,8 +11,10 @@
 #include <QTcpSocket>
 #include <QThread>
 #include <QMutex>
+#include <QTimer>
 
 // Application
+#include "../Macros.h"
 #include "CHTTPRequestProcessor.h"
 
 //-------------------------------------------------------------------------------------------------
@@ -127,6 +129,12 @@ public:
     //!
     const QMap<QString, CRequestMonitor>& monitors() const;
 
+    //!
+    CWebSession* sessionByIP(const QString& sIP);
+
+    //!
+    CWebSession* sessionBySocket(QTcpSocket* pSocket);
+
     //-------------------------------------------------------------------------------------------------
     // Public control methods
     //-------------------------------------------------------------------------------------------------
@@ -189,6 +197,9 @@ public:
     //! Returns a clean IP address from sText
     static QString cleanIP(const QString& sText);
 
+    //! Returns a clean IP address from a socket
+    static QString IPFromSocket(QTcpSocket* pSocket);
+
     //-------------------------------------------------------------------------------------------------
     // Protected methods
     //-------------------------------------------------------------------------------------------------
@@ -205,6 +216,7 @@ protected:
 protected slots:
 
     void onThreadFinished();
+    void onMaintenance();
 
     //-------------------------------------------------------------------------------------------------
     // Properties
@@ -212,15 +224,19 @@ protected slots:
 
 protected:
 
-    QMutex                          m_mMutex;                   // Data protection
-    int                             m_iRequestCount;            // Total request count
-    int                             m_iMaxRequestPerSeconds;    //
-    bool                            m_bDisabled;                // Tells if the server should ignore requests
+    QMutex                          m_mMutex;                       // Data protection
+    int                             m_iRequestCount;                // Total request count
+    int                             m_iMaxRequestPerSeconds;        // Maximum requests per second for a given IP
+    int                             m_iMaximumSessionAliveSeconds;  //
+    int                             m_iMaintenanceTimerSeconds;     // Seconds between maintenance processing
+    bool                            m_bDisabled;                    // Tells if the server should ignore requests
     bool                            m_bUseFloodProtection;
-    QVector<QString>                m_vAuthorizedFolders;       // Tells which folders users can access
-    QMap<QString, QString>          m_vExtensionToContentType;  // Used to convert a file extension to a MIME type
+    QVector<QString>                m_vAuthorizedFolders;           // Tells which folders users can access
+    QMap<QString, QString>          m_vExtensionToContentType;      // Used to convert a file extension to a MIME type
     QVector<CHTTPRequestProcessor*> m_vProcessors;
-    QMap<QString, CRequestMonitor>  m_mMonitors;                // Anti-flooding monitor
+    QMap<QString, CWebSession*>     m_mSessions;                    // Sessions
+    QMap<QString, CRequestMonitor>  m_mMonitors;                    // Anti-flooding monitors
     QStringList                     m_lStaticIPBlackList;
     QStringList                     m_lDynamicIPBlackList;
+    QTimer                          m_tMaintenanceTimer;
 };
