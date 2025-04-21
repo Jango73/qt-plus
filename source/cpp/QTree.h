@@ -233,28 +233,24 @@ public:
     }
 
     //! Returns true if this node's children contain the specified value
-    bool contains(T value) const
+    bool contains(const T& value, bool descent = true) const
     {
-        for (QTree<T> node : m_vChildren)
+        for (const QTree<T>& node : m_vChildren)
         {
-            bool bContains = node.contains(value);
-
-            if (bContains)
-            {
-                return true;
-            }
+            if (node.value() == value) return true;
+            if (descent && node.contains(value, true)) return true;
         }
 
         return false;
     }
 
-    //! Returns true if both nodes values are equal
+    //! Returns true if both nodes' values are equal
     bool operator == (const QTree<T>& target) const
     {
         return (m_tValue == target.m_tValue);
     }
 
-    //! Returns true if both nodes values are not equal
+    //! Returns true if both nodes' values are not equal
     bool operator != (const QTree<T>& target) const
     {
         return !(*this == target);
@@ -284,6 +280,21 @@ public:
     int position() const
     {
         return m_pParent ? m_pParent->getChildren().indexOf(*this) : -1;
+    }
+
+    //! Returns the path to this node
+    QString path(const QString& sep = "/") const
+    {
+        QStringList parts;
+        const QTree<T>* node = this;
+
+        while (node != nullptr)
+        {
+            parts.prepend(node->value().toString());
+            node = node->m_Parent;
+        }
+
+        return parts.join(sep);
     }
 
     //-------------------------------------------------------------------------------------------------

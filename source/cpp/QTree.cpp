@@ -77,13 +77,13 @@
 /*!
     \fn QVector<QTree<T> >& QTree::getChildren()
 
-    Returns a vector containing the child nodes of this tree node.
+    Returns a reference to a vector containing the child nodes of this tree node.
 */
 
 /*!
     \fn const QVector<QTree<T> >& QTree::getChildren() const
 
-    Returns a vector containing the child nodes of this tree node.
+    Returns a constant reference to a vector containing the child nodes of this tree node.
 */
 
 /*!
@@ -186,4 +186,10 @@
     \fn int position() const
 
     Returns the index of this node.
+*/
+
+/*!
+    \fn QString path(const QString& sep = "/") const
+
+    Returns the path to this node using \a sep as a separator.
 */
