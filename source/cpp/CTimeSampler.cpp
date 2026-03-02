@@ -4,7 +4,7 @@
 #include "CTimeSampler.h"
 
 CTimeSampler::CTimeSampler()
-    : m_tMutex(QMutex::Recursive)
+    : m_tMutex()
     , m_tDumpTimer(this)
     , m_pLogger(CLogger::getInstance())
 {
@@ -14,7 +14,7 @@ CTimeSampler::CTimeSampler()
 }
 
 CTimeSampler::CTimeSampler(CLogger* pLogger)
-    : m_tMutex(QMutex::Recursive)
+    : m_tMutex()
     , m_tDumpTimer(this)
     , m_pLogger(pLogger)
 {

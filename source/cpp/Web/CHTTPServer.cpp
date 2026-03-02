@@ -2,6 +2,7 @@
 // Qt
 #include <QCoreApplication>
 #include <QFile>
+#include <QRegularExpression>
 
 // Application
 #include "CHTTPServer.h"
@@ -48,7 +49,7 @@
 */
 CHTTPServer::CHTTPServer(quint16 uiPort, QObject* parent)
     : QTcpServer(parent)
-    , m_mMutex(QMutex::Recursive)
+    , m_mMutex()
     , m_iRequestCount(0)
     , m_iMaxRequestPerSeconds(15)
     , m_iMaximumSessionAliveSeconds(15 * 60)
@@ -321,7 +322,7 @@ void CHTTPServer::LogRequest(QString sIP, QString sText)
     if (lock())
     {
         // Read tokens
-        QStringList lTokens = sText.split(QRegExp("[ \n][ \n]*"));
+        QStringList lTokens = sText.split(QRegularExpression("[ \n][ \n]*"));
 
         if (lTokens.count() > 2)
         {
@@ -438,16 +439,21 @@ QString CHTTPServer::decodeURLParameters(QString sText)
 QString CHTTPServer::cleanIP(const QString& sText)
 {
     QString sReturnValue = sText;
-    QRegExp tRegExp_ipv6("([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}");
-    QRegExp tRegExp_ipv4(".*([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}).*");
+    QRegularExpression tRegExp_ipv6("([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}");
+    QRegularExpression tRegExp_ipv4(".*([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}).*");
 
-    if (tRegExp_ipv6.indexIn(sText) != -1)
+    QRegularExpressionMatch match_ipv6 = tRegExp_ipv6.match(sText);
+    if (match_ipv6.hasMatch())
     {
-        sReturnValue = tRegExp_ipv6.cap(0);
+        sReturnValue = match_ipv6.captured(0);
     }
-    else if (tRegExp_ipv4.indexIn(sText) != -1)
+    else
     {
-        sReturnValue = tRegExp_ipv4.cap(1);
+        QRegularExpressionMatch match_ipv4 = tRegExp_ipv4.match(sText);
+        if (match_ipv4.hasMatch())
+        {
+            sReturnValue = match_ipv4.captured(1);
+        }
     }
 
     return sReturnValue;

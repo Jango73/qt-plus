@@ -3,7 +3,7 @@
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QDir>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QMutexLocker>
 #include <QDebug>
 
@@ -421,7 +421,7 @@
 */
 QMLAnalyzer::QMLAnalyzer()
     : QThread(nullptr)
-    , m_mContextMutex(QMutex::Recursive)
+    , m_mContextMutex()
     , m_pContext(nullptr)
     , m_bIncludeImports(false)
     , m_bIncludeSubFolders(false)
@@ -979,9 +979,9 @@ bool QMLAnalyzer::runGrammar_Reject(QMLFile* pFile, const QString& sClassName, Q
             // Match a regular expression if requested
             else if (sRegExp.isEmpty() == false && sMemberToString.isEmpty() == false)
             {
-                QRegExp tRegExp(sRegExp);
+                QRegularExpression tRegExp(sRegExp);
 
-                if ((tRegExp.exactMatch(sMemberToString)) ^ bInverseLogic)
+                if ((tRegExp.match(sMemberToString).hasMatch()) ^ bInverseLogic)
                 {
                     outputError(pFile->fileName(), pEntity->position(), sText);
                     return true;

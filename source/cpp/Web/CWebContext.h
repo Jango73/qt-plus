@@ -35,6 +35,13 @@ public:
             CWebSession* pSession = nullptr
             );
 
+    //! Parametered constructor
+    CWebContext(
+            QTcpSocket* pSocket,
+            QString sPeer,
+            QString sHost
+            );
+
     //! Copy constructor
     CWebContext(const CWebContext& target);
 

@@ -146,7 +146,7 @@ qint64 CSoundSynth::bytesAvailable() const
 //-------------------------------------------------------------------------------------------------
 
 CSoundSynth::CSoundSynthGenerator::CSoundSynthGenerator(CSoundSynth* pSynth)
-    : m_tMutex(QMutex::Recursive)
+    : m_tMutex()
     , m_pSynth(pSynth)
     , m_iPosition(0)
     , m_bRun(true)

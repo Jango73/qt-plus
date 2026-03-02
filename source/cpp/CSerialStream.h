@@ -11,7 +11,7 @@
 #include <QMap>
 #include <QString>
 #include <QTimer>
-#include <QMutex>
+#include <QRecursiveMutex>
 #include <QSerialPort>
 
 // Application
@@ -58,6 +58,6 @@ protected slots:
 
 protected:
 
-    QMutex          m_tMutex;
+    QRecursiveMutex          m_tMutex;
     QSerialPort     m_tPort;
 };

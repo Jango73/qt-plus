@@ -2,6 +2,7 @@
 // Qt
 #include <QDebug>
 #include <QDateTime>
+#include <QRandomGenerator>
 
 // Application
 #include "ROKE.h"
@@ -194,8 +195,8 @@ void ROKE::shuffle(QVector<quint8>& vValues, int iIterations)
 {
     for (int index = 0; index < iIterations; index++)
     {
-        int iIndex1 = qrand() % vValues.count();
-        int iIndex2 = qrand() % vValues.count();
+        int iIndex1 = QRandomGenerator::global()->bounded(vValues.count());
+        int iIndex2 = QRandomGenerator::global()->bounded(vValues.count());
 
         if (iIndex1 != iIndex2)
         {
@@ -212,12 +213,12 @@ quint32 ROKE::randomInt32()
 {
     if (s_bSeedInit == false)
     {
-        qsrand(QDateTime::currentDateTime().toTime_t());
+        QRandomGenerator::global()->seed(static_cast<quint32>(QDateTime::currentSecsSinceEpoch()));
         s_bSeedInit = true;
     }
 
-    quint32 uiPart1 = qrand() & 0xFFFF;
-    quint32 uiPart2 = qrand() & 0xFFFF;
+    quint32 uiPart1 = QRandomGenerator::global()->generate() & 0xFFFF;
+    quint32 uiPart2 = QRandomGenerator::global()->generate() & 0xFFFF;
 
     return uiPart1 | (uiPart2 << 16);
 }

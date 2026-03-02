@@ -1,6 +1,10 @@
 
 // Qt
 #include <QDebug>
+#include <QDateTime>
+
+// Std
+#include <algorithm>
 
 // Application
 #include "CAssemblyEngine.h"
@@ -144,7 +148,7 @@ qint32 CAssemblyMachine::getTime(qint32 iPrec)
 {
     Q_UNUSED(iPrec);
 
-    return QDateTime::currentDateTime().toTime_t();
+    return static_cast<qint32>(QDateTime::currentSecsSinceEpoch());
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -160,7 +164,7 @@ qint32 CAssemblyMachine::findFreeMemoryBlock(qint32 iBase, qint32 iLimit, qint32
 
     if (iBase > 0 && iLimit > 0)
     {
-        qSort(m_baMemAlloc.begin(), m_baMemAlloc.end(), compareMemAlloc);
+        std::sort(m_baMemAlloc.begin(), m_baMemAlloc.end(), compareMemAlloc);
 
         for (int index = 0; index < m_baMemAlloc.count(); index++)
         {

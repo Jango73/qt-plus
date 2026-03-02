@@ -34,8 +34,8 @@ static double angleDifferenceGrad(double dAngle1, double dAngle2)
 void CImageUtilities::removeIsolatedWhites(QImage& image)
 {
     QImage source = image.copy();
-    qreal h1, s1, v1;
-    qreal h2, s2, v2;
+    float h1, s1, v1;
+    float h2, s2, v2;
 
     for (int y = 0; y < image.height(); y++)
     {
@@ -171,8 +171,8 @@ void CImageUtilities::tintSelection(const QImage& imgSource, QImage& imgSelectio
 {
     Q_UNUSED(dSmoothRadius);
 
-    qreal h1, s1, v1;
-    qreal h2, s2, v2;
+    float h1, s1, v1;
+    float h2, s2, v2;
 
     imgSelection = QImage(imgSelection.size(), QImage::Format_RGB888);
 
@@ -212,10 +212,23 @@ void CImageUtilities::tintSelection(const QImage& imgSource, QImage& imgSelectio
 */
 void CImageUtilities::adjustHSV(QImage& imgSource, const QImage& imgSelection, double dHue, double dSat, double dVal)
 {
-    qreal h1, s1, v1;
-    qreal h2, s2, v2;
+    float h1, s1, v1;
+    float h2, s2, v2;
 
-    QImage alphaImage = imgSource.alphaChannel();
+    // Save alpha channel if present
+    QImage alphaImage;
+    if (imgSource.hasAlphaChannel())
+    {
+        alphaImage = QImage(imgSource.size(), QImage::Format_Grayscale8);
+        for (int y = 0; y < imgSource.height(); y++)
+        {
+            for (int x = 0; x < imgSource.width(); x++)
+            {
+                QRgb pixel = imgSource.pixel(x, y);
+                alphaImage.setPixel(x, y, qRgb(qAlpha(pixel), qAlpha(pixel), qAlpha(pixel)));
+            }
+        }
+    }
 
     bool bUseSelection = imgSelection.isNull() == false && imgSource.size() == imgSelection.size();
 
@@ -255,9 +268,19 @@ void CImageUtilities::adjustHSV(QImage& imgSource, const QImage& imgSelection, d
         }
     }
 
-    if (alphaImage.isNull() == false)
+    // Restore alpha channel if it was saved
+    if (!alphaImage.isNull())
     {
-        imgSource.setAlphaChannel(alphaImage);
+        for (int y = 0; y < imgSource.height(); y++)
+        {
+            for (int x = 0; x < imgSource.width(); x++)
+            {
+                QRgb alphaPixel = alphaImage.pixel(x, y);
+                int alpha = qRed(alphaPixel); // grayscale, all components equal
+                QRgb pixel = imgSource.pixel(x, y);
+                imgSource.setPixel(x, y, qRgba(qRed(pixel), qGreen(pixel), qBlue(pixel), alpha));
+            }
+        }
     }
 }
 
@@ -273,11 +296,24 @@ void CImageUtilities::adjustHSV(QImage& imgSource, const QImage& imgSelection, d
 */
 void CImageUtilities::colorize(QImage& imgSource, const QImage& imgSelection, const QColor& cReferenceColor, bool bKeepOriginalSaturation, bool bKeepOriginalValue)
 {
-    qreal h1, s1, v1;
-    qreal h2, s2, v2;
-    qreal h3, s3, v3;
+    float h1, s1, v1;
+    float h2, s2, v2;
+    float h3, s3, v3;
 
-    QImage alphaImage = imgSource.alphaChannel();
+    // Save alpha channel if present
+    QImage alphaImage;
+    if (imgSource.hasAlphaChannel())
+    {
+        alphaImage = QImage(imgSource.size(), QImage::Format_Grayscale8);
+        for (int y = 0; y < imgSource.height(); y++)
+        {
+            for (int x = 0; x < imgSource.width(); x++)
+            {
+                QRgb pixel = imgSource.pixel(x, y);
+                alphaImage.setPixel(x, y, qRgb(qAlpha(pixel), qAlpha(pixel), qAlpha(pixel)));
+            }
+        }
+    }
 
     cReferenceColor.getHsvF(&h1, &s1, &v1);
 
@@ -326,9 +362,19 @@ void CImageUtilities::colorize(QImage& imgSource, const QImage& imgSelection, co
         }
     }
 
-    if (alphaImage.isNull() == false)
+    // Restore alpha channel if it was saved
+    if (!alphaImage.isNull())
     {
-        imgSource.setAlphaChannel(alphaImage);
+        for (int y = 0; y < imgSource.height(); y++)
+        {
+            for (int x = 0; x < imgSource.width(); x++)
+            {
+                QRgb alphaPixel = alphaImage.pixel(x, y);
+                int alpha = qRed(alphaPixel); // grayscale, all components equal
+                QRgb pixel = imgSource.pixel(x, y);
+                imgSource.setPixel(x, y, qRgba(qRed(pixel), qGreen(pixel), qBlue(pixel), alpha));
+            }
+        }
     }
 }
 
@@ -425,9 +471,9 @@ void CImageUtilities::splitHSVAChannels(const QImage& imgSource, QImage& imgHue,
         for (int x = 0; x < trueColorImage.width(); x++)
         {
             QRgb currentPixel = trueColorImage.pixel(x, y);
-            double dHue;
-            double dSat;
-            double dVal;
+            float dHue;
+            float dSat;
+            float dVal;
 
             QColor(currentPixel).getHsvF(&dHue, &dSat, &dVal);
 
@@ -565,8 +611,8 @@ QByteArray CImageUtilities::grayscale(const QImage& image)
     int len = image.width() * image.height();
     QByteArray returnValue(len, 0);
 
-    // Itération sur chaque pixel
-    // Une valeur de niveau de gris est calculée en fonction de la luminance
+    // Itï¿½ration sur chaque pixel
+    // Une valeur de niveau de gris est calculï¿½e en fonction de la luminance
     for (int i = 0; i < len; i++, src += 3)
     {
         returnValue[i] = (int) (

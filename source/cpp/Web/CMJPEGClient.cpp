@@ -1,6 +1,6 @@
 
 // Qt
-#include <QRegExp>
+#include <QRegularExpression>
 
 // Application
 #include "CMJPEGClient.h"
@@ -57,13 +57,13 @@ CMJPEGClient::~CMJPEGClient()
 */
 void CMJPEGClient::openURL(const QString& sURL, bool bKeepAlive)
 {
-    QRegExp tExp(QString("http://(.*):([0-9]*)(.*)"));
-
-    if (tExp.indexIn(sURL) != -1)
+    QRegularExpression tExp(QString("http://(.*):([0-9]*)(.*)"));
+    QRegularExpressionMatch match = tExp.match(sURL);
+    if (match.hasMatch())
     {
-        m_sIP = tExp.cap(1);
-        m_iPort = tExp.cap(2).toInt();
-        m_sResource = tExp.cap(3);
+        m_sIP = match.captured(1);
+        m_iPort = match.captured(2).toInt();
+        m_sResource = match.captured(3);
 
         m_bKeepAlive = bKeepAlive;
 
@@ -109,21 +109,21 @@ void CMJPEGClient::onDoConnection()
 
     m_pClient.connectToHost(address, m_iPort);
 
-    // Attente de connexion au serveur HTTP
+    // Waiting for connection to HTTP server
     if (m_pClient.waitForConnected(20000))
     {
         QString sGet = QString("GET %1\r\n").arg(m_sResource);
 
         // qDebug() << QString("CMJPEGClient::onDoConnection() : getting %1").arg(sGet);
 
-        // Envoi d'un GET au serveur HTTP
+        // Sending a GET request to the HTTP server
         m_pClient.write(sGet.toLatin1());
     }
     else
     {
         qWarning() << "CMJPEGClient::onDoConnection() : Unable to connect, retrying in 2 seconds";
 
-        // On retente la connexion dans deux secondes
+        // Retrying connection in two seconds
         QTimer::singleShot(2000, this, SLOT(onDoConnection()));
     }
 }
@@ -135,7 +135,7 @@ void CMJPEGClient::onDoConnection()
 */
 void CMJPEGClient::onDisconnected()
 {
-    // Si une connexion permanente est demandée, tentative de reconnexion au serveur HTTP
+    // If a persistent connection is requested, attempt to reconnect to HTTP server
     if (m_bKeepAlive)
     {
         QTimer::singleShot(2000, this, SLOT(onDoConnection()));
@@ -153,32 +153,32 @@ void CMJPEGClient::onReadyRead()
 
     QTcpSocket* pSocket = dynamic_cast<QTcpSocket*>(QObject::sender());
 
-    // Test d'intégrité de la socket
+    // Socket integrity check
     if (pSocket != nullptr)
     {
-        // Est-on en état connecté?
+        // Are we in connected state?
         if (pSocket->state() == QTcpSocket::ConnectedState)
         {
-            // On boucle tant qu'il existe des données entrantes
+            // Loop while there is incoming data
             while (pSocket->bytesAvailable() > 0)
             {
-                // Cas où on ne lit pas une image
+                // Case where we are not reading an image
                 if (m_bReadingImage == false)
                 {
-                    // On lit une ligne dans la socket et on prépare le marqueur
+                    // Read a line from the socket and prepare the marker
                     QString sLine = pSocket->readLine().toLower();
-                    QStringList vTokens = QString(sLine).split(" ", QString::SkipEmptyParts);
+                    QStringList vTokens = QString(sLine).split(" ", Qt::SkipEmptyParts);
                     QString sMarker = QString("--%1").arg(m_sBoundary);
 
-                    // Il y a quelque chose à analyser?
+                    // Is there something to analyze?
                     if (vTokens.count() > 0)
                     {
-                        // Cas du header HTTP
+                        // HTTP header case
                         if (vTokens[0] == HTTP_HEADER)
                         {
                             QString sHeader = vTokens[0];
                         }
-                        // Cas du descripteur de contenu HTTP
+                        // HTTP content descriptor case
                         else if (vTokens[0].startsWith(HTTP_CONTENT_TYPE))
                         {
                             if (m_sBoundary == "")
@@ -194,19 +194,19 @@ void CMJPEGClient::onReadyRead()
                                 }
                             }
                         }
-                        // Cas du marqueur, on ne fait rien
+                        // Marker case, do nothing
                         else if (vTokens[0] == sMarker)
                         {
                         }
-                        // Cas de la longueur du contenu
+                        // Content length case
                         else if (vTokens[0].startsWith(HTTP_CONTENT_LENGTH))
                         {
                             QString sExp = QString("%1:[ ]*([0-9]*)").arg(HTTP_CONTENT_LENGTH);
-                            QRegExp tExp(sExp);
-
-                            if (tExp.indexIn(sLine) != -1)
+                            QRegularExpression tExp(sExp);
+                            QRegularExpressionMatch match = tExp.match(sLine);
+                            if (match.hasMatch())
                             {
-                                m_iImageRemainToRead = tExp.cap(1).toInt();
+                                m_iImageRemainToRead = match.captured(1).toInt();
                             }
 
                             m_bReadingImage = true;

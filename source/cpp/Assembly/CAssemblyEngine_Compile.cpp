@@ -499,7 +499,7 @@ CAssemblyMachine::EOpCode CAssemblyMachine::nextOpCode()
                     {
                         case '/':
                         {
-                            e = 0;
+                            e = QChar();
 
                             while (e != '\n')
                             {

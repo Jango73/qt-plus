@@ -7,7 +7,7 @@
 
 // Qt
 #include <QObject>
-#include <QMutex>
+#include <QRecursiveMutex>
 #include <QMutexLocker>
 #include <QTcpServer>
 #include <QTcpSocket>
@@ -131,7 +131,7 @@ protected:
 protected:
 
     QTimer                          m_tTimer;
-    QMutex                          m_tMutex;
+    QRecursiveMutex                          m_tMutex;
     QString                         m_sFileName;
     QFile*                          m_pOutputFile;
     QVector<QByteArray>             m_vOutput;

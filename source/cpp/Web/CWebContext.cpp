@@ -1,6 +1,7 @@
 
 // Application
 #include "CWebContext.h"
+#include <QRegularExpression>
 
 //-------------------------------------------------------------------------------------------------
 
@@ -25,6 +26,20 @@ CWebContext::CWebContext(
     {
         m_sPeer = cleanIP(m_pSocket->peerAddress().toString());
     }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+CWebContext::CWebContext(
+        QTcpSocket* pSocket,
+        QString sPeer,
+        QString sHost
+        )
+    : m_pSocket(pSocket)
+    , m_pSession(nullptr)
+    , m_sPeer(sPeer)
+    , m_sHost(sHost)
+{
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -57,16 +72,21 @@ CWebContext::~CWebContext()
 QString CWebContext::cleanIP(const QString& sText)
 {
     QString sReturnValue = sText;
-    QRegExp tRegExp_ipv6("([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}");
-    QRegExp tRegExp_ipv4(".*([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}).*");
+    QRegularExpression tRegExp_ipv6("([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4}");
+    QRegularExpression tRegExp_ipv4(".*([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}).*");
 
-    if (tRegExp_ipv6.indexIn(sText) != -1)
+    QRegularExpressionMatch match_ipv6 = tRegExp_ipv6.match(sText);
+    if (match_ipv6.hasMatch())
     {
-        sReturnValue = tRegExp_ipv6.cap(0);
+        sReturnValue = match_ipv6.captured(0);
     }
-    else if (tRegExp_ipv4.indexIn(sText) != -1)
+    else
     {
-        sReturnValue = tRegExp_ipv4.cap(1);
+        QRegularExpressionMatch match_ipv4 = tRegExp_ipv4.match(sText);
+        if (match_ipv4.hasMatch())
+        {
+            sReturnValue = match_ipv4.captured(1);
+        }
     }
 
     return sReturnValue;

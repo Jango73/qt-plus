@@ -2,6 +2,7 @@
 // Qt
 #include <QCoreApplication>
 #include <QFile>
+#include <QRegularExpression>
 
 // Application
 #include "CHTTPRequestProcessor.h"
@@ -21,7 +22,7 @@ CHTTPRequestProcessor::CHTTPRequestProcessor(CHTTPServer* pServer, qintptr iSock
     , m_bHeaderRead(false)
     , m_iExpectedBytes(0)
     , m_iSocketDescriptor(iSocketDescriptor)
-    , m_mMutex(QMutex::Recursive)
+    , m_mMutex()
     , m_pServer(pServer)
     , m_pSocket(nullptr)
 {
@@ -245,7 +246,7 @@ QStringList CHTTPRequestProcessor::getHeaderTokens(QByteArray baData)
     QString sHeader = getRequestHeader(sText);
 
     // Split the string
-    lReturnValue = sHeader.split(QRegExp("[\r\n][\r\n]*"));
+    lReturnValue = sHeader.split(QRegularExpression("[\\r\\n][\\r\\n]*"));
 
     return lReturnValue;
 }
@@ -399,7 +400,7 @@ void CHTTPRequestProcessor::processRequest()
                                 if (tContext.m_sContentType.startsWith(MIME_Content_MultiPart_FormData))
                                 {
                                     // Get the part's tokens
-                                    QStringList lPartTokens = sPart.split(QRegExp("[\r\n][\r\n]*"));
+                                    QStringList lPartTokens = sPart.split(QRegularExpression("[\\r\\n][\\r\\n]*"));
 
                                     // Get the part's content type and name
                                     QString sPartContentType = getTokenValue(lPartTokens, Token_ContentType);
@@ -536,7 +537,7 @@ void CHTTPRequestProcessor::getRequestPathAndArgs(const QStringList& lTokens, QS
 
             if (lPathAndArgs.count() > 0)
             {
-                lPath = lPathAndArgs[0].split("/", QString::SkipEmptyParts);
+                lPath = lPathAndArgs[0].split("/", Qt::SkipEmptyParts);
             }
 
             if (lPathAndArgs.count() > 1)
@@ -612,7 +613,7 @@ QString CHTTPRequestProcessor::getTokenValue(const QStringList& lTokens, QString
     {
         if (sToken.startsWith(sTokenName))
         {
-            QStringList split = sToken.split(sTokenName, QString::SkipEmptyParts);
+            QStringList split = sToken.split(sTokenName, Qt::SkipEmptyParts);
 
             if (split.count() > 0)
             {
@@ -640,7 +641,7 @@ QString CHTTPRequestProcessor::getSubTokenValue(const QStringList& lTokens, QStr
     {
         if (sToken.startsWith(sTokenName))
         {
-            QStringList split = sToken.split(sTokenName, QString::SkipEmptyParts);
+            QStringList split = sToken.split(sTokenName, Qt::SkipEmptyParts);
 
             if (split.count() > 0)
             {
@@ -652,7 +653,7 @@ QString CHTTPRequestProcessor::getSubTokenValue(const QStringList& lTokens, QStr
 
     if (sReturnValue.isEmpty() == false)
     {
-        QStringList lSubTokens = sReturnValue.split(";", QString::SkipEmptyParts);
+        QStringList lSubTokens = sReturnValue.split(";", Qt::SkipEmptyParts);
 
         for (QString sSubToken : lSubTokens)
         {
@@ -660,7 +661,7 @@ QString CHTTPRequestProcessor::getSubTokenValue(const QStringList& lTokens, QStr
 
             if (sSubToken.startsWith(sSubTokenName))
             {
-                QStringList lSubTokenNameValue = sSubToken.split("=", QString::SkipEmptyParts);
+                QStringList lSubTokenNameValue = sSubToken.split("=", Qt::SkipEmptyParts);
 
                 if (lSubTokenNameValue.count() > 1)
                 {
@@ -784,7 +785,7 @@ bool CHTTPRequestProcessor::getResponseFile(CWebContext& tContext, QTcpSocket* p
                     baHTML.append("<!doctype html>\r\n");
                     baHTML.append("<html>" HTML_NL);
                     baHTML.append("<body>" HTML_NL);
-                    baHTML.append(QString("%1").arg(HTTP_403_FORBIDDEN));
+                    baHTML.append(QString("%1").arg(HTTP_403_FORBIDDEN).toUtf8());
                     baHTML.append("</body>" HTML_NL);
                     baHTML.append("</html>" HTML_NL);
 
@@ -797,7 +798,7 @@ bool CHTTPRequestProcessor::getResponseFile(CWebContext& tContext, QTcpSocket* p
                     baData.append("; charset=\"utf-8\"");
                     baData.append(HTML_NL);
                     baData.append(Token_ContentLength);
-                    baData.append(QString(" %1").arg(baHTML.count()));
+                    baData.append(QString(" %1").arg(baHTML.count()).toUtf8());
                     baData.append(HTML_NL);
                     baData.append(HTML_NL);
                     baData.append(baHTML);
@@ -854,9 +855,9 @@ bool CHTTPRequestProcessor::getResponseDynamicContent(CWebContext& tContext, QTc
             baData.append(HTTP_HEADER);
             baData.append(HTTP_200_OK);
             baData.append(HTML_NL);
-            baData.append(QString("%1 %2; charset=\"utf-8\"").arg(Token_ContentType).arg(sCustomResponseMIME));
+            baData.append(QString("%1 %2; charset=\"utf-8\"").arg(Token_ContentType).arg(sCustomResponseMIME).toUtf8());
             baData.append(HTML_NL);
-            baData.append(QString("%1 %2").arg(Token_ContentLength).arg(utf8Response.count()));
+            baData.append(QString("%1 %2").arg(Token_ContentLength).arg(utf8Response.count()).toUtf8());
             baData.append(HTML_NL);
             baData.append(HTML_NL);
             baData.append(utf8Response);
@@ -884,9 +885,9 @@ bool CHTTPRequestProcessor::getResponseDynamicContent(CWebContext& tContext, QTc
             baData.append(HTTP_HEADER);
             baData.append(HTTP_200_OK);
             baData.append(HTML_NL);
-            baData.append(QString("%1 %2; charset=\"utf-8\"").arg(Token_ContentType).arg(MIME_Content_HTML));
+            baData.append(QString("%1 %2; charset=\"utf-8\"").arg(Token_ContentType).arg(MIME_Content_HTML).toUtf8());
             baData.append(HTML_NL);
-            baData.append(QString("%1 %2").arg(Token_ContentLength).arg(baHTML.count()));
+            baData.append(QString("%1 %2").arg(Token_ContentLength).arg(baHTML.count()).toUtf8());
             baData.append(HTML_NL);
             baData.append(HTML_NL);
             baData.append(baHTML);

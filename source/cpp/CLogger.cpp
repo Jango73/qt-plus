@@ -15,7 +15,7 @@
 //-------------------------------------------------------------------------------------------------
 
 CLogger::CLogger()
-    : m_tMutex(QMutex::Recursive)
+    : m_tMutex()
     , m_tTimer(this)
     , m_tFlushTimer(this)
     , m_pFile(nullptr)
@@ -40,7 +40,7 @@ CLogger::CLogger()
 //-------------------------------------------------------------------------------------------------
 
 CLogger::CLogger(QString sPath, QString sFileName)
-    : m_tMutex(QMutex::Recursive)
+    : m_tMutex()
     , m_tTimer(this)
     , m_tFlushTimer(this)
     , m_pFile(nullptr)

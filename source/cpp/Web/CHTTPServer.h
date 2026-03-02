@@ -10,12 +10,12 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QThread>
-#include <QMutex>
+#include <QRecursiveMutex>
 #include <QTimer>
 
 // Application
-#include "../Macros.h"
 #include "CHTTPRequestProcessor.h"
+#include "CWebSession.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -224,7 +224,7 @@ protected slots:
 
 protected:
 
-    QMutex                          m_mMutex;                       // Data protection
+    QRecursiveMutex                          m_mMutex;                       // Data protection
     int                             m_iRequestCount;                // Total request count
     int                             m_iMaxRequestPerSeconds;        // Maximum requests per second for a given IP
     int                             m_iMaximumSessionAliveSeconds;  //

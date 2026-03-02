@@ -11,7 +11,7 @@
 #include <QTcpSocket>
 #include <QThreadPool>
 #include <QThread>
-#include <QMutex>
+#include <QRecursiveMutex>
 
 // Application
 #include "CWebContext.h"
@@ -197,7 +197,7 @@ protected:
     bool                    m_bHeaderRead;              // When true, we have HTTP header data
     int                     m_iExpectedBytes;           // Number of bytes we are expecting
     qintptr                 m_iSocketDescriptor;
-    QMutex                  m_mMutex;                   // Data protection
+    QRecursiveMutex                  m_mMutex;                   // Data protection
     CHTTPServer*            m_pServer;                  // The parent server
     QTcpSocket*             m_pSocket;                  // The socket we're serving
     QString                 m_sMultipartBoundary;       // The boundary marker for multi-part content

@@ -1,9 +1,5 @@
 
-win32 {
-    QT += core gui multimedia xml network serialport widgets positioning qml
-} else {
-    QT += core gui multimedia xml network serialport widgets qml
-}
+QT += core gui xml network widgets qml serialport
 
 CONFIG += warn_off
 TEMPLATE = lib

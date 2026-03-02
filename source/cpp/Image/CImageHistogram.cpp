@@ -66,7 +66,7 @@
 CImageHistogram::CImageHistogram(const QImage &imgSource, EOperateOn eOperateOn, int iSamples, double dMinimumSaturation)
 {
     qreal r, g, b, a;
-    qreal h, s, v;
+    float h, s, v;
     int where;
 
     if (iSamples < 16)

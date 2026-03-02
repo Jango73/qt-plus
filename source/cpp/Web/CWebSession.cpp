@@ -13,7 +13,7 @@
     Constructs a CWebSession
 */
 CWebSession::CWebSession(CHTTPServer* pServer)
-    : m_mMutex(QMutex::Recursive)
+    : m_mMutex()
     , m_pServer(pServer)
 {
 }

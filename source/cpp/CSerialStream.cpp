@@ -23,7 +23,7 @@
 */
 CSerialStream::CSerialStream(const QString& sName, const QMap<QString, QString>& sParameters)
     : CConnectedStream(sName)
-    , m_tMutex(QMutex::Recursive)
+    , m_tMutex()
     , m_tPort(this)
 {
     if (sParameters.contains(STREAM_PARAM_BAUD))

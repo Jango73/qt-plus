@@ -3,7 +3,7 @@
 
 // Qt
 #include <QVector>
-#include <QMutex>
+#include <QRecursiveMutex>
 #include <QWaitCondition>
 
 // Application
@@ -20,11 +20,8 @@ public:
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //! Default constructor
-    CTracableMutex();
-
     //! Constructor with parameters
-    CTracableMutex(QMutex::RecursionMode eMode, QString sName = "");
+    CTracableMutex(QString sName = "");
 
     //! Copy constructor
     CTracableMutex(const CTracableMutex&);
@@ -60,7 +57,7 @@ public:
     // Properties
     //-------------------------------------------------------------------------------------------------
 
-    QMutex                      m_tMutex;
+    QRecursiveMutex                      m_tMutex;
     QString                     m_sName;
 
     static QMap<int, QString>   m_vThreadNames;

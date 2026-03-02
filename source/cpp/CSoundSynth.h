@@ -11,7 +11,7 @@
 #include <QByteArray>
 #include <QIODevice>
 #include <QThread>
-#include <QMutex>
+#include <QRecursiveMutex>
 
 // Application
 #include "CInterpolator.h"
@@ -99,7 +99,7 @@ protected:
 
     protected:
 
-        QMutex                  m_tMutex;       // For data protection
+        QRecursiveMutex                  m_tMutex;       // For data protection
         CSoundSynth*            m_pSynth;       // The master of this class
         QList<QByteArray>       m_lBuffers;     // The generated buffers
         qint64                  m_iPosition;    // The current position in samples

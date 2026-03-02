@@ -58,7 +58,7 @@ void CMJPEGThread::run()
 CMJPEGServer::CMJPEGServer(quint16 uiPort)
     : CHTTPServer(uiPort)
     , m_tTimer(this)
-    , m_tMutex(QMutex::Recursive)
+    , m_tMutex()
     , m_pOutputFile(nullptr)
 {
     m_iCompressionRate = -1;
@@ -80,7 +80,7 @@ CMJPEGServer::CMJPEGServer(quint16 uiPort)
 CMJPEGServer::CMJPEGServer(QString sFileName)
     : CHTTPServer(0)
     , m_tTimer(this)
-    , m_tMutex(QMutex::Recursive)
+    , m_tMutex()
     , m_pOutputFile(nullptr)
 {
     m_sFileName = sFileName;

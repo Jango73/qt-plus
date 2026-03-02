@@ -12,7 +12,7 @@
 #include <QString>
 #include <QTimer>
 #include <QVector>
-#include <QMutex>
+#include <QRecursiveMutex>
 
 // Application
 #include "qtplus_global.h"
@@ -203,7 +203,7 @@ protected slots:
 
 protected:
 
-    QMutex              m_tMutex;
+    QRecursiveMutex              m_tMutex;
     QTimer              m_tTimer;
     QTimer              m_tFlushTimer;
     QString             m_sPathName;

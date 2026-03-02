@@ -10,13 +10,10 @@
 
 QMap<int, QString> CTracableMutex::m_vThreadNames;
 
-CTracableMutex::CTracableMutex()
-    : m_tMutex(QMutex::Recursive)
-{
-}
 
-CTracableMutex::CTracableMutex(QMutex::RecursionMode eMode, QString sName)
-    : m_tMutex(eMode)
+
+CTracableMutex::CTracableMutex(QString sName)
+    : m_tMutex()
     , m_sName(sName)
 {
 }

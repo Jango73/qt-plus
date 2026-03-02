@@ -1,6 +1,8 @@
 
 // Qt
 #include <QDebug>
+#include <QRandomGenerator>
+#include <QDateTime>
 
 // Application
 #include "CTDMADevice.h"
@@ -157,7 +159,7 @@ CTDMADevice::CTDMADevice(QIODevice* pDevice, PTDMASerial tSeriaNumber, int iMaxB
         bSrandInit = true;
 
         // Initialize random numbers
-        qsrand(now().toTime_t());
+        QRandomGenerator::global()->seed(static_cast<quint32>(now().toSecsSinceEpoch()));
     }
 
     // Connect to IO device
@@ -811,7 +813,7 @@ void CTDMADevice::handleReset_Slave()
 {
     if (m_tSlot == s_ucBadSlot && m_iNumFramesBeforeIdent == 0)
     {
-        m_iNumFramesBeforeIdent = 1 + (qrand() % 10);
+        m_iNumFramesBeforeIdent = 1 + QRandomGenerator::global()->bounded(10);
 
         CONSOLE_DEBUG(QString("Slave %1 sets m_iNumFramesBeforeIdent to %2").arg(m_tSeriaNumber).arg(m_iNumFramesBeforeIdent));
     }

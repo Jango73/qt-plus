@@ -39,7 +39,7 @@
 */
 CSocketStream::CSocketStream(const QString& sName, const QMap<QString, QString>& sParameters)
     : CConnectedStream(sName)
-    , m_tMutex(QMutex::Recursive)
+    , m_tMutex()
     , m_iPort(0)
     , m_pLocalServer(nullptr)
     , m_pServer(nullptr)

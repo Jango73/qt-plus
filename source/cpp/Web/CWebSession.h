@@ -11,7 +11,7 @@
 #include <QTcpSocket>
 #include <QThreadPool>
 #include <QThread>
-#include <QMutex>
+#include <QRecursiveMutex>
 
 // Application
 #include "../Macros.h"
@@ -74,6 +74,6 @@ public:
 
 protected:
 
-    QMutex          m_mMutex;                   // Data protection
+    QRecursiveMutex m_mMutex;                   // Data protection
     CHTTPServer*    m_pServer;                  // The parent server
 };

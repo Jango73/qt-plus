@@ -12,7 +12,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QTimer>
-#include <QMutex>
+#include <QRecursiveMutex>
 
 // Application
 #include "CConnectedStream.h"
@@ -133,7 +133,7 @@ protected:
 
 protected:
 
-	QMutex					m_tMutex;
+	QRecursiveMutex					m_tMutex;
 	QTimer					m_tSendTimer;
 	QString					m_sHost;
 	int						m_iPort;

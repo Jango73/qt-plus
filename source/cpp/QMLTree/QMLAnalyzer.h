@@ -7,7 +7,7 @@
 
 // Qt
 #include <QThread>
-#include <QMutex>
+#include <QRecursiveMutex>
 #include <QString>
 #include <QVariant>
 
@@ -155,7 +155,7 @@ protected:
 
 protected:
 
-    QMutex                          m_mContextMutex;
+    QRecursiveMutex                          m_mContextMutex;
     QString                         m_sFolder;
     QString                         m_sFile;
     CXMLNode                        m_xNewRules;
