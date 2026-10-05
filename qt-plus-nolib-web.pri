@@ -22,6 +22,7 @@ HEADERS += \
     $$PWD/source/cpp/Web/CWebContext.h \
     $$PWD/source/cpp/Web/CHTTPServer.h \
     $$PWD/source/cpp/Web/CHTTPRequestProcessor.h \
+    $$PWD/source/cpp/Web/CWebSession.h \
     $$PWD/source/cpp/Web/CDynamicHTTPServer.h \
     $$PWD/source/cpp/Web/WebControls/CWebButton.h \
     $$PWD/source/cpp/Web/WebControls/CWebControl.h \
@@ -62,6 +63,7 @@ SOURCES += \
     $$PWD/source/cpp/Web/CWebContext.cpp \
     $$PWD/source/cpp/Web/CHTTPServer.cpp \
     $$PWD/source/cpp/Web/CHTTPRequestProcessor.cpp \
+    $$PWD/source/cpp/Web/CWebSession.cpp \
     $$PWD/source/cpp/Web/CDynamicHTTPServer.cpp \
     $$PWD/source/cpp/Web/WebControls/CWebButton.cpp \
     $$PWD/source/cpp/Web/WebControls/CWebControl.cpp \
