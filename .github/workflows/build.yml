@@ -1,0 +1,37 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - qt6
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: ./deps.sh
+
+      - name: Build qt-plus
+        run: ./build.sh --release
+
+      - name: Build tests
+        run: |
+          for candidate in qmake6 qmake-qt6 qmake; do
+            if command -v "${candidate}" >/dev/null 2>&1; then
+              QMAKE="${candidate}"
+              break
+            fi
+          done
+          cd test
+          "${QMAKE}" qt-plus-test.pro CONFIG+=release
+          make -j"$(nproc)"
+
+      - name: Run tests
+        run: |
+          cd test
+          LD_LIBRARY_PATH="${GITHUB_WORKSPACE}/bin" QT_QPA_PLATFORM=offscreen ../bin/qt-plus-test
