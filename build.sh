@@ -92,9 +92,9 @@ echo "Building qt-plus with ${CONFIG_ARG}..."
 "${QMAKE}" "${ROOT_DIR}/qt-plus.pro" "${CONFIG_ARG}"
 
 if [ "${VERBOSE_BUILD}" -eq "${VERBOSE_ENABLED}" ]; then
-  make VERBOSE=1
+  make -j"$(nproc)" VERBOSE=1
 else
-  make
+  make -j"$(nproc)"
 fi
 
 printf '\nBuilt qt-plus library in %s\n' "${BUILD_DIR}/bin"
