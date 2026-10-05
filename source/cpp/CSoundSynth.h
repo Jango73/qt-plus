@@ -7,7 +7,9 @@
 // Includes
 
 // Qt
-#include <QAudioOutput>
+#include <QAudioSink>
+#include <QAudioDevice>
+#include <QAudioFormat>
 #include <QByteArray>
 #include <QIODevice>
 #include <QThread>
@@ -113,8 +115,8 @@ protected:
 protected:
 
     CSoundSynthGenerator    m_tGenerator;       // The thread that generates audio
-    QAudioDeviceInfo        m_tDevice;          // The output device
-    QAudioOutput*           m_tAudioOutput;     // The audio output
+    QAudioDevice            m_tDevice;          // The output device
+    QAudioSink*             m_tAudioSink;       // The audio sink
     QAudioFormat            m_tFormat;          // The audio format
     QList<QByteArray>       m_lBuffers;         // The buffers comming from CSoundSynthGenerator
 };

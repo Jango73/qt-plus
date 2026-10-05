@@ -11,19 +11,19 @@ class QTPLUSSHARED_EXPORT CWebTextEdit : public CWebControl
 public:
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
+    // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
     //!
     static CWebControl* instantiator();
 
-    //! Constructeur par défaut
+    //! Default constructor
     CWebTextEdit();
 
-    //! Constructeur avec paramètres
+    //! Constructor with parameters
     CWebTextEdit(const QString& sName, const QString& sCaption);
 
-    //! Destructeur
+    //! Destructor
     virtual ~CWebTextEdit();
 
     //-------------------------------------------------------------------------------------------------

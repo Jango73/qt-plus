@@ -30,10 +30,10 @@ class CMJPEGThread : public QThread
 
 public:
 
-    //! Constructeur
+    //! Constructor
     CMJPEGThread(CMJPEGServer* pParent);
 
-    //! Destructeur
+    //! Destructor
     virtual ~CMJPEGThread() Q_DECL_OVERRIDE;
 
     virtual void run() Q_DECL_OVERRIDE;

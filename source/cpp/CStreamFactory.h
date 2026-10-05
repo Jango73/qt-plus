@@ -33,9 +33,9 @@ public:
 
 protected:
 
-	//! Constructeur avec paramètres
+	//! Constructor with parameters
     CStreamFactory();
 
-	//! Destructeur
+	//! Destructor
     virtual ~CStreamFactory() Q_DECL_OVERRIDE;
 };

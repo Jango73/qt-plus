@@ -61,7 +61,7 @@ public:
             returnValue += iterValue;
         }
 
-        return returnValue / T(m_mValues.count());
+        return returnValue / T(static_cast<int>(m_mValues.count()));
     }
 
 protected:

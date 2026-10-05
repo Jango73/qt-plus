@@ -11,19 +11,19 @@ class QTPLUSSHARED_EXPORT CWebTextBox : public CWebControl
 public:
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
+    // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
     //!
     static CWebControl* instantiator();
 
-    //! Constructeur par défaut
+    //! Default constructor
     CWebTextBox();
 
-    //! Constructeur avec paramètres
+    //! Constructor with parameters
     CWebTextBox(const QString& sName, const QString& sCaption);
 
-    //! Destructeur
+    //! Destructor
     virtual ~CWebTextBox();
 
     //-------------------------------------------------------------------------------------------------

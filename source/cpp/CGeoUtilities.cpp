@@ -158,7 +158,7 @@ QGeoCoordinate CGeoUtilities::Vector3DToGeoCoordinate(const QVector3D& vPosition
     double dTemp;
 
     //-----------------------------------------------
-    // Récupération des coordonnées géocentriques
+    // Retrieval of the geocentric coordinates
 
     Convert_Geodetic_To_Geocentric(
                 gReference.latitude() * fDeg2Rad,

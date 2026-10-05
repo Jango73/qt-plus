@@ -73,7 +73,7 @@ void CRollingFiles::backup()
 {
     bool bCopied = false;
 
-    // Recherche d'un nom de fichier libre pour copie
+    // Search for a free file name for copy
     for (int iIndex = 0; iIndex < m_iMaximumBackups; iIndex++)
     {
         QString sCopyFileName(m_sFileName + "." + QString::number(iIndex));

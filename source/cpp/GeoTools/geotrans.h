@@ -5,12 +5,12 @@
 
 /**
         @class	GeoTrans
-        @brief	Classe de conversion de coordonn?es
+        @brief	Coordinate conversion class
         @author	Guillaume DARIER
         @date	06/10/2010
 
-        Faire un appel ? Initialize en sp?cifiant les coordonn?es
-        de r?f?rence avant utilisation
+        Call Initialize with the reference coordinates
+        before use
 **/
 
 #include <string>

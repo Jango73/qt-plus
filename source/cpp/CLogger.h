@@ -110,7 +110,7 @@ public:
     //! Default constructor
     CLogger();
 
-    //! Constructeur with file name
+    //! Constructor with file name
     CLogger(QString sPath, QString sFileName);
 
     //! Destructor

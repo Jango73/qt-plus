@@ -611,8 +611,8 @@ QByteArray CImageUtilities::grayscale(const QImage& image)
     int len = image.width() * image.height();
     QByteArray returnValue(len, 0);
 
-    // It�ration sur chaque pixel
-    // Une valeur de niveau de gris est calcul�e en fonction de la luminance
+    // Iteration over each pixel
+    // A gray level value is computed from the luminance
     for (int i = 0; i < len; i++, src += 3)
     {
         returnValue[i] = (int) (

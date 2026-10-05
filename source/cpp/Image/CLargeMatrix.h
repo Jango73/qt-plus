@@ -18,15 +18,15 @@ class QTPLUSSHARED_EXPORT CLargeMatrix
 public:
 
 	//-------------------------------------------------------------------------------------------------
-	// Constructeurs et destructeur
+	// Constructors and destructor
 	// Constructors and destructor
 	//-------------------------------------------------------------------------------------------------
 
-	//! Constructeur par défaut
+	//! Default constructor
 	//! Default constructor
 	CLargeMatrix();
 
-	//! Destructeur
+	//! Destructor
 	//! Destructor
 	virtual ~CLargeMatrix();
 
@@ -46,31 +46,31 @@ public:
 	// Getters
 	//-------------------------------------------------------------------------------------------------
 
-	//! Retourne la largeur de la matrice (colonnes)
+	//! Returns the width of the matrix (columns)
 	//! Returns the matrix' width (columns)
 	int width() const;
 
-	//! Retourne la hauteur de la matrice (rangs)
+	//! Returns the height of the matrix (rows)
 	//! Returns the matrix' height (rows)
 	int height() const;
 
-	//! Retourne le vecteur de données
+	//! Returns the data vector
 	//! Returns the data vector
 	QVector<QVector<double > >& data();
 
-	//! Retourne le vecteur de données
+	//! Returns the data vector
 	//! Returns the data vector
 	const QVector<QVector<double > >& data() const;
 
-	//! Retourne le rang numéro 'index'
+	//! Returns row number 'index'
 	//! Returns the 'index' row
 	QVector<double >& row(int index);
 
-	//! Retourne le rang numéro 'index'
+	//! Returns row number 'index'
 	//! Returns the 'index' row
 	const QVector<double >& row(int index) const;
 
-	//! Retourne la valeur de l'élément à  [row, column]
+	//! Returns the value of the element at [row, column]
 	//! Returns the value of element at [row, column]
 	double valueAt(int row, int column) const;
 
@@ -79,15 +79,15 @@ public:
 	// Control methods
 	//-------------------------------------------------------------------------------------------------
 
-	//! Retourne une matrice de flou avec un rayon 'radius'
+	//! Returns a blur matrix with a 'radius' radius
 	//! Returns a blur matrix using 'radius'
 	static CLargeMatrix blurMatrix(double dRadius);
 
-	//! Retourne une matrice de dilatation
+	//! Returns a dilation matrix
 	//! Returns a dilation matrix
 	static CLargeMatrix dilateMatrix();
 
-	//! Retourne une matrice d'érosion
+	//! Returns an erosion matrix
 	//! Returns an erosion matrix
 	static CLargeMatrix erosionMatrix();
 

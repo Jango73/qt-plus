@@ -46,10 +46,10 @@ CSocketStream::CSocketStream(const QString& sName, const QMap<QString, QString>&
 {
     Q_UNUSED(sParameters);
 
-	// On détermine d'après l'adresse IP si on est serveur ou client
+	// Determine from the IP address whether we are server or client
 	if (sName.contains("0.0.0.0"))
 	{
-		// On récupère le numéro de port
+		// Retrieve the port number
 		QStringList sNameList = sName.split(":");
 		int iPort = 0;
 
@@ -58,19 +58,19 @@ CSocketStream::CSocketStream(const QString& sName, const QMap<QString, QString>&
 			iPort = sNameList[1].toInt();
 		}
 
-		// Ecoute du port spécifié
+		// Listening on the specified port
 		bindTo(iPort);
 	}
 	else
 	{
-		// Connexion à l'adresse spécifiée
+		// Connection to the specified address
 		connectTo(sName);
 	}
 
-	// Gestion des évènements
+	// Event handling
 	connect(&m_tSendTimer, SIGNAL(timeout()), this, SLOT(onSendOutput()));
 
-	// On se place en mode ouvert en lecture/écriture dans la classe QIODevice
+	// Open in read/write mode in the QIODevice class
 	QIODevice::open(QIODevice::ReadWrite);
 
 	m_tSendTimer.start(20);
@@ -110,7 +110,7 @@ bool CSocketStream::connectTo(QString sURL)
 {
 	QStringList lTokens = sURL.split(":");
 
-	// Lecture de l'hôte
+	// Reading of the host
 
 	if (lTokens.count() > 0)
 	{
@@ -136,7 +136,7 @@ bool CSocketStream::connectTo(QString sURL)
 */
 CSocketStream::~CSocketStream()
 {
-	// Destruction de tous les clients actifs
+	// Destruction of all active clients
     for (QTcpSocket* pClient : m_vClients)
 	{
 		CClientData::deleteFromSocket(pClient);
@@ -144,7 +144,7 @@ CSocketStream::~CSocketStream()
 		pClient->deleteLater();
 	}
 
-	// Destruction de la socket serveur
+	// Destruction of the server socket
 	if (m_pServer != nullptr)
 	{
 		CClientData::deleteFromSocket(m_pServer);
@@ -152,7 +152,7 @@ CSocketStream::~CSocketStream()
 		m_pServer->deleteLater();
 	}
 
-	// Fermeture du serveur
+	// Closing of the server
 	if (m_pLocalServer != nullptr)
 	{
 		m_pLocalServer->close();
@@ -196,18 +196,18 @@ void CSocketStream::onReconnect()
 		m_pServer = nullptr;
 	}
 
-	// Création de la socket client
+	// Creation of the client socket
 	m_pServer = new QTcpSocket(this);
 
-	// Création de l'objet CClientData associé à la socket
+	// Creation of the CClientData object associated with the socket
 	new CClientData(m_pServer);
 
-	// Connexion des signaux
+	// Signal connection
 	connect(m_pServer, SIGNAL(readyRead()), this, SLOT(onSocketReadyRead()));
 	connect(m_pServer, SIGNAL(bytesWritten(qint64)), this, SLOT(onSocketBytesWritten(qint64)));
 	connect(m_pServer, SIGNAL(disconnected()), this, SLOT(onSocketDisconnected()));
 
-	// Connexion au serveur
+	// Connection to the server
 	m_pServer->connectToHost(m_sHost, m_iPort);
 
 	if (m_pServer->waitForConnected(1000) == false)
@@ -229,16 +229,16 @@ void CSocketStream::onReconnect()
 */
 void CSocketStream::onNewConnection()
 {
-	// Récupération socket entrante
+	// Retrieval of the incoming socket
 	QTcpSocket* pSocket = m_pLocalServer->nextPendingConnection();
 
-	// Ajout de la socket au vecteur
+	// Addition of the socket to the vector
 	m_vClients.append(pSocket);
 
-	// Création de l'objet CClientData associé à la socket
+	// Creation of the CClientData object associated with the socket
 	new CClientData(pSocket);
 
-	// Connexion des signaux
+	// Signal connection
 	connect(pSocket, SIGNAL(readyRead()), this, SLOT(onSocketReadyRead()));
 	connect(pSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(onSocketBytesWritten(qint64)));
 	connect(pSocket, SIGNAL(disconnected()), this, SLOT(onSocketDisconnected()));
@@ -261,7 +261,7 @@ void CSocketStream::onSocketDisconnected()
 	}
 	else
 	{
-		// Retrait de la socket du vecteur
+		// Removal of the socket from the vector
 
 		for (int iIndex = 0; iIndex < m_vClients.count(); iIndex++)
 		{
@@ -351,19 +351,19 @@ void CSocketStream::sendOutputForSocket(QTcpSocket* pSocket)
 
 	if (pData->m_baOutput.count() > 0)
 	{
-		// Est-ce que la socket est prête?
+		// Is the socket ready?
 		if (pSocket->state() == QTcpSocket::ConnectedState)
 		{
-			// Est-ce que la socket a un buffer de sortie suffisament petit?
+			// Does the socket have a small enough output buffer?
 			if (pData->m_iBytesToWrite < MAX_PENDING_BYTES)
 			{
-				// Ecriture des données
+				// Writing of the data
 				pSocket->write(pData->m_baOutput);
 
-				// Incrémentation du nombre d'octet en attente de partir
+				// Increment of the number of bytes waiting to be sent
 				pData->m_iBytesToWrite += pData->m_baOutput.count();
 
-				// Rinçage du flux
+				// Flushing of the stream
 				pSocket->flush();
 			}
 		}

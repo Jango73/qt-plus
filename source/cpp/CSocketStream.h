@@ -35,7 +35,7 @@ public:
     //! sName = "n.n.n.n:pppp" The stream is client of server at n.n.n.n:pppp
     CSocketStream(const QString& sName, const QMap<QString, QString>& sParameters);
 
-	//! Destructeur
+	//! Destructor
     virtual ~CSocketStream() Q_DECL_OVERRIDE;
 
 	//-------------------------------------------------------------------------------------------------

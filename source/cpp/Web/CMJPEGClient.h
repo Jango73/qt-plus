@@ -80,8 +80,8 @@ protected:
     QImage		m_Image;				// LAst received image if any
     QString		m_sBoundary;			// HTTP boundary marker
     QByteArray	m_baIncomingData;		// Raw incoming data from socket
-    int			m_iPort;				// Port du serveur auquel on se connecte
+    int			m_iPort;				// Port of the server to connect to
     int			m_iImageRemainToRead;	// Conteur indiquant combien d'octets il reste à lire pour une image
-    bool		m_bKeepAlive;           // Si ce flag est vrai, le client tentera des connexions au serveur continuellement
-    bool		m_bReadingImage;		// Flag indiquant si on est en train de lire une image (sinon un header ou une marque de limite)
+    bool		m_bKeepAlive;           // If this flag is true, the client keeps attempting connections to the server
+    bool		m_bReadingImage;		// Flag indicating whether an image is being read (otherwise a header or a boundary marker)
 };

@@ -1,6 +1,7 @@
 
 // Qt
 #include <QDebug>
+#include <QMediaDevices>
 
 // Application
 #include "CSoundSynth.h"
@@ -24,27 +25,21 @@ const int DataSampleRateHz  = 44100;
 */
 CSoundSynth::CSoundSynth()
     : m_tGenerator(this)
-    , m_tDevice(QAudioDeviceInfo::defaultOutputDevice())
+    , m_tDevice(QMediaDevices::defaultAudioOutput())
 {
     m_tFormat.setSampleRate(DataSampleRateHz);
     m_tFormat.setChannelCount(1);
-    m_tFormat.setSampleSize(16);
-    m_tFormat.setCodec("audio/pcm");
-    m_tFormat.setByteOrder(QAudioFormat::LittleEndian);
-    m_tFormat.setSampleType(QAudioFormat::SignedInt);
+    m_tFormat.setSampleFormat(QAudioFormat::Int16);
 
-    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
-
-    if (!info.isFormatSupported(m_tFormat))
+    if (m_tDevice.isFormatSupported(m_tFormat) == false)
     {
-        qWarning() << "Default format not supported - trying to use nearest";
-        m_tFormat = info.nearestFormat(m_tFormat);
+        qWarning() << "Default audio format not supported";
     }
 
     open(QIODevice::ReadOnly);
 
-    m_tAudioOutput = new QAudioOutput(m_tDevice, m_tFormat, this);
-    m_tAudioOutput->start(this);
+    m_tAudioSink = new QAudioSink(m_tDevice, m_tFormat, this);
+    m_tAudioSink->start(this);
 
     m_tGenerator.start();
 }

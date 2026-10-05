@@ -1,6 +1,6 @@
 /**
         @file			GeoTrans.cpp
-        @brief			Librairie de conversion de coordonn?es
+        @brief			Coordinate conversion library
         @author			Guillaume DARIER
         @date			06/10/2010
 **/
@@ -69,7 +69,7 @@ void GeoTrans::mgrsToLatLong( std::string UTMPosition, double& _latitude, double
         memset(hemisphere, 0, sizeof(hemisphere));
         memset(subgrid, 0, sizeof(subgrid));
 
-        // R?cup?ration des donn?es Position dans la trame
+        // Retrieval of the Position data from the frame
     sscanf((const char*)UTMPosition.c_str(),"%lf;%lf;%2ld%1s;%2s", &coord_x, &coord_y, &zone, hemisphere, subgrid);
 
         // Pr?cision

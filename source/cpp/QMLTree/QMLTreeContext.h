@@ -214,11 +214,11 @@ public:
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //! Constructeur par défaut
+    //! Default constructor
     //! Default constructor
     QMLTreeContext();
 
-    //! Destructeur
+    //! Destructor
     //! Destructor
     virtual ~QMLTreeContext();
 

@@ -13,7 +13,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-//! Classe utilitaire de traitement d'images
+//! Image processing utility class
 //! Utility class for image processing
 class QTPLUSSHARED_EXPORT CImageHistogram
 {
@@ -41,7 +41,7 @@ public:
     };
 
     //-------------------------------------------------------------------------------------------------
-    // Constructeurs et destructeur
+    // Constructors and destructor
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ public:
     virtual ~CImageHistogram();
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes de contrôle
+    // Control methods
     // Control methods
     //-------------------------------------------------------------------------------------------------
 
@@ -72,7 +72,7 @@ public:
     bool isSampleExclusive(int iChannel, int iSample, int iSpan = 0, double dTolerance = 0.01) const;
 
     //-------------------------------------------------------------------------------------------------
-    // Méthodes privées
+    // Private methods
     // Private methods
     //-------------------------------------------------------------------------------------------------
 
@@ -82,7 +82,7 @@ private:
     bool validChannel(int channel) const;
 
     //-------------------------------------------------------------------------------------------------
-    // Propriétés
+    // Properties
     //-------------------------------------------------------------------------------------------------
 
 protected:

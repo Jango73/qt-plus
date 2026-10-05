@@ -334,7 +334,7 @@ void CMJPEGServer::onTimeout()
                     {
                         qlonglong iBytesToWrite = m_mBytesToWrite[pSocket];
 
-                        // Si la socket a un buffer de sortie suffisament petit
+                        // If the socket has a small enough output buffer
                         if (iBytesToWrite < baOutput.count() * 4)
                         {
                             // Compose the outgoing message :
