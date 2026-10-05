@@ -14,8 +14,6 @@
 
 #define HEX_BYTE_SIZE (sizeof(quint8) * 2)
 
-bool ROKE::s_bSeedInit = false;
-
 //-------------------------------------------------------------------------------------------------
 
 ROKE::ROKE()
@@ -211,12 +209,8 @@ void ROKE::shuffle(QVector<quint8>& vValues, int iIterations)
 
 quint32 ROKE::randomInt32()
 {
-    if (s_bSeedInit == false)
-    {
-        QRandomGenerator::global()->seed(static_cast<quint32>(QDateTime::currentSecsSinceEpoch()));
-        s_bSeedInit = true;
-    }
-
+    // NOTE: do not seed QRandomGenerator::global(), Qt seeds it securely
+    // itself and reseeding it triggers a fatal error since Qt 5.10.
     quint32 uiPart1 = QRandomGenerator::global()->generate() & 0xFFFF;
     quint32 uiPart2 = QRandomGenerator::global()->generate() & 0xFFFF;
 

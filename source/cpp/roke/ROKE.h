@@ -113,6 +113,4 @@ protected:
     quint32             m_uiKeySize;
     QVector<quint8>     m_vKeyOrders;
     QVector<quint8>     m_vKeyMasks;
-
-    static bool         s_bSeedInit;
 };

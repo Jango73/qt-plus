@@ -152,15 +152,8 @@ CTDMADevice::CTDMADevice(QIODevice* pDevice, PTDMASerial tSeriaNumber, int iMaxB
     , m_tLastSpeakTime(now())
     , m_tPowerOnTime(now())
 {
-    static bool bSrandInit = false;
-
-    if (bSrandInit == false)
-    {
-        bSrandInit = true;
-
-        // Initialize random numbers
-        QRandomGenerator::global()->seed(static_cast<quint32>(now().toSecsSinceEpoch()));
-    }
+    // NOTE: do not seed QRandomGenerator::global(), Qt seeds it securely
+    // itself and reseeding it triggers a fatal error since Qt 5.10.
 
     // Connect to IO device
     connect(m_pDevice, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
