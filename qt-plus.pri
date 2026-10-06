@@ -10,6 +10,7 @@ HEADERS += \
     source/cpp/CXMLNode.h \
     source/cpp/QTree.h \
     source/cpp/CPIDController.h \
+    source/cpp/CJoystickReader.h \
     source/cpp/CAverager.h \
     source/cpp/CLogger.h \
     source/cpp/CMacroable.h \
@@ -109,6 +110,7 @@ SOURCES += \
     source/cpp/CXMLNodable.cpp \
     source/cpp/CXMLNode.cpp \
     source/cpp/CPIDController.cpp \
+    source/cpp/CJoystickReader.cpp \
     source/cpp/CLogger.cpp \
     source/cpp/CMacroable.cpp \
     source/cpp/CTracableMutex.cpp \

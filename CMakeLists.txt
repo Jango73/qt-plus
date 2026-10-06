@@ -6,6 +6,7 @@ add_library(qt-plus SHARED
     source/cpp/CMacroable.cpp
     source/cpp/CMemoryMonitor.cpp
     source/cpp/CPIDController.cpp
+    source/cpp/CJoystickReader.cpp
     source/cpp/CSecureContext.cpp
     source/cpp/CSerialStream.cpp
     source/cpp/CSingletonPool.cpp
