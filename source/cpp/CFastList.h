@@ -58,7 +58,8 @@ public:
     void deleteAll()
     {
         qDeleteAll(*this);
-        qDeleteAll(m_hLookup);
+        QList<T>::clear();
+        m_hLookup.clear();
     }
 
 protected:
