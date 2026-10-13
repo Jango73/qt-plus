@@ -6,6 +6,10 @@
 
 // Qt
 #include <QList>
+#include <QVector>
+#include <QString>
+#include <QStringList>
+#include <QVariant>
 
 //-------------------------------------------------------------------------------------------------
 
@@ -168,6 +172,8 @@ public:
     void removeAt(int n)
     {
         m_vChildren.removeAt(n);
+
+        assignParents(this, m_pParent);
     }
 
     //! Removes all value in children
@@ -181,6 +187,8 @@ public:
                 index--;
             }
         }
+
+        assignParents(this, m_pParent);
     }
 
     //! Removes all value in children
@@ -198,6 +206,8 @@ public:
                     index--;
                 }
             }
+
+            assignParents(this, m_pParent);
         }
     }
 
@@ -290,8 +300,8 @@ public:
 
         while (node != nullptr)
         {
-            parts.prepend(node->value().toString());
-            node = node->m_Parent;
+            parts.prepend(QVariant::fromValue(node->value()).toString());
+            node = node->m_pParent;
         }
 
         return parts.join(sep);

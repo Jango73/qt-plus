@@ -254,11 +254,11 @@ Note: no purely `Cosmetic` item came out of these 15 classes; the weakest findin
 
 ## 11. `QTree<T>` — `source/cpp/QTree.h`, `source/cpp/QTree.cpp`
 
-- [ ] [Critical] **11.1 `removeAt()` / `removeAll()` leave dangling parent pointers (UAF under Qt6)**
+- [x] [Critical] **11.1 `removeAt()` / `removeAll()` leave dangling parent pointers (UAF under Qt6)**
   Problem: children live by value in `QList<QTree<T>>` (`QTree.h:366`), which is contiguous storage under Qt6 (this repo builds against Qt6, `CMakeLists.txt:113-121`). `removeAt()` (`QTree.h:168-171`) and both `removeAll()` overloads (`QTree.h:174-202`) shift elements without ever calling `assignParents()` — unlike every `append()` overload (`QTree.h:144-165`). The user-declared copy ctor (`QTree.h:36-41`) suppresses implicit moves, so the shift copies subtrees whose grandchildren keep `m_pParent` aimed at the pre-shift (now dead) addresses. Any later `root()` / `position()` / `moveNode()` / `path()` walk through them is a use-after-free. Qt5's pointer-array `QList` masked this; the Qt6 build does not.
   Fix reco: call `assignParents(this, m_pParent)` at the end of every structural mutator, or store children as pointers (`QList<QTree<T>*>`) with explicit ownership.
 
-- [ ] [Critical] **11.2 `path()` does not compile: `m_Parent` vs `m_pParent`**
+- [x] [Critical] **11.2 `path()` does not compile: `m_Parent` vs `m_pParent`**
   Problem: `path()` walks `node = node->m_Parent;` (`QTree.h:294`), but the member is declared `m_pParent` (`QTree.h:365`). Any instantiation of `path()` is a hard compile error, so the documented API (`QTree.cpp:192-195`) is unusable. The header also only includes `<QList>` (`QTree.h:8`) while `path()`/`flatValues()` need `QStringList`/`QVector`/`QString`, relying on transitive includes.
   Fix reco: rename to `m_pParent`, add the missing includes, and add a compile test instantiating `QStringTree::path()`.
 
@@ -291,8 +291,8 @@ Note: no purely `Cosmetic` item came out of these 15 classes; the weakest findin
   Fix reco: fix parents locally on append (set the new child's chain only); document/fix `flatValues()` origin; check self in `contains()`; note the recursion limit.
 
 - [ ] [Minor] **11.10 `const` broken by `root()`'s `const_cast`; asymmetric contracts**
-  Problem: `root() const` returns a mutable pointer via `const_cast` (`QTree.h:117-127`), so a `const QTree` can be mutated through it — while `nodeForValue()` and `operator[]` have no `const` overloads at all, so `const` callers can't even navigate. Separately: `removeAll()` is shallow-only (direct children, `QTree.h:174-202`) while `contains()` descends (`QTree.h:236-245`), so deep duplicates survive a "removeAll"; and `path()` requires `T::toString()` (`QTree.h:293`) without constraining `T`, failing for generic value types.
-  Fix reco: provide a `const`/non-`const` `root()` pair without casts, add `const` navigation overloads, document (or recurse) `removeAll()`, and constrain `path()` to string-convertible `T`.
+  Problem: `root() const` returns a mutable pointer via `const_cast` (`QTree.h:117-127`), so a `const QTree` can be mutated through it — while `nodeForValue()` and `operator[]` have no `const` overloads at all, so `const` callers can't even navigate. Separately: `removeAll()` is shallow-only (direct children, `QTree.h:174-202`) while `contains()` descends (`QTree.h:236-245`), so deep duplicates survive a "removeAll"; and `path()` stringifies via `QVariant::fromValue()` (`QTree.h:296`), so `T` must be QVariant-convertible — document the requirement.
+  Fix reco: provide a `const`/non-`const` `root()` pair without casts, add `const` navigation overloads, document (or recurse) `removeAll()`, and document the QVariant-convertible requirement of `path()`.
 
 ---
 
@@ -342,16 +342,16 @@ Note: no purely `Cosmetic` item came out of these 15 classes; the weakest findin
 
 ## 14. `CTracableMutex` — `source/cpp/CTracableMutex.h`, `source/cpp/CTracableMutex.cpp`
 
-- [ ] [Critical] **14.1 Copy ctor / assignment silently break mutual exclusion**
+- [x] [Critical] **14.1 Copy ctor / assignment silently break mutual exclusion**
   Problem: both are no-ops (`CTracableMutex.cpp:21-28`, declared `CTracableMutex.h:27,37`): the copy gets a fresh unlocked `QRecursiveMutex` and drops `m_sName`/trace state. Code that copies a mutex (containers, captures) then guards shared data with different copies has *no* mutual exclusion at all (same family as 4.3/8.1).
   Fix reco: `CTracableMutex(const CTracableMutex&) = delete;` + `operator=` `= delete;`.
 
-- [ ] [Critical] **14.2 `lock()` can return `false` without holding the lock**
+- [x] [Critical] **14.2 `lock()` can return `false` without holding the lock**
   Problem: `lock()` does `tryLock(5000)` and returns `false` on timeout (`CTracableMutex.cpp:45-81`). Unlike `QMutex::lock()`, failure leaves the critical section unprotected, and any caller ignoring the `bool` (or using `QMutexLocker`, which expects `void lock()`) silently runs unlocked. It is also incompatible with `QMutexLocker<CTracableMutex>`.
   Fix reco: retry until acquired (with warnings), or assert/abort on timeout; document that `false` means "not locked, do not proceed".
 
-- [ ] [Major] **14.3 Lock-trace stack is pushed on failure, popped on every `unlock()`**
-  Problem: `m_sLockNames.append(...)` runs only inside the *failure* branch (`CTracableMutex.cpp:65`); the success path records nothing. `unlock()` unconditionally pops (`CTracableMutex.cpp:111-118`), draining entries owned by other failures, while a timed-out caller that still calls `unlock()` unlocks a mutex it never locked (`QRecursiveMutex::unlock()` on an unlocked mutex is UB/assert).
+- [x] [Major] **14.3 Lock-trace stack is pushed on failure, popped on every `unlock()`**
+  Problem: `m_sLockNames.append(...)` ran only inside the *failure* branch (old `CTracableMutex.cpp:65`); the success path recorded nothing. `unlock()` unconditionally popped, draining entries owned by other failures, while a timed-out caller that still called `unlock()` unlocked a mutex it never locked. Fixed as a side effect of 14.2: the timeout path loops instead of returning unlocked and no longer pushes phantom entries, so `lock()` returns only when held and every `unlock()` is balanced. Residual: `m_sLockNames` is now write-never (vestigial) — see 14.5.
   Fix reco: push `{thread, sName, timestamp}` on success, pop only the matching entry, and never `unlock()` after a failed `lock()`.
 
 - [ ] [Major] **14.4 Shared trace state without synchronization; 64-bit thread-ID truncation**
@@ -359,7 +359,7 @@ Note: no purely `Cosmetic` item came out of these 15 classes; the weakest findin
   Fix reco: guard with a static `QMutex`, store `quintptr`/`Qt::HANDLE` keys (or `QThread::currentThread()`), or drop the global registry.
 
 - [ ] [Minor] **14.5 Wall-clock timing, always-on trace macro, public mutex**
-  Problem: elapsed time uses `QDateTime::currentDateTime()` (`CTracableMutex.cpp:47,83`), which jumps on NTP adjustments (same family as 6.5) — use `QElapsedTimer`. `#define FULL_MUTEX_TRACE` is forced in the header (`CTracableMutex.h:13`, with a French "comment out in release" note), penalizing every translation unit. `m_tMutex`/`m_sName` are public (`CTracableMutex.h:60-61`), letting callers bypass tracing.
+  Problem: elapsed time uses `QDateTime::currentDateTime()` (`CTracableMutex.cpp:47,83`), which jumps on NTP adjustments (same family as 6.5) — use `QElapsedTimer`. `#define FULL_MUTEX_TRACE` is forced in the header (`CTracableMutex.h:13`, with a French "comment out in release" note), penalizing every translation unit. `m_tMutex`/`m_sName` are public (`CTracableMutex.h:60-61`), letting callers bypass tracing. `m_sLockNames` is now vestigial (nothing pushes since 14.2/14.3) — remove it or record real ownership.
   Fix reco: `QElapsedTimer`, move the flag to the build system, make members private with accessors.
 
 ---

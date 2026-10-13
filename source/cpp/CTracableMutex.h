@@ -23,8 +23,8 @@ public:
     //! Constructor with parameters
     CTracableMutex(QString sName = "");
 
-    //! Copy constructor
-    CTracableMutex(const CTracableMutex&);
+    //! Copy constructor (deleted: copying a mutex would silently break mutual exclusion)
+    CTracableMutex(const CTracableMutex&) = delete;
 
     //! Destructor
     virtual ~CTracableMutex();
@@ -33,8 +33,8 @@ public:
     // Operators
     //-------------------------------------------------------------------------------------------------
 
-    //! Assign operator
-    CTracableMutex& operator = (const CTracableMutex&);
+    //! Assign operator (deleted: copying a mutex would silently break mutual exclusion)
+    CTracableMutex& operator = (const CTracableMutex&) = delete;
 
     //-------------------------------------------------------------------------------------------------
     // Control methods

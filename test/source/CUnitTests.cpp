@@ -14,7 +14,9 @@
 #include "CLogger.h"
 #include "CSingleton.h"
 #include "CTimeSampler.h"
+#include "CTracableMutex.h"
 #include "CXMLNode.h"
+#include "QTree.h"
 #include "File/CRollingFiles.h"
 #include "RemoteControl/CRemoteControl.h"
 
@@ -296,6 +298,60 @@ void CUnitTests::lazyPointerOwnership()
     tPointer.clear();
     QCOMPARE(*tPointer.get(), 7);                // reloads after clear
     QCOMPARE(g_iLazyInstantiations, 2);
+}
+
+//-------------------------------------------------------------------------------------------------
+// Removing siblings must keep the survivors' parent links navigable
+
+void CUnitTests::qtreeRemoveKeepsParentsValid()
+{
+    QTree<QString> tTree("Root");
+    tTree.append("A");
+    tTree.append("B");
+    tTree.append("C");
+    tTree.getChildren()[1] << "B1";              // grandchild under B
+
+    tTree.removeAt(0);                           // removes A, shifts B and C
+
+    QCOMPARE(tTree.count(), 2);
+
+    QTree<QString>* pGrandChild = tTree.nodeForValue("B1");
+    QVERIFY(pGrandChild != nullptr);
+    QCOMPARE(pGrandChild->root()->value(), QString("Root"));
+    QCOMPARE(pGrandChild->parent()->value(), QString("B"));
+
+    tTree.removeAll(QString("B"));               // removes the B subtree
+
+    QCOMPARE(tTree.count(), 1);
+    QCOMPARE(tTree.getChildren()[0].root()->value(), QString("Root"));
+}
+
+//-------------------------------------------------------------------------------------------------
+// path() must instantiate and join the ancestor chain with the separator
+
+void CUnitTests::qtreePathCompilesAndJoins()
+{
+    QTree<QString> tTree("Root");
+    tTree.append("A");
+    tTree.getChildren()[0] << "A1";
+
+    QCOMPARE(tTree.getChildren()[0].getChildren()[0].path(), QString("Root/A/A1"));
+    QCOMPARE(tTree.path(), QString("Root"));
+}
+
+//-------------------------------------------------------------------------------------------------
+// A mutex must not be copyable, and lock() must only return when held
+
+void CUnitTests::tracableMutexNonCopyableAndBlocking()
+{
+    QVERIFY(!std::is_copy_constructible<CTracableMutex>::value);
+    QVERIFY(!std::is_copy_assignable<CTracableMutex>::value);
+
+    CTracableMutex tMutex("smoke");
+    QVERIFY(tMutex.lock("smoke-test"));
+    tMutex.unlock();
+    QVERIFY(tMutex.lock());
+    tMutex.unlock();
 }
 
 //-------------------------------------------------------------------------------------------------

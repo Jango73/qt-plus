@@ -18,15 +18,6 @@ CTracableMutex::CTracableMutex(QString sName)
 {
 }
 
-CTracableMutex::CTracableMutex(const CTracableMutex&)
-{
-}
-
-CTracableMutex& CTracableMutex::operator =(const CTracableMutex&)
-{
-    return *this;
-}
-
 CTracableMutex::~CTracableMutex()
 {
 }
@@ -46,7 +37,10 @@ bool CTracableMutex::lock(QString sName)
 {
     QDateTime tTime(QDateTime::currentDateTime());
 
-    if (!m_tMutex.tryLock(5000))
+    // Block until the mutex is actually acquired. Returning false without
+    // holding the lock would leave the critical section unprotected for any
+    // caller ignoring the return value, so lock() only returns when held.
+    while (!m_tMutex.tryLock(5000))
     {
         int iThreadID = (int) ((qlonglong) QThread::currentThreadId());
         QString sThread = QString::number(iThreadID);
@@ -61,12 +55,10 @@ bool CTracableMutex::lock(QString sName)
         {
             sName = "<UNKNOWN>";
         }
-
-        m_sLockNames.append(QString("%1").arg(sName));
 #endif
 
         LOG_CRITICAL("-----------------------------------------------------------------------");
-        LOG_CRITICAL(QString("Mutex %1 lock timeout ! in thread %2").arg(m_sName).arg(sThread));
+        LOG_CRITICAL(QString("Mutex %1 lock timeout ! in thread %2 (retrying)").arg(m_sName).arg(sThread));
 
 #ifdef FULL_MUTEX_TRACE
         for (QString sLockName : m_sLockNames)
@@ -76,8 +68,6 @@ bool CTracableMutex::lock(QString sName)
 #endif
 
         LOG_CRITICAL("-----------------------------------------------------------------------");
-
-        return false;
     }
 
     if (tTime.msecsTo(QDateTime::currentDateTime()) > 1000)
