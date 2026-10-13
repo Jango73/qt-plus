@@ -68,53 +68,60 @@ QString CRollingFiles::fileName() const
 
 /*!
     Backs up the file.
+    Returns true on success, false if inputs are invalid or any step failed.
 */
-void CRollingFiles::backup()
+bool CRollingFiles::backup()
 {
-    bool bCopied = false;
+    // Guard against degenerate inputs (previously produced "<name>.-1" or stray ".0" files)
+    if (m_sFileName.isEmpty() || m_iMaximumBackups <= 0)
+    {
+        return false;
+    }
 
     // Search for a free file name for copy
     for (int iIndex = 0; iIndex < m_iMaximumBackups; iIndex++)
     {
         QString sCopyFileName(m_sFileName + "." + QString::number(iIndex));
 
-        QFile tCopyFile(sCopyFileName);
-
-        if (tCopyFile.exists() == false)
+        if (QFile::exists(sCopyFileName) == false)
         {
-            bCopied = true;
-
-            QFile tOriginalFile(m_sFileName);
-            tOriginalFile.copy(sCopyFileName);
-
-            break;
+            return QFile::copy(m_sFileName, sCopyFileName);
         }
     }
 
-    if (bCopied == false)
+    // All slots full: shift backups down with renames (no data is deleted before
+    // its replacement is safely in place), then copy the live file on top.
+    if (QFile::exists(m_sFileName + "." + QString::number(0)))
     {
-        for (int iIndex = 0; iIndex < m_iMaximumBackups - 1; iIndex++)
+        if (QFile::remove(m_sFileName + "." + QString::number(0)) == false)
         {
-            QString sSourceFileName(m_sFileName + "." + QString::number(iIndex + 1));
-            QString sTargetFileName(m_sFileName + "." + QString::number(iIndex + 0));
-
-            QFile tTargetFile(sTargetFileName);
-            tTargetFile.remove();
-
-            QFile tSourceFile(sSourceFileName);
-            tSourceFile.copy(sTargetFileName);
+            return false;
         }
-
-        QString sCopyFileName(m_sFileName + "." + QString::number(m_iMaximumBackups - 1));
-
-        QFile tCopyFile(sCopyFileName);
-
-        if (tCopyFile.exists())
-        {
-            tCopyFile.remove();
-        }
-
-        QFile tOriginalFile(m_sFileName);
-        tOriginalFile.copy(sCopyFileName);
     }
+
+    for (int iIndex = 1; iIndex < m_iMaximumBackups; iIndex++)
+    {
+        QString sSourceFileName(m_sFileName + "." + QString::number(iIndex));
+        QString sTargetFileName(m_sFileName + "." + QString::number(iIndex - 1));
+
+        if (QFile::exists(sSourceFileName))
+        {
+            if (QFile::rename(sSourceFileName, sTargetFileName) == false)
+            {
+                return false;
+            }
+        }
+    }
+
+    QString sCopyFileName(m_sFileName + "." + QString::number(m_iMaximumBackups - 1));
+
+    if (QFile::exists(sCopyFileName))
+    {
+        if (QFile::remove(sCopyFileName) == false)
+        {
+            return false;
+        }
+    }
+
+    return QFile::copy(m_sFileName, sCopyFileName);
 }

@@ -27,4 +27,12 @@ private slots:
 
     void xml();
     void remoteControlMultiClient();
+
+    // Smoke tests: one slot per fixed critical defect
+    void averagerZeroClamp();
+    void rollingFilesCheckedBackup();
+    void singletonRaceAndKill();
+    void loggerChainedCycle();
+    void timeSamplerConcurrentDump();
+    void lazyPointerOwnership();
 };

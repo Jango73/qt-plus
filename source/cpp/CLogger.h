@@ -12,6 +12,7 @@
 #include <QString>
 #include <QTimer>
 #include <QVector>
+#include <QSet>
 #include <QRecursiveMutex>
 
 // Application
@@ -178,6 +179,10 @@ public:
     //-------------------------------------------------------------------------------------------------
 
 protected:
+
+    //! Logs a line, tracking visited loggers to break chaining cycles.
+    //! The visited set is passed by value so diamond chains still deliver to all branches.
+    void logInternal(ELogLevel eLevel, const QString& sText, const QString& sToken, QSet<const CLogger*> sVisited);
 
     //! Returns a final short string to write in the log file
     QString getShortStringForLevel(ELogLevel eLevel, const QString& sText);

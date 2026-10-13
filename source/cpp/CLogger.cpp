@@ -300,91 +300,125 @@ bool CLogger::filterToken(QString sToken)
 
 void CLogger::log(ELogLevel eLevel, const QString& sText, const QString& sToken)
 {
-    QMutexLocker locker(&m_tMutex);
+    logInternal(eLevel, sText, sToken, QSet<const CLogger*>());
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CLogger::logInternal(ELogLevel eLevel, const QString& sText, const QString& sToken, QSet<const CLogger*> sVisited)
+{
     QString sFinalText = sText;
+    QVector<CLogger*> vChainedLoggers;
+    bool bForward = false;
 
-    // Is the token accepted?
-    if (filterToken(sToken) == false) return;
-
-    // Add the token in the text
-    if (sToken != "")
     {
-        sFinalText = "<" + sToken + "> " + sText;
-    }
+        QMutexLocker locker(&m_tMutex);
 
-    // Replace undesirable characters
-    sFinalText = sFinalText.replace("\"", "'");
+        // Is the token accepted?
+        if (filterToken(sToken) == false) return;
 
-    if (eLevel >= llError)
-    {
-        qDebug() << getShortStringForLevel(eLevel, sFinalText).toLatin1().constData();
-    }
-
-    if (m_pFile && m_pFile->isOpen())
-    {
-        switch (eLevel)
+        // Add the token in the text
+        if (sToken != "")
         {
-            case llDebug :
+            sFinalText = "<" + sToken + "> " + sText;
+        }
+
+        // Replace undesirable characters
+        sFinalText = sFinalText.replace("\"", "'");
+
+        if (eLevel >= llError)
+        {
+            qDebug() << getShortStringForLevel(eLevel, sFinalText).toLatin1().constData();
+        }
+
+        if (m_pFile && m_pFile->isOpen())
+        {
+            switch (eLevel)
             {
-                if (m_eLogLevel <= llDebug)
+                case llDebug :
                 {
-                    m_iFileSize += m_pFile->write(getFinalStringForLevel(llDebug, sFinalText).toLatin1().constData());
+                    if (m_eLogLevel <= llDebug)
+                    {
+                        m_iFileSize += m_pFile->write(getFinalStringForLevel(llDebug, sFinalText).toLatin1().constData());
+                    }
+                    break;
                 }
-                break;
+
+                case llInfo :
+                {
+                    if (m_eLogLevel <= llInfo)
+                    {
+                        m_iFileSize += m_pFile->write(getFinalStringForLevel(llInfo, sFinalText).toLatin1().constData());
+                    }
+                    break;
+                }
+
+                case llWarning :
+                {
+                    if (m_eLogLevel <= llWarning)
+                    {
+                        m_iFileSize += m_pFile->write(getFinalStringForLevel(llWarning, sFinalText).toLatin1().constData());
+
+                        bForward = true;
+                    }
+                    break;
+                }
+
+                case llError :
+                {
+                    if (m_eLogLevel <= llError)
+                    {
+                        m_iFileSize += m_pFile->write(getFinalStringForLevel(llError, sFinalText).toLatin1().constData());
+
+                        bForward = true;
+                    }
+                    break;
+                }
+
+                case llCritical :
+                {
+                    if (m_eLogLevel <= llCritical)
+                    {
+                        m_iFileSize += m_pFile->write(getFinalStringForLevel(llCritical, sFinalText).toLatin1().constData());
+
+                        bForward = true;
+                    }
+                    break;
+                }
+
+                case llAlways :
+                {
+                    if (m_eLogLevel <= llAlways)
+                    {
+                        m_iFileSize += m_pFile->write(getFinalStringForLevel(llAlways, sFinalText).toLatin1().constData());
+
+                        bForward = true;
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (bForward)
+        {
+            vChainedLoggers = m_vChainedLoggers;
+        }
+    }
+
+    // Forward outside our own lock: no lock-order inversion, and a chaining
+    // cycle (A -> B -> A) terminates instead of overflowing the stack.
+    if (bForward)
+    {
+        sVisited.insert(this);
+
+        for (CLogger* pLogger : vChainedLoggers)
+        {
+            if (pLogger == nullptr || pLogger == this || sVisited.contains(pLogger))
+            {
+                continue;
             }
 
-            case llInfo :
-            {
-                if (m_eLogLevel <= llInfo)
-                {
-                    m_iFileSize += m_pFile->write(getFinalStringForLevel(llInfo, sFinalText).toLatin1().constData());
-                }
-                break;
-            }
-
-            case llWarning :
-            {
-                if (m_eLogLevel <= llWarning)
-                {
-                    m_iFileSize += m_pFile->write(getFinalStringForLevel(llWarning, sFinalText).toLatin1().constData());
-
-                    for (CLogger* pLogger : m_vChainedLoggers) { pLogger->log(eLevel, sFinalText, sToken); }
-                }
-                break;
-            }
-
-            case llError :
-            {
-                if (m_eLogLevel <= llError)
-                {
-                    m_iFileSize += m_pFile->write(getFinalStringForLevel(llError, sFinalText).toLatin1().constData());
-
-                    for (CLogger* pLogger : m_vChainedLoggers) { pLogger->log(eLevel, sFinalText, sToken); }
-                }
-                break;
-            }
-
-            case llCritical :
-            {
-                if (m_eLogLevel <= llCritical)
-                {
-                    m_iFileSize += m_pFile->write(getFinalStringForLevel(llCritical, sFinalText).toLatin1().constData());
-
-                    for (CLogger* pLogger : m_vChainedLoggers) { pLogger->log(eLevel, sFinalText, sToken); }
-                }
-                break;
-            }
-
-            case llAlways :
-            {
-                if (m_eLogLevel <= llAlways)
-                {
-                    m_iFileSize += m_pFile->write(getFinalStringForLevel(llAlways, sFinalText).toLatin1().constData());
-
-                    for (CLogger* pLogger : m_vChainedLoggers) { pLogger->log(eLevel, sFinalText, sToken); }
-                }
-                break;
-            }
+            pLogger->logInternal(eLevel, sFinalText, sToken, sVisited);
         }
     }
 }

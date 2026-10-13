@@ -4,6 +4,7 @@
 // Qt
 #include <QString>
 #include <QMap>
+#include <QRecursiveMutex>
 
 // Application
 #include "qtplus_global.h"
@@ -26,4 +27,5 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     static QMap<QString, void*>*    s_pSingletons;
+    static QRecursiveMutex          s_tMutex;
 };

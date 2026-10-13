@@ -96,20 +96,43 @@ void CTimeSampler::stopSampleAndLog(const QString& sName)
 
 void CTimeSampler::dumpAccumulatedTimes()
 {
+    // Snapshot under lock, then log from the copy: iterating the live maps
+    // while samplers mutate them on other threads is undefined behavior.
+    QMap<QString, qint64> mAccumTimes;
+    QMap<QString, qint64> mNumCalls;
+
+    if (m_tMutex.lock())
+    {
+        mAccumTimes = m_mAccumTimes;
+        mNumCalls = m_mNumCalls;
+        m_tMutex.unlock();
+    }
+    else
+    {
+        return;
+    }
+
     m_pLogger->log(llDebug, "------------------------------------------------------------", "TimeSample");
     m_pLogger->log(llDebug, "Total accumulated times", "TimeSample");
 
-    for (QString sName : m_mStartTimes.keys())
+    for (QString sName : mAccumTimes.keys())
     {
-        double dMillisecs = (double) m_mAccumTimes[sName] / 1000.0;
-        double dAverageMsecs = (double) dMillisecs / (double) m_mNumCalls[sName];
+        qint64 iNumCalls = mNumCalls.value(sName, 0);
+
+        if (iNumCalls <= 0)
+        {
+            continue;
+        }
+
+        double dMillisecs = (double) mAccumTimes.value(sName, 0) / 1000.0;
+        double dAverageMsecs = (double) dMillisecs / (double) iNumCalls;
 
         m_pLogger->log(llDebug,
                        QString("  %1 = %2 s (avg %3 s for %4 calls)")
                        .arg(sName)
                        .arg(dMillisecs)
                        .arg(dAverageMsecs)
-                       .arg(m_mNumCalls[sName]), "TimeSample"
+                       .arg(iNumCalls), "TimeSample"
                        );
     }
 

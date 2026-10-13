@@ -26,11 +26,9 @@ public:
     {
     }
 
-    //! Copy constructor
-    CLazyPointer(const CLazyPointer<dataType>& target)
-    {
-        *this = target;
-    }
+    //! Copy constructor (deleted: copies would share ownership of m_pData
+    //! and double-free it in the destructor)
+    CLazyPointer(const CLazyPointer<dataType>& target) = delete;
 
     //! Destructor
     ~CLazyPointer()
@@ -101,14 +99,8 @@ public:
         return m_pData;
     }
 
-    CLazyPointer& operator = (const CLazyPointer& target)
-    {
-        m_pInstantiator = target.m_pInstantiator;
-        m_pContext = target.m_pContext;
-        m_pData = target.m_pData;
-
-        return *this;
-    }
+    //! Assign operator (deleted: same ownership reason as the copy constructor)
+    CLazyPointer& operator = (const CLazyPointer& target) = delete;
 
     bool operator == (const CLazyPointer& target)
     {

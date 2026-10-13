@@ -13,7 +13,7 @@ public:
 
     //! Default constructor
     CAverager(int iMaxValues = 5)
-        : m_iMaxValues(iMaxValues)
+        : m_iMaxValues(iMaxValues < 1 ? 1 : iMaxValues)
     {
     }
 
@@ -79,7 +79,7 @@ public:
 
     //! Default constructor
     CRollingAverager(int numSamples)
-        : m_iNumSamples(numSamples)
+        : m_iNumSamples(numSamples < 1 ? 1 : numSamples)
         , m_tAverage(T(0))
     {
     }

@@ -53,7 +53,9 @@ public:
     // Control methods
     //-------------------------------------------------------------------------------------------------
 
-    void backup();
+    //! Backs up the file.
+    //! Returns true on success, false if inputs are invalid or any step failed.
+    bool backup();
 
     //-------------------------------------------------------------------------------------------------
     // Properties

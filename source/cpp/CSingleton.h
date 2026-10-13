@@ -6,6 +6,7 @@
 
 // Qt
 #include <QString>
+#include <QMutexLocker>
 
 // Application
 #include "CSingletonPool.h"
@@ -27,6 +28,8 @@ public:
     {
         CSingletonPool::init();
 
+        QMutexLocker locker(&CSingletonPool::s_tMutex);
+
         QString sClassName(typeid(T).name());
 
         if (CSingletonPool::s_pSingletons->contains(sClassName) == false)
@@ -40,6 +43,10 @@ public:
     //! Destroys the unique instance of the class
     static void killInstance()
     {
+        CSingletonPool::init();
+
+        QMutexLocker locker(&CSingletonPool::s_tMutex);
+
         QString sClassName(typeid(T).name());
 
         if (CSingletonPool::s_pSingletons->contains(sClassName))
