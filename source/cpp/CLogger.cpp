@@ -6,6 +6,7 @@
 
 // Application
 #include "CLogger.h"
+#include "Macros.h"
 
 //-------------------------------------------------------------------------------------------------
 // Constants
@@ -66,7 +67,7 @@ CLogger::~CLogger()
 
     QMutexLocker locker(&m_tMutex);
 
-    if (m_pFile != nullptr)
+    SAFE_USE(m_pFile)
     {
         if (m_pFile->isOpen())
         {
@@ -223,7 +224,7 @@ void CLogger::initialize(QString sPath, QString sFileName, CXMLNode xParameters)
     }
 
     // Destroy the file
-    if (m_pFile != nullptr)
+    SAFE_USE(m_pFile)
     {
         if (m_pFile->isOpen())
         {
@@ -413,7 +414,7 @@ void CLogger::logInternal(ELogLevel eLevel, const QString& sText, const QString&
 
         for (CLogger* pLogger : vChainedLoggers)
         {
-            if (pLogger == nullptr || pLogger == this || sVisited.contains(pLogger))
+            if (IS_NULL(pLogger) || pLogger == this || sVisited.contains(pLogger))
             {
                 continue;
             }
@@ -454,7 +455,7 @@ void CLogger::flush()
 {
     QMutexLocker locker(&m_tMutex);
 
-    if (m_pFile != nullptr)
+    SAFE_USE(m_pFile)
     {
         m_pFile->flush();
     }
@@ -521,7 +522,7 @@ void CLogger::onTimeout()
 {
     QMutexLocker locker(&m_tMutex);
 
-    if (m_pFile != nullptr)
+    SAFE_USE(m_pFile)
     {
         if (m_iFileSize > m_iMaxFileSize)
         {

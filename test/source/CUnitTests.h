@@ -38,4 +38,8 @@ private slots:
     void qtreeRemoveKeepsParentsValid();
     void qtreePathCompilesAndJoins();
     void tracableMutexNonCopyableAndBlocking();
+    void xmlLoadReportsErrors();
+    void xmlSkipsWhitespaceTextNodes();
+    void jsonPreservesScalarsAndArrays();
+    void xmlEmptyTagExportsChildren();
 };

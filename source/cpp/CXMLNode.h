@@ -99,20 +99,24 @@ public:
     // High level control methods
     //-------------------------------------------------------------------------------------------------
 
-    //! Loads a CXMLNode from a XML or JSON file based on the extension
-    static CXMLNode load(const QString& sFileName);
+    //! Loads a CXMLNode from a XML or JSON file based on the extension.
+    //! If \a pErrorString is not null, it receives a description of the failure (file or parse error).
+    static CXMLNode load(const QString& sFileName, QString* pErrorString = nullptr);
 
     //! Saves content to a XML or JSON file based on the extension
     bool save(const QString& sFileName);
 
-    //! Reads a XML file given a file name
-    static CXMLNode loadXMLFromFile(const QString& sFileName);
+    //! Reads a XML file given a file name.
+    //! If \a pErrorString is not null, it receives a description of the failure.
+    static CXMLNode loadXMLFromFile(const QString& sFileName, QString* pErrorString = nullptr);
 
-    //! Reads a compressed XML file given a file name
-    static CXMLNode loadXMLCFromFile(const QString& sFileName);
+    //! Reads a compressed XML file given a file name.
+    //! If \a pErrorString is not null, it receives a description of the failure.
+    static CXMLNode loadXMLCFromFile(const QString& sFileName, QString* pErrorString = nullptr);
 
-    //! Reads a JSON file given a file name
-    static CXMLNode loadJSONFromFile(const QString& sFileName);
+    //! Reads a JSON file given a file name.
+    //! If \a pErrorString is not null, it receives a description of the failure.
+    static CXMLNode loadJSONFromFile(const QString& sFileName, QString* pErrorString = nullptr);
 
     //! Converts the document to a string
     QString toString(bool bXMLHeader = true) const;
@@ -139,8 +143,9 @@ public:
     //! Converts a QDomNode to a CXMLNode
     static CXMLNode parseXMLNode(QDomNode node);
 
-    //! Converts a XML formatted string to a CXMLNode
-    static CXMLNode parseXML(QString sText);
+    //! Converts a XML formatted string to a CXMLNode.
+    //! If \a pErrorString is not null, it receives the parser error (line, column, message).
+    static CXMLNode parseXML(QString sText, QString* pErrorString = nullptr);
 
     //! Converts a JSON object to a CXMLNode
     static CXMLNode parseJSONNode(QJsonObject jObject, QString sTagName);
@@ -148,8 +153,11 @@ public:
     //! Converts a JSON array object to a vector of CXMLNode
     static CXMLNodeList parseJSONArray(QJsonArray jArray, QString sTagName);
 
-    //! Converts a JSON formatted string to a CXMLNode
-    static CXMLNode parseJSON(QString sText);
+    //! Converts a JSON formatted string to a CXMLNode.
+    //! If \a pErrorString is not null, it receives the parser error (offset, message).
+    //! Note: JSON scalars (numbers, booleans) have no CXMLNode counterpart and are
+    //! stored as text; JSON types are therefore not preserved (string coercion).
+    static CXMLNode parseJSON(QString sText, QString* pErrorString = nullptr);
 
     //! Converts the node to a QDomDocument
     QDomDocument toQDomDocument(bool bXMLHeader = true) const;

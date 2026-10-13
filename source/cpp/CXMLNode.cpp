@@ -1,10 +1,13 @@
 
 // Qt
+#include <QDebug>
 #include <QFile>
+#include <QJsonParseError>
 #include <QStringList>
 
 // Library
 #include "CXMLNode.h"
+#include "Macros.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -136,19 +139,24 @@ CXMLNodeList& CXMLNode::nodes()
 /*!
     Returns a CXMLNode hierarchy loaded from the file named \a sFileName (XML or JSON).
 */
-CXMLNode CXMLNode::load(const QString& sFileName)
+CXMLNode CXMLNode::load(const QString& sFileName, QString* pErrorString)
 {
     if (sFileName.toLower().endsWith(sExtension_XML))
     {
-        return loadXMLFromFile(sFileName);
+        return loadXMLFromFile(sFileName, pErrorString);
     }
     if (sFileName.toLower().endsWith(sExtension_XMLC))
     {
-        return loadXMLCFromFile(sFileName);
+        return loadXMLCFromFile(sFileName, pErrorString);
     }
     else if (sFileName.toLower().endsWith(sExtension_JSON))
     {
-        return loadJSONFromFile(sFileName);
+        return loadJSONFromFile(sFileName, pErrorString);
+    }
+
+    SAFE_USE(pErrorString)
+    {
+        *pErrorString = QString("CXMLNode::load(): unsupported file extension: %1").arg(sFileName);
     }
 
     return CXMLNode();
@@ -189,22 +197,34 @@ bool CXMLNode::save(const QString& sFileName)
 /*!
     Returns a CXMLNode hierarchy loaded from the XML file named \a sFileName.
 */
-CXMLNode CXMLNode::loadXMLFromFile(const QString& sFileName)
+CXMLNode CXMLNode::loadXMLFromFile(const QString& sFileName, QString* pErrorString)
 {
     QFile xmlFile(sFileName);
 
-    if (xmlFile.exists())
+    if (xmlFile.exists() == false)
     {
-        if (xmlFile.open(QIODevice::ReadOnly))
+        SAFE_USE(pErrorString)
         {
-            QString sText = QString(xmlFile.readAll());
-            xmlFile.close();
-
-            return parseXML(sText);
+            *pErrorString = QString("CXMLNode::loadXMLFromFile(): file not found: %1").arg(sFileName);
         }
+
+        return CXMLNode();
     }
 
-    return CXMLNode();
+    if (xmlFile.open(QIODevice::ReadOnly) == false)
+    {
+        SAFE_USE(pErrorString)
+        {
+            *pErrorString = QString("CXMLNode::loadXMLFromFile(): cannot open file: %1").arg(sFileName);
+        }
+
+        return CXMLNode();
+    }
+
+    QString sText = QString::fromUtf8(xmlFile.readAll());
+    xmlFile.close();
+
+    return parseXML(sText, pErrorString);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -212,24 +232,36 @@ CXMLNode CXMLNode::loadXMLFromFile(const QString& sFileName)
 /*!
     Returns a CXMLNode hierarchy loaded from the compressed XML file named \a sFileName.
 */
-CXMLNode CXMLNode::loadXMLCFromFile(const QString& sFileName)
+CXMLNode CXMLNode::loadXMLCFromFile(const QString& sFileName, QString* pErrorString)
 {
     QFile xmlFile(sFileName);
 
     // toto
 
-    if (xmlFile.exists())
+    if (xmlFile.exists() == false)
     {
-        if (xmlFile.open(QIODevice::ReadOnly))
+        SAFE_USE(pErrorString)
         {
-            QByteArray baData = xmlFile.readAll();
-            xmlFile.close();
-
-            return parseXML(QString(qUncompress(baData)));
+            *pErrorString = QString("CXMLNode::loadXMLCFromFile(): file not found: %1").arg(sFileName);
         }
+
+        return CXMLNode();
     }
 
-    return CXMLNode();
+    if (xmlFile.open(QIODevice::ReadOnly) == false)
+    {
+        SAFE_USE(pErrorString)
+        {
+            *pErrorString = QString("CXMLNode::loadXMLCFromFile(): cannot open file: %1").arg(sFileName);
+        }
+
+        return CXMLNode();
+    }
+
+    QByteArray baData = xmlFile.readAll();
+    xmlFile.close();
+
+    return parseXML(QString::fromUtf8(qUncompress(baData)), pErrorString);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -237,22 +269,34 @@ CXMLNode CXMLNode::loadXMLCFromFile(const QString& sFileName)
 /*!
     Returns a CXMLNode hierarchy loaded from the JSON file named \a sFileName.
 */
-CXMLNode CXMLNode::loadJSONFromFile(const QString& sFileName)
+CXMLNode CXMLNode::loadJSONFromFile(const QString& sFileName, QString* pErrorString)
 {
     QFile jsonFile(sFileName);
 
-    if (jsonFile.exists())
+    if (jsonFile.exists() == false)
     {
-        if (jsonFile.open(QIODevice::ReadOnly))
+        SAFE_USE(pErrorString)
         {
-            QString sText = QString(jsonFile.readAll());
-            jsonFile.close();
-
-            return parseJSON(sText);
+            *pErrorString = QString("CXMLNode::loadJSONFromFile(): file not found: %1").arg(sFileName);
         }
+
+        return CXMLNode();
     }
 
-    return CXMLNode();
+    if (jsonFile.open(QIODevice::ReadOnly) == false)
+    {
+        SAFE_USE(pErrorString)
+        {
+            *pErrorString = QString("CXMLNode::loadJSONFromFile(): cannot open file: %1").arg(sFileName);
+        }
+
+        return CXMLNode();
+    }
+
+    QString sText = QString::fromUtf8(jsonFile.readAll());
+    jsonFile.close();
+
+    return parseJSON(sText, pErrorString);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -289,7 +333,16 @@ CXMLNode CXMLNode::parseXMLNode(QDomNode node)
     {
         for (int Index = 0; Index < node.childNodes().length(); Index++)
         {
-            tNode.m_vNodes.append(CXMLNode::parseXMLNode(node.childNodes().at(Index)));
+            QDomNode xChild = node.childNodes().at(Index);
+
+            // Skip whitespace-only text nodes: pretty-printed XML indentation
+            // is not data and must not become child nodes.
+            if (xChild.isText() && xChild.nodeValue().trimmed().isEmpty())
+            {
+                continue;
+            }
+
+            tNode.m_vNodes.append(CXMLNode::parseXMLNode(xChild));
         }
     }
 
@@ -301,7 +354,7 @@ CXMLNode CXMLNode::parseXMLNode(QDomNode node)
 /*!
     Returns a CXMLNode tree parsed from the \a sText string.
 */
-CXMLNode CXMLNode::parseXML(QString sText)
+CXMLNode CXMLNode::parseXML(QString sText, QString* pErrorString)
 {
     CXMLNode tNode;
 
@@ -309,10 +362,23 @@ CXMLNode CXMLNode::parseXML(QString sText)
     {
         QDomDocument doc("myDocument");
 
-        if (doc.setContent(sText) == true)
+        QString sError;
+        int iErrorLine = 0;
+        int iErrorColumn = 0;
+
+        if (doc.setContent(sText, &sError, &iErrorLine, &iErrorColumn) == true)
         {
             tNode = CXMLNode::parseXMLNode(doc.documentElement());
         }
+        else SAFE_USE(pErrorString)
+        {
+            *pErrorString = QString("CXMLNode::parseXML(): line %1, column %2: %3")
+                .arg(iErrorLine).arg(iErrorColumn).arg(sError);
+        }
+    }
+    else SAFE_USE(pErrorString)
+    {
+        *pErrorString = QString("CXMLNode::parseXML(): empty input");
     }
 
     return tNode;
@@ -356,7 +422,10 @@ CXMLNode CXMLNode::parseJSONNode(QJsonObject jObject, QString sTagName)
         }
         else
         {
-            tNode.m_vAttributes[sKey] = jObject[sKey].toString();
+            // Scalars (numbers, booleans, null) have no CXMLNode counterpart:
+            // store their text form. Note QJsonValue::toString() returns empty
+            // for non-strings, so go through QVariant to preserve the value.
+            tNode.m_vAttributes[sKey] = jObject[sKey].toVariant().toString();
         }
     }
 
@@ -374,7 +443,18 @@ CXMLNodeList CXMLNode::parseJSONArray(QJsonArray jArray, QString sTagName)
 
     for (int iIndex = 0; iIndex < jArray.count(); iIndex++)
     {
-        vNodes.append(CXMLNode::parseJSONNode(jArray[iIndex].toObject(), sTagName));
+        if (jArray[iIndex].isObject())
+        {
+            vNodes.append(CXMLNode::parseJSONNode(jArray[iIndex].toObject(), sTagName));
+        }
+        else
+        {
+            // Scalar array items are not objects: keep them as value nodes
+            // instead of dropping them into empty placeholder nodes.
+            CXMLNode tValueNode(sTagName);
+            tValueNode.setValue(jArray[iIndex].toVariant().toString());
+            vNodes.append(tValueNode);
+        }
     }
 
     return vNodes;
@@ -385,15 +465,45 @@ CXMLNodeList CXMLNode::parseJSONArray(QJsonArray jArray, QString sTagName)
 /*!
     Returns a JSON hierarchy from \a sText, as a CXMLNode tree.
 */
-CXMLNode CXMLNode::parseJSON(QString sText)
+CXMLNode CXMLNode::parseJSON(QString sText, QString* pErrorString)
 {
     CXMLNode tNode;
 
     if (sText.isEmpty() == false)
     {
-        QJsonDocument doc = QJsonDocument::fromJson(sText.toUtf8());
+        QJsonParseError tError;
+        QJsonDocument doc = QJsonDocument::fromJson(sText.toUtf8(), &tError);
 
-        tNode = CXMLNode::parseJSONNode(doc.object(), "");
+        if (tError.error != QJsonParseError::NoError)
+        {
+            SAFE_USE(pErrorString)
+            {
+                *pErrorString = QString("CXMLNode::parseJSON(): offset %1: %2")
+                    .arg(tError.offset).arg(tError.errorString());
+            }
+
+            return tNode;
+        }
+
+        if (doc.isArray())
+        {
+            // Top-level arrays have no key: collect items under a NOTAG root
+            // instead of dropping them.
+            tNode.setTag("NOTAG");
+
+            for (CXMLNode xNode : parseJSONArray(doc.array(), "NOTAG"))
+            {
+                tNode.m_vNodes.append(xNode);
+            }
+        }
+        else
+        {
+            tNode = CXMLNode::parseJSONNode(doc.object(), "");
+        }
+    }
+    else SAFE_USE(pErrorString)
+    {
+        *pErrorString = QString("CXMLNode::parseJSON(): empty input");
     }
 
     return tNode;
@@ -426,7 +536,19 @@ QDomDocument CXMLNode::toQDomDocument(bool bXMLHeader) const
         doc.appendChild(xmlNode);
     }
 
-    doc.appendChild(toQDomElement(doc));
+    if (m_sTag.isEmpty())
+    {
+        // No tag: no single root element exists. Serialize children at document
+        // level (fragment-style) instead of silently discarding the subtree.
+        for (CXMLNode xChild : m_vNodes)
+        {
+            doc.appendChild(xChild.toQDomElement(doc));
+        }
+    }
+    else
+    {
+        doc.appendChild(toQDomElement(doc));
+    }
 
     return doc;
 }
@@ -438,6 +560,12 @@ QDomDocument CXMLNode::toQDomDocument(bool bXMLHeader) const
 */
 QDomElement CXMLNode::toQDomElement(QDomDocument& xDocument) const
 {
+    if (m_sTag.isEmpty())
+    {
+        qWarning() << "CXMLNode::toQDomElement(): empty tag, node and its subtree cannot be exported as an element";
+        return QDomElement();
+    }
+
     QDomElement thisElement = xDocument.createElement(m_sTag);
 
     if (!thisElement.isNull())

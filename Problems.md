@@ -230,20 +230,20 @@ Note: no purely `Cosmetic` item came out of these 15 classes; the weakest findin
 
 ## 10. `CXMLNode` — `source/cpp/CXMLNode.h`, `source/cpp/CXMLNode.cpp`
 
-- [ ] [Major] **10.1 All load/parse failures collapse to an empty node — no error signal**
-  Problem: missing files, `open()` failures, bad XML (`setContent()` false), and bad JSON all return a default `CXMLNode()` (`CXMLNode.cpp:139-155,192-256,304-319,388-400`). The `QDomDocument` error string and `QJsonParseError` are discarded, so callers cannot distinguish "file missing" from "malformed content".
+- [x] [Major] **10.1 All load/parse failures collapse to an empty node — no error signal**
+  Problem: missing files, `open()` failures, bad XML (`setContent()` false), and bad JSON all returned a default `CXMLNode()` (`CXMLNode.cpp:139-155,192-256,304-319,388-400`). The `QDomDocument` error string and `QJsonParseError` were discarded, so callers could not distinguish "file missing" from "malformed content". Fixed: `load()`, `loadXMLFromFile()`, `loadXMLCFromFile()`, `loadJSONFromFile()`, `parseXML()` and `parseJSON()` take an optional `QString* pErrorString` (default `nullptr`, existing callers unchanged) and forward file errors plus parser line/column/offset details.
   Fix reco: add `bool ok` out-params / `QString* errorString` overloads (or a `CXMLResult` type), and forward the underlying parse error details.
 
-- [ ] [Major] **10.2 `parseXMLNode()` pollutes children with whitespace `#text` nodes**
-  Problem: only the single-child `#text` case is collapsed (`CXMLNode.cpp:277-287`). Pretty-printed XML (multiple children + indentation) falls into the `else` branch and appends whitespace text nodes as real children, breaking `getNodeByTagName()` counts and round-trips.
+- [x] [Major] **10.2 `parseXMLNode()` pollutes children with whitespace `#text` nodes**
+  Problem: only the single-child `#text` case was collapsed (`CXMLNode.cpp:277-287`). Pretty-printed XML (multiple children + indentation) fell into the `else` branch and appended whitespace text nodes as real children, breaking `getNodeByTagName()` counts and round-trips. Fixed: whitespace-only text nodes are skipped during child iteration.
   Fix reco: skip whitespace-only text nodes (`node.isText()` + `trimmed().isEmpty()`) during child iteration.
 
-- [ ] [Major] **10.3 JSON conversion is lossy: scalars flattened, non-object array items dropped**
-  Problem: numbers/bools become string attributes via `toString()` (`CXMLNode.cpp:357-360`), losing types. `parseJSONArray()` calls `toObject()` on every element (`CXMLNode.cpp:375-378`), so arrays of scalars become empty `"NOTAG"` nodes. Top-level arrays are dropped entirely since `parseJSON()` only reads `doc.object()` (`CXMLNode.cpp:394-396`).
+- [x] [Major] **10.3 JSON conversion is lossy: scalars flattened, non-object array items dropped**
+  Problem: numbers/bools became string attributes via `toString()` (`CXMLNode.cpp:357-360`), losing types — worse, `QJsonValue::toString()` returns empty for non-strings, so values were wiped entirely. `parseJSONArray()` called `toObject()` on every element (`CXMLNode.cpp:375-378`), so arrays of scalars became empty `"NOTAG"` nodes. Top-level arrays were dropped entirely since `parseJSON()` only read `doc.object()` (`CXMLNode.cpp:394-396`). Fixed: scalars go through `toVariant().toString()` (values preserved as text; string coercion is now documented on `parseJSON()`), scalar array items become value nodes, and top-level arrays parse under a `NOTAG` root instead of being dropped.
   Fix reco: preserve types (store numbers/bools distinctly or document string coercion), handle `isArray()` at top level, and convert scalar array items to value nodes instead of empty objects.
 
-- [ ] [Major] **10.4 Empty tag silently drops the whole subtree on export**
-  Problem: `toQDomElement()` creates an element from `m_sTag` (`CXMLNode.cpp:439-463`); with an empty tag the element is null and children are silently discarded (lost data on `toString()`/`saveXMLToFile()`).
+- [x] [Major] **10.4 Empty tag silently drops the whole subtree on export**
+  Problem: `toQDomElement()` created an element from `m_sTag` (`CXMLNode.cpp:439-463`); with an empty tag the element was null and children were silently discarded (lost data on `toString()`/`saveXMLToFile()`). Fixed: `toQDomElement()` emits a `qWarning()` on empty tag instead of failing silently, and `toQDomDocument()` serializes children fragment-style at document level when the root tag is empty.
   Fix reco: `Q_ASSERT`/warning on empty tag, or serialize children fragment-style instead of dropping them.
 
 - [ ] [Minor] **10.5 File I/O ignores races and partial writes**

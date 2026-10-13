@@ -355,5 +355,80 @@ void CUnitTests::tracableMutexNonCopyableAndBlocking()
 }
 
 //-------------------------------------------------------------------------------------------------
+// Parse and load failures must say why instead of silently returning an empty node
+
+void CUnitTests::xmlLoadReportsErrors()
+{
+    QString sError;
+
+    CXMLNode xBad = CXMLNode::parseXML("<root><unclosed>", &sError);
+    QVERIFY(xBad.isEmpty());
+    QVERIFY(!sError.isEmpty());
+
+    sError.clear();
+    CXMLNode xGood = CXMLNode::parseXML("<root><a>1</a></root>", &sError);
+    QVERIFY(!xGood.isEmpty());
+    QVERIFY(sError.isEmpty());
+
+    sError.clear();
+    CXMLNode jBad = CXMLNode::parseJSON("{invalid}", &sError);
+    QVERIFY(jBad.isEmpty());
+    QVERIFY(!sError.isEmpty());
+
+    sError.clear();
+    CXMLNode xMissing = CXMLNode::load("/nonexistent/path/missing.xml", &sError);
+    QVERIFY(xMissing.isEmpty());
+    QVERIFY(!sError.isEmpty());
+
+    // Without an error pointer the contract is unchanged: empty node, no crash
+    QVERIFY(CXMLNode::parseXML("<root><unclosed>").isEmpty());
+}
+
+//-------------------------------------------------------------------------------------------------
+// Pretty-printed indentation must not become child nodes
+
+void CUnitTests::xmlSkipsWhitespaceTextNodes()
+{
+    CXMLNode xRoot = CXMLNode::parseXML("<root>\n  <a>1</a>\n  <b>2</b>\n</root>");
+
+    QCOMPARE(xRoot.nodes().count(), 2);
+    QCOMPARE(xRoot.getNodeByTagName("a").value(), QString("1"));
+    QCOMPARE(xRoot.getNodeByTagName("b").value(), QString("2"));
+}
+
+//-------------------------------------------------------------------------------------------------
+// JSON scalars and arrays must survive the conversion with their values
+
+void CUnitTests::jsonPreservesScalarsAndArrays()
+{
+    CXMLNode xRoot = CXMLNode::parseJSON("{\"n\":3,\"b\":true,\"arr\":[\"x\",\"y\"]}");
+
+    QCOMPARE(xRoot.attributes().value("n"), QString("3"));
+    QCOMPARE(xRoot.attributes().value("b"), QString("true"));
+
+    CXMLNodeList vArr = xRoot.getNodesByTagName("arr");
+    QCOMPARE(vArr.count(), 2);
+    QCOMPARE(vArr[0].value(), QString("x"));
+    QCOMPARE(vArr[1].value(), QString("y"));
+
+    CXMLNode xTopArray = CXMLNode::parseJSON("[1,2]");
+    QCOMPARE(xTopArray.nodes().count(), 2);
+    QCOMPARE(xTopArray.nodes()[0].value(), QString("1"));
+    QCOMPARE(xTopArray.nodes()[1].value(), QString("2"));
+}
+
+//-------------------------------------------------------------------------------------------------
+// An empty tag must not silently discard the subtree on export
+
+void CUnitTests::xmlEmptyTagExportsChildren()
+{
+    CXMLNode xRoot;
+    xRoot << CXMLNode("a");
+    xRoot.nodes()[0].setValue("1");
+
+    QVERIFY(xRoot.toString(false).contains("<a>1</a>"));
+}
+
+//-------------------------------------------------------------------------------------------------
 
 QTEST_MAIN(CUnitTests)
