@@ -4,7 +4,7 @@
 # here instead of burning CI runs.
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 QMAKE=""
 for candidate in qmake6 qmake-qt6 qmake; do
@@ -15,7 +15,7 @@ for candidate in qmake6 qmake-qt6 qmake; do
 done
 
 if [[ -z "${QMAKE}" ]]; then
-  echo "Error: qmake not found. Run ./deps.sh first." >&2
+  echo "Error: qmake not found. Run scripts/linux/deps.sh first." >&2
   exit 1
 fi
 

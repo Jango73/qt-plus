@@ -1,3 +1,6 @@
+cmake_minimum_required(VERSION 3.16)
+project(qt-plus VERSION 3.0.0 LANGUAGES CXX)
+
 add_library(qt-plus SHARED
     source/cpp/CConnectedStream.cpp
     source/cpp/CDumpable.cpp
@@ -121,4 +124,6 @@ target_link_libraries(qt-plus PUBLIC
     Qt6::Qml
 )
 
-set_target_properties(qt-plus PROPERTIES DEBUG_POSTFIX "d")
+set_target_properties(qt-plus PROPERTIES DEBUG_POSTFIX "d"
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR})

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-ROOT_FOLDER="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_FOLDER="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 EXIT_SUCCESS=0
 EXIT_FAILURE=1
@@ -10,7 +10,7 @@ CLEAN_TARGET="all"
 
 usage() {
   cat <<'USAGE'
-Usage: ./clean.sh [--debug|--release|--all] [-d|-r|-a]
+Usage: clean.sh [--debug|--release|--all] [-d|-r|-a]
   --debug,   -d  Remove the debug build folder
   --release, -r  Remove the release build folder
   --all,     -a  Remove both build folders (default)

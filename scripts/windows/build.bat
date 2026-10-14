@@ -6,7 +6,7 @@ set "EXIT_FAILURE=1"
 set "VERBOSE_ENABLED=1"
 set "VERBOSE_DISABLED=0"
 
-set "ROOT_FOLDER=%~dp0"
+for %%I in ("%~dp0..\..") do set "ROOT_FOLDER=%%~fI\"
 set "BUILD_TYPE=Release"
 set "VERBOSE_BUILD=%VERBOSE_DISABLED%"
 
@@ -85,7 +85,7 @@ if not exist "%BUILD_FOLDER%" mkdir "%BUILD_FOLDER%"
 cd /d "%BUILD_FOLDER%"
 
 echo Building qt-plus with %CONFIG_ARG%...
-qmake "%ROOT_FOLDER%\qt-plus.pro" %CONFIG_ARG%
+qmake "%ROOT_FOLDER%qt-plus.pro" %CONFIG_ARG%
 
 if %VERBOSE_BUILD%==%VERBOSE_ENABLED% (
   make VERBOSE=1

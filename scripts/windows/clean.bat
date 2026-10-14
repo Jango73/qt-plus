@@ -4,7 +4,7 @@ setlocal EnableExtensions EnableDelayedExpansion
 set "EXIT_SUCCESS=0"
 set "EXIT_FAILURE=1"
 
-set "ROOT_FOLDER=%~dp0"
+for %%I in ("%~dp0..\..") do set "ROOT_FOLDER=%%~fI\"
 set "CLEAN_TARGET=all"
 
 :parse

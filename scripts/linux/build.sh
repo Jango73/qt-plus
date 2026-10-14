@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 EXIT_SUCCESS=0
 EXIT_FAILURE=1
@@ -13,7 +13,7 @@ VERBOSE_BUILD="${VERBOSE_DISABLED}"
 
 usage() {
   cat <<'USAGE'
-Usage: ./build.sh [--debug|--release] [-d|-r] [--verbose|-v] [-c Debug|Release]
+Usage: build.sh [--debug|--release] [-d|-r] [--verbose|-v] [-c Debug|Release]
   --debug,   -d  Build type Debug (default)
   --release, -r  Build type Release
   --verbose, -v  Verbose build output

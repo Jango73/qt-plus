@@ -4,6 +4,7 @@ QT += core gui xml network widgets qml serialport
 CONFIG += warn_off
 TEMPLATE = lib
 DEFINES += QTPLUS_LIBRARY
+VERSION = 3.0.0
 
 # Dependencies
 INCLUDEPATH += $$PWD/src/cpp/QMLTree
