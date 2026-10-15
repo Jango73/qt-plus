@@ -56,6 +56,8 @@ CHTTPServer::CHTTPServer(quint16 uiPort, QObject* parent)
     , m_iMaintenanceTimerSeconds(60)
     , m_bDisabled(false)
     , m_bUseFloodProtection(true)
+    , m_pHttpsServer(nullptr)
+    , m_uiHttpsPort(0)
 {
     // Fill MIME array
 
@@ -107,6 +109,9 @@ CHTTPServer::CHTTPServer(quint16 uiPort, QObject* parent)
 */
 CHTTPServer::~CHTTPServer()
 {
+    // Stop HTTPS listener
+    disableHttps();
+
     // Kill threads
     for (CHTTPRequestProcessor* pProcessor : m_vProcessors)
     {
@@ -158,12 +163,136 @@ CWebSession* CHTTPServer::sessionBySocket(QTcpSocket* pSocket)
 
 //-------------------------------------------------------------------------------------------------
 
+bool CHTTPServer::isHttpsEnabled() const
+{
+    return m_pHttpsServer != nullptr && m_pHttpsServer->isListening();
+}
+
+//-------------------------------------------------------------------------------------------------
+
+quint16 CHTTPServer::httpsPort() const
+{
+    return m_uiHttpsPort;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+QSslConfiguration CHTTPServer::sslConfiguration() const
+{
+    return m_sslConfiguration;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 /*!
     Activates or deactivates flood protection according to \a bUse.
 */
 void CHTTPServer::useFloodProtection(bool bUse)
 {
     m_bUseFloodProtection = bUse;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Enables HTTPS on a second port using PEM files. HTTP keeps listening. \br\br
+    \a sCertPath contains the certificate file (PEM). \br
+    \a sKeyPath contains the private key file (PEM, RSA/ECDSA, optionally encrypted without passphrase support). \br
+    \a uiHttpsPort is the HTTPS port (443 by default). \br
+    Returns \c true on success.
+*/
+bool CHTTPServer::enableHttps(const QString& sCertPath, const QString& sKeyPath, quint16 uiHttpsPort)
+{
+    QFile fCert(sCertPath);
+    QFile fKey(sKeyPath);
+
+    if (!fCert.open(QIODevice::ReadOnly))
+    {
+        qWarning() << QString("CHTTPServer::enableHttps() : cannot open certificate %1").arg(sCertPath);
+        return false;
+    }
+
+    if (!fKey.open(QIODevice::ReadOnly))
+    {
+        qWarning() << QString("CHTTPServer::enableHttps() : cannot open private key %1").arg(sKeyPath);
+        return false;
+    }
+
+    QSslCertificate certificate(fCert.readAll(), QSsl::Pem);
+    QSslKey privateKey(fKey.readAll(), QSsl::Rsa, QSsl::Pem);
+
+    if (privateKey.isNull())
+    {
+        // Retry as EC key (PEM autodetect may need explicit algorithm)
+        fKey.seek(0);
+        privateKey = QSslKey(fKey.readAll(), QSsl::Ec, QSsl::Pem);
+    }
+
+    if (certificate.isNull())
+    {
+        qWarning() << QString("CHTTPServer::enableHttps() : invalid certificate %1").arg(sCertPath);
+        return false;
+    }
+
+    if (privateKey.isNull())
+    {
+        qWarning() << QString("CHTTPServer::enableHttps() : invalid private key %1").arg(sKeyPath);
+        return false;
+    }
+
+    return enableHttps(certificate, privateKey, uiHttpsPort);
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Enables HTTPS on a second port from in-memory certificate and key. HTTP keeps listening.
+*/
+bool CHTTPServer::enableHttps(const QSslCertificate& certificate, const QSslKey& privateKey, quint16 uiHttpsPort)
+{
+    if (certificate.isNull() || privateKey.isNull())
+        return false;
+
+    disableHttps();
+
+    QSslConfiguration sslConfig = QSslConfiguration::defaultConfiguration();
+    sslConfig.setLocalCertificate(certificate);
+    sslConfig.setPrivateKey(privateKey);
+    sslConfig.setPeerVerifyMode(QSslSocket::VerifyNone);
+    sslConfig.setProtocol(QSsl::SecureProtocols);
+
+    m_sslConfiguration = sslConfig;
+
+    m_pHttpsServer = new CHttpsListener(this);
+
+    if (!m_pHttpsServer->listen(QHostAddress::Any, uiHttpsPort))
+    {
+        qWarning() << QString("CHTTPServer::enableHttps() : bind to %1 failed").arg(uiHttpsPort);
+        delete m_pHttpsServer;
+        m_pHttpsServer = nullptr;
+        m_uiHttpsPort = 0;
+        return false;
+    }
+
+    m_uiHttpsPort = m_pHttpsServer->serverPort();
+    return true;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Disables HTTPS. HTTP keeps working.
+*/
+void CHTTPServer::disableHttps()
+{
+    if (m_pHttpsServer != nullptr)
+    {
+        m_pHttpsServer->close();
+        m_pHttpsServer->deleteLater();
+        m_pHttpsServer = nullptr;
+    }
+
+    m_uiHttpsPort = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -480,10 +609,27 @@ void CHTTPServer::incomingConnection(qintptr socketDescriptor)
 
 //    if (bPassBlacklisting)
     {
-        CHTTPRequestProcessor* pProcessor = new CHTTPRequestProcessor(this, socketDescriptor);
-        m_vProcessors << pProcessor;
-        connect(pProcessor, &QThread::finished, this, &CHTTPServer::onThreadFinished);
-        pProcessor->start();
+        createProcessor(socketDescriptor, false);
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CHTTPServer::createProcessor(qintptr socketDescriptor, bool bSecure)
+{
+    CHTTPRequestProcessor* pProcessor = new CHTTPRequestProcessor(this, socketDescriptor, bSecure);
+    m_vProcessors << pProcessor;
+    connect(pProcessor, &QThread::finished, this, &CHTTPServer::onThreadFinished);
+    pProcessor->start();
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CHTTPServer::CHttpsListener::incomingConnection(qintptr iSocketDescriptor)
+{
+    if (m_pParent != nullptr)
+    {
+        m_pParent->createProcessor(iSocketDescriptor, true);
     }
 }
 

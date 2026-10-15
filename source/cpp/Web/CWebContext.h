@@ -54,6 +54,9 @@ public:
 
     bool pathValid() const { return not (m_lPath.count() == 0 || m_lPath[0].isEmpty()); }
 
+    //! Returns true when the underlying socket is TLS-encrypted (HTTPS)
+    bool isSecure() const;
+
     //-------------------------------------------------------------------------------------------------
     // Control methods
     //-------------------------------------------------------------------------------------------------

@@ -12,6 +12,9 @@
 #include <QThread>
 #include <QRecursiveMutex>
 #include <QTimer>
+#include <QSslConfiguration>
+#include <QSslCertificate>
+#include <QSslKey>
 
 // Application
 #include "CHTTPRequestProcessor.h"
@@ -135,12 +138,30 @@ public:
     //!
     CWebSession* sessionBySocket(QTcpSocket* pSocket);
 
+    //!
+    bool isHttpsEnabled() const;
+
+    //!
+    quint16 httpsPort() const;
+
+    //!
+    QSslConfiguration sslConfiguration() const;
+
     //-------------------------------------------------------------------------------------------------
     // Public control methods
     //-------------------------------------------------------------------------------------------------
 
     //! Activates or deactivates flood protection (activated by default)
     void useFloodProtection(bool bUse);
+
+    //! Enables HTTPS on a second port using PEM files (key + certificate). HTTP keeps working. Returns false on error
+    bool enableHttps(const QString& sCertPath, const QString& sKeyPath, quint16 uiHttpsPort = DEFAULT_HTTPS_PORT);
+
+    //! Enables HTTPS from in-memory certificate and key. HTTP keeps working. Returns false on error
+    bool enableHttps(const QSslCertificate& certificate, const QSslKey& privateKey, quint16 uiHttpsPort = DEFAULT_HTTPS_PORT);
+
+    //! Disables HTTPS (HTTP keeps working)
+    void disableHttps();
 
     //!  Adds a folder to the list of authorized folders
     void addAuthorizedFolder(QString sFolderName);
@@ -209,6 +230,26 @@ protected:
     //!
     virtual void incomingConnection(qintptr iSocketDescriptor) Q_DECL_OVERRIDE;
 
+    //! Creates a request processor for a socket descriptor (secure = TLS upgrade in processor)
+    void createProcessor(qintptr iSocketDescriptor, bool bSecure);
+
+    //! Internal TCP listener forwarding raw descriptors to the parent as HTTPS
+    class CHttpsListener : public QTcpServer
+    {
+    public:
+        explicit CHttpsListener(CHTTPServer* pParent = nullptr)
+            : QTcpServer(pParent)
+            , m_pParent(pParent)
+        {
+        }
+
+    protected:
+        void incomingConnection(qintptr iSocketDescriptor) Q_DECL_OVERRIDE;
+
+    private:
+        CHTTPServer* m_pParent;
+    };
+
     //-------------------------------------------------------------------------------------------------
     // Protected slots
     //-------------------------------------------------------------------------------------------------
@@ -224,7 +265,7 @@ protected slots:
 
 protected:
 
-    QRecursiveMutex                          m_mMutex;                       // Data protection
+    QRecursiveMutex                 m_mMutex;                       // Data protection
     int                             m_iRequestCount;                // Total request count
     int                             m_iMaxRequestPerSeconds;        // Maximum requests per second for a given IP
     int                             m_iMaximumSessionAliveSeconds;  //
@@ -239,4 +280,7 @@ protected:
     QStringList                     m_lStaticIPBlackList;
     QStringList                     m_lDynamicIPBlackList;
     QTimer                          m_tMaintenanceTimer;
+    QSslConfiguration               m_sslConfiguration;             // Active TLS config (if HTTPS enabled)
+    CHttpsListener*                 m_pHttpsServer;                 // Second listener for HTTPS (null = disabled)
+    quint16                         m_uiHttpsPort;                  // HTTPS port (0 = disabled)
 };

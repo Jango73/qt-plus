@@ -3,6 +3,7 @@
 #include <QCoreApplication>
 #include <QFile>
 #include <QRegularExpression>
+#include <QSslSocket>
 
 // Application
 #include "CHTTPRequestProcessor.h"
@@ -17,8 +18,9 @@
 /*!
     Constructs a CHTTPRequestProcessor
 */
-CHTTPRequestProcessor::CHTTPRequestProcessor(CHTTPServer* pServer, qintptr iSocketDescriptor)
+CHTTPRequestProcessor::CHTTPRequestProcessor(CHTTPServer* pServer, qintptr iSocketDescriptor, bool bSecure)
     : m_bStop(false)
+    , m_bSecure(bSecure)
     , m_bHeaderRead(false)
     , m_iExpectedBytes(0)
     , m_iSocketDescriptor(iSocketDescriptor)
@@ -48,9 +50,43 @@ QMap<QString, QVariant>& CHTTPRequestProcessor::userData()
 
 void CHTTPRequestProcessor::run()
 {
-    m_pSocket = new QTcpSocket();
+    if (m_bSecure)
+    {
+        QSslSocket* pSslSocket = new QSslSocket();
 
-    if (m_pSocket->setSocketDescriptor(m_iSocketDescriptor))
+        pSslSocket->setSslConfiguration(m_pServer->sslConfiguration());
+
+        if (!pSslSocket->setSocketDescriptor(m_iSocketDescriptor))
+        {
+            pSslSocket->deleteLater();
+            return;
+        }
+
+        m_pSocket = pSslSocket;
+
+        pSslSocket->startServerEncryption();
+
+        if (!pSslSocket->waitForEncrypted(10000))
+        {
+            qWarning() << QString("CHTTPRequestProcessor::run() : TLS handshake failed : %1").arg(pSslSocket->errorString());
+            pSslSocket->disconnectFromHost();
+            pSslSocket->deleteLater();
+            m_pSocket = nullptr;
+            return;
+        }
+    }
+    else
+    {
+        m_pSocket = new QTcpSocket();
+
+        if (!m_pSocket->setSocketDescriptor(m_iSocketDescriptor))
+        {
+            m_pSocket->deleteLater();
+            m_pSocket = nullptr;
+            return;
+        }
+    }
+
     {
         QString sIPAddress = CHTTPServer::cleanIP(m_pSocket->peerAddress().toString());
 
@@ -61,6 +97,14 @@ void CHTTPRequestProcessor::run()
         connect(m_pSocket, &QTcpSocket::bytesWritten, this, &CHTTPRequestProcessor::onSocketBytesWritten);
         connect(m_pSocket, &QTcpSocket::disconnected, this, &CHTTPRequestProcessor::onSocketDisconnected);
 
+        // Data (e.g. a TLS-encrypted request sent right after the handshake, or a
+        // request sent in a single TCP segment) may already be buffered, in which case
+        // readyRead was emitted before we connected and would be missed forever
+        if (m_pSocket->bytesAvailable() > 0)
+        {
+            onSocketReadyRead();
+        }
+
         while (m_bStop == false)
         {
             msleep(10);
@@ -70,7 +114,16 @@ void CHTTPRequestProcessor::run()
         m_pSocket->disconnect();
     }
 
-    m_pSocket->deleteLater();
+    // Detach the socket first so late queued signals find a null socket and bail out,
+    // then cut signals and schedule deletion
+    QTcpSocket* pSocket = m_pSocket;
+    m_pSocket = nullptr;
+
+    if (pSocket != nullptr)
+    {
+        pSocket->disconnect();
+        pSocket->deleteLater();
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -88,6 +141,10 @@ void CHTTPRequestProcessor::stopMe()
 */
 void CHTTPRequestProcessor::onSocketDisconnected()
 {
+    // The socket may already be gone (worker thread teardown racing with queued signals)
+    if (m_pSocket == nullptr)
+        return;
+
     CWebContext tContext(m_pSocket, m_mUserData, m_pServer->sessionBySocket(m_pSocket));
 
     // Call the socket disconnected handler
@@ -205,6 +262,10 @@ void CHTTPRequestProcessor::onSocketReadyRead()
 */
 void CHTTPRequestProcessor::onSocketBytesWritten(qint64 iBytes)
 {
+    // The socket may already be gone (worker thread teardown racing with queued signals)
+    if (m_pSocket == nullptr)
+        return;
+
     CWebContext tContext(m_pSocket, m_mUserData, m_pServer->sessionBySocket(m_pSocket));
 
     // Call the bytes written handler

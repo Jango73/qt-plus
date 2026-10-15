@@ -91,7 +91,7 @@ Can do the following:
 * Define the accessible folders for ressources
 * Generate dynamic *HTML* content via overridden methods.
 * More or less efficient flood protection (has not been tested on large scale)
-* No *https* for now
+* Optional *https* support on a separate port (see "HTTPS setup" below)
 
 ### CDynamicHTTPServer
 Implements the base functionalities of a web server that generates dynamic HTML content.
@@ -138,3 +138,35 @@ Copyright (c) 2007-2017 Einar Lielmanis, Liam Newman, and contributors
 
 ## Content of source/cpp/rsa
 Copyright (c) 2008 Nedim Srndic. Originally hosted on http://code.google.com/p/rsa
+
+## Usage
+
+### HTTPS setup
+`CHTTPServer` serves plain HTTP by default. Calling `enableHttps()` adds a second
+listener for TLS-encrypted traffic; the HTTP port keeps working unchanged.
+
+1. Get a certificate and a private key, both in PEM format.
+   For local development, generate a self-signed pair with:
+   * Linux : `scripts/linux/make-dev-cert.sh ./certs` (outputs `certs/localhost.crt` + `certs/localhost.key`)
+   * Windows : `scripts/windows/make-dev-cert.bat .\certs`
+
+   For production, use a certificate signed by a real CA (still PEM files).
+2. Enable HTTPS in code:
+   ```cpp
+   CHTTPServer* pServer = new CHTTPServer(80);
+   if (!pServer->enableHttps("certs/localhost.crt", "certs/localhost.key", 443))
+   {
+       // Handle error (bad paths, invalid PEM, port already in use...)
+   }
+   ```
+   The certificate and key can also be passed as `QSslCertificate` / `QSslKey`
+   objects via the second `enableHttps()` overload, and HTTPS can be stopped
+   at any time with `disableHttps()` (HTTP is unaffected).
+3. Inside request handlers, `CWebContext::isSecure()` tells whether the current
+   request came through HTTPS.
+
+Notes:
+* Ports below 1024 (like the default 443) require elevated privileges on Linux;
+  use a higher port (e.g. 8443) for development.
+* Self-signed certificates make browsers and `QSslSocket` clients warn about an
+  untrusted issuer; that is expected outside production.

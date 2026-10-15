@@ -2,6 +2,7 @@
 // Application
 #include "CWebContext.h"
 #include <QRegularExpression>
+#include <QSslSocket>
 
 //-------------------------------------------------------------------------------------------------
 
@@ -62,6 +63,13 @@ CWebContext::CWebContext(const CWebContext& target)
 
 CWebContext::~CWebContext()
 {
+}
+
+//-------------------------------------------------------------------------------------------------
+
+bool CWebContext::isSecure() const
+{
+    return qobject_cast<QSslSocket*>(m_pSocket) != nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------

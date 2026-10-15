@@ -107,7 +107,7 @@ public:
     //-------------------------------------------------------------------------------------------------
 
     //! Constructor
-    CHTTPRequestProcessor(CHTTPServer* pServer, qintptr iSocketDescriptor);
+    CHTTPRequestProcessor(CHTTPServer* pServer, qintptr iSocketDescriptor, bool bSecure = false);
 
     //! Destructor
     virtual ~CHTTPRequestProcessor() override;
@@ -194,6 +194,7 @@ public:
 protected:
 
     bool                    m_bStop;                    // When true, thread must stop
+    bool                    m_bSecure;                  // When true, upgrade socket to TLS
     bool                    m_bHeaderRead;              // When true, we have HTTP header data
     int                     m_iExpectedBytes;           // Number of bytes we are expecting
     qintptr                 m_iSocketDescriptor;
