@@ -23,7 +23,12 @@ const char* CXMLNode::sExtension_XML    = ".xml";
 const char* CXMLNode::sExtension_XMLC   = ".xmlc";
 const char* CXMLNode::sExtension_QRC    = ".qrc";
 const char* CXMLNode::sExtension_JSON   = ".json";
+const char* CXMLNode::sExtension_BIN    = ".bin";
 const char* CXMLNode::sValueAttribute   = "value";
+
+// Binary format header (big picture: magic + version + recursive node payload)
+static const quint32 s_uBinaryMagic = 0x584D4C42; // "XMLB"
+static const quint32 s_uBinaryVersion = 0x00000001;
 
 //-------------------------------------------------------------------------------------------------
 
@@ -153,6 +158,10 @@ CXMLNode CXMLNode::load(const QString& sFileName, QString* pErrorString)
     {
         return loadJSONFromFile(sFileName, pErrorString);
     }
+    else if (sFileName.toLower().endsWith(sExtension_BIN))
+    {
+        return loadBINFromFile(sFileName, pErrorString);
+    }
 
     SAFE_USE(pErrorString)
     {
@@ -187,6 +196,10 @@ bool CXMLNode::save(const QString& sFileName)
     else if (sLowerFileName.endsWith(sExtension_JSON))
     {
         return saveJSONToFile(sFileName);
+    }
+    else if (sLowerFileName.endsWith(sExtension_BIN))
+    {
+        return saveBINToFile(sFileName);
     }
 
     return false;
@@ -297,6 +310,41 @@ CXMLNode CXMLNode::loadJSONFromFile(const QString& sFileName, QString* pErrorStr
     jsonFile.close();
 
     return parseJSON(sText, pErrorString);
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns a CXMLNode hierarchy loaded from the binary file named \a sFileName.
+*/
+CXMLNode CXMLNode::loadBINFromFile(const QString& sFileName, QString* pErrorString)
+{
+    QFile tFile(sFileName);
+
+    if (tFile.exists() == false)
+    {
+        SAFE_USE(pErrorString)
+        {
+            *pErrorString = QString("CXMLNode::loadBINFromFile(): file not found: %1").arg(sFileName);
+        }
+
+        return CXMLNode();
+    }
+
+    if (tFile.open(QIODevice::ReadOnly) == false)
+    {
+        SAFE_USE(pErrorString)
+        {
+            *pErrorString = QString("CXMLNode::loadBINFromFile(): cannot open file: %1").arg(sFileName);
+        }
+
+        return CXMLNode();
+    }
+
+    QByteArray sData = tFile.readAll();
+    tFile.close();
+
+    return fromBinary(sData, pErrorString);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -735,6 +783,214 @@ bool CXMLNode::saveJSONToFile(const QString& sFileName)
     }
 
     return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Saves this CXMLNode tree as binary in the file named \a sFileName. \br
+    Returns \c true if successful, \c false otherwise.
+*/
+bool CXMLNode::saveBINToFile(const QString& sFileName)
+{
+    QFile tFile(sFileName);
+
+    if (tFile.open(QIODevice::WriteOnly))
+    {
+        tFile.write(toBinary());
+        tFile.close();
+
+        return true;
+    }
+
+    return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns a binary blob with the content of this CXMLNode tree. \br
+    The blob starts with a magic number and a version number, followed by
+    the recursive node payload. Use fromBinary() to decode it.
+*/
+QByteArray CXMLNode::toBinary() const
+{
+    QByteArray sData;
+    QDataStream sStream(&sData, QIODevice::WriteOnly);
+    sStream.setVersion(QDataStream::Qt_6_0);
+
+    sStream << s_uBinaryMagic;
+    sStream << s_uBinaryVersion;
+    sStream << *this;
+
+    return sData;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Returns a CXMLNode tree decoded from the binary blob \a sData. \br
+    If \a pErrorString is not null, it receives a description of the failure.
+*/
+CXMLNode CXMLNode::fromBinary(const QByteArray& sData, QString* pErrorString)
+{
+    if (sData.isEmpty())
+    {
+        SAFE_USE(pErrorString)
+        {
+            *pErrorString = QString("CXMLNode::fromBinary(): empty input");
+        }
+
+        return CXMLNode();
+    }
+
+    QDataStream sStream(sData);
+    sStream.setVersion(QDataStream::Qt_6_0);
+
+    quint32 uMagic = 0;
+    quint32 uVersion = 0;
+
+    sStream >> uMagic;
+    sStream >> uVersion;
+
+    if (sStream.status() != QDataStream::Ok)
+    {
+        SAFE_USE(pErrorString)
+        {
+            *pErrorString = QString("CXMLNode::fromBinary(): cannot read header");
+        }
+
+        return CXMLNode();
+    }
+
+    if (uMagic != s_uBinaryMagic)
+    {
+        SAFE_USE(pErrorString)
+        {
+            *pErrorString = QString("CXMLNode::fromBinary(): invalid magic");
+        }
+
+        return CXMLNode();
+    }
+
+    if (uVersion != s_uBinaryVersion)
+    {
+        SAFE_USE(pErrorString)
+        {
+            *pErrorString = QString("CXMLNode::fromBinary(): unsupported version: %1").arg(uVersion);
+        }
+
+        return CXMLNode();
+    }
+
+    CXMLNode xNode;
+    sStream >> xNode;
+
+    if (sStream.status() != QDataStream::Ok)
+    {
+        SAFE_USE(pErrorString)
+        {
+            *pErrorString = QString("CXMLNode::fromBinary(): truncated payload");
+        }
+
+        return CXMLNode();
+    }
+
+    return xNode;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Serializes the payload of \a xNode (tag, value, attributes, children)
+    into \a sStream. The header (magic, version) is handled by toBinary().
+*/
+QDataStream& operator << (QDataStream& sStream, const CXMLNode& xNode)
+{
+    sStream << xNode.tag();
+    sStream << xNode.value();
+
+    const QMap<QString, QString>& vAttributes = xNode.attributes();
+    sStream << static_cast<quint32>(vAttributes.count());
+
+    for (auto iAttribute = vAttributes.constBegin(); iAttribute != vAttributes.constEnd(); ++iAttribute)
+    {
+        sStream << iAttribute.key();
+        sStream << iAttribute.value();
+    }
+
+    const CXMLNodeList& vNodes = xNode.nodes();
+    sStream << static_cast<quint32>(vNodes.count());
+
+    for (const CXMLNode& xChild : vNodes)
+    {
+        sStream << xChild;
+    }
+
+    return sStream;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Deserializes the payload of \a xNode (tag, value, attributes, children)
+    from \a sStream. The header (magic, version) is handled by fromBinary().
+*/
+QDataStream& operator >> (QDataStream& sStream, CXMLNode& xNode)
+{
+    QString sTag;
+    QString sValue;
+
+    sStream >> sTag;
+    sStream >> sValue;
+
+    if (sStream.status() != QDataStream::Ok)
+        return sStream;
+
+    xNode.setTag(sTag);
+    xNode.setValue(sValue);
+    xNode.attributes().clear();
+    xNode.nodes().clear();
+
+    quint32 uAttributeCount = 0;
+    sStream >> uAttributeCount;
+
+    if (sStream.status() != QDataStream::Ok)
+        return sStream;
+
+    for (quint32 iIndex = 0; iIndex < uAttributeCount; iIndex++)
+    {
+        QString sKey;
+        QString sAttributeValue;
+
+        sStream >> sKey;
+        sStream >> sAttributeValue;
+
+        if (sStream.status() != QDataStream::Ok)
+            return sStream;
+
+        xNode.attributes()[sKey] = sAttributeValue;
+    }
+
+    quint32 uChildCount = 0;
+    sStream >> uChildCount;
+
+    if (sStream.status() != QDataStream::Ok)
+        return sStream;
+
+    for (quint32 iIndex = 0; iIndex < uChildCount; iIndex++)
+    {
+        CXMLNode xChild;
+
+        sStream >> xChild;
+
+        if (sStream.status() != QDataStream::Ok)
+            return sStream;
+
+        xNode.nodes().append(xChild);
+    }
+
+    return sStream;
 }
 
 //-------------------------------------------------------------------------------------------------

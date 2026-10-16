@@ -7,6 +7,8 @@
 // Includes
 
 // Qt
+#include <QByteArray>
+#include <QDataStream>
 #include <QMetaType>
 #include <QString>
 #include <QMap>
@@ -99,11 +101,11 @@ public:
     // High level control methods
     //-------------------------------------------------------------------------------------------------
 
-    //! Loads a CXMLNode from a XML or JSON file based on the extension.
+    //! Loads a CXMLNode from a XML, JSON or binary file based on the extension.
     //! If \a pErrorString is not null, it receives a description of the failure (file or parse error).
     static CXMLNode load(const QString& sFileName, QString* pErrorString = nullptr);
 
-    //! Saves content to a XML or JSON file based on the extension
+    //! Saves content to a XML, JSON or binary file based on the extension
     bool save(const QString& sFileName);
 
     //! Reads a XML file given a file name.
@@ -118,6 +120,10 @@ public:
     //! If \a pErrorString is not null, it receives a description of the failure.
     static CXMLNode loadJSONFromFile(const QString& sFileName, QString* pErrorString = nullptr);
 
+    //! Reads a binary file given a file name.
+    //! If \a pErrorString is not null, it receives a description of the failure.
+    static CXMLNode loadBINFromFile(const QString& sFileName, QString* pErrorString = nullptr);
+
     //! Converts the document to a string
     QString toString(bool bXMLHeader = true) const;
 
@@ -129,6 +135,9 @@ public:
 
     //! Saves a JSON file
     bool saveJSONToFile(const QString& sFileName);
+
+    //! Saves a binary file
+    bool saveBINToFile(const QString& sFileName);
 
     //! Appends a node to the child nodes of this node
     CXMLNode& operator << (CXMLNode value);
@@ -174,6 +183,13 @@ public:
     //! Converts the node to a JSON object
     QJsonObject toJsonObject() const;
 
+    //! Converts the node to a binary blob (magic + version + recursive payload)
+    QByteArray toBinary() const;
+
+    //! Converts a binary blob produced by toBinary() back to a CXMLNode.
+    //! If \a pErrorString is not null, it receives a description of the failure.
+    static CXMLNode fromBinary(const QByteArray& sData, QString* pErrorString = nullptr);
+
     //! Merges the 'target' node into this node
     void merge(const CXMLNode& xTarget);
 
@@ -190,6 +206,7 @@ public:
     static const char* sExtension_XMLC;
     static const char* sExtension_QRC;
     static const char* sExtension_JSON;
+    static const char* sExtension_BIN;
     static const char* sValueAttribute;
 
     //-------------------------------------------------------------------------------------------------
@@ -203,5 +220,11 @@ protected:
     QMap<QString, QString>  m_vAttributes;  // Node's attributes
     CXMLNodeList            m_vNodes;       // Child nodes
 };
+
+//! Serializes a CXMLNode payload (without magic or version) into a data stream
+QTPLUSSHARED_EXPORT QDataStream& operator << (QDataStream& sStream, const CXMLNode& xNode);
+
+//! Deserializes a CXMLNode payload (without magic or version) from a data stream
+QTPLUSSHARED_EXPORT QDataStream& operator >> (QDataStream& sStream, CXMLNode& xNode);
 
 Q_DECLARE_METATYPE(CXMLNode);

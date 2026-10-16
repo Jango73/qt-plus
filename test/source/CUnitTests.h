@@ -42,4 +42,5 @@ private slots:
     void xmlSkipsWhitespaceTextNodes();
     void jsonPreservesScalarsAndArrays();
     void xmlEmptyTagExportsChildren();
+    void xmlBinaryRoundTrip();
 };

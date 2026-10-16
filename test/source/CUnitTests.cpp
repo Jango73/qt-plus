@@ -430,5 +430,78 @@ void CUnitTests::xmlEmptyTagExportsChildren()
 }
 
 //-------------------------------------------------------------------------------------------------
+// Binary persistence must round-trip the full hierarchy and report errors
+
+void CUnitTests::xmlBinaryRoundTrip()
+{
+    CXMLNode xRoot("root");
+    xRoot.attributes()["name"] = QString::fromUtf8("héllo");
+    xRoot.setValue("");
+
+    CXMLNode xChild("item");
+    xChild.attributes()["id"] = "1";
+    xChild.setValue("first");
+    xRoot << xChild;
+
+    CXMLNode xNested("item");
+    xNested.attributes()["id"] = "2";
+    xNested.setValue("second");
+
+    CXMLNode xLeaf("leaf");
+    xLeaf.setValue(QString::fromUtf8("ünicode"));
+    xNested << xLeaf;
+
+    xRoot << xNested;
+
+    QByteArray sBinary = xRoot.toBinary();
+    QVERIFY(!sBinary.isEmpty());
+
+    QString sError;
+    CXMLNode xDecoded = CXMLNode::fromBinary(sBinary, &sError);
+    QVERIFY2(sError.isEmpty(), qPrintable(sError));
+    QVERIFY(xDecoded == xRoot);
+
+    // Empty node round-trip
+    CXMLNode xEmptyDecoded = CXMLNode::fromBinary(CXMLNode().toBinary());
+    QVERIFY(xEmptyDecoded == CXMLNode());
+
+    // File round-trip through the dedicated and generic entry points
+    QTemporaryDir tDir;
+    QVERIFY(tDir.isValid());
+
+    QString sFileName = tDir.path() + "/node.bin";
+    QVERIFY(xRoot.saveBINToFile(sFileName));
+
+    sError.clear();
+    CXMLNode xFromFile = CXMLNode::loadBINFromFile(sFileName, &sError);
+    QVERIFY2(sError.isEmpty(), qPrintable(sError));
+    QVERIFY(xFromFile == xRoot);
+
+    QString sGenericFile = tDir.path() + "/generic.bin";
+    QVERIFY(xRoot.save(sGenericFile));
+    QVERIFY(CXMLNode::load(sGenericFile) == xRoot);
+
+    // Error paths: no crash, empty node, error text when requested
+    sError.clear();
+    QVERIFY(CXMLNode::fromBinary(QByteArray(), &sError).isEmpty());
+    QVERIFY(!sError.isEmpty());
+
+    sError.clear();
+    QVERIFY(CXMLNode::fromBinary(QByteArray("not-a-node"), &sError).isEmpty());
+    QVERIFY(!sError.isEmpty());
+
+    QByteArray sTruncated = sBinary.left(sBinary.size() / 2);
+    sError.clear();
+    QVERIFY(CXMLNode::fromBinary(sTruncated, &sError).isEmpty());
+    QVERIFY(!sError.isEmpty());
+
+    sError.clear();
+    QVERIFY(CXMLNode::loadBINFromFile(tDir.path() + "/missing.bin", &sError).isEmpty());
+    QVERIFY(!sError.isEmpty());
+
+    QVERIFY(CXMLNode::fromBinary(QByteArray()).isEmpty());
+}
+
+//-------------------------------------------------------------------------------------------------
 
 QTEST_MAIN(CUnitTests)
