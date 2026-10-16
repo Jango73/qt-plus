@@ -76,6 +76,7 @@ public:
     QStringList                 m_lPath;                //! The path to the required resource
     QMap<QString, QString>      m_mArguments;           //! The arguments in the URL
     QMap<QString, QString>      m_mArgumentMIMEs;       //! The MIME type of the arguments in the URL (if any)
+    QMap<QString, QString>      m_mRequestHeaders;      //! Generic HTTP request headers (header name to value, request line excluded)
     QMap<QString, QVariant>     m_mUserData;            //! A map for user data
     QString                     m_sContentType;         //! The requested content type
     QByteArray                  m_baPostContent;        //! The contents of the POST data (if any)

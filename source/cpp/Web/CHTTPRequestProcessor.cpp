@@ -398,6 +398,22 @@ void CHTTPRequestProcessor::processRequest()
                 // Get the request path (route) and arguments
                 getRequestPathAndArgs(lTokens, tContext.m_lPath, tContext.m_mArguments, tContext.m_mArgumentMIMEs);
 
+                // Store generic request headers (skip the request line at index 0)
+                for (int iIndex = 1; iIndex < lTokens.count(); iIndex++)
+                {
+                    const QString sLine = lTokens[iIndex];
+                    const int iSeparator = sLine.indexOf(":");
+
+                    if (iSeparator > 0)
+                    {
+                        const QString sName = sLine.left(iSeparator).trimmed();
+                        const QString sValue = sLine.mid(iSeparator + 1).trimmed();
+
+                        if (not sName.isEmpty())
+                            tContext.m_mRequestHeaders[sName] = sValue;
+                    }
+                }
+
                 // Get the host name
                 tContext.m_sHost = getTokenValue(lTokens, Token_Host);
 
