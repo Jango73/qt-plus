@@ -205,6 +205,3 @@ SOURCES += \
     source/cpp/rsa/source/PrimeGenerator.cpp \
     source/cpp/rsa/source/RSA.cpp \
     source/cpp/roke/ROKE.cpp
-
-RESOURCES += \
-    resources.qrc

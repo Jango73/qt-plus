@@ -13,7 +13,6 @@
 #include <QTextStream>
 #include <QStack>
 #include <QThread>
-#include <QJSEngine>
 
 // Library
 #include "../CXMLNodable.h"
