@@ -17,6 +17,7 @@ HEADERS += \
     $$PWD/source/cpp/CSecureContext.h \
     $$PWD/source/cpp/File/CFileUtilities.h \
     $$PWD/source/cpp/File/CRollingFiles.h \
+    $$PWD/source/cpp/File/CShardFileStore.h \
     $$PWD/source/cpp/File/CDirectoryListing.h \
     $$PWD/source/cpp/Web/CWebComposer.h \
     $$PWD/source/cpp/Web/CWebContext.h \
@@ -58,6 +59,7 @@ SOURCES += \
     $$PWD/source/cpp/CSecureContext.cpp \
     $$PWD/source/cpp/File/CFileUtilities.cpp \
     $$PWD/source/cpp/File/CRollingFiles.cpp \
+    $$PWD/source/cpp/File/CShardFileStore.cpp \
     $$PWD/source/cpp/File/CDirectoryListing.cpp \
     $$PWD/source/cpp/Web/CWebComposer.cpp \
     $$PWD/source/cpp/Web/CWebContext.cpp \

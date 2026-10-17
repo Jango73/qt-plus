@@ -29,6 +29,7 @@ HEADERS += \
     source/cpp/CSerialStream.h \
     source/cpp/File/CFileUtilities.h \
     source/cpp/File/CRollingFiles.h \
+    source/cpp/File/CShardFileStore.h \
     source/cpp/File/CDirectoryListing.h \
     source/cpp/Assembly/CAssemblyEngine.h \
     source/cpp/RemoteControl/CRemoteControl.h \
@@ -128,6 +129,7 @@ SOURCES += \
     source/cpp/CSerialStream.cpp \
     source/cpp/File/CFileUtilities.cpp \
     source/cpp/File/CRollingFiles.cpp \
+    source/cpp/File/CShardFileStore.cpp \
     source/cpp/File/CDirectoryListing.cpp \
     source/cpp/Assembly/CAssemblyEngine.cpp \
     source/cpp/Assembly/CAssemblyEngine_Compile.cpp \

@@ -29,6 +29,7 @@ add_library(qt-plus SHARED
     source/cpp/File/CDirectoryListing.cpp
     source/cpp/File/CFileUtilities.cpp
     source/cpp/File/CRollingFiles.cpp
+    source/cpp/File/CShardFileStore.cpp
     source/cpp/GeoTools/coordcnv.cpp
     source/cpp/GeoTools/geocent.cpp
     source/cpp/GeoTools/geotrans.cpp

@@ -43,4 +43,5 @@ private slots:
     void jsonPreservesScalarsAndArrays();
     void xmlEmptyTagExportsChildren();
     void xmlBinaryRoundTrip();
+    void shardFileStoreRoutingSplitAndPersistence();
 };

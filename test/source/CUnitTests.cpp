@@ -1,6 +1,8 @@
 
 // Qt
 #include <QDebug>
+#include <QDateTime>
+#include <QFileInfo>
 #include <QTemporaryDir>
 #include <QThread>
 #include <QFile>
@@ -18,6 +20,7 @@
 #include "CXMLNode.h"
 #include "QTree.h"
 #include "File/CRollingFiles.h"
+#include "File/CShardFileStore.h"
 #include "RemoteControl/CRemoteControl.h"
 
 #include "CUnitTests.h"
@@ -500,6 +503,129 @@ void CUnitTests::xmlBinaryRoundTrip()
     QVERIFY(!sError.isEmpty());
 
     QVERIFY(CXMLNode::fromBinary(QByteArray()).isEmpty());
+}
+
+//-------------------------------------------------------------------------------------------------
+// Sharded map: routing, splits, dirty-only writes, reload, removal
+
+void CUnitTests::shardFileStoreRoutingSplitAndPersistence()
+{
+    QTemporaryDir tDir;
+    QVERIFY(tDir.isValid());
+
+    QString sFolder = tDir.path() + "/cache";
+
+    // Small threshold forces root and nested splits with few entries
+    CShardFileStore tStore(sFolder, "TestShardStore", nullptr, 8, true);
+
+    // Phase 1: keys spread over all 16 first hex characters (splits the root)
+    QStringList lSpreadKeys;
+
+    for (int iIndex = 0; iIndex < 32; iIndex++)
+    {
+        QString sKey = QString("%1").arg(iIndex % 16, 1, 16, QChar('0'))
+                + QString("%1").arg(iIndex, 63, 16, QChar('0'));
+        lSpreadKeys << sKey;
+        tStore.setValue(sKey, QStringList() << QString("parent-%1").arg(iIndex));
+    }
+
+    QVERIFY(tStore.shardCount() > 1);
+
+    for (const QString& sKey : lSpreadKeys)
+    {
+        QVERIFY(tStore.containsValue(sKey));
+        QVERIFY(tStore.shardPrefixForKey(sKey).length() >= 1);
+        QVERIFY(tStore.value(sKey).count() == 1);
+    }
+
+    // Phase 2: keys sharing one prefix (forces a nested split below the root)
+    QStringList lNestedKeys;
+
+    for (int iIndex = 0; iIndex < 20; iIndex++)
+    {
+        QString sKey = QString("ab%1").arg(iIndex, 62, 16, QChar('0'));
+        lNestedKeys << sKey;
+        tStore.setValue(sKey, QStringList() << "p1" << "p2");
+    }
+
+    for (const QString& sKey : lNestedKeys)
+    {
+        QVERIFY(tStore.shardPrefixForKey(sKey).startsWith("ab"));
+        QCOMPARE(tStore.value(sKey), QStringList() << "p1" << "p2");
+    }
+
+    // Empty lists round-trip distinctly from missing keys
+    QString sEmptyKey = QString("cd%1").arg(0, 62, 16, QChar('0'));
+    tStore.setValue(sEmptyKey, QStringList());
+    QVERIFY(tStore.containsValue(sEmptyKey));
+    QVERIFY(tStore.value(sEmptyKey).isEmpty());
+
+    // Non-hex keys fall back to the root shard without error
+    tStore.setValue("not-a-hex-key!!", QStringList() << "v");
+    QCOMPARE(tStore.shardPrefixForKey("not-a-hex-key!!"), QString(""));
+    QCOMPARE(tStore.value("not-a-hex-key!!"), QStringList() << "v");
+
+    // Missing keys resolve to empty without polluting the store
+    QVERIFY(!tStore.containsValue("ff00000000000000000000000000000000000000000000000000000000000000"));
+    QVERIFY(tStore.value("ff00000000000000000000000000000000000000000000000000000000000000").isEmpty());
+
+    // No-op writes do not dirty anything: a fresh check below relies on save() below
+    QString sFirstKey = lSpreadKeys.first();
+    QStringList lFirstValue = tStore.value(sFirstKey);
+    tStore.setValue(sFirstKey, lFirstValue);
+
+    tStore.save();
+
+    // Reload from disk through a fresh instance
+    CShardFileStore tReloaded(sFolder, "TestShardStore", nullptr, 8, true);
+
+    for (const QString& sKey : lSpreadKeys)
+        QVERIFY(tReloaded.containsValue(sKey));
+
+    for (const QString& sKey : lNestedKeys)
+        QCOMPARE(tReloaded.value(sKey), QStringList() << "p1" << "p2");
+
+    QVERIFY(tReloaded.containsValue(sEmptyKey));
+    QVERIFY(tReloaded.value(sEmptyKey).isEmpty());
+    QCOMPARE(tReloaded.value("not-a-hex-key!!"), QStringList() << "v");
+
+    // Dirty-only persistence: untouched shard files keep their modification time
+    QMap<QString, QDateTime> mTimesBefore;
+
+    for (const QString& sPrefix : tReloaded.knownPrefixes())
+    {
+        QFileInfo tInfo(tReloaded.shardFileName(sPrefix));
+
+        if (tInfo.exists())
+            mTimesBefore[sPrefix] = tInfo.lastModified();
+    }
+
+    QVERIFY(mTimesBefore.count() > 1);
+
+    QString sTouchedPrefix = tReloaded.shardPrefixForKey(lNestedKeys.first());
+    tReloaded.setValue(lNestedKeys.first(), QStringList() << "p1" << "p2" << "p3");
+    tReloaded.save();
+
+    QCOMPARE(tReloaded.value(lNestedKeys.first()), QStringList() << "p1" << "p2" << "p3");
+
+    for (auto iEntry = mTimesBefore.constBegin(); iEntry != mTimesBefore.constEnd(); iEntry++)
+    {
+        if (iEntry.key() == sTouchedPrefix)
+            continue;
+
+        QFileInfo tInfo(tReloaded.shardFileName(iEntry.key()));
+        QVERIFY(tInfo.exists());
+        QCOMPARE(tInfo.lastModified(), iEntry.value());
+    }
+
+    // Removal drops the entry and persists through reload
+    tReloaded.removeValue(sFirstKey);
+    QVERIFY(!tReloaded.containsValue(sFirstKey));
+    tReloaded.save();
+
+    CShardFileStore tPruned(sFolder, "TestShardStore", nullptr, 8, true);
+    QVERIFY(!tPruned.containsValue(sFirstKey));
+    QVERIFY(tPruned.containsValue(lSpreadKeys.last()));
 }
 
 //-------------------------------------------------------------------------------------------------
