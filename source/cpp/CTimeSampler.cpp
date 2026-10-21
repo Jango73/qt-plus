@@ -167,6 +167,32 @@ void CTimeSampler::stopSampleAndLog(const QString& sName)
 
 /************************************************************************/
 
+void CTimeSampler::addSampleTime(const QString& sName, qint64 iElapsedNs)
+{
+    if (m_tMutex.lock())
+    {
+        if (m_mAccumTimesNs.contains(sName) == false)
+        {
+            m_mAccumTimesNs[sName] = 0;
+            m_mMaxTimesNs[sName] = 0;
+            m_mNumCalls[sName] = 0;
+        }
+
+        m_mAccumTimesNs[sName] += iElapsedNs;
+
+        if (iElapsedNs > m_mMaxTimesNs[sName])
+        {
+            m_mMaxTimesNs[sName] = iElapsedNs;
+        }
+
+        m_mNumCalls[sName]++;
+
+        m_tMutex.unlock();
+    }
+}
+
+/************************************************************************/
+
 void CTimeSampler::dumpAccumulatedTimes()
 {
     // Snapshot under lock, then log from the copy: iterating the live maps

@@ -55,6 +55,9 @@ public:
     //! Stops sampling and log results
     void stopSampleAndLog(const QString& sName);
 
+    //! Accumulates an externally measured duration in nanoseconds under sName
+    void addSampleTime(const QString& sName, qint64 iElapsedNs);
+
     void dumpAccumulatedTimes();
 
     //! Clears all accumulated timings and the frame counter
