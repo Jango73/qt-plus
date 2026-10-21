@@ -2,9 +2,10 @@
 #pragma once
 
 // Qt
-#include <QObject>
+#include <QElapsedTimer>
 #include <QMap>
-#include <QDateTime>
+#include <QObject>
+#include <QString>
 #include <QTimer>
 
 // Application
@@ -42,6 +43,9 @@ public:
     // Control methods
     //-------------------------------------------------------------------------------------------------
 
+    //! Marks the start of a new frame, increments the frame counter
+    void beginFrame();
+
     //! Starts sampling
     void startSample(const QString& sName);
 
@@ -52,6 +56,16 @@ public:
     void stopSampleAndLog(const QString& sName);
 
     void dumpAccumulatedTimes();
+
+    //! Clears all accumulated timings and the frame counter
+    void clear();
+
+    //-------------------------------------------------------------------------------------------------
+    // Getters
+    //-------------------------------------------------------------------------------------------------
+
+    //! Returns the last frame duration in milliseconds
+    double lastFrameMs() const { return m_dLastFrameMs; }
 
     //-------------------------------------------------------------------------------------------------
     // Slots
@@ -67,10 +81,34 @@ private slots:
 
 private:
 
-    CTracableMutex              m_tMutex;
-    QMap<QString, QDateTime>    m_mStartTimes;
-    QMap<QString, qint64>       m_mAccumTimes;
-    QMap<QString, qint64>       m_mNumCalls;
-    QTimer                      m_tDumpTimer;
-    CLogger*                    m_pLogger;
+    CTracableMutex m_tMutex;
+    QMap<QString, QElapsedTimer> m_mStartTimes;
+    QMap<QString, qint64> m_mAccumTimesNs;
+    QMap<QString, qint64> m_mMaxTimesNs;
+    QMap<QString, qint64> m_mNumCalls;
+    QTimer m_tDumpTimer;
+    QElapsedTimer m_tFrameTimer;
+    double m_dLastFrameMs;
+    qint64 m_iFrameCount;
+    bool m_bFirstFrame;
+    int m_iDumpIntervalMs;
+    CLogger* m_pLogger;
+};
+
+//-------------------------------------------------------------------------------------------------
+
+//! RAII helper timing one sampler section for its lifetime
+class QTPLUSSHARED_EXPORT CScopedTimeSample
+{
+public:
+
+    //!
+    CScopedTimeSample(const QString& sName);
+
+    //!
+    ~CScopedTimeSample();
+
+private:
+
+    QString m_sName;
 };

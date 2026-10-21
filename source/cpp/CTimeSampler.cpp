@@ -3,24 +3,40 @@
 #include "CLogger.h"
 #include "CTimeSampler.h"
 
+/************************************************************************/
+
+static const int TimeSamplerDumpIntervalMs = 10000;
+
+/************************************************************************/
+
 CTimeSampler::CTimeSampler()
     : m_tMutex()
     , m_tDumpTimer(this)
+    , m_dLastFrameMs(0.0)
+    , m_iFrameCount(0)
+    , m_bFirstFrame(true)
+    , m_iDumpIntervalMs(TimeSamplerDumpIntervalMs)
     , m_pLogger(CLogger::getInstance())
 {
     connect(&m_tDumpTimer, SIGNAL(timeout()), this, SLOT(onTimer()));
 
-    m_tDumpTimer.start(10000);
+    m_tDumpTimer.start(m_iDumpIntervalMs);
 }
+
+/************************************************************************/
 
 CTimeSampler::CTimeSampler(CLogger* pLogger)
     : m_tMutex()
     , m_tDumpTimer(this)
+    , m_dLastFrameMs(0.0)
+    , m_iFrameCount(0)
+    , m_bFirstFrame(true)
+    , m_iDumpIntervalMs(TimeSamplerDumpIntervalMs)
     , m_pLogger(pLogger)
 {
     connect(&m_tDumpTimer, SIGNAL(timeout()), this, SLOT(onTimer()));
 
-    m_tDumpTimer.start(10000);
+    m_tDumpTimer.start(m_iDumpIntervalMs);
 
     if (m_pLogger == nullptr)
     {
@@ -28,10 +44,14 @@ CTimeSampler::CTimeSampler(CLogger* pLogger)
     }
 }
 
+/************************************************************************/
+
 CTimeSampler::~CTimeSampler()
 {
     m_tDumpTimer.stop();
 }
+
+/************************************************************************/
 
 void CTimeSampler::onTimer()
 {
@@ -39,18 +59,46 @@ void CTimeSampler::onTimer()
 
     dumpAccumulatedTimes();
 
-    m_tDumpTimer.start();
+    m_tDumpTimer.start(m_iDumpIntervalMs);
 }
+
+/************************************************************************/
+
+void CTimeSampler::beginFrame()
+{
+    if (m_tMutex.lock())
+    {
+        if (m_bFirstFrame == false)
+        {
+            m_dLastFrameMs = double(m_tFrameTimer.nsecsElapsed()) / 1000000.0;
+        }
+        else
+        {
+            m_bFirstFrame = false;
+            m_dLastFrameMs = 0.0;
+        }
+
+        m_tFrameTimer.start();
+        m_iFrameCount++;
+
+        m_tMutex.unlock();
+    }
+}
+
+/************************************************************************/
 
 void CTimeSampler::startSample(const QString& sName)
 {
     if (m_tMutex.lock())
     {
-        m_mStartTimes[sName] = QDateTime::currentDateTime();
+        QElapsedTimer tTimer;
+        tTimer.start();
+        m_mStartTimes[sName] = tTimer;
 
-        if (m_mAccumTimes.contains(sName) == false)
+        if (m_mAccumTimesNs.contains(sName) == false)
         {
-            m_mAccumTimes[sName] = 0;
+            m_mAccumTimesNs[sName] = 0;
+            m_mMaxTimesNs[sName] = 0;
             m_mNumCalls[sName] = 0;
         }
 
@@ -60,51 +108,89 @@ void CTimeSampler::startSample(const QString& sName)
     }
 }
 
+/************************************************************************/
+
 void CTimeSampler::stopSample(const QString& sName)
 {
-    if (m_mStartTimes.contains(sName))
+    if (m_tMutex.lock())
     {
-        if (m_tMutex.lock())
+        if (m_mStartTimes.contains(sName) == true)
         {
-            QDateTime dNow = QDateTime::currentDateTime();
-            qint64 msecs = m_mStartTimes[sName].msecsTo(dNow);
+            qint64 iElapsedNs = m_mStartTimes[sName].nsecsElapsed();
+            m_mStartTimes.remove(sName);
 
-            m_mAccumTimes[sName] += msecs;
+            m_mAccumTimesNs[sName] += iElapsedNs;
 
-            m_tMutex.unlock();
+            if (iElapsedNs > m_mMaxTimesNs[sName])
+            {
+                m_mMaxTimesNs[sName] = iElapsedNs;
+            }
         }
+
+        m_tMutex.unlock();
     }
 }
+
+/************************************************************************/
 
 void CTimeSampler::stopSampleAndLog(const QString& sName)
 {
-    if (m_mStartTimes.contains(sName))
+    qint64 iElapsedNs = 0;
+    bool bFound = false;
+
+    if (m_tMutex.lock())
     {
-        if (m_tMutex.lock())
+        if (m_mStartTimes.contains(sName) == true)
         {
-            QDateTime dNow = QDateTime::currentDateTime();
-            qint64 msecs = m_mStartTimes[sName].msecsTo(dNow);
+            iElapsedNs = m_mStartTimes[sName].nsecsElapsed();
+            m_mStartTimes.remove(sName);
 
-            m_mAccumTimes[sName] += msecs;
+            m_mAccumTimesNs[sName] += iElapsedNs;
 
-            m_pLogger->log(llDebug, QString("%1 = %2 milliseconds").arg(sName).arg(msecs), "TimeSample");
+            if (iElapsedNs > m_mMaxTimesNs[sName])
+            {
+                m_mMaxTimesNs[sName] = iElapsedNs;
+            }
 
-            m_tMutex.unlock();
+            bFound = true;
         }
+
+        m_tMutex.unlock();
+    }
+
+    if (bFound == true)
+    {
+        double dElapsedMs = double(iElapsedNs) / 1000000.0;
+        m_pLogger->log(llDebug, QString("%1 = %2 milliseconds").arg(sName).arg(dElapsedMs), "TimeSample");
     }
 }
+
+/************************************************************************/
 
 void CTimeSampler::dumpAccumulatedTimes()
 {
     // Snapshot under lock, then log from the copy: iterating the live maps
     // while samplers mutate them on other threads is undefined behavior.
-    QMap<QString, qint64> mAccumTimes;
+    QMap<QString, qint64> mAccumTimesNs;
+    QMap<QString, qint64> mMaxTimesNs;
     QMap<QString, qint64> mNumCalls;
+    qint64 iFrameCount = 0;
+    double dLastFrameMs = 0.0;
 
     if (m_tMutex.lock())
     {
-        mAccumTimes = m_mAccumTimes;
+        mAccumTimesNs = m_mAccumTimesNs;
+        mMaxTimesNs = m_mMaxTimesNs;
         mNumCalls = m_mNumCalls;
+        iFrameCount = m_iFrameCount;
+        dLastFrameMs = m_dLastFrameMs;
+
+        m_mAccumTimesNs.clear();
+        m_mMaxTimesNs.clear();
+        m_mNumCalls.clear();
+        m_mStartTimes.clear();
+        m_iFrameCount = 0;
+
         m_tMutex.unlock();
     }
     else
@@ -112,10 +198,15 @@ void CTimeSampler::dumpAccumulatedTimes()
         return;
     }
 
-    m_pLogger->log(llDebug, "------------------------------------------------------------", "TimeSample");
-    m_pLogger->log(llDebug, "Total accumulated times", "TimeSample");
+    if (iFrameCount == 0 && mNumCalls.isEmpty() == true)
+    {
+        return;
+    }
 
-    for (QString sName : mAccumTimes.keys())
+    m_pLogger->log(llDebug, "------------------------------------------------------------", "TimeSample");
+    m_pLogger->log(llDebug, QString("TimeSample frames = %1 last frame = %2 ms").arg(iFrameCount).arg(dLastFrameMs, 0, 'f', 3), "TimeSample");
+
+    foreach (const QString& sName, mAccumTimesNs.keys())
     {
         qint64 iNumCalls = mNumCalls.value(sName, 0);
 
@@ -124,17 +215,55 @@ void CTimeSampler::dumpAccumulatedTimes()
             continue;
         }
 
-        double dMillisecs = (double) mAccumTimes.value(sName, 0) / 1000.0;
-        double dAverageMsecs = (double) dMillisecs / (double) iNumCalls;
+        double dTotalMs = double(mAccumTimesNs.value(sName, 0)) / 1000000.0;
+        double dMaxMs = double(mMaxTimesNs.value(sName, 0)) / 1000000.0;
+        double dAverageMs = 0.0;
+
+        if (iFrameCount > 0)
+        {
+            dAverageMs = dTotalMs / double(iFrameCount);
+        }
 
         m_pLogger->log(llDebug,
-                       QString("  %1 = %2 s (avg %3 s for %4 calls)")
+                       QString("  %1 total %2 ms avg %3 ms/frame max %4 ms calls %5")
                        .arg(sName)
-                       .arg(dMillisecs)
-                       .arg(dAverageMsecs)
+                       .arg(dTotalMs, 0, 'f', 2)
+                       .arg(dAverageMs, 0, 'f', 3)
+                       .arg(dMaxMs, 0, 'f', 2)
                        .arg(iNumCalls), "TimeSample"
                        );
     }
 
     m_pLogger->log(llDebug, "------------------------------------------------------------", "TimeSample");
+}
+
+/************************************************************************/
+
+void CTimeSampler::clear()
+{
+    if (m_tMutex.lock())
+    {
+        m_mAccumTimesNs.clear();
+        m_mMaxTimesNs.clear();
+        m_mNumCalls.clear();
+        m_mStartTimes.clear();
+        m_iFrameCount = 0;
+
+        m_tMutex.unlock();
+    }
+}
+
+/************************************************************************/
+
+CScopedTimeSample::CScopedTimeSample(const QString& sName)
+    : m_sName(sName)
+{
+    CTimeSampler::getInstance()->startSample(m_sName);
+}
+
+/************************************************************************/
+
+CScopedTimeSample::~CScopedTimeSample()
+{
+    CTimeSampler::getInstance()->stopSample(m_sName);
 }
