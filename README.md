@@ -1,6 +1,6 @@
 # qt-plus
 
-[![Build](https://github.com/Jango73/qt-plus/actions/workflows/build.yml/badge.svg?branch=qt6)](https://github.com/Jango73/qt-plus/actions/workflows/build.yml)
+[![Build](https://github.com/Jango73/qt-plus/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/Jango73/qt-plus/actions/workflows/build.yml)
 
 Utility classes extending Qt's functionnality.
 
