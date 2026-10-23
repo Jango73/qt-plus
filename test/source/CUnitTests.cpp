@@ -347,6 +347,8 @@ void CUnitTests::timeSamplerConcurrentDump()
     QVector<QThread*> vThreads;
     vThreads.reserve(iThreads);
 
+    CTimeSampler::getInstance()->setEnabled(true);
+
     for (int i = 0; i < iThreads; i++)
     {
         vThreads << QThread::create([=]() {
@@ -370,6 +372,8 @@ void CUnitTests::timeSamplerConcurrentDump()
         QVERIFY(pThread->wait(60000));
         delete pThread;
     }
+
+    CTimeSampler::getInstance()->setEnabled(false);
 
     QVERIFY(true);  // reaching here without crashing is the assertion
 }

@@ -1,6 +1,9 @@
 
 #pragma once
 
+// Std
+#include <atomic>
+
 // Qt
 #include <QElapsedTimer>
 #include <QMap>
@@ -63,12 +66,18 @@ public:
     //! Clears all accumulated timings and the frame counter
     void clear();
 
+    //! Enables or disables sampling. Disabled by default: every sampling call is a no-op and no dump timer runs
+    void setEnabled(bool bEnabled);
+
     //-------------------------------------------------------------------------------------------------
     // Getters
     //-------------------------------------------------------------------------------------------------
 
     //! Returns the last frame duration in milliseconds
     double lastFrameMs() const { return m_dLastFrameMs; }
+
+    //! Returns true when sampling is enabled
+    bool isEnabled() const { return m_bEnabled.load(std::memory_order_relaxed); }
 
     //-------------------------------------------------------------------------------------------------
     // Slots
@@ -96,6 +105,7 @@ private:
     bool m_bFirstFrame;
     int m_iDumpIntervalMs;
     CLogger* m_pLogger;
+    std::atomic<bool> m_bEnabled;
 };
 
 //-------------------------------------------------------------------------------------------------

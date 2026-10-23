@@ -17,10 +17,9 @@ CTimeSampler::CTimeSampler()
     , m_bFirstFrame(true)
     , m_iDumpIntervalMs(TimeSamplerDumpIntervalMs)
     , m_pLogger(CLogger::getInstance())
+    , m_bEnabled(false)
 {
     connect(&m_tDumpTimer, SIGNAL(timeout()), this, SLOT(onTimer()));
-
-    m_tDumpTimer.start(m_iDumpIntervalMs);
 }
 
 /************************************************************************/
@@ -33,10 +32,9 @@ CTimeSampler::CTimeSampler(CLogger* pLogger)
     , m_bFirstFrame(true)
     , m_iDumpIntervalMs(TimeSamplerDumpIntervalMs)
     , m_pLogger(pLogger)
+    , m_bEnabled(false)
 {
     connect(&m_tDumpTimer, SIGNAL(timeout()), this, SLOT(onTimer()));
-
-    m_tDumpTimer.start(m_iDumpIntervalMs);
 
     if (m_pLogger == nullptr)
     {
@@ -53,8 +51,31 @@ CTimeSampler::~CTimeSampler()
 
 /************************************************************************/
 
+void CTimeSampler::setEnabled(bool bEnabled)
+{
+    m_bEnabled.store(bEnabled, std::memory_order_relaxed);
+
+    if (bEnabled == true)
+    {
+        clear();
+        m_tDumpTimer.start(m_iDumpIntervalMs);
+    }
+    else
+    {
+        m_tDumpTimer.stop();
+        clear();
+    }
+}
+
+/************************************************************************/
+
 void CTimeSampler::onTimer()
 {
+    if (m_bEnabled.load(std::memory_order_relaxed) == false)
+    {
+        return;
+    }
+
     m_tDumpTimer.stop();
 
     dumpAccumulatedTimes();
@@ -66,6 +87,11 @@ void CTimeSampler::onTimer()
 
 void CTimeSampler::beginFrame()
 {
+    if (m_bEnabled.load(std::memory_order_relaxed) == false)
+    {
+        return;
+    }
+
     if (m_tMutex.lock())
     {
         if (m_bFirstFrame == false)
@@ -89,6 +115,11 @@ void CTimeSampler::beginFrame()
 
 void CTimeSampler::startSample(const QString& sName)
 {
+    if (m_bEnabled.load(std::memory_order_relaxed) == false)
+    {
+        return;
+    }
+
     if (m_tMutex.lock())
     {
         QElapsedTimer tTimer;
@@ -112,6 +143,11 @@ void CTimeSampler::startSample(const QString& sName)
 
 void CTimeSampler::stopSample(const QString& sName)
 {
+    if (m_bEnabled.load(std::memory_order_relaxed) == false)
+    {
+        return;
+    }
+
     if (m_tMutex.lock())
     {
         if (m_mStartTimes.contains(sName) == true)
@@ -137,6 +173,11 @@ void CTimeSampler::stopSampleAndLog(const QString& sName)
 {
     qint64 iElapsedNs = 0;
     bool bFound = false;
+
+    if (m_bEnabled.load(std::memory_order_relaxed) == false)
+    {
+        return;
+    }
 
     if (m_tMutex.lock())
     {
@@ -169,6 +210,11 @@ void CTimeSampler::stopSampleAndLog(const QString& sName)
 
 void CTimeSampler::addSampleTime(const QString& sName, qint64 iElapsedNs)
 {
+    if (m_bEnabled.load(std::memory_order_relaxed) == false)
+    {
+        return;
+    }
+
     if (m_tMutex.lock())
     {
         if (m_mAccumTimesNs.contains(sName) == false)
@@ -195,6 +241,11 @@ void CTimeSampler::addSampleTime(const QString& sName, qint64 iElapsedNs)
 
 void CTimeSampler::dumpAccumulatedTimes()
 {
+    if (m_bEnabled.load(std::memory_order_relaxed) == false)
+    {
+        return;
+    }
+
     // Snapshot under lock, then log from the copy: iterating the live maps
     // while samplers mutate them on other threads is undefined behavior.
     QMap<QString, qint64> mAccumTimesNs;
