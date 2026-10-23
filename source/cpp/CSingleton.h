@@ -45,14 +45,25 @@ public:
     {
         CSingletonPool::init();
 
-        QMutexLocker locker(&CSingletonPool::s_tMutex);
+        T* pInstance = nullptr;
 
-        QString sClassName(typeid(T).name());
-
-        if (CSingletonPool::s_pSingletons->contains(sClassName))
         {
-            delete static_cast<T*>((*CSingletonPool::s_pSingletons)[sClassName]);
-            CSingletonPool::s_pSingletons->remove(sClassName);
+            QMutexLocker locker(&CSingletonPool::s_tMutex);
+
+            QString sClassName(typeid(T).name());
+
+            if (CSingletonPool::s_pSingletons->contains(sClassName))
+            {
+                pInstance = static_cast<T*>((*CSingletonPool::s_pSingletons)[sClassName]);
+                CSingletonPool::s_pSingletons->remove(sClassName);
+            }
+        }
+
+        // Delete outside the pool lock: the destructor may block waiting for
+        // worker threads, and those threads need the pool lock in getInstance
+        if (pInstance != nullptr)
+        {
+            delete pInstance;
         }
     }
 

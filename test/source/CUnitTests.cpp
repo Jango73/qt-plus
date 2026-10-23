@@ -2,12 +2,14 @@
 // Qt
 #include <QDebug>
 #include <QDateTime>
+#include <QElapsedTimer>
 #include <QFileInfo>
 #include <QTemporaryDir>
 #include <QThread>
 #include <QFile>
 
 // std
+#include <atomic>
 #include <type_traits>
 
 // qt-plus
@@ -206,6 +208,98 @@ void CUnitTests::singletonRaceAndKill()
 
     SmokeDummySingleton::killInstance();
     SmokeDummySingleton::killInstance();  // double kill: no-op, no crash
+}
+
+//-------------------------------------------------------------------------------------------------
+// Kill during concurrent get must not deadlock: the destructor runs outside
+// the pool lock, so getters keep flowing through getInstance while it runs
+
+static QAtomicInt s_iBlockingGettersDone = 0;
+static QAtomicInt s_iBlockingGettersActive = 0;
+
+class SmokeBlockingSingleton : public CSingleton<SmokeBlockingSingleton>
+{
+public:
+
+    SmokeBlockingSingleton()
+    {
+    }
+
+    ~SmokeBlockingSingleton()
+    {
+        // Wait for getter progress during the kill. With the pool lock held
+        // across delete getters stay blocked and this spins the full budget.
+        // Skipped when no getter runs (final cleanup kill).
+        int iBaseline = s_iBlockingGettersDone.loadRelaxed();
+
+        for (int iSpin = 0; iSpin < 1000; iSpin++)
+        {
+            if (s_iBlockingGettersDone.loadRelaxed() != iBaseline)
+            {
+                break;
+            }
+
+            if (s_iBlockingGettersActive.loadRelaxed() == 0)
+            {
+                break;
+            }
+
+            QThread::msleep(5);
+        }
+    }
+};
+
+void CUnitTests::singletonKillDuringGet()
+{
+    SmokeBlockingSingleton::killInstance();  // start clean
+
+    QVERIFY(SmokeBlockingSingleton::getInstance() != nullptr);
+
+    s_iBlockingGettersDone.storeRelaxed(0);
+    s_iBlockingGettersActive.storeRelaxed(1);
+
+    std::atomic<bool> bStop{false};
+
+    const int iThreads = 4;
+    QVector<QThread*> vThreads;
+    vThreads.reserve(iThreads);
+
+    for (int i = 0; i < iThreads; i++)
+    {
+        vThreads << QThread::create([&]() {
+            while (bStop.load() == false)
+            {
+                if (SmokeBlockingSingleton::getInstance() != nullptr)
+                {
+                    s_iBlockingGettersDone.ref();
+                }
+            }
+        });
+    }
+
+    for (QThread* pThread : vThreads) pThread->start();
+
+    QThread::msleep(50);  // let getters enter getInstance
+
+    QElapsedTimer tTimer;
+    tTimer.start();
+    SmokeBlockingSingleton::killInstance();  // must return, not deadlock
+    qint64 iKillMs = tTimer.elapsed();
+
+    bStop.store(true);
+
+    for (QThread* pThread : vThreads)
+    {
+        QVERIFY(pThread->wait(30000));
+        delete pThread;
+    }
+
+    s_iBlockingGettersActive.storeRelaxed(0);
+
+    QVERIFY(s_iBlockingGettersDone.loadRelaxed() > 0);  // getters flowed during kill
+    QVERIFY(iKillMs < 4000);  // old code spins the full 5 s destructor budget
+
+    SmokeBlockingSingleton::killInstance();  // drop the replacement instance
 }
 
 //-------------------------------------------------------------------------------------------------

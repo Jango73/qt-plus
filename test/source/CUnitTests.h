@@ -32,6 +32,7 @@ private slots:
     void averagerZeroClamp();
     void rollingFilesCheckedBackup();
     void singletonRaceAndKill();
+    void singletonKillDuringGet();
     void loggerChainedCycle();
     void timeSamplerConcurrentDump();
     void lazyPointerOwnership();
