@@ -2,9 +2,10 @@
 # Code complexity report with scc (https://github.com/boyter/scc).
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+SCRIPT_FOLDER="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT_FOLDER="$(cd "${SCRIPT_FOLDER}/../.." && pwd)"
 
-(cd "${ROOT_DIR}" && scc source/cpp \
+(cd "${PROJECT_ROOT_FOLDER}" && scc source/cpp \
   --exclude-dir source/cpp/GeoTools/ \
   --exclude-dir source/cpp/Poppy/ \
   --exclude-dir source/cpp/rsa/ \

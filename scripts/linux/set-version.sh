@@ -7,7 +7,8 @@
 #   --tag  create git tag vX.Y.Z after updating the files
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+SCRIPT_FOLDER="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT_FOLDER="$(cd "${SCRIPT_FOLDER}/../.." && pwd)"
 
 EXIT_SUCCESS=0
 EXIT_FAILURE=1
@@ -60,10 +61,10 @@ REST="${NEW_VERSION#*.}"
 MINOR="${REST%%.*}"
 PATCH="${REST#*.}"
 
-VERSION_FILE="${ROOT_DIR}/VERSION"
-QMAKE_PRO="${ROOT_DIR}/qt-plus.pro"
-CMAKE_LISTS="${ROOT_DIR}/CMakeLists.txt"
-GLOBAL_H="${ROOT_DIR}/source/cpp/qtplus_global.h"
+VERSION_FILE="${PROJECT_ROOT_FOLDER}/VERSION"
+QMAKE_PRO="${PROJECT_ROOT_FOLDER}/qt-plus.pro"
+CMAKE_LISTS="${PROJECT_ROOT_FOLDER}/CMakeLists.txt"
+GLOBAL_H="${PROJECT_ROOT_FOLDER}/source/cpp/qtplus_global.h"
 
 for f in "${QMAKE_PRO}" "${CMAKE_LISTS}" "${GLOBAL_H}"; do
   if [[ ! -f "${f}" ]]; then
@@ -96,10 +97,10 @@ echo "  CMakeLists.txt"
 echo "  source/cpp/qtplus_global.h"
 
 if [[ "${TAG}" -eq 1 ]]; then
-  if git -C "${ROOT_DIR}" rev-parse "v${NEW_VERSION}" >/dev/null 2>&1; then
+  if git -C "${PROJECT_ROOT_FOLDER}" rev-parse "v${NEW_VERSION}" >/dev/null 2>&1; then
     echo "Tag v${NEW_VERSION} already exists" >&2
     exit "${EXIT_FAILURE}"
   fi
-  git -C "${ROOT_DIR}" tag "v${NEW_VERSION}"
+  git -C "${PROJECT_ROOT_FOLDER}" tag "v${NEW_VERSION}"
   echo "Created git tag v${NEW_VERSION}"
 fi

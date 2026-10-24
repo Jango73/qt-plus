@@ -5,7 +5,7 @@ rem Set the qt-plus version everywhere from a single command.
 rem Mirrors scripts/linux/set-version.sh for Windows.
 rem Usage: set-version.bat [--tag] X.Y.Z
 
-for %%I in ("%~dp0..\..") do set "ROOT_DIR=%%~fI"
+for %%I in ("%~dp0..\..") do set "PROJECT_ROOT_FOLDER=%%~fI"
 
 set "TAG=0"
 set "NEW_VERSION="
@@ -56,23 +56,23 @@ for /F "tokens=1-3 delims=." %%A in ("%NEW_VERSION%") do (
   set "PATCH=%%C"
 )
 
-if not exist "%ROOT_DIR%\qt-plus.pro" (
-  echo Missing file: %ROOT_DIR%\qt-plus.pro 1>&2
+if not exist "%PROJECT_ROOT_FOLDER%\qt-plus.pro" (
+  echo Missing file: %PROJECT_ROOT_FOLDER%\qt-plus.pro 1>&2
   exit /b 1
 )
-if not exist "%ROOT_DIR%\CMakeLists.txt" (
-  echo Missing file: %ROOT_DIR%\CMakeLists.txt 1>&2
+if not exist "%PROJECT_ROOT_FOLDER%\CMakeLists.txt" (
+  echo Missing file: %PROJECT_ROOT_FOLDER%\CMakeLists.txt 1>&2
   exit /b 1
 )
-if not exist "%ROOT_DIR%\source\cpp\qtplus_global.h" (
-  echo Missing file: %ROOT_DIR%\source\cpp\qtplus_global.h 1>&2
+if not exist "%PROJECT_ROOT_FOLDER%\source\cpp\qtplus_global.h" (
+  echo Missing file: %PROJECT_ROOT_FOLDER%\source\cpp\qtplus_global.h 1>&2
   exit /b 1
 )
 
-> "%ROOT_DIR%\VERSION" echo %NEW_VERSION%
+> "%PROJECT_ROOT_FOLDER%\VERSION" echo %NEW_VERSION%
 
 powershell -NoProfile -Command ^
-  "$p='%ROOT_DIR%\qt-plus.pro';" ^
+  "$p='%PROJECT_ROOT_FOLDER%\qt-plus.pro';" ^
   "$c=Get-Content $p;" ^
   "$c=$c -replace '^VERSION = .*','VERSION = %NEW_VERSION%';" ^
   "Set-Content $p $c;" ^
@@ -83,7 +83,7 @@ if errorlevel 1 (
 )
 
 powershell -NoProfile -Command ^
-  "$p='%ROOT_DIR%\CMakeLists.txt';" ^
+  "$p='%PROJECT_ROOT_FOLDER%\CMakeLists.txt';" ^
   "$c=Get-Content $p;" ^
   "$c=$c -replace '^project\(qt-plus VERSION [0-9]+\.[0-9]+\.[0-9]+','project(qt-plus VERSION %NEW_VERSION%';" ^
   "Set-Content $p $c;" ^
@@ -94,7 +94,7 @@ if errorlevel 1 (
 )
 
 powershell -NoProfile -Command ^
-  "$p='%ROOT_DIR%\source\cpp\qtplus_global.h';" ^
+  "$p='%PROJECT_ROOT_FOLDER%\source\cpp\qtplus_global.h';" ^
   "$c=Get-Content $p;" ^
   "$c=$c -replace '^#define QTPLUS_VERSION_MAJOR .*',\"#define QTPLUS_VERSION_MAJOR %MAJOR%\";" ^
   "$c=$c -replace '^#define QTPLUS_VERSION_MINOR .*',\"#define QTPLUS_VERSION_MINOR %MINOR%\";" ^
@@ -113,12 +113,12 @@ echo   CMakeLists.txt
 echo   source/cpp/qtplus_global.h
 
 if "%TAG%"=="1" (
-  git -C "%ROOT_DIR%" rev-parse "v%NEW_VERSION%" >nul 2>&1
+  git -C "%PROJECT_ROOT_FOLDER%" rev-parse "v%NEW_VERSION%" >nul 2>&1
   if not errorlevel 1 (
     echo Tag v%NEW_VERSION% already exists 1>&2
     exit /b 1
   )
-  git -C "%ROOT_DIR%" tag "v%NEW_VERSION%"
+  git -C "%PROJECT_ROOT_FOLDER%" tag "v%NEW_VERSION%"
   echo Created git tag v%NEW_VERSION%
 )
 

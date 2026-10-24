@@ -1,7 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-ROOT_FOLDER="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+SCRIPT_FOLDER="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT_FOLDER="$(cd "${SCRIPT_FOLDER}/../.." && pwd)"
 
 EXIT_SUCCESS=0
 EXIT_FAILURE=1
@@ -10,7 +11,7 @@ CLEAN_TARGET="all"
 
 usage() {
   cat <<'USAGE'
-Usage: clean.sh [--debug|--release|--all] [-d|-r|-a]
+Usage: ./clean.sh [--debug|--release|--all] [-d|-r|-a]
   --debug,   -d  Remove the debug build folder
   --release, -r  Remove the release build folder
   --all,     -a  Remove both build folders (default)
@@ -53,8 +54,8 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-BUILD_DEBUG_FOLDER="${ROOT_FOLDER}/build-debug"
-BUILD_RELEASE_FOLDER="${ROOT_FOLDER}/build-release"
+BUILD_DEBUG_FOLDER="${PROJECT_ROOT_FOLDER}/build-debug"
+BUILD_RELEASE_FOLDER="${PROJECT_ROOT_FOLDER}/build-release"
 
 case "${CLEAN_TARGET}" in
   debug)

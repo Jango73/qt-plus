@@ -1,7 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+SCRIPT_FOLDER="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT_FOLDER="$(cd "${SCRIPT_FOLDER}/../.." && pwd)"
 
 EXIT_SUCCESS=0
 EXIT_FAILURE=1
@@ -13,9 +14,9 @@ VERBOSE_BUILD="${VERBOSE_DISABLED}"
 
 usage() {
   cat <<'USAGE'
-Usage: build.sh [--debug|--release] [-d|-r] [--verbose|-v] [-c Debug|Release]
-  --debug,   -d  Build type Debug (default)
-  --release, -r  Build type Release
+Usage: ./build.sh [--debug|--release] [-d|-r] [--verbose|-v] [-c Debug|Release] [-h|--help]
+  --debug,   -d  Build type Debug
+  --release, -r  Build type Release (default)
   --verbose, -v  Verbose build output
   -c             Build type (Debug or Release)
 USAGE
@@ -61,6 +62,8 @@ if [[ "${BUILD_TYPE}" != "Debug" && "${BUILD_TYPE}" != "Release" ]]; then
   exit "${EXIT_FAILURE}"
 fi
 
+BUILD_DIR="${PROJECT_ROOT_FOLDER}/build-${BUILD_TYPE,,}"
+
 # Find qmake executable (prefer Qt6)
 QMAKE=""
 for candidate in qmake6 qmake-qt6 qmake; do
@@ -77,8 +80,6 @@ fi
 
 echo "Using qmake: ${QMAKE}"
 
-BUILD_DIR="${ROOT_DIR}/build-${BUILD_TYPE,,}"
-
 mkdir -p "${BUILD_DIR}"
 cd "${BUILD_DIR}"
 
@@ -89,7 +90,7 @@ else
 fi
 
 echo "Building qt-plus with ${CONFIG_ARG}..."
-"${QMAKE}" "${ROOT_DIR}/qt-plus.pro" "${CONFIG_ARG}"
+"${QMAKE}" "${PROJECT_ROOT_FOLDER}/qt-plus.pro" "${CONFIG_ARG}"
 
 if [ "${VERBOSE_BUILD}" -eq "${VERBOSE_ENABLED}" ]; then
   make -j"$(nproc)" VERBOSE=1
@@ -97,4 +98,4 @@ else
   make -j"$(nproc)"
 fi
 
-printf '\nBuilt qt-plus library in %s\n' "${BUILD_DIR}/bin"
+printf '\nBuilt qt-plus library in %s\n' "${PROJECT_ROOT_FOLDER}/bin"

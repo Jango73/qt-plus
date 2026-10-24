@@ -6,7 +6,7 @@ set "EXIT_FAILURE=1"
 set "VERBOSE_ENABLED=1"
 set "VERBOSE_DISABLED=0"
 
-for %%I in ("%~dp0..\..") do set "ROOT_FOLDER=%%~fI\"
+for %%I in ("%~dp0..\..") do set "PROJECT_ROOT_FOLDER=%%~fI\"
 set "BUILD_TYPE=Release"
 set "VERBOSE_BUILD=%VERBOSE_DISABLED%"
 
@@ -74,10 +74,10 @@ if /I not "%BUILD_TYPE%"=="Debug" if /I not "%BUILD_TYPE%"=="Release" (
 )
 
 if /I "%BUILD_TYPE%"=="Debug" (
-  set "BUILD_FOLDER=%ROOT_FOLDER%build-debug"
+  set "BUILD_FOLDER=%PROJECT_ROOT_FOLDER%build-debug"
   set "CONFIG_ARG=CONFIG+=debug"
 ) else (
-  set "BUILD_FOLDER=%ROOT_FOLDER%build-release"
+  set "BUILD_FOLDER=%PROJECT_ROOT_FOLDER%build-release"
   set "CONFIG_ARG=CONFIG+=release"
 )
 
@@ -85,7 +85,7 @@ if not exist "%BUILD_FOLDER%" mkdir "%BUILD_FOLDER%"
 cd /d "%BUILD_FOLDER%"
 
 echo Building qt-plus with %CONFIG_ARG%...
-qmake "%ROOT_FOLDER%qt-plus.pro" %CONFIG_ARG%
+qmake "%PROJECT_ROOT_FOLDER%qt-plus.pro" %CONFIG_ARG%
 
 if %VERBOSE_BUILD%==%VERBOSE_ENABLED% (
   make VERBOSE=1
@@ -98,9 +98,9 @@ echo Built qt-plus library in %BUILD_FOLDER%\bin
 exit /b %EXIT_SUCCESS%
 
 :usage
-echo Usage: build.bat [--debug^|--release] [-d^|-r] [--verbose^|-v] [-c Debug^|Release]
-echo   --debug,   -d  Build type Debug (default)
-echo   --release, -r  Build type Release
+echo Usage: build.bat [--debug^|--release] [-d^|-r] [--verbose^|-v] [-c Debug^|Release] [-h^|--help]
+echo   --debug,   -d  Build type Debug
+echo   --release, -r  Build type Release (default)
 echo   --verbose, -v  Verbose build output
 echo   -c             Build type (Debug or Release)
 exit /b %EXIT_SUCCESS%

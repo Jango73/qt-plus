@@ -4,7 +4,7 @@ setlocal EnableExtensions EnableDelayedExpansion
 set "EXIT_SUCCESS=0"
 set "EXIT_FAILURE=1"
 
-for %%I in ("%~dp0..\..") do set "ROOT_FOLDER=%%~fI\"
+for %%I in ("%~dp0..\..") do set "PROJECT_ROOT_FOLDER=%%~fI\"
 set "CLEAN_TARGET=all"
 
 :parse
@@ -54,8 +54,8 @@ call :usage 1>&2
 exit /b %EXIT_FAILURE%
 
 :done
-set "BUILD_DEBUG_FOLDER=%ROOT_FOLDER%build-debug"
-set "BUILD_RELEASE_FOLDER=%ROOT_FOLDER%build-release"
+set "BUILD_DEBUG_FOLDER=%PROJECT_ROOT_FOLDER%build-debug"
+set "BUILD_RELEASE_FOLDER=%PROJECT_ROOT_FOLDER%build-release"
 
 if /I "%CLEAN_TARGET%"=="debug" (
   call :remove_folder "%BUILD_DEBUG_FOLDER%"
