@@ -1,10 +1,6 @@
 #!/bin/bash
-# Set the qt-plus version everywhere from a single command.
 # Single source of truth for the release: the VERSION file at repo root.
 # This script syncs it to qt-plus.pro (qmake), CMakeLists.txt and qtplus_global.h.
-#
-# Usage: set-version.sh [--tag] X.Y.Z
-#   --tag  create git tag vX.Y.Z after updating the files
 set -euo pipefail
 
 SCRIPT_FOLDER="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -17,9 +13,10 @@ TAG=0
 
 usage() {
   cat <<'USAGE'
-Usage: set-version.sh [--tag] X.Y.Z
-  X.Y.Z  new semantic version (e.g. 3.0.0)
-  --tag  create git tag vX.Y.Z after updating the files
+Usage: ./set-version.sh [--tag] <version>
+  --tag  create git tag v<version> after updating the files
+Example: ./set-version.sh 1.2.3
+Example: ./set-version.sh --tag 1.2.3
 USAGE
 }
 

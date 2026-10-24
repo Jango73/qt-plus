@@ -10,57 +10,57 @@ EXIT_FAILURE=1
 APT_PACKAGES=(
   build-essential
   cmake
-  ninja-build
   git
+  libqt6serialport6-dev
+  libqt6shadertools6-dev
+  linguist-qt6
+  ninja-build
+  # NOTE: qtcreator is excluded on purpose. On Ubuntu 22.04 (jammy) the
+  # unversioned qtcreator package (6.0.2) is Qt5-based and pulls libqt5*,
+  # qml-module-*, qt5-doc and related packages as dependencies.
+  # Install an IDE separately only if needed.
+  qml6-module-qtqml-models
+  qml6-module-qtqml-workerscript
+  qml6-module-qtquick
+  qml6-module-qtquick-controls
+  qml6-module-qtquick-layouts
+  qml6-module-qtquick-templates
+  qml6-module-qtquick-window
   qt6-base-dev
   qt6-base-dev-tools
   qt6-declarative-dev
   qt6-declarative-dev-tools
   qt6-qmltooling-plugins
+  qt6-shader-baker
   qt6-tools-dev
   qt6-tools-dev-tools
-  linguist-qt6
-  libqt6shadertools6-dev
-  qt6-shader-baker
   qt6-wayland
-  # NOTE: qtcreator is excluded on purpose. On Ubuntu 22.04 (jammy) the
-  # unversioned qtcreator package (6.0.2) is Qt5-based and pulls libqt5*,
-  # qml-module-*, qt5-doc and related packages as dependencies.
-  # Install an IDE separately only if needed.
-  qml6-module-qtquick
-  qml6-module-qtquick-controls
-  qml6-module-qtquick-layouts
-  qml6-module-qtqml-models
-  qml6-module-qtqml-workerscript
-  qml6-module-qtquick-templates
-  qml6-module-qtquick-window
-  libqt6serialport6-dev
 )
 
 DNF_PACKAGES=(
-  gcc-c++
   cmake
-  ninja-build
+  gcc-c++
   git
+  ninja-build
   qt6-qtbase-devel
   qt6-qtdeclarative-devel
-  qt6-qttools-devel
-  qt6-qtshadertools-devel
-  qt6-qtwayland-devel
   qt6-qtserialport-devel
+  qt6-qtshadertools-devel
+  qt6-qttools-devel
+  qt6-qtwayland-devel
 )
 
 PACMAN_PACKAGES=(
   base-devel
   cmake
-  ninja
   git
+  ninja
   qt6-base
   qt6-declarative
-  qt6-tools
-  qt6-shadertools
-  qt6-wayland
   qt6-serialport
+  qt6-shadertools
+  qt6-tools
+  qt6-wayland
 )
 
 install_with_apt() {

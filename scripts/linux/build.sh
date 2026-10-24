@@ -74,8 +74,8 @@ for candidate in qmake6 qmake-qt6 qmake; do
 done
 
 if [[ -z "${QMAKE}" ]]; then
-  echo "Error: qmake not found. Install Qt development tools." >&2
-  exit 1
+  echo "[build] qmake not found, run ./scripts/linux/deps.sh first." >&2
+  exit "${EXIT_FAILURE}"
 fi
 
 echo "Using qmake: ${QMAKE}"

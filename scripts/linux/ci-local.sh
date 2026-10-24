@@ -1,7 +1,6 @@
 #!/bin/bash
-# Local mirror of the GitHub CI build: compiles the library, builds the
-# unit tests and runs them. Run this before pushing, it catches failures
-# here instead of burning CI runs.
+# Local mirror of the GitHub CI build: builds the project and runs its checks.
+# Run this before pushing, it catches failures here instead of burning CI runs.
 set -euo pipefail
 
 SCRIPT_FOLDER="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -66,11 +65,11 @@ for candidate in qmake6 qmake-qt6 qmake; do
 done
 
 if [[ -z "${QMAKE}" ]]; then
-  echo "Error: qmake not found. Run scripts/linux/deps.sh first." >&2
+  echo "[ci-local] qmake not found, run ./scripts/linux/deps.sh first." >&2
   exit "${EXIT_FAILURE}"
 fi
 
-echo "Using qmake: ${QMAKE}"
+echo "[ci-local] Using qmake: ${QMAKE}"
 
 if [[ "${BUILD_TYPE}" == "Debug" ]]; then
   QMAKE_CONFIG="debug"
@@ -80,17 +79,18 @@ fi
 
 LIB_BUILD_DIR="${PROJECT_ROOT_FOLDER}/build-ci-check-lib"
 TEST_BUILD_DIR="${PROJECT_ROOT_FOLDER}/build-ci-check-test"
-mkdir -p "${LIB_BUILD_DIR}" "${TEST_BUILD_DIR}"
+LOG_FILE="${PROJECT_ROOT_FOLDER}/tmp/ci-local.log"
+mkdir -p "${LIB_BUILD_DIR}" "${TEST_BUILD_DIR}" "$(dirname "${LOG_FILE}")"
 
-echo "Building qt-plus..."
+echo "[ci-local] Building qt-plus..."
 (cd "${LIB_BUILD_DIR}" && "${QMAKE}" "${PROJECT_ROOT_FOLDER}/qt-plus.pro" "CONFIG+=${QMAKE_CONFIG}")
 make -C "${LIB_BUILD_DIR}" -j"$(nproc)"
 
-echo "Building tests..."
+echo "[ci-local] Building tests..."
 (cd "${TEST_BUILD_DIR}" && "${QMAKE}" "${PROJECT_ROOT_FOLDER}/test/qt-plus-test.pro" "CONFIG+=${QMAKE_CONFIG}")
 make -C "${TEST_BUILD_DIR}" -j"$(nproc)"
 
-echo "Running tests..."
-(cd "${PROJECT_ROOT_FOLDER}/test" && LD_LIBRARY_PATH="${PROJECT_ROOT_FOLDER}/bin" QT_QPA_PLATFORM=offscreen "${PROJECT_ROOT_FOLDER}/bin/qt-plus-test")
+echo "[ci-local] Running checks (logging to ${LOG_FILE})..."
+(cd "${PROJECT_ROOT_FOLDER}/test" && LD_LIBRARY_PATH="${PROJECT_ROOT_FOLDER}/bin" QT_QPA_PLATFORM=offscreen "${PROJECT_ROOT_FOLDER}/bin/qt-plus-test") 2>&1 | tee "${LOG_FILE}"
 
 echo "[ci-local] Local CI check passed."
