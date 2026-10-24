@@ -6,8 +6,19 @@ Utility classes extending Qt's functionnality.
 
 ## Building
 
-* Open /qt-plus.pro in QtCreator
-* Build
+* Install dependencies
+```
+    ./scripts/linux/deps.sh
+```
+* Build (shadow build with `cmake` + `ninja`)
+```
+    ./scripts/linux/build.sh [--debug|--release]
+```
+* Run the unit tests
+```
+    ./scripts/linux/ci-local.sh [--debug|--release]
+```
+(Windows still builds with `scripts/windows/build.bat` through `qt-plus.pro`.)
 
 ## How to use
 

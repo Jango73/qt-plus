@@ -30,6 +30,8 @@ APT_PACKAGES=(
   qt6-base-dev-tools
   qt6-declarative-dev
   qt6-declarative-dev-tools
+  qt6-multimedia-dev
+  qt6-positioning-dev
   qt6-qmltooling-plugins
   qt6-shader-baker
   qt6-tools-dev
@@ -44,6 +46,8 @@ DNF_PACKAGES=(
   ninja-build
   qt6-qtbase-devel
   qt6-qtdeclarative-devel
+  qt6-qtmultimedia-devel
+  qt6-qtpositioning-devel
   qt6-qtserialport-devel
   qt6-qtshadertools-devel
   qt6-qttools-devel
@@ -57,6 +61,8 @@ PACMAN_PACKAGES=(
   ninja
   qt6-base
   qt6-declarative
+  qt6-multimedia
+  qt6-positioning
   qt6-serialport
   qt6-shadertools
   qt6-tools

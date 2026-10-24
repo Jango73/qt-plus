@@ -56,41 +56,25 @@ if [[ "${BUILD_TYPE}" != "Debug" && "${BUILD_TYPE}" != "Release" ]]; then
   exit "${EXIT_FAILURE}"
 fi
 
-QMAKE=""
-for candidate in qmake6 qmake-qt6 qmake; do
-  if command -v "${candidate}" >/dev/null 2>&1; then
-    QMAKE="${candidate}"
-    break
-  fi
-done
+echo "[ci-local] Building (${BUILD_TYPE})..."
+"${SCRIPT_FOLDER}/build.sh" -c "${BUILD_TYPE}"
 
-if [[ -z "${QMAKE}" ]]; then
-  echo "[ci-local] qmake not found, run ./scripts/linux/deps.sh first." >&2
+BUILD_FOLDER="${PROJECT_ROOT_FOLDER}/build-${BUILD_TYPE,,}"
+LOG_FILE="${PROJECT_ROOT_FOLDER}/tmp/ci-local.log"
+
+if [[ "${BUILD_TYPE}" == "Debug" ]]; then
+  BINARY="${BUILD_FOLDER}/test/qt-plus-testd"
+else
+  BINARY="${BUILD_FOLDER}/test/qt-plus-test"
+fi
+
+if [ ! -f "${BINARY}" ]; then
+  echo "[ci-local] Binary not found at ${BINARY}" >&2
   exit "${EXIT_FAILURE}"
 fi
 
-echo "[ci-local] Using qmake: ${QMAKE}"
-
-if [[ "${BUILD_TYPE}" == "Debug" ]]; then
-  QMAKE_CONFIG="debug"
-else
-  QMAKE_CONFIG="release"
-fi
-
-LIB_BUILD_DIR="${PROJECT_ROOT_FOLDER}/build-ci-check-lib"
-TEST_BUILD_DIR="${PROJECT_ROOT_FOLDER}/build-ci-check-test"
-LOG_FILE="${PROJECT_ROOT_FOLDER}/tmp/ci-local.log"
-mkdir -p "${LIB_BUILD_DIR}" "${TEST_BUILD_DIR}" "$(dirname "${LOG_FILE}")"
-
-echo "[ci-local] Building qt-plus..."
-(cd "${LIB_BUILD_DIR}" && "${QMAKE}" "${PROJECT_ROOT_FOLDER}/qt-plus.pro" "CONFIG+=${QMAKE_CONFIG}")
-make -C "${LIB_BUILD_DIR}" -j"$(nproc)"
-
-echo "[ci-local] Building tests..."
-(cd "${TEST_BUILD_DIR}" && "${QMAKE}" "${PROJECT_ROOT_FOLDER}/test/qt-plus-test.pro" "CONFIG+=${QMAKE_CONFIG}")
-make -C "${TEST_BUILD_DIR}" -j"$(nproc)"
-
+mkdir -p "$(dirname "${LOG_FILE}")"
 echo "[ci-local] Running checks (logging to ${LOG_FILE})..."
-(cd "${PROJECT_ROOT_FOLDER}/test" && LD_LIBRARY_PATH="${PROJECT_ROOT_FOLDER}/bin" QT_QPA_PLATFORM=offscreen "${PROJECT_ROOT_FOLDER}/bin/qt-plus-test") 2>&1 | tee "${LOG_FILE}"
+QT_QPA_PLATFORM=offscreen "${BINARY}" 2>&1 | tee "${LOG_FILE}"
 
 echo "[ci-local] Local CI check passed."

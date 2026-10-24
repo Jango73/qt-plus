@@ -1,5 +1,40 @@
 cmake_minimum_required(VERSION 3.16)
-project(qt-plus VERSION 3.0.0 LANGUAGES CXX)
+
+# Version lives in the VERSION file at the repository root (same file synced
+# by scripts/linux/set-version.sh). Fail fast if it is missing or malformed.
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/VERSION")
+  message(FATAL_ERROR "VERSION file not found at repository root")
+endif()
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" QTPLUS_VERSION_RAW)
+string(STRIP "${QTPLUS_VERSION_RAW}" QTPLUS_VERSION)
+if(NOT QTPLUS_VERSION MATCHES "^[0-9]+\\.[0-9]+\\.[0-9]+$")
+  message(FATAL_ERROR "Malformed VERSION file: '${QTPLUS_VERSION_RAW}'")
+endif()
+
+project(qt-plus VERSION ${QTPLUS_VERSION} LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+set(CMAKE_AUTOMOC ON)
+
+# Also usable as a submodule (quick3d, VirtualPilot): only locate Qt when the
+# parent project did not do it already.
+if(NOT TARGET Qt6::Core)
+  find_package(Qt6 6.2 REQUIRED COMPONENTS
+    Core
+    Gui
+    Widgets
+    Network
+    Xml
+    SerialPort
+    Multimedia
+    Positioning
+    Qml
+    Test
+  )
+endif()
 
 add_library(qt-plus SHARED
     source/cpp/CConnectedStream.cpp
@@ -128,3 +163,16 @@ target_link_libraries(qt-plus PUBLIC
 set_target_properties(qt-plus PROPERTIES DEBUG_POSTFIX "d"
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR})
+
+# Tests only for standalone builds: parents (quick3d, VirtualPilot) run their
+# own suites and must not inherit this one.
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  set(QTPLUS_BUILD_TESTS_DEFAULT ON)
+else()
+  set(QTPLUS_BUILD_TESTS_DEFAULT OFF)
+endif()
+option(QTPLUS_BUILD_TESTS "Build the qt-plus unit tests" ${QTPLUS_BUILD_TESTS_DEFAULT})
+
+if(QTPLUS_BUILD_TESTS)
+  add_subdirectory(test)
+endif()

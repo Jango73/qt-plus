@@ -64,38 +64,25 @@ fi
 
 BUILD_DIR="${PROJECT_ROOT_FOLDER}/build-${BUILD_TYPE,,}"
 
-# Find qmake executable (prefer Qt6)
-QMAKE=""
-for candidate in qmake6 qmake-qt6 qmake; do
-  if command -v "${candidate}" >/dev/null 2>&1; then
-    QMAKE="${candidate}"
-    break
-  fi
-done
-
-if [[ -z "${QMAKE}" ]]; then
-  echo "[build] qmake not found, run ./scripts/linux/deps.sh first." >&2
+# Find CMake and Ninja
+if ! command -v cmake >/dev/null 2>&1; then
+  echo "[build] cmake not found, run ./scripts/linux/deps.sh first." >&2
   exit "${EXIT_FAILURE}"
 fi
 
-echo "Using qmake: ${QMAKE}"
-
-mkdir -p "${BUILD_DIR}"
-cd "${BUILD_DIR}"
-
-if [[ "${BUILD_TYPE}" == "Debug" ]]; then
-  CONFIG_ARG="CONFIG+=debug"
-else
-  CONFIG_ARG="CONFIG+=release"
+if ! command -v ninja >/dev/null 2>&1; then
+  echo "[build] ninja not found, run ./scripts/linux/deps.sh first." >&2
+  exit "${EXIT_FAILURE}"
 fi
 
-echo "Building qt-plus with ${CONFIG_ARG}..."
-"${QMAKE}" "${PROJECT_ROOT_FOLDER}/qt-plus.pro" "${CONFIG_ARG}"
+echo "Using cmake: $(command -v cmake)"
 
+echo "Running cmake with build type ${BUILD_TYPE}..."
+cmake -S "${PROJECT_ROOT_FOLDER}" -B "${BUILD_DIR}" -G Ninja -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
 if [ "${VERBOSE_BUILD}" -eq "${VERBOSE_ENABLED}" ]; then
-  make -j"$(nproc)" VERBOSE=1
+  cmake --build "${BUILD_DIR}" --verbose
 else
-  make -j"$(nproc)"
+  cmake --build "${BUILD_DIR}"
 fi
 
-printf '\nBuilt qt-plus library in %s\n' "${PROJECT_ROOT_FOLDER}/bin"
+printf '\nBuilt qt-plus library in %s\n' "${BUILD_DIR}"
