@@ -70,6 +70,7 @@ CHTTPServer::CHTTPServer(quint16 uiPort, const QHostAddress& tListenAddress, QOb
     , m_iMaxBodyBytes(32 * 1024 * 1024)
     , m_tListenAddress(tListenAddress)
     , m_eSslPeerVerifyMode(QSslSocket::VerifyNone)
+    , m_lSslCaCertificates()
     , m_bHstsEnabled(false)
     , m_iHstsMaxAge(31536000)
     , m_iMaximumSessionAliveSeconds(15 * 60)
@@ -299,6 +300,20 @@ QSslSocket::PeerVerifyMode CHTTPServer::sslPeerVerifyMode() const
 
 //-------------------------------------------------------------------------------------------------
 
+void CHTTPServer::setSslCaCertificates(const QList<QSslCertificate>& lCertificates)
+{
+    m_lSslCaCertificates = lCertificates;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+QList<QSslCertificate> CHTTPServer::sslCaCertificates() const
+{
+    return m_lSslCaCertificates;
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void CHTTPServer::setHstsEnabled(bool bEnabled)
 {
     m_bHstsEnabled = bEnabled;
@@ -397,6 +412,10 @@ bool CHTTPServer::enableHttps(const QSslCertificate& certificate, const QSslKey&
     sslConfig.setLocalCertificate(certificate);
     sslConfig.setPrivateKey(privateKey);
     sslConfig.setPeerVerifyMode(m_eSslPeerVerifyMode);
+
+    if (!m_lSslCaCertificates.isEmpty())
+        sslConfig.setCaCertificates(m_lSslCaCertificates);
+
     sslConfig.setProtocol(QSsl::TlsV1_2OrLater);
 
     m_sslConfiguration = sslConfig;

@@ -182,10 +182,17 @@ public:
     QHostAddress listenAddress() const;
 
     //! Sets the TLS peer verify mode applied at the next enableHttps call (default VerifyNone, portal owns identity)
+    //! VerifyPeer and above refuse peers without a certificate, QueryPeer asks without refusing
     void setSslPeerVerifyMode(QSslSocket::PeerVerifyMode eMode);
 
     //! Returns the TLS peer verify mode applied at the next enableHttps call
     QSslSocket::PeerVerifyMode sslPeerVerifyMode() const;
+
+    //! Sets the portal CA certificates trusted for peer verification, applied at the next enableHttps call (empty keeps the system store)
+    void setSslCaCertificates(const QList<QSslCertificate>& lCertificates);
+
+    //! Returns the portal CA certificates trusted for peer verification
+    QList<QSslCertificate> sslCaCertificates() const;
 
     //! Enables or disables the Strict-Transport-Security header on HTTPS responses (disabled by default)
     void setHstsEnabled(bool bEnabled);
@@ -319,6 +326,7 @@ protected:
     qint64                          m_iMaxBodyBytes;                // Maximum buffered body bytes
     QHostAddress                    m_tListenAddress;               // Bind address for HTTP and HTTPS listeners
     QSslSocket::PeerVerifyMode      m_eSslPeerVerifyMode;           // Applied at the next enableHttps call
+    QList<QSslCertificate>          m_lSslCaCertificates;           // Portal CAs for peer verification, empty keeps the system store
     bool                            m_bHstsEnabled;                 // Adds Strict-Transport-Security on HTTPS responses
     int                             m_iHstsMaxAge;                  // Strict-Transport-Security max-age in seconds
     int                             m_iMaximumSessionAliveSeconds;  //

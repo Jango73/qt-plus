@@ -77,6 +77,20 @@ void CHTTPRequestProcessor::run()
             m_pSocket = nullptr;
             return;
         }
+
+        // Qt verifies a presented client certificate but tolerates a missing one,
+        // so presence is enforced here: verification modes above QueryPeer refuse
+        // peers without a certificate instead of serving them unauthenticated
+        if (pSslSocket->peerVerifyMode() != QSslSocket::VerifyNone
+            && pSslSocket->peerVerifyMode() != QSslSocket::QueryPeer
+            && pSslSocket->peerCertificateChain().isEmpty())
+        {
+            qWarning() << QString("CHTTPRequestProcessor::run() : peer did not present a certificate");
+            pSslSocket->disconnectFromHost();
+            pSslSocket->deleteLater();
+            m_pSocket = nullptr;
+            return;
+        }
     }
     else
     {
