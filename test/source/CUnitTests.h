@@ -45,4 +45,6 @@ private slots:
     void xmlEmptyTagExportsChildren();
     void xmlBinaryRoundTrip();
     void shardFileStoreRoutingSplitAndPersistence();
+    void httpFloodSurvives();
+    void httpDistributedFloodIsolatesIps();
 };

@@ -27,8 +27,11 @@ public:
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //! Constructor
+    //! Constructor, listens on all interfaces
     CDynamicHTTPServer(quint16 port = DEFAULT_HTTP_PORT, QObject* parent = nullptr);
+
+    //! Constructor, listens on tListenAddress only (portal-only binding)
+    CDynamicHTTPServer(quint16 port, const QHostAddress& tListenAddress, QObject* parent = nullptr);
 
     //! Destructor
     virtual ~CDynamicHTTPServer() Q_DECL_OVERRIDE;

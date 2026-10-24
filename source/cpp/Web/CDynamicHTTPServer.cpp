@@ -33,6 +33,20 @@ CDynamicHTTPServer::CDynamicHTTPServer(quint16 port, QObject* parent)
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Constructs a CDynamicHTTPServer with a binding port equal to \a port on \a tListenAddress only. \br
+    \a parent is the owner of this object.
+*/
+CDynamicHTTPServer::CDynamicHTTPServer(quint16 port, const QHostAddress& tListenAddress, QObject* parent)
+    : CHTTPServer(port, tListenAddress, parent)
+    , m_sLang("fr")
+    , m_sLocalizationFolder("")
+{
+    append(this);
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Destroys a CDynamicHTTPServer.
 */
 CDynamicHTTPServer::~CDynamicHTTPServer()

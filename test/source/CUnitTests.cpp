@@ -24,6 +24,12 @@
 #include "File/CRollingFiles.h"
 #include "File/CShardFileStore.h"
 #include "RemoteControl/CRemoteControl.h"
+#include "Web/CHTTPServer.h"
+
+// Qt
+#include <QTcpServer>
+#include <QTcpSocket>
+#include <QElapsedTimer>
 
 #include "CUnitTests.h"
 
@@ -724,6 +730,142 @@ void CUnitTests::shardFileStoreRoutingSplitAndPersistence()
     CShardFileStore tPruned(sFolder, "TestShardStore", nullptr, 8, true);
     QVERIFY(!tPruned.containsValue(sFirstKey));
     QVERIFY(tPruned.containsValue(lSpreadKeys.last()));
+}
+
+//-------------------------------------------------------------------------------------------------
+// Flood survival: burst of parallel connections must not kill the listener,
+// oversized bodies are dropped, a clean request still answers afterwards
+
+void CUnitTests::httpFloodSurvives()
+{
+    QTcpServer tProbe;
+
+    QVERIFY(tProbe.listen(QHostAddress::LocalHost, 0));
+
+    const quint16 uiPort = tProbe.serverPort();
+    tProbe.close();
+
+    CHTTPServer tServer(uiPort);
+    QVERIFY(tServer.isListening());
+
+    tServer.setMaxConnectionsTotal(200);
+    tServer.setMaxHeaderBytes(65536);
+    tServer.setMaxBodyBytes(1024 * 1024);
+    tServer.setFloodLimits(100000, 100000);
+
+    const int iClients = 60;
+    const QByteArray baGet = "GET / HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n";
+    int iAnswered = 0;
+
+    // waitForReadyRead does not deliver the server accept in this harness,
+    // pump with qWait so the listener, processors and client all flow
+    for (int i = 0; i < iClients; i++)
+    {
+        QTcpSocket tSocket;
+
+        tSocket.connectToHost(QHostAddress::LocalHost, uiPort);
+
+        if (!tSocket.waitForConnected(2000))
+            continue;
+
+        tSocket.write(baGet);
+        tSocket.waitForBytesWritten(2000);
+
+        QByteArray baReply;
+
+        QElapsedTimer tTimer;
+        tTimer.start();
+
+        while (tTimer.elapsed() < 3000)
+        {
+            QTest::qWait(20);
+
+            if (tSocket.bytesAvailable() > 0)
+            {
+                baReply += tSocket.readAll();
+
+                if (baReply.contains("HTTP/1.1"))
+                    break;
+            }
+            else if (tSocket.state() != QAbstractSocket::ConnectedState && !baReply.isEmpty())
+            {
+                break;
+            }
+        }
+
+        if (baReply.contains("HTTP/1.1"))
+            iAnswered++;
+
+        tSocket.disconnectFromHost();
+    }
+
+    QVERIFY(tServer.isListening());
+    QVERIFY(iAnswered > 0);
+
+    QTcpSocket tClean;
+    tClean.connectToHost(QHostAddress::LocalHost, uiPort);
+    QVERIFY(tClean.waitForConnected(2000));
+
+    tClean.write(baGet);
+    QVERIFY(tClean.waitForBytesWritten(2000));
+
+    QByteArray baClean;
+    QElapsedTimer tCleanTimer;
+    tCleanTimer.start();
+
+    while (tCleanTimer.elapsed() < 3000)
+    {
+        QTest::qWait(20);
+
+        if (tClean.bytesAvailable() > 0)
+        {
+            baClean += tClean.readAll();
+
+            if (baClean.contains("HTTP/1.1"))
+                break;
+        }
+    }
+
+    QVERIFY(baClean.contains("HTTP/1.1"));
+    QVERIFY(tServer.isListening());
+
+    tClean.disconnectFromHost();
+}
+
+//-------------------------------------------------------------------------------------------------
+// Distributed flood: many source IPs, only attackers are blocked, clean IPs still pass
+
+void CUnitTests::httpDistributedFloodIsolatesIps()
+{
+    QTcpServer tProbe;
+
+    QVERIFY(tProbe.listen(QHostAddress::LocalHost, 0));
+
+    const quint16 uiPort = tProbe.serverPort();
+    tProbe.close();
+
+    CHTTPServer tServer(uiPort);
+    QVERIFY(tServer.isListening());
+
+    // Simultaneous threshold trips without waiting for the 4 s rate window,
+    // which models burst sources behind distinct addresses
+    tServer.setFloodLimits(100000, 5);
+
+    const QString sAttacker = QStringLiteral("10.99.0.1");
+
+    for (int i = 0; i < 12; i++)
+        tServer.requestStart(sAttacker);
+
+    QVERIFY(tServer.monitors().value(sAttacker).shouldBeBlocked());
+    QVERIFY(!tServer.passBlackListing(sAttacker));
+
+    const QStringList lClean = { QStringLiteral("10.99.0.2"), QStringLiteral("10.99.0.3"), QStringLiteral("192.168.100.7") };
+
+    for (const QString& sClean : lClean)
+    {
+        QVERIFY(!tServer.monitors().value(sClean).shouldBeBlocked());
+        QVERIFY(tServer.passBlackListing(sClean));
+    }
 }
 
 //-------------------------------------------------------------------------------------------------

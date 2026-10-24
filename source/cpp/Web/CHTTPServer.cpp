@@ -48,10 +48,30 @@
     \a parent is the owner of this object.
 */
 CHTTPServer::CHTTPServer(quint16 uiPort, QObject* parent)
+    : CHTTPServer(uiPort, QHostAddress::Any, parent)
+{
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Constructs a CHTTPServer with a binding port equal to \a uiPort on \a tListenAddress only. \br\br
+    \a tListenAddress restricts the bind so a portal-only deployment never listens on all interfaces. \br
+    \a parent is the owner of this object.
+*/
+CHTTPServer::CHTTPServer(quint16 uiPort, const QHostAddress& tListenAddress, QObject* parent)
     : QTcpServer(parent)
     , m_mMutex()
     , m_iRequestCount(0)
     , m_iMaxRequestPerSeconds(15)
+    , m_iMaxSimultaneousRequests(15)
+    , m_iMaxConnectionsTotal(200)
+    , m_iMaxHeaderBytes(65536)
+    , m_iMaxBodyBytes(32 * 1024 * 1024)
+    , m_tListenAddress(tListenAddress)
+    , m_eSslPeerVerifyMode(QSslSocket::VerifyNone)
+    , m_bHstsEnabled(false)
+    , m_iHstsMaxAge(31536000)
     , m_iMaximumSessionAliveSeconds(15 * 60)
     , m_iMaintenanceTimerSeconds(60)
     , m_bDisabled(false)
@@ -91,7 +111,7 @@ CHTTPServer::CHTTPServer(quint16 uiPort, QObject* parent)
     // Listen
     if (uiPort > 0)
     {
-        if (!listen(QHostAddress::Any, uiPort))
+        if (!listen(m_tListenAddress, uiPort))
         {
             qWarning() << QString("CHTTPServer::CHTTPServer() : bind to %1 failed").arg(uiPort);
         }
@@ -195,6 +215,124 @@ void CHTTPServer::useFloodProtection(bool bUse)
 //-------------------------------------------------------------------------------------------------
 
 /*!
+    Sets the flood thresholds applied per IP. \br\br
+    \a iMaxRequestsPerSecond bounds the 4 s sample rate, \a iMaxSimultaneousRequests bounds concurrent requests.
+*/
+void CHTTPServer::setFloodLimits(int iMaxRequestsPerSecond, int iMaxSimultaneousRequests)
+{
+    if (iMaxRequestsPerSecond > 0)
+        m_iMaxRequestPerSeconds = iMaxRequestsPerSecond;
+
+    if (iMaxSimultaneousRequests > 0)
+        m_iMaxSimultaneousRequests = iMaxSimultaneousRequests;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Sets the maximum concurrent connection threads. \br\br
+    Excess descriptors are dropped in incomingConnection without spawning a thread.
+*/
+void CHTTPServer::setMaxConnectionsTotal(int iMax)
+{
+    if (iMax > 0)
+        m_iMaxConnectionsTotal = iMax;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+int CHTTPServer::maxConnectionsTotal() const
+{
+    return m_iMaxConnectionsTotal;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CHTTPServer::setMaxHeaderBytes(qint64 iMax)
+{
+    if (iMax > 0)
+        m_iMaxHeaderBytes = iMax;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+qint64 CHTTPServer::maxHeaderBytes() const
+{
+    return m_iMaxHeaderBytes;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CHTTPServer::setMaxBodyBytes(qint64 iMax)
+{
+    if (iMax > 0)
+        m_iMaxBodyBytes = iMax;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+qint64 CHTTPServer::maxBodyBytes() const
+{
+    return m_iMaxBodyBytes;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+QHostAddress CHTTPServer::listenAddress() const
+{
+    return m_tListenAddress;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CHTTPServer::setSslPeerVerifyMode(QSslSocket::PeerVerifyMode eMode)
+{
+    m_eSslPeerVerifyMode = eMode;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+QSslSocket::PeerVerifyMode CHTTPServer::sslPeerVerifyMode() const
+{
+    return m_eSslPeerVerifyMode;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+void CHTTPServer::setHstsEnabled(bool bEnabled)
+{
+    m_bHstsEnabled = bEnabled;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+bool CHTTPServer::hstsEnabled() const
+{
+    return m_bHstsEnabled;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
+    Sets the Strict-Transport-Security max-age. \br\br
+    Non-positive values keep the previous setting.
+*/
+void CHTTPServer::setHstsMaxAge(int iSeconds)
+{
+    if (iSeconds > 0)
+        m_iHstsMaxAge = iSeconds;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+int CHTTPServer::hstsMaxAge() const
+{
+    return m_iHstsMaxAge;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+/*!
     Enables HTTPS on a second port using PEM files. HTTP keeps listening. \br\br
     \a sCertPath contains the certificate file (PEM). \br
     \a sKeyPath contains the private key file (PEM, RSA/ECDSA, optionally encrypted without passphrase support). \br
@@ -258,14 +396,14 @@ bool CHTTPServer::enableHttps(const QSslCertificate& certificate, const QSslKey&
     QSslConfiguration sslConfig = QSslConfiguration::defaultConfiguration();
     sslConfig.setLocalCertificate(certificate);
     sslConfig.setPrivateKey(privateKey);
-    sslConfig.setPeerVerifyMode(QSslSocket::VerifyNone);
-    sslConfig.setProtocol(QSsl::SecureProtocols);
+    sslConfig.setPeerVerifyMode(m_eSslPeerVerifyMode);
+    sslConfig.setProtocol(QSsl::TlsV1_2OrLater);
 
     m_sslConfiguration = sslConfig;
 
     m_pHttpsServer = new CHttpsListener(this);
 
-    if (!m_pHttpsServer->listen(QHostAddress::Any, uiHttpsPort))
+    if (!m_pHttpsServer->listen(m_tListenAddress, uiHttpsPort))
     {
         qWarning() << QString("CHTTPServer::enableHttps() : bind to %1 failed").arg(uiHttpsPort);
         delete m_pHttpsServer;
@@ -398,7 +536,7 @@ void CHTTPServer::requestStart(QString sIPAddress)
         if (m_bUseFloodProtection)
         {
             // Process request monitors
-            m_mMonitors[sIPAddress].processIn();
+            m_mMonitors[sIPAddress].processIn(m_iMaxRequestPerSeconds, m_iMaxSimultaneousRequests);
         }
 
         unlock();
@@ -598,19 +736,21 @@ QString CHTTPServer::IPFromSocket(QTcpSocket* pSocket)
 //-------------------------------------------------------------------------------------------------
 
 /*!
-    Handles incoming connections.
+    Handles incoming connections. Drops excess descriptors without a thread when over the global cap.
 */
 void CHTTPServer::incomingConnection(qintptr socketDescriptor)
 {
-//    bool bPassBlacklisting = true;
-
-//    QString sIPAddress = cleanIP(pSocket->peerAddress().toString());
-//    bPassBlacklisting = passBlackListing(sIPAddress);
-
-//    if (bPassBlacklisting)
+    if (m_vProcessors.size() >= m_iMaxConnectionsTotal)
     {
-        createProcessor(socketDescriptor, false);
+        QTcpSocket tDrop;
+
+        if (tDrop.setSocketDescriptor(socketDescriptor))
+            tDrop.disconnectFromHost();
+
+        return;
     }
+
+    createProcessor(socketDescriptor, false);
 }
 
 //-------------------------------------------------------------------------------------------------

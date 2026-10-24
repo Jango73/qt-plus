@@ -59,7 +59,7 @@ public:
             m_bFlooding = false;
         }
 
-        void processIn()
+        void processIn(int iMaxRequestsPerSecond = 15, int iMaxSimultaneousRequests = 15)
         {
             const int iSampleMillis = 4000;
 
@@ -70,7 +70,7 @@ public:
 
             if (m_dSampleStartTime.msecsTo(dNow) > iSampleMillis)
             {
-                if (m_iSampleRequestCount > (15 * (iSampleMillis / 1000)))
+                if (m_iSampleRequestCount > (iMaxRequestsPerSecond * (iSampleMillis / 1000)))
                 {
                     m_bFlooding = true;
                 }
@@ -79,7 +79,7 @@ public:
                 m_iSampleRequestCount = 0;
             }
 
-            if (m_iSimultaneousRequestCount > 15)
+            if (m_iSimultaneousRequestCount > iMaxSimultaneousRequests)
             {
                 m_bFlooding = true;
             }
@@ -109,8 +109,11 @@ public:
     // Constructors and destructor
     //-------------------------------------------------------------------------------------------------
 
-    //! Constructor
+    //! Constructor, listens on all interfaces
     CHTTPServer(quint16 uiPort = DEFAULT_HTTP_PORT, QObject* parent = nullptr);
+
+    //! Constructor, listens on tListenAddress only (portal-only binding)
+    CHTTPServer(quint16 uiPort, const QHostAddress& tListenAddress, QObject* parent = nullptr);
 
     //! Destructor
     virtual ~CHTTPServer() Q_DECL_OVERRIDE;
@@ -153,6 +156,48 @@ public:
 
     //! Activates or deactivates flood protection (activated by default)
     void useFloodProtection(bool bUse);
+
+    //! Sets the flood thresholds (requests per second per IP, simultaneous requests per IP)
+    void setFloodLimits(int iMaxRequestsPerSecond, int iMaxSimultaneousRequests);
+
+    //! Sets the maximum concurrent connections (threads), excess descriptors are dropped without a thread
+    void setMaxConnectionsTotal(int iMax);
+
+    //! Returns the maximum concurrent connections
+    int maxConnectionsTotal() const;
+
+    //! Sets the maximum buffered HTTP header bytes (default 65536)
+    void setMaxHeaderBytes(qint64 iMax);
+
+    //! Returns the maximum buffered HTTP header bytes
+    qint64 maxHeaderBytes() const;
+
+    //! Sets the maximum buffered HTTP body bytes (default 32 MiB)
+    void setMaxBodyBytes(qint64 iMax);
+
+    //! Returns the maximum buffered HTTP body bytes
+    qint64 maxBodyBytes() const;
+
+    //! Returns the listen address used for HTTP and HTTPS listeners
+    QHostAddress listenAddress() const;
+
+    //! Sets the TLS peer verify mode applied at the next enableHttps call (default VerifyNone, portal owns identity)
+    void setSslPeerVerifyMode(QSslSocket::PeerVerifyMode eMode);
+
+    //! Returns the TLS peer verify mode applied at the next enableHttps call
+    QSslSocket::PeerVerifyMode sslPeerVerifyMode() const;
+
+    //! Enables or disables the Strict-Transport-Security header on HTTPS responses (disabled by default)
+    void setHstsEnabled(bool bEnabled);
+
+    //! Returns true when the Strict-Transport-Security header is added on HTTPS responses
+    bool hstsEnabled() const;
+
+    //! Sets the Strict-Transport-Security max-age in seconds (default 31536000)
+    void setHstsMaxAge(int iSeconds);
+
+    //! Returns the Strict-Transport-Security max-age in seconds
+    int hstsMaxAge() const;
 
     //! Enables HTTPS on a second port using PEM files (key + certificate). HTTP keeps working. Returns false on error
     bool enableHttps(const QString& sCertPath, const QString& sKeyPath, quint16 uiHttpsPort = DEFAULT_HTTPS_PORT);
@@ -268,6 +313,14 @@ protected:
     QRecursiveMutex                 m_mMutex;                       // Data protection
     int                             m_iRequestCount;                // Total request count
     int                             m_iMaxRequestPerSeconds;        // Maximum requests per second for a given IP
+    int                             m_iMaxSimultaneousRequests;     // Maximum simultaneous requests for a given IP
+    int                             m_iMaxConnectionsTotal;         // Maximum concurrent connection threads
+    qint64                          m_iMaxHeaderBytes;              // Maximum buffered header bytes
+    qint64                          m_iMaxBodyBytes;                // Maximum buffered body bytes
+    QHostAddress                    m_tListenAddress;               // Bind address for HTTP and HTTPS listeners
+    QSslSocket::PeerVerifyMode      m_eSslPeerVerifyMode;           // Applied at the next enableHttps call
+    bool                            m_bHstsEnabled;                 // Adds Strict-Transport-Security on HTTPS responses
+    int                             m_iHstsMaxAge;                  // Strict-Transport-Security max-age in seconds
     int                             m_iMaximumSessionAliveSeconds;  //
     int                             m_iMaintenanceTimerSeconds;     // Seconds between maintenance processing
     bool                            m_bDisabled;                    // Tells if the server should ignore requests

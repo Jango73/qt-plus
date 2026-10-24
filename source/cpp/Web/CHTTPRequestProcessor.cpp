@@ -1,9 +1,12 @@
 
 // Qt
 #include <QCoreApplication>
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QRegularExpression>
 #include <QSslSocket>
+#include <climits>
 
 // Application
 #include "CHTTPRequestProcessor.h"
@@ -189,6 +192,13 @@ void CHTTPRequestProcessor::onSocketReadyRead()
             // Add incoming bytes to buffer
             m_baBuffer.append(baData);
 
+            // Bound total buffered bytes before any parsing (Q3)
+            if (m_baBuffer.size() > m_pServer->maxHeaderBytes() + m_pServer->maxBodyBytes())
+            {
+                stopMe();
+                return;
+            }
+
             // Did we read the header yet?
             if (m_bHeaderRead == false)
             {
@@ -197,6 +207,19 @@ void CHTTPRequestProcessor::onSocketReadyRead()
 
                 m_bHeaderRead = true;
                 m_iExpectedBytes = getHeaderLength(baData) + getExpectedBytes(lTokens);
+
+                // Reject oversized headers and bodies before waiting for the remainder
+                if (getHeaderLength(m_baBuffer) > m_pServer->maxHeaderBytes())
+                {
+                    stopMe();
+                    return;
+                }
+
+                if (getExpectedBytes(lTokens) > m_pServer->maxBodyBytes())
+                {
+                    stopMe();
+                    return;
+                }
 
                 // Get the content type
                 QString sContentType = getTokenValue(lTokens, Token_ContentType);
@@ -320,7 +343,7 @@ QStringList CHTTPRequestProcessor::getHeaderTokens(QByteArray baData)
 */
 int CHTTPRequestProcessor::getExpectedBytes(QStringList lTokens)
 {
-    int iExpectedBytes = 0;
+    qint64 iExpectedBytes = 0;
 
     if (lTokens.count() > 0)
     {
@@ -334,12 +357,19 @@ int CHTTPRequestProcessor::getExpectedBytes(QStringList lTokens)
 
             if (sContentLength.isEmpty() == false)
             {
-                iExpectedBytes = sContentLength.toInt();
+                bool bOk = false;
+                qint64 iParsed = sContentLength.toLongLong(&bOk);
+
+                if (bOk && iParsed > 0)
+                    iExpectedBytes = iParsed;
             }
         }
     }
 
-    return iExpectedBytes;
+    if (iExpectedBytes > INT_MAX)
+        return INT_MAX;
+
+    return static_cast<int>(iExpectedBytes);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -817,9 +847,25 @@ bool CHTTPRequestProcessor::getResponseFile(CWebContext& tContext, QTcpSocket* p
                 sFileName += "/" + sPathName;
             }
 
+            sFileName = QDir::cleanPath(sFileName);
+
+            const QString sAppDir = QDir::cleanPath(QCoreApplication::applicationDirPath());
+
+            if (sFileName != sAppDir && !sFileName.startsWith(sAppDir + QLatin1Char('/')))
+            {
+                return false;
+            }
+
             // Does the file exist on disk?
             if (QFile::exists(sFileName))
             {
+                const QString sCanonical = QFileInfo(sFileName).canonicalFilePath();
+
+                if (sCanonical.isEmpty() || (sCanonical != sAppDir && !sCanonical.startsWith(sAppDir + QLatin1Char('/'))))
+                {
+                    return false;
+                }
+
                 // Is the access authorized?
                 if (bAuthorized)
                 {
@@ -843,6 +889,11 @@ bool CHTTPRequestProcessor::getResponseFile(CWebContext& tContext, QTcpSocket* p
                         baData.append(Token_ContentLength);
                         baData.append(QString(" %1").arg(tFile.size()).toLatin1());
                         baData.append(HTML_NL);
+                        if (m_bSecure && m_pServer->hstsEnabled())
+                        {
+                            baData.append(QString("Strict-Transport-Security: max-age=%1").arg(m_pServer->hstsMaxAge()).toUtf8());
+                            baData.append(HTML_NL);
+                        }
                         baData.append(HTML_NL);
                         baData.append(tFile.readAll());
 
@@ -877,6 +928,11 @@ bool CHTTPRequestProcessor::getResponseFile(CWebContext& tContext, QTcpSocket* p
                     baData.append(Token_ContentLength);
                     baData.append(QString(" %1").arg(baHTML.count()).toUtf8());
                     baData.append(HTML_NL);
+                    if (m_bSecure && m_pServer->hstsEnabled())
+                    {
+                        baData.append("Strict-Transport-Security: max-age=31536000");
+                        baData.append(HTML_NL);
+                    }
                     baData.append(HTML_NL);
                     baData.append(baHTML);
 
@@ -936,6 +992,11 @@ bool CHTTPRequestProcessor::getResponseDynamicContent(CWebContext& tContext, QTc
             baData.append(HTML_NL);
             baData.append(QString("%1 %2").arg(Token_ContentLength).arg(utf8Response.count()).toUtf8());
             baData.append(HTML_NL);
+            if (m_bSecure && m_pServer->hstsEnabled())
+            {
+                baData.append("Strict-Transport-Security: max-age=31536000");
+                baData.append(HTML_NL);
+            }
             baData.append(HTML_NL);
             baData.append(utf8Response);
 
@@ -966,6 +1027,11 @@ bool CHTTPRequestProcessor::getResponseDynamicContent(CWebContext& tContext, QTc
             baData.append(HTML_NL);
             baData.append(QString("%1 %2").arg(Token_ContentLength).arg(baHTML.count()).toUtf8());
             baData.append(HTML_NL);
+            if (m_bSecure && m_pServer->hstsEnabled())
+            {
+                baData.append("Strict-Transport-Security: max-age=31536000");
+                baData.append(HTML_NL);
+            }
             baData.append(HTML_NL);
             baData.append(baHTML);
 
