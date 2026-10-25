@@ -164,21 +164,25 @@ Note: no purely `Cosmetic` item came out of these 15 classes; the weakest findin
 
 ## 7. `CFastList<K, T>` — `source/cpp/CFastList.h`
 
-- [ ] [Major] **7.1 Public inheritance from `QList<T>` breaks the list/hash invariant**
+- [x] [Major] **7.1 Public inheritance from `QList<T>` breaks the list/hash invariant**
   Problem: `CFastList` extends `QList<T>` publicly (`CFastList.h:15`), so any caller can use `append()`, `removeAt()`, `clear()`, etc. directly and bypass `m_hLookup`. The hash then silently disagrees with the list.
   Fix reco: favor composition over inheritance (hold a `QList<T>` member), or inherit privately and expose only a safe API.
+  Fixed: private inheritance with a `using`-exposed read-only vocabulary plus iteration; mutating QList entry points no longer compile. This exact defect caused a use-after-free crash in cutegit (`unload()` cleared the list without the hash).
 
-- [ ] [Major] **7.2 `removeItem(key, item)` leaves dangling keys for shared values**
+- [x] [Major] **7.2 `removeItem(key, item)` leaves dangling keys for shared values**
   Problem: `removeItem(K, const T&)` (`CFastList.h:42-46`) removes *all* list entries equal to `item` but only erases the one key. Other keys mapping to the same value now point at values no longer in the list.
   Fix reco: remove only the entry associated with the key, or rebuild/validate the affected hash entries and document the duplicate-value policy.
+  Fixed: single-key removal erases one list occurrence plus its hash entry, other keys sharing the value stay valid; the two-argument overload only removes when the key holds the given item.
 
-- [ ] [Major] **7.3 `itemByKey()` silently default-constructs on miss**
+- [x] [Major] **7.3 `itemByKey()` silently default-constructs on miss**
   Problem: `return m_hLookup[key];` (`CFastList.h:53-56`) inserts and returns a default `T()` when the key is absent. Callers cannot tell "missing" from "stored default", and the hash grows on every typo.
   Fix reco: return `std::optional<T>` / take a `bool* found` out-param, or at least use `value(key)` without insertion plus a `containsKey()` precondition (and make accessors `const`).
+  Fixed: `value(key)` without insertion, accessors made `const`; documented `containsKey()` precondition.
 
-- [ ] [Minor] **7.4 `deleteAll()` assumes `T` is a pointer, without constraint**
+- [x] [Minor] **7.4 `deleteAll()` assumes `T` is a pointer, without constraint**
   Problem: `qDeleteAll(*this)` (`CFastList.h:58-63`) only compiles when `T` is a pointer type, but nothing states it. For non-pointer `T` users get a cryptic template error far from the cause.
   Fix reco: `static_assert(std::is_pointer<T>::value, ...)` on `deleteAll()`, or split into a pointer specialization.
+  Fixed: `static_assert` with an explicit message.
 
 - [ ] [Minor] **7.5 No thread-safety, underspecified key requirements**
   Problem: list + hash are mutated with no locking, and `K` needs `qHash()`/`operator==` without this being documented. Concurrent `addItem` / `removeItem` corrupts both containers.

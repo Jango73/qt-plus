@@ -86,3 +86,6 @@ Makefile.*
 *.dot
 *.user
 *.bak
+
+# Scratch logs and temporary files
+tmp/

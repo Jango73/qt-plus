@@ -15,6 +15,7 @@
 // qt-plus
 #include "CAverager.h"
 #include "CLazyPointer.h"
+#include "CFastList.h"
 #include "CLogger.h"
 #include "CSingleton.h"
 #include "CTimeSampler.h"
@@ -866,6 +867,51 @@ void CUnitTests::httpDistributedFloodIsolatesIps()
         QVERIFY(!tServer.monitors().value(sClean).shouldBeBlocked());
         QVERIFY(tServer.passBlackListing(sClean));
     }
+}
+
+//-------------------------------------------------------------------------------------------------
+// The hash must always describe the list: removal and lookup go through
+// the key API, a miss returns a default without inserting
+
+void CUnitTests::fastListHashStaysConsistent()
+{
+    QVERIFY(not (std::is_convertible<CFastList<QString, int*>*, QList<int*>*>::value));
+
+    CFastList<QString, int> lList;
+    lList.addItem("b", 2);
+    lList.addItem("a", 1);
+
+    QCOMPARE(lList.count(), 2);
+    QVERIFY(lList.containsKey("a"));
+    QCOMPARE(lList.itemByKey("a"), 1);
+
+    QCOMPARE(lList.itemByKey("missing"), 0);
+    QVERIFY(not lList.containsKey("missing"));
+    QCOMPARE(lList.count(), 2);
+
+    lList.removeItem("b");
+    QVERIFY(not lList.containsKey("b"));
+    QCOMPARE(lList.count(), 1);
+    QCOMPARE(lList.itemByKey("a"), 1);
+
+    lList.removeItem("missing");
+    QCOMPARE(lList.count(), 1);
+
+    CFastList<QString, int> lShared;
+    lShared.addItem("k1", 42);
+    lShared.addItem("k2", 42);
+    lShared.removeItem("k1");
+    QVERIFY(not lShared.containsKey("k1"));
+    QVERIFY(lShared.containsKey("k2"));
+    QCOMPARE(lShared.itemByKey("k2"), 42);
+    QCOMPARE(lShared.count(), 1);
+
+    CFastList<QString, int*> lPointers;
+    lPointers.addItem("p1", new int(1));
+    lPointers.addItem("p2", new int(2));
+    lPointers.deleteAll();
+    QCOMPARE(lPointers.count(), 0);
+    QVERIFY(not lPointers.containsKey("p1"));
 }
 
 //-------------------------------------------------------------------------------------------------

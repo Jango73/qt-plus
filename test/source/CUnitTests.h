@@ -36,6 +36,7 @@ private slots:
     void loggerChainedCycle();
     void timeSamplerConcurrentDump();
     void lazyPointerOwnership();
+    void fastListHashStaysConsistent();
     void qtreeRemoveKeepsParentsValid();
     void qtreePathCompilesAndJoins();
     void tracableMutexNonCopyableAndBlocking();
